@@ -1,0 +1,2594 @@
+[
+  {
+    "attack_type": "Normal",
+    "defense_type": "Normal",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Normal",
+    "defense_type": "Fire",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Normal",
+    "defense_type": "Water",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Normal",
+    "defense_type": "Electric",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Normal",
+    "defense_type": "Grass",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Normal",
+    "defense_type": "Ice",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Normal",
+    "defense_type": "Fighting",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Normal",
+    "defense_type": "Poison",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Normal",
+    "defense_type": "Ground",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Normal",
+    "defense_type": "Flying",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Normal",
+    "defense_type": "Psychic",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Normal",
+    "defense_type": "Bug",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Normal",
+    "defense_type": "Rock",
+    "relation": "resistant",
+    "source_chart_symbol": "1/2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Normal",
+    "defense_type": "Ghost",
+    "relation": "immune",
+    "source_chart_symbol": "0",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Normal",
+    "defense_type": "Dragon",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Normal",
+    "defense_type": "Dark",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Normal",
+    "defense_type": "Steel",
+    "relation": "resistant",
+    "source_chart_symbol": "1/2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Normal",
+    "defense_type": "Fairy",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Fire",
+    "defense_type": "Normal",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Fire",
+    "defense_type": "Fire",
+    "relation": "resistant",
+    "source_chart_symbol": "1/2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Fire",
+    "defense_type": "Water",
+    "relation": "resistant",
+    "source_chart_symbol": "1/2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Fire",
+    "defense_type": "Electric",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Fire",
+    "defense_type": "Grass",
+    "relation": "weak",
+    "source_chart_symbol": "2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Fire",
+    "defense_type": "Ice",
+    "relation": "weak",
+    "source_chart_symbol": "2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Fire",
+    "defense_type": "Fighting",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Fire",
+    "defense_type": "Poison",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Fire",
+    "defense_type": "Ground",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Fire",
+    "defense_type": "Flying",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Fire",
+    "defense_type": "Psychic",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Fire",
+    "defense_type": "Bug",
+    "relation": "weak",
+    "source_chart_symbol": "2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Fire",
+    "defense_type": "Rock",
+    "relation": "resistant",
+    "source_chart_symbol": "1/2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Fire",
+    "defense_type": "Ghost",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Fire",
+    "defense_type": "Dragon",
+    "relation": "resistant",
+    "source_chart_symbol": "1/2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Fire",
+    "defense_type": "Dark",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Fire",
+    "defense_type": "Steel",
+    "relation": "weak",
+    "source_chart_symbol": "2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Fire",
+    "defense_type": "Fairy",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Water",
+    "defense_type": "Normal",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Water",
+    "defense_type": "Fire",
+    "relation": "weak",
+    "source_chart_symbol": "2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Water",
+    "defense_type": "Water",
+    "relation": "resistant",
+    "source_chart_symbol": "1/2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Water",
+    "defense_type": "Electric",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Water",
+    "defense_type": "Grass",
+    "relation": "resistant",
+    "source_chart_symbol": "1/2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Water",
+    "defense_type": "Ice",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Water",
+    "defense_type": "Fighting",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Water",
+    "defense_type": "Poison",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Water",
+    "defense_type": "Ground",
+    "relation": "weak",
+    "source_chart_symbol": "2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Water",
+    "defense_type": "Flying",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Water",
+    "defense_type": "Psychic",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Water",
+    "defense_type": "Bug",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Water",
+    "defense_type": "Rock",
+    "relation": "weak",
+    "source_chart_symbol": "2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Water",
+    "defense_type": "Ghost",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Water",
+    "defense_type": "Dragon",
+    "relation": "resistant",
+    "source_chart_symbol": "1/2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Water",
+    "defense_type": "Dark",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Water",
+    "defense_type": "Steel",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Water",
+    "defense_type": "Fairy",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Electric",
+    "defense_type": "Normal",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Electric",
+    "defense_type": "Fire",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Electric",
+    "defense_type": "Water",
+    "relation": "weak",
+    "source_chart_symbol": "2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Electric",
+    "defense_type": "Electric",
+    "relation": "resistant",
+    "source_chart_symbol": "1/2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Electric",
+    "defense_type": "Grass",
+    "relation": "resistant",
+    "source_chart_symbol": "1/2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Electric",
+    "defense_type": "Ice",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Electric",
+    "defense_type": "Fighting",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Electric",
+    "defense_type": "Poison",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Electric",
+    "defense_type": "Ground",
+    "relation": "immune",
+    "source_chart_symbol": "0",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Electric",
+    "defense_type": "Flying",
+    "relation": "weak",
+    "source_chart_symbol": "2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Electric",
+    "defense_type": "Psychic",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Electric",
+    "defense_type": "Bug",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Electric",
+    "defense_type": "Rock",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Electric",
+    "defense_type": "Ghost",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Electric",
+    "defense_type": "Dragon",
+    "relation": "resistant",
+    "source_chart_symbol": "1/2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Electric",
+    "defense_type": "Dark",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Electric",
+    "defense_type": "Steel",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Electric",
+    "defense_type": "Fairy",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Grass",
+    "defense_type": "Normal",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Grass",
+    "defense_type": "Fire",
+    "relation": "resistant",
+    "source_chart_symbol": "1/2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Grass",
+    "defense_type": "Water",
+    "relation": "weak",
+    "source_chart_symbol": "2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Grass",
+    "defense_type": "Electric",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Grass",
+    "defense_type": "Grass",
+    "relation": "resistant",
+    "source_chart_symbol": "1/2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Grass",
+    "defense_type": "Ice",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Grass",
+    "defense_type": "Fighting",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Grass",
+    "defense_type": "Poison",
+    "relation": "resistant",
+    "source_chart_symbol": "1/2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Grass",
+    "defense_type": "Ground",
+    "relation": "weak",
+    "source_chart_symbol": "2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Grass",
+    "defense_type": "Flying",
+    "relation": "resistant",
+    "source_chart_symbol": "1/2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Grass",
+    "defense_type": "Psychic",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Grass",
+    "defense_type": "Bug",
+    "relation": "resistant",
+    "source_chart_symbol": "1/2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Grass",
+    "defense_type": "Rock",
+    "relation": "weak",
+    "source_chart_symbol": "2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Grass",
+    "defense_type": "Ghost",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Grass",
+    "defense_type": "Dragon",
+    "relation": "resistant",
+    "source_chart_symbol": "1/2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Grass",
+    "defense_type": "Dark",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Grass",
+    "defense_type": "Steel",
+    "relation": "resistant",
+    "source_chart_symbol": "1/2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Grass",
+    "defense_type": "Fairy",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Ice",
+    "defense_type": "Normal",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Ice",
+    "defense_type": "Fire",
+    "relation": "resistant",
+    "source_chart_symbol": "1/2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Ice",
+    "defense_type": "Water",
+    "relation": "resistant",
+    "source_chart_symbol": "1/2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Ice",
+    "defense_type": "Electric",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Ice",
+    "defense_type": "Grass",
+    "relation": "weak",
+    "source_chart_symbol": "2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Ice",
+    "defense_type": "Ice",
+    "relation": "resistant",
+    "source_chart_symbol": "1/2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Ice",
+    "defense_type": "Fighting",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Ice",
+    "defense_type": "Poison",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Ice",
+    "defense_type": "Ground",
+    "relation": "weak",
+    "source_chart_symbol": "2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Ice",
+    "defense_type": "Flying",
+    "relation": "weak",
+    "source_chart_symbol": "2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Ice",
+    "defense_type": "Psychic",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Ice",
+    "defense_type": "Bug",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Ice",
+    "defense_type": "Rock",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Ice",
+    "defense_type": "Ghost",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Ice",
+    "defense_type": "Dragon",
+    "relation": "weak",
+    "source_chart_symbol": "2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Ice",
+    "defense_type": "Dark",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Ice",
+    "defense_type": "Steel",
+    "relation": "resistant",
+    "source_chart_symbol": "1/2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Ice",
+    "defense_type": "Fairy",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Fighting",
+    "defense_type": "Normal",
+    "relation": "weak",
+    "source_chart_symbol": "2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Fighting",
+    "defense_type": "Fire",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Fighting",
+    "defense_type": "Water",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Fighting",
+    "defense_type": "Electric",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Fighting",
+    "defense_type": "Grass",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Fighting",
+    "defense_type": "Ice",
+    "relation": "weak",
+    "source_chart_symbol": "2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Fighting",
+    "defense_type": "Fighting",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Fighting",
+    "defense_type": "Poison",
+    "relation": "resistant",
+    "source_chart_symbol": "1/2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Fighting",
+    "defense_type": "Ground",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Fighting",
+    "defense_type": "Flying",
+    "relation": "resistant",
+    "source_chart_symbol": "1/2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Fighting",
+    "defense_type": "Psychic",
+    "relation": "resistant",
+    "source_chart_symbol": "1/2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Fighting",
+    "defense_type": "Bug",
+    "relation": "resistant",
+    "source_chart_symbol": "1/2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Fighting",
+    "defense_type": "Rock",
+    "relation": "weak",
+    "source_chart_symbol": "2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Fighting",
+    "defense_type": "Ghost",
+    "relation": "immune",
+    "source_chart_symbol": "0",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Fighting",
+    "defense_type": "Dragon",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Fighting",
+    "defense_type": "Dark",
+    "relation": "weak",
+    "source_chart_symbol": "2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Fighting",
+    "defense_type": "Steel",
+    "relation": "weak",
+    "source_chart_symbol": "2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Fighting",
+    "defense_type": "Fairy",
+    "relation": "resistant",
+    "source_chart_symbol": "1/2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Poison",
+    "defense_type": "Normal",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Poison",
+    "defense_type": "Fire",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Poison",
+    "defense_type": "Water",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Poison",
+    "defense_type": "Electric",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Poison",
+    "defense_type": "Grass",
+    "relation": "weak",
+    "source_chart_symbol": "2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Poison",
+    "defense_type": "Ice",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Poison",
+    "defense_type": "Fighting",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Poison",
+    "defense_type": "Poison",
+    "relation": "resistant",
+    "source_chart_symbol": "1/2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Poison",
+    "defense_type": "Ground",
+    "relation": "resistant",
+    "source_chart_symbol": "1/2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Poison",
+    "defense_type": "Flying",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Poison",
+    "defense_type": "Psychic",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Poison",
+    "defense_type": "Bug",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Poison",
+    "defense_type": "Rock",
+    "relation": "resistant",
+    "source_chart_symbol": "1/2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Poison",
+    "defense_type": "Ghost",
+    "relation": "resistant",
+    "source_chart_symbol": "1/2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Poison",
+    "defense_type": "Dragon",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Poison",
+    "defense_type": "Dark",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Poison",
+    "defense_type": "Steel",
+    "relation": "immune",
+    "source_chart_symbol": "0",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Poison",
+    "defense_type": "Fairy",
+    "relation": "weak",
+    "source_chart_symbol": "2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Ground",
+    "defense_type": "Normal",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Ground",
+    "defense_type": "Fire",
+    "relation": "weak",
+    "source_chart_symbol": "2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Ground",
+    "defense_type": "Water",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Ground",
+    "defense_type": "Electric",
+    "relation": "weak",
+    "source_chart_symbol": "2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Ground",
+    "defense_type": "Grass",
+    "relation": "resistant",
+    "source_chart_symbol": "1/2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Ground",
+    "defense_type": "Ice",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Ground",
+    "defense_type": "Fighting",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Ground",
+    "defense_type": "Poison",
+    "relation": "weak",
+    "source_chart_symbol": "2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Ground",
+    "defense_type": "Ground",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Ground",
+    "defense_type": "Flying",
+    "relation": "immune",
+    "source_chart_symbol": "0",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Ground",
+    "defense_type": "Psychic",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Ground",
+    "defense_type": "Bug",
+    "relation": "resistant",
+    "source_chart_symbol": "1/2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Ground",
+    "defense_type": "Rock",
+    "relation": "weak",
+    "source_chart_symbol": "2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Ground",
+    "defense_type": "Ghost",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Ground",
+    "defense_type": "Dragon",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Ground",
+    "defense_type": "Dark",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Ground",
+    "defense_type": "Steel",
+    "relation": "weak",
+    "source_chart_symbol": "2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Ground",
+    "defense_type": "Fairy",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Flying",
+    "defense_type": "Normal",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Flying",
+    "defense_type": "Fire",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Flying",
+    "defense_type": "Water",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Flying",
+    "defense_type": "Electric",
+    "relation": "resistant",
+    "source_chart_symbol": "1/2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Flying",
+    "defense_type": "Grass",
+    "relation": "weak",
+    "source_chart_symbol": "2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Flying",
+    "defense_type": "Ice",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Flying",
+    "defense_type": "Fighting",
+    "relation": "weak",
+    "source_chart_symbol": "2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Flying",
+    "defense_type": "Poison",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Flying",
+    "defense_type": "Ground",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Flying",
+    "defense_type": "Flying",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Flying",
+    "defense_type": "Psychic",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Flying",
+    "defense_type": "Bug",
+    "relation": "weak",
+    "source_chart_symbol": "2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Flying",
+    "defense_type": "Rock",
+    "relation": "resistant",
+    "source_chart_symbol": "1/2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Flying",
+    "defense_type": "Ghost",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Flying",
+    "defense_type": "Dragon",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Flying",
+    "defense_type": "Dark",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Flying",
+    "defense_type": "Steel",
+    "relation": "resistant",
+    "source_chart_symbol": "1/2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Flying",
+    "defense_type": "Fairy",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Psychic",
+    "defense_type": "Normal",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Psychic",
+    "defense_type": "Fire",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Psychic",
+    "defense_type": "Water",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Psychic",
+    "defense_type": "Electric",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Psychic",
+    "defense_type": "Grass",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Psychic",
+    "defense_type": "Ice",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Psychic",
+    "defense_type": "Fighting",
+    "relation": "weak",
+    "source_chart_symbol": "2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Psychic",
+    "defense_type": "Poison",
+    "relation": "weak",
+    "source_chart_symbol": "2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Psychic",
+    "defense_type": "Ground",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Psychic",
+    "defense_type": "Flying",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Psychic",
+    "defense_type": "Psychic",
+    "relation": "resistant",
+    "source_chart_symbol": "1/2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Psychic",
+    "defense_type": "Bug",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Psychic",
+    "defense_type": "Rock",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Psychic",
+    "defense_type": "Ghost",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Psychic",
+    "defense_type": "Dragon",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Psychic",
+    "defense_type": "Dark",
+    "relation": "immune",
+    "source_chart_symbol": "0",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Psychic",
+    "defense_type": "Steel",
+    "relation": "resistant",
+    "source_chart_symbol": "1/2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Psychic",
+    "defense_type": "Fairy",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Bug",
+    "defense_type": "Normal",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Bug",
+    "defense_type": "Fire",
+    "relation": "resistant",
+    "source_chart_symbol": "1/2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Bug",
+    "defense_type": "Water",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Bug",
+    "defense_type": "Electric",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Bug",
+    "defense_type": "Grass",
+    "relation": "weak",
+    "source_chart_symbol": "2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Bug",
+    "defense_type": "Ice",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Bug",
+    "defense_type": "Fighting",
+    "relation": "resistant",
+    "source_chart_symbol": "1/2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Bug",
+    "defense_type": "Poison",
+    "relation": "resistant",
+    "source_chart_symbol": "1/2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Bug",
+    "defense_type": "Ground",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Bug",
+    "defense_type": "Flying",
+    "relation": "resistant",
+    "source_chart_symbol": "1/2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Bug",
+    "defense_type": "Psychic",
+    "relation": "weak",
+    "source_chart_symbol": "2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Bug",
+    "defense_type": "Bug",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Bug",
+    "defense_type": "Rock",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Bug",
+    "defense_type": "Ghost",
+    "relation": "resistant",
+    "source_chart_symbol": "1/2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Bug",
+    "defense_type": "Dragon",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Bug",
+    "defense_type": "Dark",
+    "relation": "weak",
+    "source_chart_symbol": "2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Bug",
+    "defense_type": "Steel",
+    "relation": "resistant",
+    "source_chart_symbol": "1/2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Bug",
+    "defense_type": "Fairy",
+    "relation": "resistant",
+    "source_chart_symbol": "1/2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Rock",
+    "defense_type": "Normal",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Rock",
+    "defense_type": "Fire",
+    "relation": "weak",
+    "source_chart_symbol": "2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Rock",
+    "defense_type": "Water",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Rock",
+    "defense_type": "Electric",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Rock",
+    "defense_type": "Grass",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Rock",
+    "defense_type": "Ice",
+    "relation": "weak",
+    "source_chart_symbol": "2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Rock",
+    "defense_type": "Fighting",
+    "relation": "resistant",
+    "source_chart_symbol": "1/2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Rock",
+    "defense_type": "Poison",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Rock",
+    "defense_type": "Ground",
+    "relation": "resistant",
+    "source_chart_symbol": "1/2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Rock",
+    "defense_type": "Flying",
+    "relation": "weak",
+    "source_chart_symbol": "2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Rock",
+    "defense_type": "Psychic",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Rock",
+    "defense_type": "Bug",
+    "relation": "weak",
+    "source_chart_symbol": "2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Rock",
+    "defense_type": "Rock",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Rock",
+    "defense_type": "Ghost",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Rock",
+    "defense_type": "Dragon",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Rock",
+    "defense_type": "Dark",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Rock",
+    "defense_type": "Steel",
+    "relation": "resistant",
+    "source_chart_symbol": "1/2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Rock",
+    "defense_type": "Fairy",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Ghost",
+    "defense_type": "Normal",
+    "relation": "immune",
+    "source_chart_symbol": "0",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Ghost",
+    "defense_type": "Fire",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Ghost",
+    "defense_type": "Water",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Ghost",
+    "defense_type": "Electric",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Ghost",
+    "defense_type": "Grass",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Ghost",
+    "defense_type": "Ice",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Ghost",
+    "defense_type": "Fighting",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Ghost",
+    "defense_type": "Poison",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Ghost",
+    "defense_type": "Ground",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Ghost",
+    "defense_type": "Flying",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Ghost",
+    "defense_type": "Psychic",
+    "relation": "weak",
+    "source_chart_symbol": "2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Ghost",
+    "defense_type": "Bug",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Ghost",
+    "defense_type": "Rock",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Ghost",
+    "defense_type": "Ghost",
+    "relation": "weak",
+    "source_chart_symbol": "2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Ghost",
+    "defense_type": "Dragon",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Ghost",
+    "defense_type": "Dark",
+    "relation": "resistant",
+    "source_chart_symbol": "1/2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Ghost",
+    "defense_type": "Steel",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Ghost",
+    "defense_type": "Fairy",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Dragon",
+    "defense_type": "Normal",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Dragon",
+    "defense_type": "Fire",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Dragon",
+    "defense_type": "Water",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Dragon",
+    "defense_type": "Electric",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Dragon",
+    "defense_type": "Grass",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Dragon",
+    "defense_type": "Ice",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Dragon",
+    "defense_type": "Fighting",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Dragon",
+    "defense_type": "Poison",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Dragon",
+    "defense_type": "Ground",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Dragon",
+    "defense_type": "Flying",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Dragon",
+    "defense_type": "Psychic",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Dragon",
+    "defense_type": "Bug",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Dragon",
+    "defense_type": "Rock",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Dragon",
+    "defense_type": "Ghost",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Dragon",
+    "defense_type": "Dragon",
+    "relation": "weak",
+    "source_chart_symbol": "2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Dragon",
+    "defense_type": "Dark",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Dragon",
+    "defense_type": "Steel",
+    "relation": "resistant",
+    "source_chart_symbol": "1/2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Dragon",
+    "defense_type": "Fairy",
+    "relation": "immune",
+    "source_chart_symbol": "0",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Dark",
+    "defense_type": "Normal",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Dark",
+    "defense_type": "Fire",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Dark",
+    "defense_type": "Water",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Dark",
+    "defense_type": "Electric",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Dark",
+    "defense_type": "Grass",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Dark",
+    "defense_type": "Ice",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Dark",
+    "defense_type": "Fighting",
+    "relation": "resistant",
+    "source_chart_symbol": "1/2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Dark",
+    "defense_type": "Poison",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Dark",
+    "defense_type": "Ground",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Dark",
+    "defense_type": "Flying",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Dark",
+    "defense_type": "Psychic",
+    "relation": "weak",
+    "source_chart_symbol": "2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Dark",
+    "defense_type": "Bug",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Dark",
+    "defense_type": "Rock",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Dark",
+    "defense_type": "Ghost",
+    "relation": "weak",
+    "source_chart_symbol": "2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Dark",
+    "defense_type": "Dragon",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Dark",
+    "defense_type": "Dark",
+    "relation": "resistant",
+    "source_chart_symbol": "1/2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Dark",
+    "defense_type": "Steel",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Dark",
+    "defense_type": "Fairy",
+    "relation": "resistant",
+    "source_chart_symbol": "1/2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Steel",
+    "defense_type": "Normal",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Steel",
+    "defense_type": "Fire",
+    "relation": "resistant",
+    "source_chart_symbol": "1/2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Steel",
+    "defense_type": "Water",
+    "relation": "resistant",
+    "source_chart_symbol": "1/2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Steel",
+    "defense_type": "Electric",
+    "relation": "resistant",
+    "source_chart_symbol": "1/2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Steel",
+    "defense_type": "Grass",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Steel",
+    "defense_type": "Ice",
+    "relation": "weak",
+    "source_chart_symbol": "2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Steel",
+    "defense_type": "Fighting",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Steel",
+    "defense_type": "Poison",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Steel",
+    "defense_type": "Ground",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Steel",
+    "defense_type": "Flying",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Steel",
+    "defense_type": "Psychic",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Steel",
+    "defense_type": "Bug",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Steel",
+    "defense_type": "Rock",
+    "relation": "weak",
+    "source_chart_symbol": "2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Steel",
+    "defense_type": "Ghost",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Steel",
+    "defense_type": "Dragon",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Steel",
+    "defense_type": "Dark",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Steel",
+    "defense_type": "Steel",
+    "relation": "resistant",
+    "source_chart_symbol": "1/2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Steel",
+    "defense_type": "Fairy",
+    "relation": "weak",
+    "source_chart_symbol": "2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Fairy",
+    "defense_type": "Normal",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Fairy",
+    "defense_type": "Fire",
+    "relation": "resistant",
+    "source_chart_symbol": "1/2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Fairy",
+    "defense_type": "Water",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Fairy",
+    "defense_type": "Electric",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Fairy",
+    "defense_type": "Grass",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Fairy",
+    "defense_type": "Ice",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Fairy",
+    "defense_type": "Fighting",
+    "relation": "weak",
+    "source_chart_symbol": "2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Fairy",
+    "defense_type": "Poison",
+    "relation": "resistant",
+    "source_chart_symbol": "1/2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Fairy",
+    "defense_type": "Ground",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Fairy",
+    "defense_type": "Flying",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Fairy",
+    "defense_type": "Psychic",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Fairy",
+    "defense_type": "Bug",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Fairy",
+    "defense_type": "Rock",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Fairy",
+    "defense_type": "Ghost",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Fairy",
+    "defense_type": "Dragon",
+    "relation": "weak",
+    "source_chart_symbol": "2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Fairy",
+    "defense_type": "Dark",
+    "relation": "weak",
+    "source_chart_symbol": "2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Fairy",
+    "defense_type": "Steel",
+    "relation": "resistant",
+    "source_chart_symbol": "1/2",
+    "source_id": "core",
+    "source_page": 238
+  },
+  {
+    "attack_type": "Fairy",
+    "defense_type": "Fairy",
+    "relation": "neutral",
+    "source_chart_symbol": "1",
+    "source_id": "core",
+    "source_page": 238
+  }
+]

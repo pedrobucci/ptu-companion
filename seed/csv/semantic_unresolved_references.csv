@@ -1,0 +1,29 @@
+﻿definition_kind,definition_id,definition_name,effect_index,entity_kind,entity_name,status
+feature,power-enhance,Power Enhance,0,move,Concealed Power,unresolved_exact
+feature,type-mastery,Type Mastery,0,ability,one,unresolved_exact
+feature,archive-tutor,Archive Tutor,0,move,and loses 2 Tutor Points,unresolved_exact
+feature,dilettante,Dilettante,0,edge,both an,unresolved_exact
+feature,martial-achievement,Martial Achievement,0,ability,Martial Achievement based on your Chosen,unresolved_exact
+feature,stat-embodiment,Stat Embodiment,0,ability,an,unresolved_exact
+feature,telepath,Telepath,0,capability,Telepathy,unresolved_exact
+feature,extra-ordinary,Extra Ordinary,0,ability,Last Chance or Normal Strategist,unresolved_exact
+feature,archive-tutor,Archive Tutor,0,move,and loses 2 Tutor Points,unresolved_exact
+feature,leadership,Leadership,1,edge,chosen Feature and the Leader,unresolved_exact
+feature,peerless-elegance,Peerless Elegance,0,edge,Trickster Orders Feature and the Leader,unresolved_exact
+feature,shade-caller,Shade Caller,0,move,Faint Attack,unresolved_exact
+feature,too-spooky,Too Spooky,0,ability,cho- sen,unresolved_exact
+feature,druid,Druid,0,ability,an,unresolved_exact
+feature,green-path,Green Path,0,capability,Naturewalk (Grassland),unresolved_exact
+feature,green-path,Green Path,1,capability,Na- turewalk (Forest),unresolved_exact
+feature,luminous-aura,Luminous Aura,0,ability,Cho- sen,unresolved_exact
+feature,shade-caller,Shade Caller,0,move,Faint Attack,unresolved_exact
+feature,shards-of-stone,Shards of Stone,1,move,Stealth Rock Stone Cold Finish [+Defense] vival Static You learn Stone Edge,unresolved_exact
+feature,how-to-shoot-web,How To Shoot Web,0,ability,following,unresolved_exact
+feature,swarmlord,Swarmlord,0,ability,an,unresolved_exact
+feature,movement-mastery,Movement Mastery,1,edge,chosen,unresolved_exact
+feature,improvised-gadgets,Improvised Gadgets,1,capability,user the chosen,unresolved_exact
+feature,experimental-designs,Experimental Designs,0,move,Feint without taking a Move Slot,unresolved_exact
+ability,power-of-alchemy,Power of Alchemy,0,ability,an,unresolved_exact
+ability,receiver,Receiver,0,ability,that,unresolved_exact
+ability,seasonal,Seasonal,0,ability,an,unresolved_exact
+ability,trace,Trace,0,ability,an,unresolved_exact

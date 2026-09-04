@@ -1,0 +1,37 @@
+[
+  {
+    "id": "fixed-gm-stealth",
+    "base": {
+      "trainer.skill.stealth.check_bonus": 0
+    },
+    "modifiers": [
+      {
+        "source": "gm_grant",
+        "operation": "add",
+        "target": "trainer.skill.stealth.check_bonus",
+        "value": 2,
+        "duration": "permanent"
+      }
+    ],
+    "expected": {
+      "trainer.skill.stealth.check_bonus": 2,
+      "survives_respec": true
+    }
+  },
+  {
+    "id": "resource-grant-reallocation",
+    "grant": {
+      "resource": "edge",
+      "amount": 1,
+      "allocation": "skill-edge:charm"
+    },
+    "respec": {
+      "new_allocation": "skill-edge:command"
+    },
+    "expected": {
+      "resource_amount": 1,
+      "allocation": "skill-edge:command",
+      "grant_preserved": true
+    }
+  }
+]

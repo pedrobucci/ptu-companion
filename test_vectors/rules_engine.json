@@ -1,0 +1,59 @@
+[
+  {
+    "id": "stab-db4-dark-atk15",
+    "input": {
+      "move_db": 4,
+      "move_type": "Dark",
+      "actor_types": [
+        "Dark"
+      ],
+      "damage_class": "Physical",
+      "attack_stat": 15
+    },
+    "expected": {
+      "stab_applies": true,
+      "final_db": 6,
+      "damage_expression": "2d6+23"
+    },
+    "source_basis": "Core STAB +2 DB; Core DB6 rolled damage 2d6+8."
+  },
+  {
+    "id": "no-stab-db4-atk15",
+    "input": {
+      "move_db": 4,
+      "move_type": "Fire",
+      "actor_types": [
+        "Dark"
+      ],
+      "damage_class": "Physical",
+      "attack_stat": 15
+    },
+    "expected": {
+      "stab_applies": false,
+      "final_db": 4,
+      "damage_expression": "1d8+21"
+    }
+  },
+  {
+    "id": "single-weakness-step",
+    "input": {
+      "weak_count": 1,
+      "resistant_count": 0,
+      "immune": false
+    },
+    "expected": {
+      "multiplier": 1.5
+    }
+  },
+  {
+    "id": "double-resistance-step",
+    "input": {
+      "weak_count": 0,
+      "resistant_count": 2,
+      "immune": false
+    },
+    "expected": {
+      "multiplier": 0.25
+    }
+  }
+]

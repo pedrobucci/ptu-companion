@@ -1,0 +1,45 @@
+[
+  {
+    "type": "Electric",
+    "immunities": [
+      "Paralysis"
+    ]
+  },
+  {
+    "type": "Fire",
+    "immunities": [
+      "Burn"
+    ]
+  },
+  {
+    "type": "Ghost",
+    "immunities": [
+      "Stuck",
+      "Trapped"
+    ]
+  },
+  {
+    "type": "Grass",
+    "immunities": [
+      "Moves with the Powder Keyword"
+    ]
+  },
+  {
+    "type": "Ice",
+    "immunities": [
+      "Frozen"
+    ]
+  },
+  {
+    "type": "Poison",
+    "immunities": [
+      "Poison"
+    ]
+  },
+  {
+    "type": "Steel",
+    "immunities": [
+      "Poison"
+    ]
+  }
+]

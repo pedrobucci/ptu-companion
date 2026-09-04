@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "PTU Trainer Pack",
+  "type": "object",
+  "required": [
+    "manifest",
+    "trainer"
+  ],
+  "properties": {
+    "manifest": {
+      "type": "object"
+    },
+    "trainer": {
+      "type": "object"
+    },
+    "pokemon": {
+      "type": "array"
+    },
+    "rosters": {
+      "type": "array"
+    },
+    "inventory": {
+      "type": "object"
+    },
+    "npcs": {
+      "type": "array"
+    },
+    "embedded_content": {
+      "type": "object"
+    }
+  }
+}

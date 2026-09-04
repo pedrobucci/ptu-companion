@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "PTU Modifier",
+  "type": "object",
+  "required": [
+    "id",
+    "source",
+    "target",
+    "operation",
+    "duration"
+  ],
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "source": {
+      "type": "object"
+    },
+    "target": {
+      "type": "string"
+    },
+    "operation": {
+      "enum": [
+        "add",
+        "multiply",
+        "set",
+        "min",
+        "max",
+        "step_resistance",
+        "grant",
+        "remove"
+      ]
+    },
+    "value": {},
+    "condition": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "duration": {
+      "enum": [
+        "permanent",
+        "round",
+        "scene",
+        "day",
+        "until_rest",
+        "while_equipped",
+        "manual"
+      ]
+    },
+    "stacking_group": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "priority": {
+      "type": "integer"
+    }
+  }
+}

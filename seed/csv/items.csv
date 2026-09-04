@@ -1,0 +1,352 @@
+﻿id,name,category,price,price_text,consumable,trainer_usable,pokemon_held_usable,equipment_slots,effect_text,source_id,source_page,needs_review
+aguav-berry,Aguav Berry,Berry,250,,True,True,True,,"Bitter Treat*, Smart Poffin Ingredient",core,282,False
+apicot-berry,Apicot Berry,Berry,250,,True,True,True,,+1 Special Defense CS,core,282,False
+aspear-berry,Aspear Berry,Berry,150,,True,True,True,,"Cures Freeze, Tough Poffin Ingredient",core,282,False
+babiri-berry,Babiri Berry,Berry,500,,True,True,True,,Weakens foe's super effective Steel-type move*,core,283,False
+belue-berry,Belue Berry,Berry,250,,True,True,True,,Cool or Tough Poffin Ingredient,core,282,False
+bluk-berry,Bluk Berry,Berry,150,,True,True,True,,Beauty Poffin Ingredient,core,282,False
+charti-berry,Charti Berry,Berry,500,,True,True,True,,Weakens foe's super effective Rock-type move*,core,283,False
+cheri-berry,Cheri Berry,Berry,150,,True,True,True,,"Cures Paralysis, Cool Poffin Ingredient",core,282,False
+chesto-berry,Chesto Berry,Berry,150,,True,True,True,,"Cures Sleep, Beauty Poffin Ingredient",core,282,False
+chilan-berry,Chilan Berry,Berry,500,,True,True,True,,Weakens foe's Normal- type move*,core,283,False
+chople-berry,Chople Berry,Berry,500,,True,True,True,,Weakens foe's super effective Fighting-type move*,core,283,False
+coba-berry,Coba Berry,Berry,500,,True,True,True,,Weakens foe's super effective Flying-type move*,core,283,False
+colbur-berry,Colbur Berry,Berry,500,,True,True,True,,Weakens foe's super effective Dark-type move*,core,283,False
+cornn-berry,Cornn Berry,Berry,250,,True,True,True,,Cures Disabled Condition.,core,282,False
+custap-berry,Custap Berry,Berry,500,,True,True,True,,Grants the Priority keyword to any Move. May only be used at 25% HP or lower.,core,283,False
+durin-berry,Durin Berry,Berry,250,,True,True,True,,Smart or Tough Poffin Ingredient,core,282,False
+enigma-berry,Enigma Berry,Berry,250,,True,True,True,,User gains Temporary HP equal to 1/6th of their Max HP when hit by a Super Effective Move.,core,282,False
+figy-berry,Figy Berry,Berry,250,,True,True,True,,"Spicy Treat*, Cool Poffin Ingredient",core,282,False
+ganlon-berry,Ganlon Berry,Berry,250,,True,True,True,,+1 Defense CS,core,282,False
+grepa-berry,Grepa Berry,Berry,500,,True,True,True,,Special Defense Suppressant*,core,283,False
+haban-berry,Haban Berry,Berry,500,,True,True,True,,Weakens foe's super effective Dragon-type move*,core,283,False
+hondew-berry,Hondew Berry,Berry,500,,True,True,True,,Special Attack Suppressant*,core,283,False
+iapapa-berry,Iapapa Berry,Berry,250,,True,True,True,,"Sour Treat*, Tough Poffin Ingredient",core,282,False
+jaboca-berry,Jaboca Berry,Berry,250,,True,True,True,,Foe dealing Physical Damage to the user loses 1/8 of their Maximum HP.,core,282,False
+kasib-berry,Kasib Berry,Berry,500,,True,True,True,,Weakens foe's super effective Ghost-type move*,core,283,False
+kebia-berry,Kebia Berry,Berry,500,,True,True,True,,Weakens foe's super effective Poison-type move*,core,283,False
+kee-berry,Kee Berry,Berry,500,,True,True,True,,+1 Defense CS. Activates as a Free Action when hit by a Physical Move.,core,283,False
+kelpsy-berry,Kelpsy Berry,Berry,500,,True,True,True,,Attack Suppressant*,core,283,False
+lansat-berry,Lansat Berry,Berry,250,,True,True,True,,Increases Critical Range by +1 for the remainder of the encounter.,core,282,False
+leppa-berry,Leppa Berry,Berry,500,,True,True,True,,Restores a Scene Move.,core,282,False
+liechi-berry,Liechi Berry,Berry,250,,True,True,True,,+1 Attack CS.,core,282,False
+lum-berry,Lum Berry,Berry,250,,True,True,True,,Cures any single status ailment,core,282,False
+mago-berry,Mago Berry,Berry,250,,True,True,True,,"Sweet Treat*, Cute Poffin Ingredient",core,282,False
+magost-berry,Magost Berry,Berry,250,,True,True,True,,Cures Enraged condition.,core,282,False
+maranga-berry,Maranga Berry,Berry,500,,True,True,True,,+1 Special Defense CS. Activates as a Free Action when hit by a Special Move.,core,283,False
+micle-berry,Micle Berry,Berry,250,,True,True,True,,Increases Accuracy by +1.,core,282,False
+nanab-berry,Nanab Berry,Berry,150,,True,True,True,,Cute Poffin Ingredient,core,282,False
+nomel-berry,Nomel Berry,Berry,250,,True,True,True,,Cures Infatuated condition.,core,282,False
+occa-berry,Occa Berry,Berry,500,,True,True,True,,Weakens foe's super effective Fire-type move*,core,283,False
+oran-berry,Oran Berry,Berry,150,,True,True,True,,Restores 5 Hit Points,core,282,False
+pamtre-berry,Pamtre Berry,Berry,250,,True,True,True,,Cute or Beauty Poffin Ingredient,core,282,False
+passho-berry,Passho Berry,Berry,500,,True,True,True,,Weakens foe's super effective Water-type move*,core,283,False
+payapa-berry,Payapa Berry,Berry,500,,True,True,True,,Weakens foe's super effective Psychic-type move*,core,283,False
+pecha-berry,Pecha Berry,Berry,150,,True,True,True,,"Cures Poison, Cute Poffin Ingredient",core,282,False
+persim-berry,Persim Berry,Berry,150,,True,True,True,,Cures Confusion,core,282,False
+petaya-berry,Petaya Berry,Berry,250,,True,True,True,,+1 Special Attack CS,core,282,False
+pinap-berry,Pinap Berry,Berry,150,,True,True,True,,Tough Poffin Ingredient,core,282,False
+pomeg-berry,Pomeg Berry,Berry,500,,True,True,True,,HP Suppressant*,core,283,False
+qualot-berry,Qualot Berry,Berry,500,,True,True,True,,Defense Suppressant*,core,283,False
+rabuta-berry,Rabuta Berry,Berry,250,,True,True,True,,Cures Suppressed condition.,core,282,False
+rawst-berry,Rawst Berry,Berry,150,,True,True,True,,"Cures Burn, Smart Poffin Ingredient",core,282,False
+razz-berry,Razz Berry,Berry,150,,True,True,True,,Cool Poffin Ingredient,core,282,False
+rindo-berry,Rindo Berry,Berry,500,,True,True,True,,Weakens foe's super effective Grass-type move*,core,283,False
+roseli-berry,Roseli Berry,Berry,500,,True,True,True,,Weakens foe's supereffective Fairy- type move*,core,283,False
+rowap-berry,Rowap Berry,Berry,250,,True,True,True,,Foe dealing Special Damage to the user loses 1/8 of their Maximum HP.,core,282,False
+salac-berry,Salac Berry,Berry,250,,True,True,True,,+1 Speed CS,core,282,False
+shuca-berry,Shuca Berry,Berry,500,,True,True,True,,Weakens foe's super effective Ground-type move*,core,283,False
+sitrus-berry,Sitrus Berry,Berry,250,,True,True,True,,Restores 15 Hit Points,core,282,False
+spelon-berry,Spelon Berry,Berry,250,,True,True,True,,Cool or Beauty Poffin Ingredient,core,282,False
+starf-berry,Starf Berry,Berry,250,,True,True,True,,+2 CS to a random Stat. May be used only at 25% HP or lower.,core,282,False
+tamato-berry,Tamato Berry,Berry,500,,True,True,True,,Speed Suppressant*,core,283,False
+tanga-berry,Tanga Berry,Berry,500,,True,True,True,,Weakens foe's super effective Bug-type move*,core,283,False
+wacan-berry,Wacan Berry,Berry,500,,True,True,True,,Weakens foe's super effective Electric-type move*,core,283,False
+watmel-berry,Watmel Berry,Berry,250,,True,True,True,,Cute or Smart Poffin Ingredient,core,282,False
+wepear-berry,Wepear Berry,Berry,150,,True,True,True,,Smart Poffin Ingredient,core,282,False
+wiki-berry,Wiki Berry,Berry,250,,True,True,True,,"Dry Treat*, Beauty Poffin Ingredient",core,282,False
+yache-berry,Yache Berry,Berry,500,,True,True,True,,Weakens foe's super effective Ice-type move*,core,283,False
+caltrops-toxic-caltrops,Caltrops & Toxic Caltrops,Combat Item,,"Caltrops are not usually sold in stores, but may be found from specialty shops for $500",True,True,False,,"These items let the user use the Move Spikes and Toxic Spikes, respectively, as a Standard Action. The item is then consumed. Caltrops are not usually sold in stores, but may be found from specialty shops for $500.",core,302,False
+cleanse-tags,Cleanse Tags,Combat Item,,,True,True,False,,"Cleanse Tags are small strips of paper with a prayer or incantation written on them. When created, the creator makes an Occult Education Roll; this is the Cleanse Tag's Power Value.",core,302,False
+dream-mist,Dream Mist,Combat Item,500,Dream Mist is collected from Pokémon with the eponymous Capability using a Collection Jar but is also in rare occult shops for $500,True,True,False,,"Dream Mist may be used as an AC 6 Melee Status Attack, performed as a Standard Action. If it hits, the target falls Asleep. Dream Mist is collected from Pokémon with the eponymous Capability using a Collection Jar but is also in rare occult shops for $500.",core,302,False
+magic-flute,Magic Flute,Combat Item,4000,These rare artifacts cannot be found in most ordinary stores but may cost upwards of $4000 from an appropriate occult vendor,True,True,False,,"Magic Flutes are rare artifacts made only by skilled crafters with occult knowledge. They are not usually found in stores. When a Flute is crafted, it is tied to a particular Status Condition. Once per day, the Flute may be played as a Standard Action. All Pokémon and Trainers within 20 meters of the Flute are cured of that Status. These rare artifacts cannot be found in most ordinary stores but may cost upwards of $4000 from an appropriate occult vendor.",core,302,False
+pester-balls,Pester Balls,Combat Item,,,True,True,False,,"Pester Balls are small balls full of chemicals that come in six varieties, each of which inflicts a different Status Affliction when they hit a target. The",core,302,False
+smoke-ball,Smoke Ball,Combat Item,500,Smoke Balls can only be found in specialty shops for around $500,True,True,False,,"When used, a Smoke Ball creates a 3 meter blast that fills the area with smoke, as if the move Smokescreen had been used. Smoke Balls can only be found in specialty shops for around $500.",core,302,False
+chemistry-set,Chemistry Set,Crafting Kit,1000,Costs $1000,False,True,False,,"Used to create Repels, Potions, and other objects. Costs $1000.",core,284,False
+cooking-set,Cooking Set,Crafting Kit,1000,Costs $1000,False,True,False,,Used by Chefs to create Snacks and Refreshments. Costs $1000.,core,284,False
+dowsing-rod,Dowsing Rod,Crafting Kit,2000,"They may be used while in any route, cave, or outside area and can be bought for $2000",False,True,False,,"Dowsing Rods have been attuned to the energy resonance given off by Shards. They may be used while in any route, cave, or outside area and can be bought for $2000. They may be activated by spending 10 minutes searching an area, and may be activated a number of times per day equal to half of the trainer's Occult Education Rank.",core,284,False
+poffin-mixer,Poffin Mixer,Crafting Kit,500,"You simply insert cooking ingredients worth $500, and at least one of the listed berries",False,True,False,,"A Poffin Mixer can be used by any Trainer to create Poffins. You simply insert cooking ingredients worth $500, and at least one of the listed berries. You create two Poffins that raises the Contest Stat most represented by the berries used by +1 Contest Die. Some Berries can raise multiple Contest Stats; you choose which to raise when using these Berries to make Poffins. Cheri, Figy, Razz, Spelon and Belue Berries raise Cool; Chesto, Wiki, Bluk, Spelon and Pamtre Berries raise Beauty; Pecha, Mago, Nanab, Pamtre, and Watmel Berries raise Cute; Rawst, Aguav, Wepear, Watmel, and Durin Berries raise Smart; Aspear, Iapapa, Pinap, Durin, and Belue Berries raise Tough. Poffins can be purchased for $500 in bakeries and Contest halls, and Poffin Mixers cost $500 as well.",core,284,False
+poke-ball-tool-box,Poké Ball Tool Box,Crafting Kit,500,They cost $500 and can be found in most Poké Marts,False,True,False,,These tool boxes let those with the know-how craft and repair Poké Balls. They cost $500 and can be found in most Poké Marts.,core,284,False
+portable-grower-berry-planter,Portable Grower / Berry Planter,Crafting Kit,2000,Portable Growers cost $2000,False,True,False,,"Portable Growers can be used to grow berries and herbs. Portable Growers protect the plants within them from external weather, and never need to be fertilized. Each Grower holds one plant. Portable Growers cost $2000.",core,284,False
+capture-styler,Capture Styler,Equipment,,"Not public sale; may cost upwards of $7,500 on black market.",False,True,False,"[""main_hand""]","Main-Hand specialized Ranger equipment; not sold to the general public, black-market cost may be upwards of $7,500.",core,294,False
+dark-vision-goggles,Dark Vision Goggles,Equipment,1000,"$1,000",False,True,False,,These Goggles simply grant the Darkvision Capability while worn.,core,293,False
+fancy-clothes,Fancy Clothes,Equipment,5000,$5000,False,True,False,,"Each set of Fancy Clothes is assigned a Contest Stat - either Beauty, Cool, Cute, Smart, or Tough. Trainers wearing these clothes may roll 2d6 during the Introduction Stage of a Contest to try to generate Contest Stat Dice for the assigned Stat.",core,293,False
+fishing-rod,Fishing Rod,Equipment,,,False,True,False,,"Fishing Rods are used to Fish. They are two-handed items. They come in three varieties; Old Rods, Good Rods, and Super Rods. Old Rods cost $1000, Good Rods cost $5,000, and Super Rods cost $15,000.",core,294,False
+flippers,Flippers,Equipment,2000,$2000,False,True,False,,"Flippers grant a +2 bonus to your Swim speed when fully submerged, and decrease your Overland speed by the same amount.",core,293,False
+focus,Focus,Equipment,,,False,True,False,"[""accessory""]","A Focus grants +5 Bonus to a Stat, chosen when crafted. This Bonus is applied AFTER Combat Stages. Focuses are often Accessory-Slot Items, but may be crafted as Head-Slot, Hand or Off- Hand Slot Items as well; a Trainer may only benefit from one Focus at a time, regardless of the Equipment Slot. Focuses are not usually found in stores, but may sometimes be found for $6000 at your GM's discretion.",core,295,False
+gas-mask,Gas Mask,Equipment,1500,"$1,500",False,True,False,,"Gas Masks are invaluable equipment when trying to breathe in toxic environments or heavy smoke. They not only let you breathe through environmental toxins or smoke, but you become immune to the Moves Rage Powder, Poison Gas, Poisonpowder, Sleep Powder, Smog, Smokescreen, Spore, Stun Spore, and Sweet Scent.",core,293,False
+glue-cannon,Glue Cannon,Equipment,3000,,False,True,False,,Two-handed cannon; purchase includes three charge packets. Attack and status details are defined in Core p.294.,core,294,False
+glue-cannon-charge,Glue Cannon Charge,Equipment,100,,False,True,False,,Additional charge packet for a Glue Cannon.,core,294,False
+good-rod,Good Rod,Equipment,5000,,False,True,False,,Good Rod variant used for Fishing.,core,294,False
+hand-net,Hand Net,Equipment,,,False,True,False,,"A long net, usually on the end of a long stick, these pieces of two-handed Equipment are usually used for bug catching or fishing. As an AC6 Status Attack, you may attempt to net a Small Pokémon using this item. If you hit, you manage to scoop up the Pokémon, trapping them. You may move with the Pokémon, dragging them with you. Pokémon may still attack from the Hand Net using long-range attacks, or try to attack the net itself, potentially breaking it and freeing themselves. Capture Rolls against Pokémon in a net receive a -20 bonus. Hand Nets with 50 Hit Points cost $100; 100 Hit Points cost $600; and 200 Hit Points cost $1500. Nets aren't broken until all of their Hit Points are depleted.",core,294,False
+hand-net-100-hp,Hand Net - 100 HP,Equipment,600,,False,True,False,,Two-handed Hand Net with 100 Hit Points.,core,294,False
+hand-net-200-hp,Hand Net - 200 HP,Equipment,1500,,False,True,False,,Two-handed Hand Net with 200 Hit Points.,core,294,False
+hand-net-50-hp,Hand Net - 50 HP,Equipment,100,,False,True,False,,Two-handed Hand Net with 50 Hit Points.,core,294,False
+heavy-armor,Heavy Armor,Equipment,12000,"$12,000",False,True,False,,Heavy Armor grants +10 Damage Reduction. Heavy Armor causes the wearer's Speed's Default Combat Stage to be -1.,core,293,False
+heavy-shield,Heavy Shield,Equipment,4500,,False,True,False,"[""off_hand""]","A Shield is an Off-Hand defensive item held in one hand or braced to an arm. Heavy Shields grnat +2 Evasion and may be readied as a Standard Action to grant +6 Evasion and 15 Damage Reduction until the end of your next turn, but also cause you to become Slowed for that duration. If used Two-Handed, shields can also function as a Small Melee Weapon. Heavy Shields cost around $4500.",core,294,False
+helmet,Helmet,Equipment,2250,$2250,False,True,False,,The user gains 15 Damage Reduction against Critical Hits. The user resists the Moves Headbutt and Zen Headbutt and can't be flinched by these Moves.,core,293,False
+jungle-boots,Jungle Boots,Equipment,1500,$1500,False,True,False,,Jungle Boots grant you the Naturewalk (Forest) capability,core,293,False
+light-armor,Light Armor,Equipment,8000,$8000,False,True,False,,Grants 5 Damage Reduction,core,293,False
+light-shield,Light Shield,Equipment,3000,,False,True,False,"[""off_hand""]","A Shield is an Off-Hand defensive item held in one hand or braced to an arm. Light Shields grant +2 Evasion. They may be readied as a Standard Action to instead grant +4 Evasion and 10 Damage Reduction until the end of your next turn, but also cause you to become Slowed for that duration. If used Two-Handed, light shields can also function as a Small Melee Weapon. Light Shields cost around $3000.",core,294,False
+mega-ring,Mega Ring,Equipment,,,False,True,False,,"Mega Rings are extraordinarily rare accessories that allow a Trainer's Pokémon to Mega Evolve when used in conjunction with a Mega Stone. They cannot be bought in stores anywhere and must usually be earned through a trial of sorts, governed by a Gym Leader or other influential Pokémon Trainer. They can take the form of a bracelet, a necklace, or an actual ring.",core,295,False
+old-rod,Old Rod,Equipment,1000,,False,True,False,,Old Rod variant used for Fishing.,core,294,False
+re-breather,Re-Breather,Equipment,4000,$4000,False,True,False,,This small partial face mask allows Trainers and Pokémon to breathe underwater as if they had the Gilled Capability for up to an hour. The Re-Breather is refilled automatically in 5 minutes while in open air.,core,293,False
+running-shoes,Running Shoes,Equipment,2000,$2000,False,True,False,,"Running Shoes grant a +2 bonus to Athletics Checks, to a maximum total modifier of +3, and increase your Overland Speed by +1.",core,293,False
+snag-machine,Snag Machine,Equipment,,"$30,000+ black market",False,True,False,,"Restricted/black-market equipment; source lists $30,000+ as a black-market reference where applicable.",core,295,False
+snow-boots,Snow Boots,Equipment,1500,$1500,False,True,False,,"Snow Boots grant you the Naturewalk (Tundra) capability, but lower your Overland Speed by -1 while on ice or deep snow.",core,293,False
+stealth-clothes,Stealth Clothes,Equipment,2000,$2000,False,True,False,,"Whether it's a dark cloak and hood, a ninja suit, or spy gear, these clothes help you blend in. This body-slot equipment raises your modifier to Stealth Checks made to remain unseen by +4, to a maximum total modifier of +4.",core,293,False
+sunglasses,Sunglasses,Equipment,2000,$2000,False,True,False,,"+1 to Charm, Guile, and Intimidate Checks, to a maximum total modifier of +3.",core,293,False
+super-rod,Super Rod,Equipment,15000,,False,True,False,,Super Rod variant used for Fishing.,core,294,False
+weighted-net-150-hp,Weighted Net - 150 HP,Equipment,1200,,False,True,False,,Weighted Net with 150 Hit Points.,core,294,False
+weighted-net-50-hp,Weighted Net - 50 HP,Equipment,500,,False,True,False,,Weighted Net with 50 Hit Points.,core,294,False
+weighted-net-80-hp,Weighted Net - 80 HP,Equipment,850,,False,True,False,,Weighted Net with 80 Hit Points.,core,294,False
+weighted-nets,Weighted Nets,Equipment,,,False,True,False,,"Weighted Nets are foldable nets used for trapping Pokémon. These two-handed nets, when Equipped, can be thrown at a target as a Standard Action, as a Status Attack with an AC of 8. While a Pokémon is netted, you may pull on the rope attached to the Net to pull the Pokémon 1 Meter towards you as a Standard Action. Pokémon hit by a weighted net become Slowed as long as the net remains and cannot use Sky or Levitate Speeds except to safely lower themselves back to the ground. A Pokémon may attack the Net to attempt to break free. Capture Rolls against Pokémon in a net receive a -20 bonus. Weighted Nets with 50 Hit Points cost $500; 80 Hit Points cost $850; and 150 Hit Points cost $1200.",core,294,False
+wonder-launcher,Wonder Launcher,Equipment,10000,"$10,000+",False,True,False,,"Special launcher; source lists a base cost of $10,000+.",core,295,False
+dawn-stone,Dawn Stone,Evolution Item,3000,,False,True,False,,"Evolves Eevee, Male Kirlia, Female Snorunt",core,298,False
+deepseascale-deepseatooth,Deepseascale/ Deepseatooth,Evolution Item,3000,,False,True,False,,Evolves Clamperl,core,298,False
+dragon-scale,Dragon Scale,Evolution Item,3000,,False,True,False,,Evolves Seadra,core,298,False
+dubious-disc,Dubious Disc,Evolution Item,3000,,False,True,False,,Evolves Porygon2,core,298,False
+dusk-stone,Dusk Stone,Evolution Item,3000,,False,True,False,,"Evolves Eevee, Murkrow, Misdreavus, Lampent, Doublade",core,298,False
+electirizer,Electirizer,Evolution Item,3000,,False,True,False,,Evolves Electabuzz,core,298,False
+fire-stone,Fire Stone,Evolution Item,3000,,False,True,False,,"Evolves Vulpix, Growlithe, Eevee, Pansear",core,298,False
+leaf-stone,Leaf Stone,Evolution Item,3000,,False,True,False,,"Evolves Gloom, Weepinbell, Exeggcute, Eevee, Nuzleaf, Pansage",core,298,False
+magmarizer,Magmarizer,Evolution Item,3000,,False,True,False,,Evolves Magmar,core,298,False
+metal-coat,Metal Coat,Evolution Item,3000,,False,True,False,,"Evolves Onix, Scyther",core,298,False
+moon-stone,Moon Stone,Evolution Item,3000,,False,True,False,,"Evolves Nidorina, Nidorino, Clefairy, Jigglypuff, Eevee, Skitty, Munna",core,298,False
+oval-stone,Oval Stone,Evolution Item,3000,,False,True,False,,Evolves Happiny,core,298,False
+protector,Protector,Evolution Item,3000,,False,True,False,,Evolves Rhydon,core,298,False
+razor-claw,Razor Claw,Evolution Item,3000,,False,True,False,,Evolves Sneasel,core,298,False
+razor-fang,Razor Fang,Evolution Item,3000,,False,True,False,,Evolves Gligar,core,298,False
+reaper-cloth,Reaper Cloth,Evolution Item,3000,,False,True,False,,Evolves Dusclops,core,298,False
+sachet,Sachet,Evolution Item,3000,,False,True,False,,Evolves Spritzee,core,298,False
+shiny-stone,Shiny Stone,Evolution Item,3000,,False,True,False,,"Evolves Eevee, Togetic, Roselia, Minccino, Floette",core,298,False
+sun-stone,Sun Stone,Evolution Item,3000,,False,True,False,,"Evolves Gloom, Sunkern, Cottonee, Petilil, Helioptile",core,298,False
+thunder-stone,Thunder Stone,Evolution Item,3000,,False,True,False,,"Evolves Pikachu, Eevee, Eelektrik",core,298,False
+up-grade,Up-Grade,Evolution Item,3000,,False,True,False,,Evolves Porygon,core,298,False
+water-stone,Water Stone,Evolution Item,3000,,False,True,False,,"Evolves Poliwhirl, Shellder, Staryu, Eevee, Lombre, Panpour",core,298,False
+whipped-dream,Whipped Dream,Evolution Item,3000,,False,True,False,,Evolves Swirlix,core,298,False
+black-sludge,Black Sludge,Food,500,$500,True,True,False,,"Poison-Type Pokémon may consume the Black Sludge as a Snack Item; when the Digestion Buff is traded in, they recover 1/8th of their Max Hit Points at the beginning of each turn for the rest of the encounter.",core,278,False
+candy-bar,Candy Bar,Food,75,$75,True,True,False,,Snack. Grants a Digestion Buff that heals 5 Hit Points.,core,278,False
+honey,Honey,Food,100,$100,True,True,False,,Snack. Grants a Digestion Buff that heals 5 Hit Points. May be used as Bait,core,278,False
+leftovers,Leftovers,Food,350,$350,True,True,False,,"Snack. When their Digestion Buff is traded in, the user recovers 1/16th of their max Hit Points at the beginning of each turn for the rest of the encounter.",core,278,False
+hm-a1-cut,HM A1 - Cut,HM,75,$75,False,False,False,,Teaches Cut. Hidden Machines may be used once per day; the Pokémon must qualify through its TM/HM list.,core,301,False
+hm-a2-fly,HM A2 - Fly,HM,3200,$3200,False,False,False,,Teaches Fly. Hidden Machines may be used once per day; the Pokémon must qualify through its TM/HM list.,core,301,False
+hm-a3-surf,HM A3 - Surf,HM,5000,$5000,False,False,False,,Teaches Surf. Hidden Machines may be used once per day; the Pokémon must qualify through its TM/HM list.,core,301,False
+hm-a4-strength,HM A4 - Strength,HM,3400,$3400,False,False,False,,Teaches Strength. Hidden Machines may be used once per day; the Pokémon must qualify through its TM/HM list.,core,301,False
+hm-a5-waterfall,HM A5 - Waterfall,HM,3700,$3700,False,False,False,,Teaches Waterfall. Hidden Machines may be used once per day; the Pokémon must qualify through its TM/HM list.,core,301,False
+hm-a6-dive,HM A6 - Dive,HM,2900,$2900,False,False,False,,Teaches Dive. Hidden Machines may be used once per day; the Pokémon must qualify through its TM/HM list.,core,301,False
+big-root,Big Root,Held Item,1000,$1000,False,False,True,,HP stealing moves restore double HP. Cannot be used by Trainers.,core,296,False
+bright-powder,Bright Powder,Held Item,2000,$2000,False,False,True,,+2 to Speed Evasion. Cannot be used by Trainers.,core,296,False
+choice-item,Choice Item,Held Item,3000,$3000,False,False,True,,"Choice Items are tied to a Specific Stat. While worn, the default state of the Stat is +2 Combat Stages instead of 0. However, the user is Suppressed and cannot be cured until the end of Combat, even if the item is removed. Cannot be used by Trainers.",core,296,False
+contest-accessory,Contest Accessory,Held Item,1500,$1500,False,False,True,,The user rolls +2d6 during the Introduction Stage of a Contest. Cannot be used by Trainers.,core,296,False
+contest-fashion,Contest Fashion,Held Item,1000,$1000,False,False,True,,"These Items have a chosen Contest Stat; Beauty, Cool, Cute, Smart, or Tough. When held, once per Contest, the holder may re-roll any 1s made when using a Move of the chosen Type. Cannot be used by Trainers.",core,296,False
+everstone,Everstone,Held Item,1500,$1500,False,False,True,,Evolution is prevented for the holder. Cannot be used by Trainers.,core,296,False
+eviolite,Eviolite,Held Item,4000,$4000,False,False,True,,"Only affects not-fully-evolved Pokémon of a single family, decided when the Eviolite is made. Grants a +5 Bonus to two different Stats, after Combat Stages, decided when the Eviolite is made. Prevents Pokémon from evolving when held. Cannot be used by Trainers.",core,296,False
+expert-belt,Expert Belt,Held Item,3500,$3500,False,True,True,"[""accessory""]","Whenever the holder deals Super Effective Damage, they deal an additional 5 damage (this damage is not multiplied). Accessory Item for Trainers.",core,296,False
+flame-orb,Flame Orb,Held Item,3800,$3800,False,True,True,"[""off_hand""]",Induces burn on holder. Off-Hand Item for Trainers. Standard Action to drop.,core,296,False
+focus-band,Focus Band,Held Item,4700,$4700,False,True,True,"[""accessory""]","Whenever the user faints, roll 1d20. Once a Scene on a result of 16+, the holder does not faint, and is left with 1 Hit Point. Accessory Item for Trainers.",core,296,False
+focus-sash,Focus Sash,Held Item,4700,$4700,False,True,True,"[""accessory""]","Once a Scene, if damage from a Move would take Focus Sash's holder's Hit Points from Max to 0 or less, Focus Sash's holder instead has 1 Hit Point remaining. Accessory Item for Trainers.",core,296,False
+full-incense,Full Incense,Held Item,900,$900,False,False,True,,The holder gains the Stall ability. Cannot be used by Trainers.,core,296,False
+go-goggles,Go-Goggles,Held Item,1500,$1500,False,True,True,"[""head""]",The user does not take damage from Sandstorm. Head Item for Trainers.,core,296,False
+iron-ball,Iron Ball,Held Item,900,$900,False,True,True,"[""main_hand"", ""off_hand""]","The Holder's Speed is halved, and any immunity to Ground Type is lost. Hand Item for Trainers. Standard Action to drop.",core,296,False
+kings-rock,King's Rock,Held Item,2500,$2500,False,True,True,"[""head""]","Attacks cause Flinch on a roll of 19+. This does not stack with any abilities, moves, or effects that extend flinch rate. Head Item for Trainers.",core,296,False
+balm-mushroom,Balm Mushroom**,Herb,,---,True,True,False,,"The user is cured of Burn, Paralysis, or Poison. If they are, they lose 1 Combat Stage in a random Stat.",core,281,False
+big-mushroom,Big Mushroom**,Herb,,---,True,True,False,,"The user becomes Poisoned; if they do, they gain +1 Combat Stage in two random Stats.",core,281,False
+mental-herb,Mental Herb,Herb,300,$300,True,True,False,,Cures all Volatile Status Effects.,core,281,False
+power-herb,Power Herb,Herb,300,$300,True,True,False,,Eliminates the Set-Up turn of Moves with the Set-Up Keyword.,core,281,False
+tiny-mushroom,Tiny Mushroom**,Herb,,---,True,True,False,,"The user loses 5 HP, and gains +1 Combat Stage in a random Stat.",core,281,False
+white-herb,White Herb,Herb,300,$300,True,True,False,,Any negative Combat Stages are set to 0.,core,281,False
+antidote,Antidote,Medicine,200,$200,True,True,False,,Cures Poison,core,276,False
+bandages,Bandages,Medicine,300,$300,True,True,False,,See attached Section,core,277,False
+burn-heal,Burn Heal,Medicine,200,$200,True,True,False,,Cures Burns,core,276,False
+dire-hit,Dire Hit,Medicine,600,$600,True,True,False,,Increases Critical Hit Range of all moves by +2.,core,276,False
+energy-powder,Energy Powder,Medicine,150,$150,True,True,False,,Heals 25 Hit Points - Repulsive,core,276,False
+energy-root,Energy Root,Medicine,500,$500,True,True,False,,Heals 70 Hit Points - Repulsive,core,276,False
+full-heal,Full Heal,Medicine,450,$450,True,True,False,,Cures all Persistent Status Afflictions,core,276,False
+full-restore,Full Restore,Medicine,1450,$1450,True,True,False,,Heals a Pokémon for 80 Hit Points and cures any Status Afflictions,core,276,False
+guard-spec,Guard Spec,Medicine,700,$700,True,True,False,,Prevents reduction of Combat Stages or Accuracy on the Pokémon for 5 Turns,core,276,False
+heal-powder,Heal Powder,Medicine,350,$350,True,True,False,,Cure all Persistent Status Afflictions - Repulsive,core,276,False
+hyper-potion,Hyper Potion,Medicine,800,$800,True,True,False,,Heals 70 Hit Points,core,276,False
+ice-heal,Ice Heal,Medicine,200,$200,True,True,False,,Cures Freezing,core,276,False
+paralyze-heal,Paralyze Heal,Medicine,200,$200,True,True,False,,Cures Paralysis,core,276,False
+potion,Potion,Medicine,200,$200,True,True,False,,Heals 20 Hit Points,core,276,False
+poultices,Poultices,Medicine,225,$225,True,True,False,,See attached Section - Repulsive,core,277,False
+revival-herb,Revival Herb,Medicine,350,$350,True,True,False,,Revives Pokémon and sets to 50% Hit Points - Repulsive,core,276,False
+revive,Revive,Medicine,300,$300,True,True,False,,Revives fainted Pokémon and sets to 20 Hit Points,core,276,False
+super-potion,Super Potion,Medicine,380,$380,True,True,False,,Heals 35 Hit Points,core,276,False
+x-accuracy,X Accuracy,Medicine,600,$600,True,True,False,,Increases Accuracy by +2,core,276,False
+x-attack,X Attack,Medicine,350,$350,True,True,False,,Increases the Pokémon's Attack by two Combat Stages,core,276,False
+x-defend,X Defend,Medicine,350,$350,True,True,False,,Increases the Pokémon's Defense by two Combat Stages,core,276,False
+x-sp-def,X Sp. Def,Medicine,350,$350,True,True,False,,Increases the Pokémon's Special Defense by two Combat Stages,core,276,False
+x-special,X Special,Medicine,350,$350,True,True,False,,Increases the Pokémon's Special Attack by two Combat Stages,core,276,False
+x-speed,X Speed,Medicine,350,$350,True,True,False,,Increases the Pokémon's Speed by two Combat Stages,core,276,False
+basic-ball,Basic Ball,Poké Ball,250,,True,True,False,,"Basic Poké Ball; often called just a ""Poké Ball"".",core,272,False
+cherish-ball,Cherish Ball,Poké Ball,800,,True,True,False,,A decorative Poké Ball often given out during special events.,core,273,False
+dive-ball,Dive Ball,Poké Ball,800,,True,True,False,,"-20 Modifier, if the target was found underwater or underground.",core,272,False
+dusk-ball,Dusk Ball,Poké Ball,800,,True,True,False,,-20 Modifier if it is dark or there is very little light when used.,core,273,False
+fast-ball,Fast Ball,Poké Ball,800,,True,True,False,,-20 Modifier if the target has a Movement Capability above 7.,core,272,False
+friend-ball,Friend Ball,Poké Ball,800,,True,True,False,,A caught Pokémon will start with +1 Loyalty.,core,272,False
+great-ball,Great Ball,Poké Ball,400,,True,True,False,,A better Poké Ball with no special effects.,core,272,False
+heal-ball,Heal Ball,Poké Ball,800,,True,True,False,,A caught Pokémon will heal to Max HP immediately upon capture.,core,273,False
+heavy-ball,Heavy Ball,Poké Ball,800,,True,True,False,,-5 Modifier for each Weight Class the target is above 1.,core,272,False
+level-ball,Level Ball,Poké Ball,800,,True,True,False,,-20 Modifier if the target is under half the level your active Pokémon is.,core,272,False
+love-ball,Love Ball,Poké Ball,800,,True,True,False,,"-30 Modifier if the user has an active Pokémon that is of the same evolutionary line as the target, and the opposite gender. Does not work with genderless Pokémon.",core,272,False
+lure-ball,Lure Ball,Poké Ball,800,,True,True,False,,-20 Modifier if the target was baited into the encounter with food.,core,272,False
+luxury-ball,Luxury Ball,Poké Ball,800,,True,True,False,,A caught Pokémon is easily pleased and starts with a raised happiness.,core,272,False
+master-ball,Master Ball,Poké Ball,,"Worth at least $300,000; sold nowhere.",True,True,False,,"Incredibly Rare. Worth at least $300,000. Sold nowhere.",core,272,False
+moon-ball,Moon Ball,Poké Ball,800,,True,True,False,,-20 Modifier if the target evolves with an Evolution Stone.,core,272,False
+nest-ball,Nest Ball,Poké Ball,800,,True,True,False,,-20 Modifier if the target is under level 10.,core,272,False
+net-ball,Net Ball,Poké Ball,800,,True,True,False,,"-20 Modifier, if the target is Water or Bug type.",core,272,False
+park-ball,Park Ball,Poké Ball,800,,True,True,False,,Used during Safari hunts.,core,273,False
+premier-ball,Premier Ball,Poké Ball,800,,True,True,False,,Given as promotional balls during sales.,core,272,False
+quick-ball,Quick Ball,Poké Ball,800,,True,True,False,,"+5 to Modifier after round 1, +10 after round 2, +20 after round 3.",core,273,False
+repeat-ball,Repeat Ball,Poké Ball,800,,True,True,False,,-20 Modifier if you already own a Pokémon of the target's species.,core,272,False
+safari-ball,Safari Ball,Poké Ball,800,,True,True,False,,Used during Safari hunts.,core,272,False
+sport-ball,Sport Ball,Poké Ball,800,,True,True,False,,Used during Safari hunts.,core,272,False
+timer-ball,Timer Ball,Poké Ball,800,,True,True,False,,"-5 to the Modifier after every round since the beginning of the en- counter, until the Modifier is -20.",core,272,False
+ultra-ball,Ultra Ball,Poké Ball,800,,True,True,False,,The best generic Poké Ball.,core,272,False
+egg-warmer,Egg Warmer,Pokémon Toolkit,2500,Egg Warmers cost $2500,False,True,False,,Egg Warmers are insulated cases that carry up to four Pokémon Eggs and protect them from harm. They also cause Pokémon to hatch twice as fast; each day spent in an Egg Warmer counts as 2 days for the purposes of Hatch Rate. Egg Warmers cost $2500.,core,298,False
+groomers-kit,Groomer's Kit,Pokémon Toolkit,500,Costs $500,False,True,False,,Used by Trainers with the Groomer Edge to clean their Pokémon. Costs $500.,core,298,False
+reanimation-machine,Reanimation Machine,Pokémon Toolkit,10000,"Prices are up to GM discretion, often upwards of $10,000",False,True,False,,"Can be used to revive Fossils. Reanimation Machines also come in a smaller but more expensive Portable variety. Prices are up to GM discretion, often upwards of $10,000. See the Pokémon Fossils section for more details (page 216).",core,298,False
+enriched-water,Enriched Water,Refreshment,75,$75,True,True,False,,Heals 20 Hit Points.,core,279,False
+moomoo-milk,MooMoo Milk,Refreshment,500,$500,True,True,False,,Heals 80 Hit Points.,core,279,False
+shuckles-berry-juice,Shuckle's Berry Juice,Refreshment,,---,True,True,False,,Heals 30 Hit Points.,core,279,False
+sparkling-lemonade,Sparkling Lemonade,Refreshment,250,$250,True,True,False,,Heals 50 Hit Points.,core,279,False
+super-soda-pop,Super Soda Pop,Refreshment,125,$125,True,True,False,,Heals 30 Hit Points.,core,279,False
+max-repel,Max Repel,Repel,400,$400,True,True,False,,Lasts 5 hours; causes Pokémon of level 35 or lower to flee.,core,275,False
+repel,Repel,Repel,200,$200,True,True,False,,Lasts 1 hour; causes Pokémon of level 15 or lower to flee.,core,275,False
+super-repel,Super Repel,Repel,300,$300,True,True,False,,Lasts 2 hours; causes Pokémon of level 25 or lower to flee.,core,275,False
+heart-scale,Heart Scale,Special Pokémon Item,,,False,True,False,,"This tiny rainbow scale from a Luvdisc is valued by Apothecary Researchers, because it can be used to create the Heart Booster vitamin. Luvdiscs will produce them occasionally; they can be found along sandy beach- es, and ancient ones can be found in desert, caves, or underground. Heart Scales cannot normally be bought, but Heart Boosters are detailed in the vitamins section.",core,299,False
+rare-candy,Rare Candy,Special Pokémon Item,9800,Rare Candies can cost $9800 or more,False,True,False,,"These very rare treats are created from Shuckles that have held a Berry for a long time. When ingested by a Pokémon, the eater gains enough experience to reach its next Level. Pokémon may benefit from up to five Rare Candies in their lifetime. Rare Candies can cost $9800 or more.",core,299,False
+stat-suppressants,Stat Suppressants,Special Pokémon Item,500,These cost $500,False,True,False,,These medicines have an identical effect to the Suppressant Berries - they lower one of the user's Base Stats by 1 point and only function if the Trainer of the Pokémon wants them to. These cost $500.,core,299,False
+tm-01-hone-claws,TM 01 - Hone Claws,TM,1200,$1200,True,False,False,,Teaches Hone Claws. One-time use; the Pokémon must qualify through its TM list and pays Tutor Points according to PTU rules.,core,301,False
+tm-02-dragon-claw,TM 02 - Dragon Claw,TM,2400,$2400,True,False,False,,Teaches Dragon Claw. One-time use; the Pokémon must qualify through its TM list and pays Tutor Points according to PTU rules.,core,301,False
+tm-03-psyshock,TM 03 - Psyshock,TM,2900,$2900,True,False,False,,Teaches Psyshock. One-time use; the Pokémon must qualify through its TM list and pays Tutor Points according to PTU rules.,core,301,False
+tm-04-calm-mind,TM 04 - Calm Mind,TM,1200,$1200,True,False,False,,Teaches Calm Mind. One-time use; the Pokémon must qualify through its TM list and pays Tutor Points according to PTU rules.,core,301,False
+tm-05-roar,TM 05 - Roar,TM,1000,$1000,True,False,False,,Teaches Roar. One-time use; the Pokémon must qualify through its TM list and pays Tutor Points according to PTU rules.,core,301,False
+tm-06-toxic,TM 06 - Toxic,TM,1900,$1900,True,False,False,,Teaches Toxic. One-time use; the Pokémon must qualify through its TM list and pays Tutor Points according to PTU rules.,core,301,False
+tm-07-hail,TM 07 - Hail,TM,1500,$1500,True,False,False,,Teaches Hail. One-time use; the Pokémon must qualify through its TM list and pays Tutor Points according to PTU rules.,core,301,False
+tm-08-bulk-up,TM 08 - Bulk Up,TM,1200,$1200,True,False,False,,Teaches Bulk Up. One-time use; the Pokémon must qualify through its TM list and pays Tutor Points according to PTU rules.,core,301,False
+tm-09-venoshock,TM 09 - Venoshock,TM,2300,$2300,True,False,False,,Teaches Venoshock. One-time use; the Pokémon must qualify through its TM list and pays Tutor Points according to PTU rules.,core,301,False
+tm-10-hidden-power,TM 10 - Hidden Power,TM,1500,$1500,True,False,False,,Teaches Hidden Power. One-time use; the Pokémon must qualify through its TM list and pays Tutor Points according to PTU rules.,core,301,False
+tm-100-confide,TM 100 - Confide,TM,1000,$1000,True,False,False,,Teaches Confide. One-time use; the Pokémon must qualify through its TM list and pays Tutor Points according to PTU rules.,core,301,False
+tm-11-sunny-day,TM 11 - Sunny Day,TM,1500,$1500,True,False,False,,Teaches Sunny Day. One-time use; the Pokémon must qualify through its TM list and pays Tutor Points according to PTU rules.,core,301,False
+tm-12-taunt,TM 12 - Taunt,TM,1000,$1000,True,False,False,,Teaches Taunt. One-time use; the Pokémon must qualify through its TM list and pays Tutor Points according to PTU rules.,core,301,False
+tm-13-ice-beam,TM 13 - Ice Beam,TM,4200,$4200,True,False,False,,Teaches Ice Beam. One-time use; the Pokémon must qualify through its TM list and pays Tutor Points according to PTU rules.,core,301,False
+tm-14-blizzard,TM 14 - Blizzard,TM,5100,$5100,True,False,False,,Teaches Blizzard. One-time use; the Pokémon must qualify through its TM list and pays Tutor Points according to PTU rules.,core,301,False
+tm-15-hyper-beam,TM 15 - Hyper Beam,TM,5000,$5000,True,False,False,,Teaches Hyper Beam. One-time use; the Pokémon must qualify through its TM list and pays Tutor Points according to PTU rules.,core,301,False
+tm-16-light-screen,TM 16 - Light Screen,TM,1500,$1500,True,False,False,,Teaches Light Screen. One-time use; the Pokémon must qualify through its TM list and pays Tutor Points according to PTU rules.,core,301,False
+tm-17-protect,TM 17 - Protect,TM,2500,$2500,True,False,False,,Teaches Protect. One-time use; the Pokémon must qualify through its TM list and pays Tutor Points according to PTU rules.,core,301,False
+tm-18-rain-dance,TM 18 - Rain Dance,TM,1500,$1500,True,False,False,,Teaches Rain Dance. One-time use; the Pokémon must qualify through its TM list and pays Tutor Points according to PTU rules.,core,301,False
+tm-19-roost,TM 19 - Roost,TM,2500,$2500,True,False,False,,Teaches Roost. One-time use; the Pokémon must qualify through its TM list and pays Tutor Points according to PTU rules.,core,301,False
+tm-20-safeguard,TM 20 - Safeguard,TM,1000,$1000,True,False,False,,Teaches Safeguard. One-time use; the Pokémon must qualify through its TM list and pays Tutor Points according to PTU rules.,core,301,False
+tm-21-frustration,TM 21 - Frustration,TM,3000,$3000,True,False,False,,Teaches Frustration. One-time use; the Pokémon must qualify through its TM list and pays Tutor Points according to PTU rules.,core,301,False
+tm-22-solarbeam,TM 22 - Solarbeam,TM,4600,$4600,True,False,False,,Teaches Solarbeam. One-time use; the Pokémon must qualify through its TM list and pays Tutor Points according to PTU rules.,core,301,False
+tm-23-smack-down,TM 23 - Smack Down,TM,2500,$2500,True,False,False,,Teaches Smack Down. One-time use; the Pokémon must qualify through its TM list and pays Tutor Points according to PTU rules.,core,301,False
+tm-24-thunderbolt,TM 24 - Thunderbolt,TM,4200,$4200,True,False,False,,Teaches Thunderbolt. One-time use; the Pokémon must qualify through its TM list and pays Tutor Points according to PTU rules.,core,301,False
+tm-25-thunder,TM 25 - Thunder,TM,5100,$5100,True,False,False,,Teaches Thunder. One-time use; the Pokémon must qualify through its TM list and pays Tutor Points according to PTU rules.,core,301,False
+tm-26-earthquake,TM 26 - Earthquake,TM,4000,$4000,True,False,False,,Teaches Earthquake. One-time use; the Pokémon must qualify through its TM list and pays Tutor Points according to PTU rules.,core,301,False
+tm-27-return,TM 27 - Return,TM,3000,$3000,True,False,False,,Teaches Return. One-time use; the Pokémon must qualify through its TM list and pays Tutor Points according to PTU rules.,core,301,False
+tm-28-dig,TM 28 - Dig,TM,3400,$3400,True,False,False,,Teaches Dig. One-time use; the Pokémon must qualify through its TM list and pays Tutor Points according to PTU rules.,core,301,False
+tm-29-psychic,TM 29 - Psychic,TM,3000,$3000,True,False,False,,Teaches Psychic. One-time use; the Pokémon must qualify through its TM list and pays Tutor Points according to PTU rules.,core,301,False
+tm-30-shadow-ball,TM 30 - Shadow Ball,TM,2700,$2700,True,False,False,,Teaches Shadow Ball. One-time use; the Pokémon must qualify through its TM list and pays Tutor Points according to PTU rules.,core,301,False
+tm-31-brick-break,TM 31 - Brick Break,TM,2400,$2400,True,False,False,,Teaches Brick Break. One-time use; the Pokémon must qualify through its TM list and pays Tutor Points according to PTU rules.,core,301,False
+tm-32-double-team,TM 32 - Double Team,TM,2500,$2500,True,False,False,,Teaches Double Team. One-time use; the Pokémon must qualify through its TM list and pays Tutor Points according to PTU rules.,core,301,False
+tm-33-reflect,TM 33 - Reflect,TM,1500,$1500,True,False,False,,Teaches Reflect. One-time use; the Pokémon must qualify through its TM list and pays Tutor Points according to PTU rules.,core,301,False
+tm-34-sludge-wave,TM 34 - Sludge Wave,TM,4200,$4200,True,False,False,,Teaches Sludge Wave. One-time use; the Pokémon must qualify through its TM list and pays Tutor Points according to PTU rules.,core,301,False
+tm-35-flamethrower,TM 35 - Flamethrower,TM,4200,$4200,True,False,False,,Teaches Flamethrower. One-time use; the Pokémon must qualify through its TM list and pays Tutor Points according to PTU rules.,core,301,False
+tm-36-sludge-bomb,TM 36 - Sludge Bomb,TM,4300,$4300,True,False,False,,Teaches Sludge Bomb. One-time use; the Pokémon must qualify through its TM list and pays Tutor Points according to PTU rules.,core,301,False
+tm-37-sandstorm,TM 37 - Sandstorm,TM,1500,$1500,True,False,False,,Teaches Sandstorm. One-time use; the Pokémon must qualify through its TM list and pays Tutor Points according to PTU rules.,core,301,False
+tm-38-fire-blast,TM 38 - Fire Blast,TM,5100,$5100,True,False,False,,Teaches Fire Blast. One-time use; the Pokémon must qualify through its TM list and pays Tutor Points according to PTU rules.,core,301,False
+tm-39-rock-tomb,TM 39 - Rock Tomb,TM,2800,$2800,True,False,False,,Teaches Rock Tomb. One-time use; the Pokémon must qualify through its TM list and pays Tutor Points according to PTU rules.,core,301,False
+tm-40-aerial-ace,TM 40 - Aerial Ace,TM,2800,$2800,True,False,False,,Teaches Aerial Ace. One-time use; the Pokémon must qualify through its TM list and pays Tutor Points according to PTU rules.,core,301,False
+tm-41-torment,TM 41 - Torment,TM,1000,$1000,True,False,False,,Teaches Torment. One-time use; the Pokémon must qualify through its TM list and pays Tutor Points according to PTU rules.,core,301,False
+tm-42-facade,TM 42 - Facade,TM,3100,$3100,True,False,False,,Teaches Facade. One-time use; the Pokémon must qualify through its TM list and pays Tutor Points according to PTU rules.,core,301,False
+tm-43-flame-charge,TM 43 - Flame Charge,TM,2100,$2100,True,False,False,,Teaches Flame Charge. One-time use; the Pokémon must qualify through its TM list and pays Tutor Points according to PTU rules.,core,301,False
+tm-44-rest,TM 44 - Rest,TM,2000,$2000,True,False,False,,Teaches Rest. One-time use; the Pokémon must qualify through its TM list and pays Tutor Points according to PTU rules.,core,301,False
+tm-45-attract,TM 45 - Attract,TM,1200,$1200,True,False,False,,Teaches Attract. One-time use; the Pokémon must qualify through its TM list and pays Tutor Points according to PTU rules.,core,301,False
+tm-46-thief,TM 46 - Thief,TM,2200,$2200,True,False,False,,Teaches Thief. One-time use; the Pokémon must qualify through its TM list and pays Tutor Points according to PTU rules.,core,301,False
+tm-47-low-sweep,TM 47 - Low Sweep,TM,2400,$2400,True,False,False,,Teaches Low Sweep. One-time use; the Pokémon must qualify through its TM list and pays Tutor Points according to PTU rules.,core,301,False
+tm-48-round,TM 48 - Round,TM,2800,$2800,True,False,False,,Teaches Round. One-time use; the Pokémon must qualify through its TM list and pays Tutor Points according to PTU rules.,core,301,False
+tm-49-echoed-voice,TM 49 - Echoed Voice,TM,1500,$1500,True,False,False,,Teaches Echoed Voice. One-time use; the Pokémon must qualify through its TM list and pays Tutor Points according to PTU rules.,core,301,False
+tm-50-overheat,TM 50 - Overheat,TM,5100,$5100,True,False,False,,Teaches Overheat. One-time use; the Pokémon must qualify through its TM list and pays Tutor Points according to PTU rules.,core,301,False
+tm-51-steel-wing,TM 51 - Steel Wing,TM,2200,$2200,True,False,False,,Teaches Steel Wing. One-time use; the Pokémon must qualify through its TM list and pays Tutor Points according to PTU rules.,core,301,False
+tm-52-focus-blast,TM 52 - Focus Blast,TM,4400,$4400,True,False,False,,Teaches Focus Blast. One-time use; the Pokémon must qualify through its TM list and pays Tutor Points according to PTU rules.,core,301,False
+tm-53-energy-ball,TM 53 - Energy Ball,TM,2700,$2700,True,False,False,,Teaches Energy Ball. One-time use; the Pokémon must qualify through its TM list and pays Tutor Points according to PTU rules.,core,301,False
+tm-54-false-swipe,TM 54 - False Swipe,TM,1200,$1200,True,False,False,,Teaches False Swipe. One-time use; the Pokémon must qualify through its TM list and pays Tutor Points according to PTU rules.,core,301,False
+tm-55-scald,TM 55 - Scald,TM,3000,$3000,True,False,False,,Teaches Scald. One-time use; the Pokémon must qualify through its TM list and pays Tutor Points according to PTU rules.,core,301,False
+tm-56-fling,TM 56 - Fling,TM,2000,$2000,True,False,False,,Teaches Fling. One-time use; the Pokémon must qualify through its TM list and pays Tutor Points according to PTU rules.,core,301,False
+tm-57-charge-beam,TM 57 - Charge Beam,TM,2300,$2300,True,False,False,,Teaches Charge Beam. One-time use; the Pokémon must qualify through its TM list and pays Tutor Points according to PTU rules.,core,301,False
+tm-58-sky-drop,TM 58 - Sky Drop,TM,2800,$2800,True,False,False,,Teaches Sky Drop. One-time use; the Pokémon must qualify through its TM list and pays Tutor Points according to PTU rules.,core,301,False
+tm-59-incinerate,TM 59 - Incinerate,TM,1400,$1400,True,False,False,,Teaches Incinerate. One-time use; the Pokémon must qualify through its TM list and pays Tutor Points according to PTU rules.,core,301,False
+tm-60-quash,TM 60 - Quash,TM,1000,$1000,True,False,False,,Teaches Quash. One-time use; the Pokémon must qualify through its TM list and pays Tutor Points according to PTU rules.,core,301,False
+tm-61-will-o-wisp,TM 61 - Will-O-Wisp,TM,2200,$2200,True,False,False,,Teaches Will-O-Wisp. One-time use; the Pokémon must qualify through its TM list and pays Tutor Points according to PTU rules.,core,301,False
+tm-62-acrobatics,TM 62 - Acrobatics,TM,2800,$2800,True,False,False,,Teaches Acrobatics. One-time use; the Pokémon must qualify through its TM list and pays Tutor Points according to PTU rules.,core,301,False
+tm-63-embargo,TM 63 - Embargo,TM,1000,$1000,True,False,False,,Teaches Embargo. One-time use; the Pokémon must qualify through its TM list and pays Tutor Points according to PTU rules.,core,301,False
+tm-64-explosion,TM 64 - Explosion,TM,7500,$7500,True,False,False,,Teaches Explosion. One-time use; the Pokémon must qualify through its TM list and pays Tutor Points according to PTU rules.,core,301,False
+tm-65-shadow-claw,TM 65 - Shadow Claw,TM,2400,$2400,True,False,False,,Teaches Shadow Claw. One-time use; the Pokémon must qualify through its TM list and pays Tutor Points according to PTU rules.,core,301,False
+tm-66-payback,TM 66 - Payback,TM,2500,$2500,True,False,False,,Teaches Payback. One-time use; the Pokémon must qualify through its TM list and pays Tutor Points according to PTU rules.,core,301,False
+tm-67-retaliate,TM 67 - Retaliate,TM,3600,$3600,True,False,False,,Teaches Retaliate. One-time use; the Pokémon must qualify through its TM list and pays Tutor Points according to PTU rules.,core,301,False
+tm-68-giga-impact,TM 68 - Giga Impact,TM,5000,$5000,True,False,False,,Teaches Giga Impact. One-time use; the Pokémon must qualify through its TM list and pays Tutor Points according to PTU rules.,core,301,False
+tm-69-rock-polish,TM 69 - Rock Polish,TM,1200,$1200,True,False,False,,Teaches Rock Polish. One-time use; the Pokémon must qualify through its TM list and pays Tutor Points according to PTU rules.,core,301,False
+tm-70-flash,TM 70 - Flash,TM,1500,$1500,True,False,False,,Teaches Flash. One-time use; the Pokémon must qualify through its TM list and pays Tutor Points according to PTU rules.,core,301,False
+tm-71-stone-edge,TM 71 - Stone Edge,TM,3900,$3900,True,False,False,,Teaches Stone Edge. One-time use; the Pokémon must qualify through its TM list and pays Tutor Points according to PTU rules.,core,301,False
+tm-72-volt-switch,TM 72 - Volt Switch,TM,3100,$3100,True,False,False,,Teaches Volt Switch. One-time use; the Pokémon must qualify through its TM list and pays Tutor Points according to PTU rules.,core,301,False
+tm-73-thunder-wave,TM 73 - Thunder Wave,TM,2200,$2200,True,False,False,,Teaches Thunder Wave. One-time use; the Pokémon must qualify through its TM list and pays Tutor Points according to PTU rules.,core,301,False
+tm-74-gyro-ball,TM 74 - Gyro Ball,TM,2500,$2500,True,False,False,,Teaches Gyro Ball. One-time use; the Pokémon must qualify through its TM list and pays Tutor Points according to PTU rules.,core,301,False
+tm-75-swords-dance,TM 75 - Swords Dance,TM,1200,$1200,True,False,False,,Teaches Swords Dance. One-time use; the Pokémon must qualify through its TM list and pays Tutor Points according to PTU rules.,core,301,False
+tm-76-struggle-bug,TM 76 - Struggle Bug,TM,1700,$1700,True,False,False,,Teaches Struggle Bug. One-time use; the Pokémon must qualify through its TM list and pays Tutor Points according to PTU rules.,core,301,False
+tm-77-psych-up,TM 77 - Psych Up,TM,2100,$2100,True,False,False,,Teaches Psych Up. One-time use; the Pokémon must qualify through its TM list and pays Tutor Points according to PTU rules.,core,301,False
+tm-78-bulldoze,TM 78 - Bulldoze,TM,2400,$2400,True,False,False,,Teaches Bulldoze. One-time use; the Pokémon must qualify through its TM list and pays Tutor Points according to PTU rules.,core,301,False
+tm-79-frost-breath,TM 79 - Frost Breath,TM,1000,$1000,True,False,False,,Teaches Frost Breath. One-time use; the Pokémon must qualify through its TM list and pays Tutor Points according to PTU rules.,core,301,False
+tm-80-rock-slide,TM 80 - Rock Slide,TM,4200,$4200,True,False,False,,Teaches Rock Slide. One-time use; the Pokémon must qualify through its TM list and pays Tutor Points according to PTU rules.,core,301,False
+tm-81-x-scissor,TM 81 - X-Scissor,TM,2400,$2400,True,False,False,,Teaches X-Scissor. One-time use; the Pokémon must qualify through its TM list and pays Tutor Points according to PTU rules.,core,301,False
+tm-82-dragon-tail,TM 82 - Dragon Tail,TM,2800,$2800,True,False,False,,Teaches Dragon Tail. One-time use; the Pokémon must qualify through its TM list and pays Tutor Points according to PTU rules.,core,301,False
+tm-83-infestation,TM 83 - Infestation,TM,2200,$2200,True,False,False,,Teaches Infestation. One-time use; the Pokémon must qualify through its TM list and pays Tutor Points according to PTU rules.,core,301,False
+tm-84-poison-jab,TM 84 - Poison Jab,TM,3000,$3000,True,False,False,,Teaches Poison Jab. One-time use; the Pokémon must qualify through its TM list and pays Tutor Points according to PTU rules.,core,301,False
+tm-85-dream-eater,TM 85 - Dream Eater,TM,3000,$3000,True,False,False,,Teaches Dream Eater. One-time use; the Pokémon must qualify through its TM list and pays Tutor Points according to PTU rules.,core,301,False
+tm-86-grass-knot,TM 86 - Grass Knot,TM,2900,$2900,True,False,False,,Teaches Grass Knot. One-time use; the Pokémon must qualify through its TM list and pays Tutor Points according to PTU rules.,core,301,False
+tm-87-swagger,TM 87 - Swagger,TM,1000,$1000,True,False,False,,Teaches Swagger. One-time use; the Pokémon must qualify through its TM list and pays Tutor Points according to PTU rules.,core,301,False
+tm-88-sleep-talk,TM 88 - Sleep Talk,TM,1500,$1500,True,False,False,,Teaches Sleep Talk. One-time use; the Pokémon must qualify through its TM list and pays Tutor Points according to PTU rules.,core,301,False
+tm-89-u-turn,TM 89 - U-Turn,TM,3100,$3100,True,False,False,,Teaches U-Turn. One-time use; the Pokémon must qualify through its TM list and pays Tutor Points according to PTU rules.,core,301,False
+tm-90-substitute,TM 90 - Substitute,TM,2000,$2000,True,False,False,,Teaches Substitute. One-time use; the Pokémon must qualify through its TM list and pays Tutor Points according to PTU rules.,core,301,False
+tm-91-flash-cannon,TM 91 - Flash Cannon,TM,2700,$2700,True,False,False,,Teaches Flash Cannon. One-time use; the Pokémon must qualify through its TM list and pays Tutor Points according to PTU rules.,core,301,False
+tm-92-trick-room,TM 92 - Trick Room,TM,2000,$2000,True,False,False,,Teaches Trick Room. One-time use; the Pokémon must qualify through its TM list and pays Tutor Points according to PTU rules.,core,301,False
+tm-93-wild-charge,TM 93 - Wild Charge,TM,2500,$2500,True,False,False,,Teaches Wild Charge. One-time use; the Pokémon must qualify through its TM list and pays Tutor Points according to PTU rules.,core,301,False
+tm-94-rock-smash,TM 94 - Rock Smash,TM,1500,$1500,True,False,False,,Teaches Rock Smash. One-time use; the Pokémon must qualify through its TM list and pays Tutor Points according to PTU rules.,core,301,False
+tm-95-snarl,TM 95 - Snarl,TM,2400,$2400,True,False,False,,Teaches Snarl. One-time use; the Pokémon must qualify through its TM list and pays Tutor Points according to PTU rules.,core,301,False
+tm-96-nature-power,TM 96 - Nature Power,TM,2000,$2000,True,False,False,,Teaches Nature Power. One-time use; the Pokémon must qualify through its TM list and pays Tutor Points according to PTU rules.,core,301,False
+tm-97-dark-pulse,TM 97 - Dark Pulse,TM,2700,$2700,True,False,False,,Teaches Dark Pulse. One-time use; the Pokémon must qualify through its TM list and pays Tutor Points according to PTU rules.,core,301,False
+tm-98-power-up-punch,TM 98 - Power-Up Punch,TM,2300,$2300,True,False,False,,Teaches Power-Up Punch. One-time use; the Pokémon must qualify through its TM list and pays Tutor Points according to PTU rules.,core,301,False
+tm-99-dazzling-gleam,TM 99 - Dazzling Gleam,TM,2700,$2700,True,False,False,,Teaches Dazzling Gleam. One-time use; the Pokémon must qualify through its TM list and pays Tutor Points according to PTU rules.,core,301,False
+bait,Bait,Travel Gear,250,Bait can be bought for $250,False,True,False,,"Bait is a tasty, strong-smelling morsel of food designed to attract Pokémon. It may be used in two ways; to lure Pokémon, or to distract Pokémon. Bait can be bought for $250.",core,274,False
+basic-rope,Basic Rope,Travel Gear,100,Costs $100,False,True,False,,Basic Fiber Rope. Has a tensile strength of 35 kg or 77 lbs. It has 5 Hit Points. Costs $100,core,274,False
+collection-jar,Collection Jar,Travel Gear,100,"Available almost everywhere, and cost $100",False,True,False,,"A simple sealable glass jar. Useful when collecting Items from Pokémon, such as Honey from Pokémon with the Honey Gather Ability, or MooMoo Milk from Pokémon with the Milk Collection Ability. Available almost everywhere, and cost $100.",core,274,False
+first-aid-kit,First Aid Kit,Travel Gear,500,Costs $500,False,True,False,,"Required to use the First Aid Expertise Feature. By Draining 1 AP, any Trainer can make a Medicine Education Check on a target as an Extended Action. The target gains Hit Points equal to the result, and is cured of Burn, Poison, and Paralysis. Costs $500.",core,274,False
+fishing-lure,Fishing Lure,Travel Gear,1500,Fishing Lures cost $1500,False,True,False,,"Instead of Bait, some trainers may opt to use a Fishing Lure when attempting to Fish. Fishing Lures work just like Bait, but can be used multiple times. If the line snaps or the fish gets away, they may take your lure with them, however. Fishing Lures cost $1500.",core,274,False
+flashlight,Flashlight,Travel Gear,200,Costs $200 for a regular Flashlight; + $400 to make it Waterproof,False,True,False,,"For, you know, seeing. In the dark. Yes. Costs $200 for a regular Flashlight; + $400 to make it Waterproof.",core,274,False
+lighter,Lighter,Travel Gear,150,A regular convenience store lighter costs $150; a waterproof lighter costs $1000,False,True,False,,For creating flames in a hurry. A regular convenience store lighter costs $150; a waterproof lighter costs $1000.,core,274,False
+saddle,Saddle,Travel Gear,2000,Costs $2000,False,True,False,,"Saddles help Trainers ride Pokémon. They are created with a specific Pokémon species in mind, and only Pokémon with that body type can wear the saddle. A common Saddle type fits Ponyta, Rapidash, Blitzle, and Zebstrika, for example. Saddles grant a +3 bonus to all Skill Checks made to mount Pokémon, or to remain on the Saddle when hit by an attack. Costs $2000.",core,274,False
+sleeping-bag,Sleeping Bag,Travel Gear,1000,"Costs $1000 for a single, or $1800 for a double",False,True,False,,"A standard sleeping bag. Costs $1000 for a single, or $1800 for a double.",core,274,False
+sturdy-rope,Sturdy Rope,Travel Gear,400,Costs $400,False,True,False,,Sturdy Rope with a tensile strength of 225 kg or roughly 500lbs. 30 Hit Points and 20 Damage Reduction. Costs $400,core,274,False
+tents,Tents,Travel Gear,400,Costs $400 per meter cubed,False,True,False,,"Standard outdoor tents. Provide protection from the elements of nature. Costs $400 per meter cubed. (A small one person tent would be about 1m x 1.5m x 1.5m, or 2.25 cubic meters- meaning 900 in price. )",core,274,False
+utility-rope,Utility Rope,Travel Gear,200,Costs $200,False,True,False,,Braided Utility Rope. Has a tensile strength of 80 kg or 176 lbs. It has 20 Hit Points and 10 Damage Reduction. Costs $200,core,274,False
+water-filter,Water Filter,Travel Gear,500,Costs $500,False,True,False,,Can ensure that river or pond water is clean to drink after being filtered. Costs $500.,core,274,False
+calcium,Calcium,Vitamin,4900,$4900,False,True,False,,Raise the user's Special Attack Base Stat 1.,core,299,False
+carbos,Carbos,Vitamin,4900,$4900,False,True,False,,Raise the user's Speed Base Stat 1.,core,299,False
+heart-booster,Heart Booster,Vitamin,9800,$9800,False,True,False,,The Pokémon gains 2 Tutor Points. Use only one per Pokémon.,core,299,False
+hp-up,HP Up,Vitamin,4900,$4900,False,True,False,,Raise the user's HP Base Stat 1.,core,299,False
+iron,Iron,Vitamin,4900,$4900,False,True,False,,Raise the user's Defense Base Stat 1.,core,299,False
+pp-up,PP Up,Vitamin,9800,$9800,False,True,False,,Raise one of the user's Move's Frequency one level. Use only one per Pokémon.,core,299,False
+protein,Protein,Vitamin,4900,$4900,False,True,False,,Raise the user's Attack Base Stat 1.,core,299,False
+zinc,Zinc,Vitamin,4900,$4900,False,True,False,,Raise the user's Special Defense Base Stat 1.,core,299,False

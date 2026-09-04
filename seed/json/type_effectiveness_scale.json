@@ -1,0 +1,37 @@
+[
+  {
+    "net_steps": 3,
+    "combat_multiplier": 3.0,
+    "label": "triply_super_effective"
+  },
+  {
+    "net_steps": 2,
+    "combat_multiplier": 2.0,
+    "label": "doubly_super_effective"
+  },
+  {
+    "net_steps": 1,
+    "combat_multiplier": 1.5,
+    "label": "super_effective"
+  },
+  {
+    "net_steps": 0,
+    "combat_multiplier": 1.0,
+    "label": "neutral"
+  },
+  {
+    "net_steps": -1,
+    "combat_multiplier": 0.5,
+    "label": "resisted"
+  },
+  {
+    "net_steps": -2,
+    "combat_multiplier": 0.25,
+    "label": "doubly_resisted"
+  },
+  {
+    "net_steps": -3,
+    "combat_multiplier": 0.125,
+    "label": "triply_resisted"
+  }
+]

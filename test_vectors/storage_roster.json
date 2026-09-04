@@ -1,0 +1,54 @@
+[
+  {
+    "id": "storage-reject-injured",
+    "input": {
+      "injuries": 1,
+      "held_item_id": "leftovers"
+    },
+    "expected": {
+      "allowed": false,
+      "reason": "pokemon_has_injuries"
+    }
+  },
+  {
+    "id": "storage-accept-healthy",
+    "input": {
+      "injuries": 0,
+      "held_item_id": "leftovers",
+      "battle_state": {
+        "current_hp": 10,
+        "statuses": [
+          "poisoned"
+        ],
+        "combat_stages": {
+          "attack": 2
+        }
+      }
+    },
+    "expected": {
+      "allowed": true,
+      "held_item_destination": "trainer_backpack",
+      "battle_state_reset": true
+    }
+  },
+  {
+    "id": "overlapping-active-rosters",
+    "input": {
+      "pokemon_id": "pkm-1",
+      "rosters": [
+        {
+          "id": "personal",
+          "active": true
+        },
+        {
+          "id": "company",
+          "active": true
+        }
+      ]
+    },
+    "expected": {
+      "valid": true,
+      "membership_count": 2
+    }
+  }
+]

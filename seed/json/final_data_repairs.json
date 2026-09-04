@@ -1,0 +1,2408 @@
+[
+  {
+    "species_id": "charcadet",
+    "source_id": "knight",
+    "field": "ability_slots",
+    "reason": "Reconstructed directly from Knight species block; earlier two-column/layout parse assigned slot labels as values.",
+    "confidence": "high",
+    "before": [
+      {
+        "slot": "Basic Ability 1",
+        "name": "Advanced Ability 1:",
+        "ability_id": "advanced-ability-1",
+        "slot_category": "basic",
+        "slot_index": 1,
+        "reference_status": "unresolved"
+      },
+      {
+        "slot": "Advanced Ability 2",
+        "name": "Advanced Ability 3:",
+        "ability_id": "advanced-ability-3",
+        "slot_category": "advanced",
+        "slot_index": 2,
+        "reference_status": "unresolved"
+      },
+      {
+        "slot": "High Ability",
+        "name": "Flash Fire",
+        "ability_id": "flash-fire",
+        "slot_category": "high",
+        "slot_index": 1,
+        "reference_status": "resolved"
+      }
+    ],
+    "after": [
+      {
+        "slot": "Basic Ability 1",
+        "name": "Flash Fire",
+        "ability_id": "flash-fire",
+        "slot_category": "basic",
+        "slot_index": 1,
+        "reference_status": "resolved_source_repair"
+      },
+      {
+        "slot": "Advanced Ability 1",
+        "name": "Blaze",
+        "ability_id": "blaze",
+        "slot_category": "advanced",
+        "slot_index": 1,
+        "reference_status": "resolved_source_repair"
+      },
+      {
+        "slot": "Advanced Ability 2",
+        "name": "Guts",
+        "ability_id": "guts",
+        "slot_category": "advanced",
+        "slot_index": 2,
+        "reference_status": "resolved_source_repair"
+      },
+      {
+        "slot": "Advanced Ability 3",
+        "name": "Pride",
+        "ability_id": "pride",
+        "slot_category": "advanced",
+        "slot_index": 3,
+        "reference_status": "resolved_source_repair"
+      },
+      {
+        "slot": "High Ability",
+        "name": "Flame Body",
+        "ability_id": "flame-body",
+        "slot_category": "high",
+        "slot_index": 1,
+        "reference_status": "resolved_source_repair"
+      }
+    ]
+  },
+  {
+    "species_id": "armarouge",
+    "source_id": "knight",
+    "field": "ability_slots",
+    "reason": "Reconstructed directly from Knight species block; earlier two-column/layout parse assigned slot labels as values.",
+    "confidence": "high",
+    "before": [
+      {
+        "slot": "Basic Ability 1",
+        "name": "Flash Fire",
+        "ability_id": "flash-fire",
+        "slot_category": "basic",
+        "slot_index": 1,
+        "reference_status": "resolved"
+      },
+      {
+        "slot": "Advanced Ability 1",
+        "name": "Weak Armor",
+        "ability_id": "weak-armor",
+        "slot_category": "advanced",
+        "slot_index": 1,
+        "reference_status": "resolved"
+      },
+      {
+        "slot": "Advanced Ability 2",
+        "name": "Competitive",
+        "ability_id": "competitive",
+        "slot_category": "advanced",
+        "slot_index": 2,
+        "reference_status": "resolved"
+      },
+      {
+        "slot": "Advanced Ability 3",
+        "name": "Pride",
+        "ability_id": "pride",
+        "slot_category": "advanced",
+        "slot_index": 3,
+        "reference_status": "resolved"
+      },
+      {
+        "slot": "High Ability",
+        "name": "White Knight",
+        "ability_id": "white-knight",
+        "slot_category": "high",
+        "slot_index": 1,
+        "reference_status": "unresolved"
+      }
+    ],
+    "after": [
+      {
+        "slot": "Basic Ability 1",
+        "name": "Flash Fire",
+        "ability_id": "flash-fire",
+        "slot_category": "basic",
+        "slot_index": 1,
+        "reference_status": "resolved_source_repair"
+      },
+      {
+        "slot": "Advanced Ability 1",
+        "name": "Weak Armor",
+        "ability_id": "weak-armor",
+        "slot_category": "advanced",
+        "slot_index": 1,
+        "reference_status": "resolved_source_repair"
+      },
+      {
+        "slot": "Advanced Ability 2",
+        "name": "Competitive",
+        "ability_id": "competitive",
+        "slot_category": "advanced",
+        "slot_index": 2,
+        "reference_status": "resolved_source_repair"
+      },
+      {
+        "slot": "Advanced Ability 3",
+        "name": "Pride",
+        "ability_id": "pride",
+        "slot_category": "advanced",
+        "slot_index": 3,
+        "reference_status": "resolved_source_repair"
+      },
+      {
+        "slot": "High Ability",
+        "name": "White Knight",
+        "ability_id": "white-knight",
+        "slot_category": "high",
+        "slot_index": 1,
+        "reference_status": "resolved_source_repair"
+      }
+    ]
+  },
+  {
+    "species_id": "ceruledge",
+    "source_id": "knight",
+    "field": "ability_slots",
+    "reason": "Reconstructed directly from Knight species block; earlier two-column/layout parse assigned slot labels as values.",
+    "confidence": "high",
+    "before": [
+      {
+        "slot": "Basic Ability 1",
+        "name": "Advanced Ability 1:",
+        "ability_id": "advanced-ability-1",
+        "slot_category": "basic",
+        "slot_index": 1,
+        "reference_status": "unresolved"
+      },
+      {
+        "slot": "Advanced Ability 2",
+        "name": "Advanced Ability 3:",
+        "ability_id": "advanced-ability-3",
+        "slot_category": "advanced",
+        "slot_index": 2,
+        "reference_status": "unresolved"
+      },
+      {
+        "slot": "High Ability",
+        "name": "Flash Fire",
+        "ability_id": "flash-fire",
+        "slot_category": "high",
+        "slot_index": 1,
+        "reference_status": "resolved"
+      }
+    ],
+    "after": [
+      {
+        "slot": "Basic Ability 1",
+        "name": "Flash Fire",
+        "ability_id": "flash-fire",
+        "slot_category": "basic",
+        "slot_index": 1,
+        "reference_status": "resolved_source_repair"
+      },
+      {
+        "slot": "Advanced Ability 1",
+        "name": "Weak Armor",
+        "ability_id": "weak-armor",
+        "slot_category": "advanced",
+        "slot_index": 1,
+        "reference_status": "resolved_source_repair"
+      },
+      {
+        "slot": "Advanced Ability 2",
+        "name": "Guts",
+        "ability_id": "guts",
+        "slot_category": "advanced",
+        "slot_index": 2,
+        "reference_status": "resolved_source_repair"
+      },
+      {
+        "slot": "Advanced Ability 3",
+        "name": "Defiant",
+        "ability_id": "defiant",
+        "slot_category": "advanced",
+        "slot_index": 3,
+        "reference_status": "resolved_source_repair"
+      },
+      {
+        "slot": "High Ability",
+        "name": "Death Knight",
+        "ability_id": "death-knight",
+        "slot_category": "high",
+        "slot_index": 1,
+        "reference_status": "resolved_source_repair"
+      }
+    ]
+  },
+  {
+    "species_id": "kingambit",
+    "source_id": "knight",
+    "field": "ability_slots",
+    "reason": "Reconstructed directly from Knight species block; earlier two-column/layout parse assigned slot labels as values.",
+    "confidence": "high",
+    "before": [
+      {
+        "slot": "Basic Ability 1",
+        "name": "Advanced Ability 1:",
+        "ability_id": "advanced-ability-1",
+        "slot_category": "basic",
+        "slot_index": 1,
+        "reference_status": "unresolved"
+      },
+      {
+        "slot": "Advanced Ability 2",
+        "name": "Advanced Ability 3:",
+        "ability_id": "advanced-ability-3",
+        "slot_category": "advanced",
+        "slot_index": 2,
+        "reference_status": "unresolved"
+      },
+      {
+        "slot": "High Ability",
+        "name": "Supreme Overlord",
+        "ability_id": "supreme-overlord",
+        "slot_category": "high",
+        "slot_index": 1,
+        "reference_status": "unresolved"
+      }
+    ],
+    "after": [
+      {
+        "slot": "Basic Ability 1",
+        "name": "Supreme Overlord",
+        "ability_id": "supreme-overlord",
+        "slot_category": "basic",
+        "slot_index": 1,
+        "reference_status": "resolved_source_repair"
+      },
+      {
+        "slot": "Advanced Ability 1",
+        "name": "Defiant",
+        "ability_id": "defiant",
+        "slot_category": "advanced",
+        "slot_index": 1,
+        "reference_status": "resolved_source_repair"
+      },
+      {
+        "slot": "Advanced Ability 2",
+        "name": "Hyper Cutter",
+        "ability_id": "hyper-cutter",
+        "slot_category": "advanced",
+        "slot_index": 2,
+        "reference_status": "resolved_source_repair"
+      },
+      {
+        "slot": "Advanced Ability 3",
+        "name": "Regal Challenge",
+        "ability_id": "regal-challenge",
+        "slot_category": "advanced",
+        "slot_index": 3,
+        "reference_status": "resolved_source_repair"
+      },
+      {
+        "slot": "High Ability",
+        "name": "Pressure",
+        "ability_id": "pressure",
+        "slot_category": "high",
+        "slot_index": 1,
+        "reference_status": "resolved_source_repair"
+      }
+    ]
+  },
+  {
+    "species_id": "kingambit",
+    "source_id": "knight",
+    "field": "level_up_moves",
+    "reason": "Reconstructed directly from Knight level-up list; evolution lines had leaked into the parsed move list.",
+    "confidence": "high",
+    "before": [
+      {
+        "level": "Evo",
+        "move": "Kowtow Cleave*",
+        "type_hint": null,
+        "move_id": "kowtow-cleave",
+        "reference_status": "unresolved"
+      },
+      {
+        "level": "14",
+        "move": "Torment",
+        "type_hint": null,
+        "move_id": "torment",
+        "reference_status": "resolved"
+      },
+      {
+        "level": "17",
+        "move": "Feint Attack",
+        "type_hint": null,
+        "move_id": "feint-attack",
+        "reference_status": "resolved"
+      },
+      {
+        "level": "22",
+        "move": "Scary Face",
+        "type_hint": null,
+        "move_id": "scary-face",
+        "reference_status": "resolved"
+      },
+      {
+        "level": "25",
+        "move": "Metal Claw",
+        "type_hint": null,
+        "move_id": "metal-claw",
+        "reference_status": "resolved"
+      },
+      {
+        "level": "30",
+        "move": "Slash",
+        "type_hint": null,
+        "move_id": "slash",
+        "reference_status": "resolved"
+      },
+      {
+        "level": "33",
+        "move": "Assurance",
+        "type_hint": null,
+        "move_id": "assurance",
+        "reference_status": "resolved"
+      },
+      {
+        "level": "38",
+        "move": "Metal Sound",
+        "type_hint": null,
+        "move_id": "metal-sound",
+        "reference_status": "resolved"
+      },
+      {
+        "level": "41",
+        "move": "Embargo",
+        "type_hint": null,
+        "move_id": "embargo",
+        "reference_status": "resolved"
+      },
+      {
+        "level": "46",
+        "move": "Iron Defense",
+        "type_hint": null,
+        "move_id": "iron-defense",
+        "reference_status": "resolved"
+      },
+      {
+        "level": "49",
+        "move": "Night Slash",
+        "type_hint": null,
+        "move_id": "night-slash",
+        "reference_status": "resolved"
+      },
+      {
+        "level": "57",
+        "move": "Iron Head",
+        "type_hint": null,
+        "move_id": "iron-head",
+        "reference_status": "resolved"
+      },
+      {
+        "level": "63",
+        "move": "Swords Dance",
+        "type_hint": null,
+        "move_id": "swords-dance",
+        "reference_status": "resolved"
+      },
+      {
+        "level": "71",
+        "move": "Guillotine",
+        "type_hint": null,
+        "move_id": "guillotine",
+        "reference_status": "resolved"
+      }
+    ],
+    "after": [
+      {
+        "level": "Evo",
+        "move": "Kowtow Cleave",
+        "type_hint": null,
+        "move_id": "kowtow-cleave",
+        "reference_status": "resolved_source_repair"
+      },
+      {
+        "level": "14",
+        "move": "Torment",
+        "type_hint": null,
+        "move_id": "torment",
+        "reference_status": "resolved_source_repair"
+      },
+      {
+        "level": "17",
+        "move": "Feint Attack",
+        "type_hint": null,
+        "move_id": "feint-attack",
+        "reference_status": "resolved_source_repair"
+      },
+      {
+        "level": "22",
+        "move": "Scary Face",
+        "type_hint": null,
+        "move_id": "scary-face",
+        "reference_status": "resolved_source_repair"
+      },
+      {
+        "level": "25",
+        "move": "Metal Claw",
+        "type_hint": null,
+        "move_id": "metal-claw",
+        "reference_status": "resolved_source_repair"
+      },
+      {
+        "level": "30",
+        "move": "Slash",
+        "type_hint": null,
+        "move_id": "slash",
+        "reference_status": "resolved_source_repair"
+      },
+      {
+        "level": "33",
+        "move": "Assurance",
+        "type_hint": null,
+        "move_id": "assurance",
+        "reference_status": "resolved_source_repair"
+      },
+      {
+        "level": "38",
+        "move": "Metal Sound",
+        "type_hint": null,
+        "move_id": "metal-sound",
+        "reference_status": "resolved_source_repair"
+      },
+      {
+        "level": "41",
+        "move": "Embargo",
+        "type_hint": null,
+        "move_id": "embargo",
+        "reference_status": "resolved_source_repair"
+      },
+      {
+        "level": "46",
+        "move": "Iron Defense",
+        "type_hint": null,
+        "move_id": "iron-defense",
+        "reference_status": "resolved_source_repair"
+      },
+      {
+        "level": "49",
+        "move": "Night Slash",
+        "type_hint": null,
+        "move_id": "night-slash",
+        "reference_status": "resolved_source_repair"
+      },
+      {
+        "level": "57",
+        "move": "Iron Head",
+        "type_hint": null,
+        "move_id": "iron-head",
+        "reference_status": "resolved_source_repair"
+      },
+      {
+        "level": "63",
+        "move": "Swords Dance",
+        "type_hint": null,
+        "move_id": "swords-dance",
+        "reference_status": "resolved_source_repair"
+      },
+      {
+        "level": "71",
+        "move": "Guillotine",
+        "type_hint": null,
+        "move_id": "guillotine",
+        "reference_status": "resolved_source_repair"
+      }
+    ]
+  },
+  {
+    "species_id": "charcadet",
+    "source_id": "knight",
+    "field": "egg_moves",
+    "reason": "Reconstructed from the explicit Knight Egg Move List; previous extraction swallowed the next Basic Information block.",
+    "confidence": "high",
+    "before": [
+      {
+        "move": "Mystical Fire",
+        "move_id": "mystical-fire",
+        "note": null,
+        "reference_status": "resolved"
+      },
+      {
+        "move": "Wide Guard",
+        "move_id": "wide-guard",
+        "note": null,
+        "reference_status": "resolved"
+      },
+      {
+        "move": "Night Slash",
+        "move_id": "night-slash",
+        "note": null,
+        "reference_status": "resolved"
+      },
+      {
+        "move": "Shadow Sneak",
+        "move_id": "shadow-sneak",
+        "note": null,
+        "reference_status": "resolved"
+      },
+      {
+        "move": "Quick Guard",
+        "move_id": "quick-guard",
+        "note": null,
+        "reference_status": "resolved"
+      },
+      {
+        "move": "Solar Blade. Basic Information Type: Fire Basic Ability 1: Advanced Ability 1: Advanced Ability 2: Advanced Ability 3: High Ability: Flash Fire Blaze Guts Pride Flame Body",
+        "move_id": "solar-blade-basic-information-type-fire-basic-ability-1-advanced-ability-1-advanced-ability-2-advanced-ability-3-high-ability-flash-fire-blaze-guts-pride-flame-body",
+        "note": null,
+        "reference_status": "unresolved"
+      }
+    ],
+    "after": [
+      {
+        "move": "Mystical Fire",
+        "move_id": "mystical-fire",
+        "note": null,
+        "reference_status": "resolved_source_repair"
+      },
+      {
+        "move": "Wide Guard",
+        "move_id": "wide-guard",
+        "note": null,
+        "reference_status": "resolved_source_repair"
+      },
+      {
+        "move": "Night Slash",
+        "move_id": "night-slash",
+        "note": null,
+        "reference_status": "resolved_source_repair"
+      },
+      {
+        "move": "Shadow Sneak",
+        "move_id": "shadow-sneak",
+        "note": null,
+        "reference_status": "resolved_source_repair"
+      },
+      {
+        "move": "Quick Guard",
+        "move_id": "quick-guard",
+        "note": null,
+        "reference_status": "resolved_source_repair"
+      },
+      {
+        "move": "Solar Blade",
+        "move_id": "solar-blade",
+        "note": null,
+        "reference_status": "resolved_source_repair"
+      }
+    ]
+  },
+  {
+    "species_id": "charcadet",
+    "source_id": "knight",
+    "field": "tm_moves",
+    "reason": "Knight uses singular Sword Dance while PTU catalog definition is Swords Dance.",
+    "confidence": "high",
+    "before": {
+      "code": "75",
+      "move": "Sword Dance",
+      "move_id": "sword-dance",
+      "reference_status": "unresolved"
+    },
+    "after": {
+      "code": "75",
+      "move": "Swords Dance",
+      "move_id": "swords-dance",
+      "reference_status": "resolved_source_spelling_normalization"
+    }
+  },
+  {
+    "species_id": "armarouge",
+    "source_id": "knight",
+    "field": "tm_moves",
+    "reason": "Knight uses singular Sword Dance while PTU catalog definition is Swords Dance.",
+    "confidence": "high",
+    "before": {
+      "code": "75",
+      "move": "Sword Dance",
+      "move_id": "sword-dance",
+      "reference_status": "unresolved"
+    },
+    "after": {
+      "code": "75",
+      "move": "Swords Dance",
+      "move_id": "swords-dance",
+      "reference_status": "resolved_source_spelling_normalization"
+    }
+  },
+  {
+    "species_id": "ceruledge",
+    "source_id": "knight",
+    "field": "tm_moves",
+    "reason": "Knight uses singular Sword Dance while PTU catalog definition is Swords Dance.",
+    "confidence": "high",
+    "before": {
+      "code": "75",
+      "move": "Sword Dance",
+      "move_id": "sword-dance",
+      "reference_status": "unresolved"
+    },
+    "after": {
+      "code": "75",
+      "move": "Swords Dance",
+      "move_id": "swords-dance",
+      "reference_status": "resolved_source_spelling_normalization"
+    }
+  },
+  {
+    "species_id": "kingambit",
+    "source_id": "knight",
+    "field": "tutor_moves",
+    "reason": "Tutor entry “Swords” normalized to Swords Dance because the same source lists Swords Dance as the learned/TM move and no “Swords” move definition exists.",
+    "confidence": "medium",
+    "before": {
+      "move": "Swords",
+      "move_id": "swords",
+      "note": null,
+      "reference_status": "unresolved"
+    },
+    "after": {
+      "move": "Swords Dance",
+      "move_id": "swords-dance",
+      "note": null,
+      "reference_status": "resolved_source_context_normalization"
+    }
+  },
+  {
+    "species_id": "needlene",
+    "source_id": "needlene",
+    "field": "ability_slots",
+    "reason": "Reconstructed from explicit Needlene species block; asterisk denotes local newly-defined Ability, not part of the name.",
+    "confidence": "high",
+    "before": [
+      {
+        "slot": "Basic Ability 1",
+        "name": "Overlocker*",
+        "ability_id": "overlocker",
+        "slot_category": "basic",
+        "slot_index": 1,
+        "reference_status": "unresolved"
+      },
+      {
+        "slot": "Adv Ability 1",
+        "name": "Technician",
+        "ability_id": "technician",
+        "slot_category": "advanced",
+        "slot_index": 1,
+        "reference_status": "resolved"
+      },
+      {
+        "slot": "Adv Ability 2",
+        "name": "Sheer Force",
+        "ability_id": "sheer-force",
+        "slot_category": "advanced",
+        "slot_index": 2,
+        "reference_status": "resolved"
+      },
+      {
+        "slot": "Adv Ability 3",
+        "name": "Exploit",
+        "ability_id": "exploit",
+        "slot_category": "advanced",
+        "slot_index": 3,
+        "reference_status": "resolved"
+      },
+      {
+        "slot": "High Ability",
+        "name": "Needles",
+        "ability_id": "needles",
+        "slot_category": "high",
+        "slot_index": 1,
+        "reference_status": "resolved"
+      }
+    ],
+    "after": [
+      {
+        "slot": "Basic Ability 1",
+        "name": "Overlocker",
+        "ability_id": "overlocker",
+        "slot_category": "basic",
+        "slot_index": 1,
+        "reference_status": "resolved_source_repair"
+      },
+      {
+        "slot": "Advanced Ability 1",
+        "name": "Technician",
+        "ability_id": "technician",
+        "slot_category": "advanced",
+        "slot_index": 1,
+        "reference_status": "resolved_source_repair"
+      },
+      {
+        "slot": "Advanced Ability 2",
+        "name": "Sheer Force",
+        "ability_id": "sheer-force",
+        "slot_category": "advanced",
+        "slot_index": 2,
+        "reference_status": "resolved_source_repair"
+      },
+      {
+        "slot": "Advanced Ability 3",
+        "name": "Exploit",
+        "ability_id": "exploit",
+        "slot_category": "advanced",
+        "slot_index": 3,
+        "reference_status": "resolved_source_repair"
+      },
+      {
+        "slot": "High Ability",
+        "name": "Needles",
+        "ability_id": "needles",
+        "slot_category": "high",
+        "slot_index": 1,
+        "reference_status": "resolved_source_repair"
+      }
+    ]
+  },
+  {
+    "species_id": "needlene",
+    "source_id": "needlene",
+    "field": "tm_moves",
+    "reason": "Obvious spelling/name normalization against supplied PTU move catalog.",
+    "confidence": "high",
+    "before": {
+      "code": "21",
+      "move": "Frustraition",
+      "move_id": "frustraition",
+      "reference_status": "unresolved"
+    },
+    "after": {
+      "code": "21",
+      "move": "Frustration",
+      "move_id": "frustration",
+      "reference_status": "resolved_source_spelling_normalization"
+    }
+  },
+  {
+    "species_id": "needlene",
+    "source_id": "needlene",
+    "field": "egg_moves",
+    "reason": "Obvious spelling/name normalization against supplied PTU move catalog.",
+    "confidence": "high",
+    "before": {
+      "move": "Drain Kiss",
+      "move_id": "drain-kiss",
+      "note": null,
+      "reference_status": "unresolved"
+    },
+    "after": {
+      "move": "Draining Kiss",
+      "move_id": "draining-kiss",
+      "note": null,
+      "reference_status": "resolved_source_spelling_normalization"
+    }
+  },
+  {
+    "species_id": "needlene",
+    "source_id": "needlene",
+    "field": "egg_moves",
+    "reason": "Obvious spelling/name normalization against supplied PTU move catalog.",
+    "confidence": "high",
+    "before": {
+      "move": "Sahdow Claw",
+      "move_id": "sahdow-claw",
+      "note": null,
+      "reference_status": "unresolved"
+    },
+    "after": {
+      "move": "Shadow Claw",
+      "move_id": "shadow-claw",
+      "note": null,
+      "reference_status": "resolved_source_spelling_normalization"
+    }
+  },
+  {
+    "species_id": "pidgey--pidgey",
+    "source_id": "pidgey",
+    "field": "ability_slots",
+    "reason": "Restored complete Ability slots from supplied Paldean Pidgey source.",
+    "confidence": "high",
+    "before": [
+      {
+        "slot": "Basic Ability 2",
+        "name": "Tangled Feet",
+        "ability_id": "tangled-feet",
+        "slot_category": "basic",
+        "slot_index": 2,
+        "reference_status": "resolved"
+      },
+      {
+        "slot": "Advanced Ability 1",
+        "name": "Big Pecks",
+        "ability_id": "big-pecks",
+        "slot_category": "advanced",
+        "slot_index": 1,
+        "reference_status": "resolved"
+      },
+      {
+        "slot": "Advanced Ability 2",
+        "name": "Blow Away",
+        "ability_id": "blow-away",
+        "slot_category": "advanced",
+        "slot_index": 2,
+        "reference_status": "resolved"
+      },
+      {
+        "slot": "High Ability",
+        "name": "Run Away",
+        "ability_id": "run-away",
+        "slot_category": "high",
+        "slot_index": 1,
+        "reference_status": "resolved"
+      }
+    ],
+    "after": [
+      {
+        "slot": "Basic Ability 1",
+        "name": "Keen Eye",
+        "ability_id": "keen-eye",
+        "slot_category": "basic",
+        "slot_index": 1,
+        "reference_status": "resolved_source_repair"
+      },
+      {
+        "slot": "Basic Ability 2",
+        "name": "Tangled Feet",
+        "ability_id": "tangled-feet",
+        "slot_category": "basic",
+        "slot_index": 2,
+        "reference_status": "resolved_source_repair"
+      },
+      {
+        "slot": "Advanced Ability 1",
+        "name": "Big Pecks",
+        "ability_id": "big-pecks",
+        "slot_category": "advanced",
+        "slot_index": 1,
+        "reference_status": "resolved_source_repair"
+      },
+      {
+        "slot": "Advanced Ability 2",
+        "name": "Blow Away",
+        "ability_id": "blow-away",
+        "slot_category": "advanced",
+        "slot_index": 2,
+        "reference_status": "resolved_source_repair"
+      },
+      {
+        "slot": "High Ability",
+        "name": "Run Away",
+        "ability_id": "run-away",
+        "slot_category": "high",
+        "slot_index": 1,
+        "reference_status": "resolved_source_repair"
+      }
+    ]
+  },
+  {
+    "species_id": "pidgey--pidgey",
+    "source_id": "pidgey",
+    "field": "level_up_moves",
+    "reason": "Type suffix had been captured as part of the move name.",
+    "confidence": "high",
+    "before": {
+      "level": "21",
+      "move": "Thunder Wave- Electric",
+      "type_hint": null,
+      "move_id": "thunder-wave-electric",
+      "reference_status": "unresolved"
+    },
+    "after": {
+      "level": "21",
+      "move": "Thunder Wave",
+      "type_hint": "Electric",
+      "move_id": "thunder-wave",
+      "reference_status": "resolved_layout_cleanup"
+    }
+  },
+  {
+    "species_id": "pidgey--pidgey",
+    "source_id": "pidgey",
+    "field": "tutor_moves",
+    "reason": "Electoball normalized to Electro Ball.",
+    "confidence": "high",
+    "before": {
+      "move": "Electoball",
+      "move_id": "electoball",
+      "note": null,
+      "reference_status": "unresolved"
+    },
+    "after": {
+      "move": "Electro Ball",
+      "move_id": "electro-ball",
+      "note": null,
+      "reference_status": "resolved_source_spelling_normalization"
+    }
+  },
+  {
+    "species_id": "heafinha",
+    "source_id": "chickute",
+    "field": "level_up_moves",
+    "reason": "Obvious spelling/type-suffix normalization against supplied move catalog.",
+    "confidence": "high",
+    "before": {
+      "level": "22",
+      "move": "Beat Up -Dark",
+      "type_hint": null,
+      "move_id": "beat-up-dark",
+      "reference_status": "unresolved"
+    },
+    "after": {
+      "level": "22",
+      "move": "Beat Up",
+      "type_hint": null,
+      "move_id": "beat-up",
+      "reference_status": "resolved_source_spelling_normalization"
+    }
+  },
+  {
+    "species_id": "heafinha",
+    "source_id": "chickute",
+    "field": "level_up_moves",
+    "reason": "Obvious spelling/type-suffix normalization against supplied move catalog.",
+    "confidence": "high",
+    "before": {
+      "level": "55",
+      "move": "Land’s Warth",
+      "type_hint": "Ground",
+      "move_id": "lands-warth",
+      "reference_status": "unresolved"
+    },
+    "after": {
+      "level": "55",
+      "move": "Land's Wrath",
+      "type_hint": "Ground",
+      "move_id": "lands-wrath",
+      "reference_status": "resolved_source_spelling_normalization"
+    }
+  },
+  {
+    "species_id": "heafinha",
+    "source_id": "chickute",
+    "field": "tutor_moves",
+    "reason": "Obvious spelling/type-suffix normalization against supplied move catalog.",
+    "confidence": "high",
+    "before": {
+      "move": "Flamethower",
+      "move_id": "flamethower",
+      "note": null,
+      "reference_status": "unresolved"
+    },
+    "after": {
+      "move": "Flamethrower",
+      "move_id": "flamethrower",
+      "note": null,
+      "reference_status": "resolved_source_spelling_normalization"
+    }
+  },
+  {
+    "species_id": "pidgeotto--pidgey",
+    "source_id": "pidgey",
+    "field": "level_up_moves",
+    "reason": "Conservative final reference cleanup (section contamination, type suffix, punctuation, or exact alias).",
+    "confidence": "high",
+    "before": {
+      "level": "22",
+      "move": "Thunder Wave- Electric",
+      "type_hint": null,
+      "move_id": "thunder-wave-electric",
+      "reference_status": "unresolved"
+    },
+    "after": {
+      "level": "22",
+      "move": "Thunder Wave",
+      "type_hint": null,
+      "move_id": "thunder-wave",
+      "reference_status": "resolved_final_normalization"
+    }
+  },
+  {
+    "species_id": "pidgeotto--pidgey",
+    "source_id": "pidgey",
+    "field": "tutor_moves",
+    "reason": "Conservative final reference cleanup (section contamination, type suffix, punctuation, or exact alias).",
+    "confidence": "high",
+    "before": {
+      "move": "Electoball",
+      "move_id": "electoball",
+      "note": null,
+      "reference_status": "unresolved"
+    },
+    "after": {
+      "move": "Electro Ball",
+      "move_id": "electro-ball",
+      "note": null,
+      "reference_status": "resolved_final_normalization"
+    }
+  },
+  {
+    "species_id": "pidgeot--pidgey",
+    "source_id": "pidgey",
+    "field": "level_up_moves",
+    "reason": "Conservative final reference cleanup (section contamination, type suffix, punctuation, or exact alias).",
+    "confidence": "high",
+    "before": {
+      "level": "22",
+      "move": "Thunder Wave- Electric",
+      "type_hint": null,
+      "move_id": "thunder-wave-electric",
+      "reference_status": "unresolved"
+    },
+    "after": {
+      "level": "22",
+      "move": "Thunder Wave",
+      "type_hint": null,
+      "move_id": "thunder-wave",
+      "reference_status": "resolved_final_normalization"
+    }
+  },
+  {
+    "species_id": "pidgeot--pidgey",
+    "source_id": "pidgey",
+    "field": "tutor_moves",
+    "reason": "Conservative final reference cleanup (section contamination, type suffix, punctuation, or exact alias).",
+    "confidence": "high",
+    "before": {
+      "move": "Electoball",
+      "move_id": "electoball",
+      "note": null,
+      "reference_status": "unresolved"
+    },
+    "after": {
+      "move": "Electro Ball",
+      "move_id": "electro-ball",
+      "note": null,
+      "reference_status": "resolved_final_normalization"
+    }
+  },
+  {
+    "species_id": "armarouge",
+    "source_id": "knight",
+    "field": "level_up_moves",
+    "reason": "Conservative final reference cleanup (section contamination, type suffix, punctuation, or exact alias).",
+    "confidence": "high",
+    "before": {
+      "level": "45",
+      "move": "Expanding Force",
+      "type_hint": null,
+      "move_id": "expanding-force",
+      "reference_status": "unresolved"
+    },
+    "after": {
+      "level": "45",
+      "move": "Expanding Force",
+      "type_hint": null,
+      "move_id": "expanding-force",
+      "reference_status": "resolved_final_normalization"
+    }
+  },
+  {
+    "species_id": "armarouge",
+    "source_id": "knight",
+    "field": "level_up_moves",
+    "reason": "Conservative final reference cleanup (section contamination, type suffix, punctuation, or exact alias).",
+    "confidence": "high",
+    "before": {
+      "level": "49",
+      "move": "Armor Cannon",
+      "type_hint": null,
+      "move_id": "armor-cannon",
+      "reference_status": "unresolved"
+    },
+    "after": {
+      "level": "49",
+      "move": "Armor Cannon",
+      "type_hint": null,
+      "move_id": "armor-cannon",
+      "reference_status": "resolved_final_normalization"
+    }
+  },
+  {
+    "species_id": "ceruledge",
+    "source_id": "knight",
+    "field": "level_up_moves",
+    "reason": "Conservative final reference cleanup (section contamination, type suffix, punctuation, or exact alias).",
+    "confidence": "high",
+    "before": {
+      "level": "40",
+      "move": "Bitter Blade",
+      "type_hint": null,
+      "move_id": "bitter-blade",
+      "reference_status": "unresolved"
+    },
+    "after": {
+      "level": "40",
+      "move": "Bitter Blade",
+      "type_hint": null,
+      "move_id": "bitter-blade",
+      "reference_status": "resolved_final_normalization"
+    }
+  },
+  {
+    "species_id": "kingambit",
+    "source_id": "knight",
+    "field": "tutor_moves",
+    "reason": "Conservative final reference cleanup (section contamination, type suffix, punctuation, or exact alias).",
+    "confidence": "high",
+    "before": {
+      "move": "Lash Out*",
+      "move_id": "lash-out",
+      "note": null,
+      "reference_status": "unresolved"
+    },
+    "after": {
+      "move": "Lash Out",
+      "move_id": "lash-out",
+      "note": null,
+      "reference_status": "resolved_final_normalization"
+    }
+  },
+  {
+    "species_id": "anorith",
+    "source_id": "gen8",
+    "field": "tutor_moves",
+    "reason": "Conservative final reference cleanup (section contamination, type suffix, punctuation, or exact alias).",
+    "confidence": "high",
+    "before": {
+      "move": "Water Pulse Basic Information Breeding Information Gender Ratio: 87.5% M / 12.5% F Egg Group: Water 3 Average Hatch Rate: 16 Days",
+      "move_id": "water-pulse-basic-information-breeding-information-gender-ratio-87-5-m-12-5-f-egg-group-water-3-average-hatch-rate-16-days",
+      "note": null,
+      "reference_status": "unresolved"
+    },
+    "after": {
+      "move": "Water Pulse",
+      "move_id": "water-pulse",
+      "note": null,
+      "reference_status": "resolved_final_normalization"
+    }
+  },
+  {
+    "species_id": "applin",
+    "source_id": "gen8",
+    "field": "tm_moves",
+    "reason": "Conservative final reference cleanup (section contamination, type suffix, punctuation, or exact alias).",
+    "confidence": "high",
+    "before": {
+      "code": "45",
+      "move": "Attract Base Stats: HP: 4 Attack: 4 Defense: 8 Special Attack: 4 Special Defense: 4 Speed: 2 Basic Information Type: Grass / Dragon Basic Ability 1: Gluttony Basic Ability 2: Immunity Adv Ability 1: Ripen Adv Ability 2: Decoy High Ability: Bulletproof TM Move List 06 Toxic",
+      "move_id": "attract-base-stats-hp-4-attack-4-defense-8-special-attack-4-special-defense-4-speed-2-basic-information-type-grass-dragon-basic-ability-1-gluttony-basic-ability-2-immunity-adv-ability-1-ripen-adv-ability-2-decoy-high-ability-bulletproof-tm-move-list-06-toxic",
+      "reference_status": "unresolved"
+    },
+    "after": {
+      "code": "45",
+      "move": "Attract",
+      "move_id": "attract",
+      "reference_status": "resolved_final_normalization"
+    }
+  },
+  {
+    "species_id": "arcanine",
+    "source_id": "gen8",
+    "field": "tutor_moves",
+    "reason": "Concatenated reference split only because every segment exactly matched a known supplied Move.",
+    "confidence": "high",
+    "before": {
+      "move": "Body Slam. Covet",
+      "move_id": "body-slam-covet",
+      "note": null,
+      "reference_status": "unresolved"
+    },
+    "after": [
+      {
+        "move": "Body Slam",
+        "move_id": "body-slam",
+        "note": null,
+        "reference_status": "resolved_final_split"
+      },
+      {
+        "move": "Covet",
+        "move_id": "covet",
+        "note": null,
+        "reference_status": "resolved_final_split"
+      }
+    ]
+  },
+  {
+    "species_id": "beartic",
+    "source_id": "gen8",
+    "field": "tutor_moves",
+    "reason": "Concatenated reference split only because every segment exactly matched a known supplied Move.",
+    "confidence": "high",
+    "before": {
+      "move": "Thrash (N) Throat Chop",
+      "move_id": "thrash-n-throat-chop",
+      "note": null,
+      "reference_status": "unresolved"
+    },
+    "after": [
+      {
+        "move": "Thrash",
+        "move_id": "thrash",
+        "note": null,
+        "reference_status": "resolved_final_split"
+      },
+      {
+        "move": "Throat Chop",
+        "move_id": "throat-chop",
+        "note": null,
+        "reference_status": "resolved_final_split"
+      }
+    ]
+  },
+  {
+    "species_id": "beldum",
+    "source_id": "gen8",
+    "field": "tutor_moves",
+    "reason": "Conservative final reference cleanup (section contamination, type suffix, punctuation, or exact alias).",
+    "confidence": "high",
+    "before": {
+      "move": "Zen Headbutt HP: Attack: Defense: Special Attack: Special Defense: Speed: Base Stats: 4 6 8 4 6 3 Basic Information Type: Steel / Psychic Basic Ability 1: Clear Body Adv Ability 1: Light Metal Adv Ability 2: Keen Eye Adv Ability 3: Klutz High Ability: Unaware",
+      "move_id": "zen-headbutt-hp-attack-defense-special-attack-special-defense-speed-base-stats-4-6-8-4-6-3-basic-information-type-steel-psychic-basic-ability-1-clear-body-adv-ability-1-light-metal-adv-ability-2-keen-eye-adv-ability-3-klutz-high-ability-unaware",
+      "note": null,
+      "reference_status": "unresolved"
+    },
+    "after": {
+      "move": "Zen Headbutt",
+      "move_id": "zen-headbutt",
+      "note": null,
+      "reference_status": "resolved_final_normalization"
+    }
+  },
+  {
+    "species_id": "blipbug",
+    "source_id": "gen8",
+    "field": "egg_moves",
+    "reason": "Conservative final reference cleanup (section contamination, type suffix, punctuation, or exact alias).",
+    "confidence": "high",
+    "before": {
+      "move": "Supersonic HP: Attack: Defense: Special Attack: Special Defense: Speed: Base Stats: 3 2 2 3 5 5 Basic Information Type: Bug Basic Ability 1: Swarm Basic Ability 2: Forewarn Adv Ability 1: Telepathy Adv Ability 2: Compound Eyes High Ability: Shield Dust",
+      "move_id": "supersonic-hp-attack-defense-special-attack-special-defense-speed-base-stats-3-2-2-3-5-5-basic-information-type-bug-basic-ability-1-swarm-basic-ability-2-forewarn-adv-ability-1-telepathy-adv-ability-2-compound-eyes-high-ability-shield-dust",
+      "note": null,
+      "reference_status": "unresolved"
+    },
+    "after": {
+      "move": "Supersonic",
+      "move_id": "supersonic",
+      "note": null,
+      "reference_status": "resolved_final_normalization"
+    }
+  },
+  {
+    "species_id": "burmy",
+    "source_id": "gen8",
+    "field": "tm_moves",
+    "reason": "Conservative final reference cleanup (section contamination, type suffix, punctuation, or exact alias).",
+    "confidence": "high",
+    "before": {
+      "code": "17",
+      "move": "Protect HP: Attack: Defense: Special Attack: Special Defense: Speed: Base Stats: 4 3 5 3 5 4",
+      "move_id": "protect-hp-attack-defense-special-attack-special-defense-speed-base-stats-4-3-5-3-5-4",
+      "reference_status": "unresolved"
+    },
+    "after": {
+      "code": "17",
+      "move": "Protect",
+      "move_id": "protect",
+      "reference_status": "resolved_final_normalization"
+    }
+  },
+  {
+    "species_id": "burmy",
+    "source_id": "gen8",
+    "field": "tutor_moves",
+    "reason": "Conservative final reference cleanup (section contamination, type suffix, punctuation, or exact alias).",
+    "confidence": "high",
+    "before": {
+      "move": "String Shot Basic Information Type: Bug Basic Ability 1: Quick Cloak Adv Ability 1: Overcoat Adv Ability 2: Shed Skin Adv Ability 3: Tolerance High Ability: Sturdy",
+      "move_id": "string-shot-basic-information-type-bug-basic-ability-1-quick-cloak-adv-ability-1-overcoat-adv-ability-2-shed-skin-adv-ability-3-tolerance-high-ability-sturdy",
+      "note": null,
+      "reference_status": "unresolved"
+    },
+    "after": {
+      "move": "String Shot",
+      "move_id": "string-shot",
+      "note": null,
+      "reference_status": "resolved_final_normalization"
+    }
+  },
+  {
+    "species_id": "cascoon",
+    "source_id": "gen8",
+    "field": "tutor_moves",
+    "reason": "Conservative final reference cleanup (section contamination, type suffix, punctuation, or exact alias).",
+    "confidence": "high",
+    "before": {
+      "move": "Snore HP: Attack: Defense: Special Attack: Special Defense: Speed: Base Stats: 5 4 6 3 3 2 Basic Information Type: Bug Basic Ability 1: Shed Skin Adv Ability 1: Silk Threads Adv Ability 2: Battle Armor Adv Ability 3: Overcoat High Ability: Sturdy",
+      "move_id": "snore-hp-attack-defense-special-attack-special-defense-speed-base-stats-5-4-6-3-3-2-basic-information-type-bug-basic-ability-1-shed-skin-adv-ability-1-silk-threads-adv-ability-2-battle-armor-adv-ability-3-overcoat-high-ability-sturdy",
+      "note": null,
+      "reference_status": "unresolved"
+    },
+    "after": {
+      "move": "Snore",
+      "move_id": "snore",
+      "note": null,
+      "reference_status": "resolved_final_normalization"
+    }
+  },
+  {
+    "species_id": "caterpie",
+    "source_id": "gen8",
+    "field": "tutor_moves",
+    "reason": "Conservative final reference cleanup (section contamination, type suffix, punctuation, or exact alias).",
+    "confidence": "high",
+    "before": {
+      "move": "Snore HP: Attack: Defense: Special Attack: Special Defense: Speed: Base Stats: 5 3 4 2 2 5 Basic Information Type: Bug Basic Ability 1: Shield Dust Adv Ability 1: Run Away Adv Ability 2: Silk Threads Adv Ability 3: Stench High Ability: Suction Cups",
+      "move_id": "snore-hp-attack-defense-special-attack-special-defense-speed-base-stats-5-3-4-2-2-5-basic-information-type-bug-basic-ability-1-shield-dust-adv-ability-1-run-away-adv-ability-2-silk-threads-adv-ability-3-stench-high-ability-suction-cups",
+      "note": null,
+      "reference_status": "unresolved"
+    },
+    "after": {
+      "move": "Snore",
+      "move_id": "snore",
+      "note": null,
+      "reference_status": "resolved_final_normalization"
+    }
+  },
+  {
+    "species_id": "chickute",
+    "source_id": "chickute",
+    "field": "tm_moves",
+    "reason": "Conservative final reference cleanup (section contamination, type suffix, punctuation, or exact alias).",
+    "confidence": "high",
+    "before": {
+      "move": ": 06 Toxic",
+      "move_id": "06-toxic",
+      "note": null,
+      "reference_status": "unresolved"
+    },
+    "after": {
+      "move": "Toxic",
+      "move_id": "toxic",
+      "note": null,
+      "reference_status": "resolved_final_normalization"
+    }
+  },
+  {
+    "species_id": "combee",
+    "source_id": "gen8",
+    "field": "tutor_moves",
+    "reason": "Conservative final reference cleanup (section contamination, type suffix, punctuation, or exact alias).",
+    "confidence": "high",
+    "before": {
+      "move": "Tailwind Basic Information Type: Bug / Flying Basic Ability 1: Pickup Adv Ability 1: Hustle Adv Ability 2: Pack Hunt Adv Ability 3: Teamwork High Ability: Dodge",
+      "move_id": "tailwind-basic-information-type-bug-flying-basic-ability-1-pickup-adv-ability-1-hustle-adv-ability-2-pack-hunt-adv-ability-3-teamwork-high-ability-dodge",
+      "note": null,
+      "reference_status": "unresolved"
+    },
+    "after": {
+      "move": "Tailwind",
+      "move_id": "tailwind",
+      "note": null,
+      "reference_status": "resolved_final_normalization"
+    }
+  },
+  {
+    "species_id": "dialga",
+    "source_id": "gen8",
+    "field": "tm_moves",
+    "reason": "Concatenated reference split only because every segment exactly matched a known supplied Move.",
+    "confidence": "high",
+    "before": {
+      "code": "92",
+      "move": "Trick Room 100 Confide",
+      "move_id": "trick-room-100-confide",
+      "reference_status": "unresolved"
+    },
+    "after": [
+      {
+        "code": "92",
+        "move": "Trick Room",
+        "move_id": "trick-room",
+        "reference_status": "resolved_final_split"
+      },
+      {
+        "code": null,
+        "move": "Confide",
+        "move_id": "confide",
+        "reference_status": "resolved_final_split"
+      }
+    ]
+  },
+  {
+    "species_id": "empoleon",
+    "source_id": "gen8",
+    "field": "tutor_moves",
+    "reason": "Concatenated reference split only because every segment exactly matched a known supplied Move.",
+    "confidence": "high",
+    "before": {
+      "move": "Avalanche. Covet",
+      "move_id": "avalanche-covet",
+      "note": null,
+      "reference_status": "unresolved"
+    },
+    "after": [
+      {
+        "move": "Avalanche",
+        "move_id": "avalanche",
+        "note": null,
+        "reference_status": "resolved_final_split"
+      },
+      {
+        "move": "Covet",
+        "move_id": "covet",
+        "note": null,
+        "reference_status": "resolved_final_split"
+      }
+    ]
+  },
+  {
+    "species_id": "flapple",
+    "source_id": "gen8",
+    "field": "level_up_moves",
+    "reason": "Conservative final reference cleanup (section contamination, type suffix, punctuation, or exact alias).",
+    "confidence": "high",
+    "before": {
+      "level": "Evo",
+      "move": "Wing Attack -Flying",
+      "type_hint": null,
+      "move_id": "wing-attack-flying",
+      "reference_status": "unresolved"
+    },
+    "after": {
+      "level": "Evo",
+      "move": "Wing Attack",
+      "type_hint": null,
+      "move_id": "wing-attack",
+      "reference_status": "resolved_final_normalization"
+    }
+  },
+  {
+    "species_id": "froslass",
+    "source_id": "gen8",
+    "field": "level_up_moves",
+    "reason": "Conservative final reference cleanup (section contamination, type suffix, punctuation, or exact alias).",
+    "confidence": "high",
+    "before": {
+      "level": "42",
+      "move": "Shadow Ball -Ghost",
+      "type_hint": null,
+      "move_id": "shadow-ball-ghost",
+      "reference_status": "unresolved"
+    },
+    "after": {
+      "level": "42",
+      "move": "Shadow Ball",
+      "type_hint": null,
+      "move_id": "shadow-ball",
+      "reference_status": "resolved_final_normalization"
+    }
+  },
+  {
+    "species_id": "gliscor",
+    "source_id": "gen8",
+    "field": "tutor_moves",
+    "reason": "Concatenated reference split only because every segment exactly matched a known supplied Move.",
+    "confidence": "high",
+    "before": {
+      "move": "Fire Fang (N) Fury Cutter",
+      "move_id": "fire-fang-n-fury-cutter",
+      "note": null,
+      "reference_status": "unresolved"
+    },
+    "after": [
+      {
+        "move": "Fire Fang",
+        "move_id": "fire-fang",
+        "note": null,
+        "reference_status": "resolved_final_split"
+      },
+      {
+        "move": "Fury Cutter",
+        "move_id": "fury-cutter",
+        "note": null,
+        "reference_status": "resolved_final_split"
+      }
+    ]
+  },
+  {
+    "species_id": "hitmonlee",
+    "source_id": "gen8",
+    "field": "level_up_moves",
+    "reason": "Conservative final reference cleanup (section contamination, type suffix, punctuation, or exact alias).",
+    "confidence": "high",
+    "before": {
+      "level": "29",
+      "move": "Hi Jump Kick",
+      "type_hint": "Fighting",
+      "move_id": "hi-jump-kick",
+      "reference_status": "unresolved"
+    },
+    "after": {
+      "level": "29",
+      "move": "High Jump Kick",
+      "type_hint": "Fighting",
+      "move_id": "high-jump-kick",
+      "reference_status": "resolved_final_normalization"
+    }
+  },
+  {
+    "species_id": "kakuna",
+    "source_id": "gen8",
+    "field": "tutor_moves",
+    "reason": "Conservative final reference cleanup (section contamination, type suffix, punctuation, or exact alias).",
+    "confidence": "high",
+    "before": {
+      "move": "String Shot HP: Attack: Defense: Special Attack: Special Defense: Speed: Base Stats: 5 3 5 3 3 4 Basic Information Type: Bug / Poison Basic Ability 1: Shed Skin Adv Ability 1: Battle Armor Adv Ability 2: Silk Threads Adv Ability 3: Magic Guard High Ability: Sturdy",
+      "move_id": "string-shot-hp-attack-defense-special-attack-special-defense-speed-base-stats-5-3-5-3-3-4-basic-information-type-bug-poison-basic-ability-1-shed-skin-adv-ability-1-battle-armor-adv-ability-2-silk-threads-adv-ability-3-magic-guard-high-ability-sturdy",
+      "note": null,
+      "reference_status": "unresolved"
+    },
+    "after": {
+      "move": "String Shot",
+      "move_id": "string-shot",
+      "note": null,
+      "reference_status": "resolved_final_normalization"
+    }
+  },
+  {
+    "species_id": "karrablast",
+    "source_id": "gen8",
+    "field": "tutor_moves",
+    "reason": "Conservative final reference cleanup (section contamination, type suffix, punctuation, or exact alias).",
+    "confidence": "high",
+    "before": {
+      "move": "Snore Basic Information Breeding Information Gender Ratio: 50% M / 50% F Egg Group: Bug Average Hatch Rate: 10 Days",
+      "move_id": "snore-basic-information-breeding-information-gender-ratio-50-m-50-f-egg-group-bug-average-hatch-rate-10-days",
+      "note": null,
+      "reference_status": "unresolved"
+    },
+    "after": {
+      "move": "Snore",
+      "move_id": "snore",
+      "note": null,
+      "reference_status": "resolved_final_normalization"
+    }
+  },
+  {
+    "species_id": "klink",
+    "source_id": "gen8",
+    "field": "tutor_moves",
+    "reason": "Conservative final reference cleanup (section contamination, type suffix, punctuation, or exact alias).",
+    "confidence": "high",
+    "before": {
+      "move": "Uproar Basic Information",
+      "move_id": "uproar-basic-information",
+      "note": null,
+      "reference_status": "unresolved"
+    },
+    "after": {
+      "move": "Uproar",
+      "move_id": "uproar",
+      "note": null,
+      "reference_status": "resolved_final_normalization"
+    }
+  },
+  {
+    "species_id": "krabby",
+    "source_id": "gen8",
+    "field": "tutor_moves",
+    "reason": "Conservative final reference cleanup (section contamination, type suffix, punctuation, or exact alias).",
+    "confidence": "high",
+    "before": {
+      "move": "Water Pulse Basic Information Breeding Information Gender Ratio: 50% M / 50% F Egg Group: Water 3 Average Hatch Rate: 10 Days",
+      "move_id": "water-pulse-basic-information-breeding-information-gender-ratio-50-m-50-f-egg-group-water-3-average-hatch-rate-10-days",
+      "note": null,
+      "reference_status": "unresolved"
+    },
+    "after": {
+      "move": "Water Pulse",
+      "move_id": "water-pulse",
+      "note": null,
+      "reference_status": "resolved_final_normalization"
+    }
+  },
+  {
+    "species_id": "kricketot",
+    "source_id": "gen8",
+    "field": "tutor_moves",
+    "reason": "Conservative final reference cleanup (section contamination, type suffix, punctuation, or exact alias).",
+    "confidence": "high",
+    "before": {
+      "move": "Uproar HP: Attack: Defense: Special Attack: Special Defense: Speed: Base Stats: 4 3 4 3 4 3 Basic Information Type: Bug Basic Ability 1: Shed Skin Basic Ability 2: Run Away Adv Ability 1: Swarm Adv Ability 2: Technician High Ability: Drown Out",
+      "move_id": "uproar-hp-attack-defense-special-attack-special-defense-speed-base-stats-4-3-4-3-4-3-basic-information-type-bug-basic-ability-1-shed-skin-basic-ability-2-run-away-adv-ability-1-swarm-adv-ability-2-technician-high-ability-drown-out",
+      "note": null,
+      "reference_status": "unresolved"
+    },
+    "after": {
+      "move": "Uproar",
+      "move_id": "uproar",
+      "note": null,
+      "reference_status": "resolved_final_normalization"
+    }
+  },
+  {
+    "species_id": "landorus-incarnate-forme",
+    "source_id": "gen8",
+    "field": "level_up_moves",
+    "reason": "Conservative final reference cleanup (section contamination, type suffix, punctuation, or exact alias).",
+    "confidence": "high",
+    "before": {
+      "level": "10",
+      "move": "Rock Throw- Rock",
+      "type_hint": null,
+      "move_id": "rock-throw-rock",
+      "reference_status": "unresolved"
+    },
+    "after": {
+      "level": "10",
+      "move": "Rock Throw",
+      "type_hint": null,
+      "move_id": "rock-throw",
+      "reference_status": "resolved_final_normalization"
+    }
+  },
+  {
+    "species_id": "landorus-therian-forme",
+    "source_id": "gen8",
+    "field": "level_up_moves",
+    "reason": "Conservative final reference cleanup (section contamination, type suffix, punctuation, or exact alias).",
+    "confidence": "high",
+    "before": {
+      "level": "10",
+      "move": "Rock Throw- Rock",
+      "type_hint": null,
+      "move_id": "rock-throw-rock",
+      "reference_status": "unresolved"
+    },
+    "after": {
+      "level": "10",
+      "move": "Rock Throw",
+      "type_hint": null,
+      "move_id": "rock-throw",
+      "reference_status": "resolved_final_normalization"
+    }
+  },
+  {
+    "species_id": "magikarp",
+    "source_id": "gen8",
+    "field": "tutor_moves",
+    "reason": "Conservative final reference cleanup (section contamination, type suffix, punctuation, or exact alias).",
+    "confidence": "high",
+    "before": {
+      "move": "Bounce HP: Attack: Defense: Special Attack: Special Defense: Speed: Base Stats: 2 1 6 2 2 8 Basic Information Type: Water Basic Ability 1: Bulletproof Basic Ability 2: Simple Adv Ability 1: Decoy Adv Ability 2: Swift Swim High Ability: Rattled",
+      "move_id": "bounce-hp-attack-defense-special-attack-special-defense-speed-base-stats-2-1-6-2-2-8-basic-information-type-water-basic-ability-1-bulletproof-basic-ability-2-simple-adv-ability-1-decoy-adv-ability-2-swift-swim-high-ability-rattled",
+      "note": null,
+      "reference_status": "unresolved"
+    },
+    "after": {
+      "move": "Bounce",
+      "move_id": "bounce",
+      "note": null,
+      "reference_status": "resolved_final_normalization"
+    }
+  },
+  {
+    "species_id": "magneton",
+    "source_id": "gen8",
+    "field": "level_up_moves",
+    "reason": "Conservative final reference cleanup (section contamination, type suffix, punctuation, or exact alias).",
+    "confidence": "high",
+    "before": {
+      "level": "Evo",
+      "move": "Tri Attack -Normal",
+      "type_hint": null,
+      "move_id": "tri-attack-normal",
+      "reference_status": "unresolved"
+    },
+    "after": {
+      "level": "Evo",
+      "move": "Tri Attack",
+      "type_hint": null,
+      "move_id": "tri-attack",
+      "reference_status": "resolved_final_normalization"
+    }
+  },
+  {
+    "species_id": "magnezone",
+    "source_id": "gen8",
+    "field": "level_up_moves",
+    "reason": "Conservative final reference cleanup (section contamination, type suffix, punctuation, or exact alias).",
+    "confidence": "high",
+    "before": {
+      "level": "Evo",
+      "move": "Tri Attack -Normal",
+      "type_hint": null,
+      "move_id": "tri-attack-normal",
+      "reference_status": "unresolved"
+    },
+    "after": {
+      "level": "Evo",
+      "move": "Tri Attack",
+      "type_hint": null,
+      "move_id": "tri-attack",
+      "reference_status": "resolved_final_normalization"
+    }
+  },
+  {
+    "species_id": "mareep",
+    "source_id": "gen8",
+    "field": "tutor_moves",
+    "reason": "Conservative final reference cleanup (section contamination, type suffix, punctuation, or exact alias).",
+    "confidence": "high",
+    "before": {
+      "move": "Swift Basic Information Breeding Information Gender Ratio: 50% M / 50% F Egg Group: Monster / Field Average Hatch Rate: 10 Days",
+      "move_id": "swift-basic-information-breeding-information-gender-ratio-50-m-50-f-egg-group-monster-field-average-hatch-rate-10-days",
+      "note": null,
+      "reference_status": "unresolved"
+    },
+    "after": {
+      "move": "Swift",
+      "move_id": "swift",
+      "note": null,
+      "reference_status": "resolved_final_normalization"
+    }
+  },
+  {
+    "species_id": "meltan",
+    "source_id": "gen8",
+    "field": "tm_moves",
+    "reason": "Conservative final reference cleanup (section contamination, type suffix, punctuation, or exact alias).",
+    "confidence": "high",
+    "before": {
+      "code": "100",
+      "move": "Confide Basic Information",
+      "move_id": "confide-basic-information",
+      "reference_status": "unresolved"
+    },
+    "after": {
+      "code": "100",
+      "move": "Confide",
+      "move_id": "confide",
+      "reference_status": "resolved_final_normalization"
+    }
+  },
+  {
+    "species_id": "metapod",
+    "source_id": "gen8",
+    "field": "tutor_moves",
+    "reason": "Conservative final reference cleanup (section contamination, type suffix, punctuation, or exact alias).",
+    "confidence": "high",
+    "before": {
+      "move": "String Shot HP: Attack: Defense: Special Attack: Special Defense: Speed: Base Stats: 5 2 6 3 3 3 Basic Information Type: Bug Basic Ability 1: Shed Skin Adv Ability 1: Battle Armor Adv Ability 2: Silk Threads Adv Ability 3: Magic Guard High Ability: Sturdy",
+      "move_id": "string-shot-hp-attack-defense-special-attack-special-defense-speed-base-stats-5-2-6-3-3-3-basic-information-type-bug-basic-ability-1-shed-skin-adv-ability-1-battle-armor-adv-ability-2-silk-threads-adv-ability-3-magic-guard-high-ability-sturdy",
+      "note": null,
+      "reference_status": "unresolved"
+    },
+    "after": {
+      "move": "String Shot",
+      "move_id": "string-shot",
+      "note": null,
+      "reference_status": "resolved_final_normalization"
+    }
+  },
+  {
+    "species_id": "needlene",
+    "source_id": "needlene",
+    "field": "tm_moves",
+    "reason": "Conservative final reference cleanup (section contamination, type suffix, punctuation, or exact alias).",
+    "confidence": "high",
+    "before": {
+      "move": ": 03 Psyshock",
+      "move_id": "03-psyshock",
+      "note": null,
+      "reference_status": "unresolved"
+    },
+    "after": {
+      "move": "Psyshock",
+      "move_id": "psyshock",
+      "note": null,
+      "reference_status": "resolved_final_normalization"
+    }
+  },
+  {
+    "species_id": "pancham",
+    "source_id": "gen8",
+    "field": "tutor_moves",
+    "reason": "Conservative final reference cleanup (section contamination, type suffix, punctuation, or exact alias).",
+    "confidence": "high",
+    "before": {
+      "move": "Zen Headbutt Basic Information Type: Fighting Basic Ability 1: Iron Fist Basic Ability 2: Mold Breaker Adv Ability 1: Deep Sleep Adv Ability 2: Oblivious High Ability: Scrappy",
+      "move_id": "zen-headbutt-basic-information-type-fighting-basic-ability-1-iron-fist-basic-ability-2-mold-breaker-adv-ability-1-deep-sleep-adv-ability-2-oblivious-high-ability-scrappy",
+      "note": null,
+      "reference_status": "unresolved"
+    },
+    "after": {
+      "move": "Zen Headbutt",
+      "move_id": "zen-headbutt",
+      "note": null,
+      "reference_status": "resolved_final_normalization"
+    }
+  },
+  {
+    "species_id": "passimian",
+    "source_id": "gen8",
+    "field": "tm_moves",
+    "reason": "Concatenated reference split only because every segment exactly matched a known supplied Move.",
+    "confidence": "high",
+    "before": {
+      "code": "08",
+      "move": "Bulk Up. 10 Hidden Power",
+      "move_id": "bulk-up-10-hidden-power",
+      "reference_status": "unresolved"
+    },
+    "after": [
+      {
+        "code": "08",
+        "move": "Bulk Up",
+        "move_id": "bulk-up",
+        "reference_status": "resolved_final_split"
+      },
+      {
+        "code": null,
+        "move": "Hidden Power",
+        "move_id": "hidden-power",
+        "reference_status": "resolved_final_split"
+      }
+    ]
+  },
+  {
+    "species_id": "scatterbug",
+    "source_id": "gen8",
+    "field": "egg_moves",
+    "reason": "Conservative final reference cleanup (section contamination, type suffix, punctuation, or exact alias).",
+    "confidence": "high",
+    "before": {
+      "move": "Stun Spore HP: Attack: Defense: Special Attack: Special Defense: Speed: Base Stats: 4 4 4 3 3 4",
+      "move_id": "stun-spore-hp-attack-defense-special-attack-special-defense-speed-base-stats-4-4-4-3-3-4",
+      "note": null,
+      "reference_status": "unresolved"
+    },
+    "after": {
+      "move": "Stun Spore",
+      "move_id": "stun-spore",
+      "note": null,
+      "reference_status": "resolved_final_normalization"
+    }
+  },
+  {
+    "species_id": "scatterbug",
+    "source_id": "gen8",
+    "field": "tutor_moves",
+    "reason": "Conservative final reference cleanup (section contamination, type suffix, punctuation, or exact alias).",
+    "confidence": "high",
+    "before": {
+      "move": "Bug Bite Basic Information Type: Bug Basic Ability 1: Compound Eyes Adv Ability 1: Shield Dust Adv Ability 2: Friend Guard Adv Ability 3: Suction Cups High Ability: Effect Spore",
+      "move_id": "bug-bite-basic-information-type-bug-basic-ability-1-compound-eyes-adv-ability-1-shield-dust-adv-ability-2-friend-guard-adv-ability-3-suction-cups-high-ability-effect-spore",
+      "note": null,
+      "reference_status": "unresolved"
+    },
+    "after": {
+      "move": "Bug Bite",
+      "move_id": "bug-bite",
+      "note": null,
+      "reference_status": "resolved_final_normalization"
+    }
+  },
+  {
+    "species_id": "silcoon",
+    "source_id": "gen8",
+    "field": "tutor_moves",
+    "reason": "Conservative final reference cleanup (section contamination, type suffix, punctuation, or exact alias).",
+    "confidence": "high",
+    "before": {
+      "move": "Snore HP: Attack: Defense: Special Attack: Special Defense: Speed: Base Stats: 5 4 6 3 3 2 Basic Information Type: Bug Basic Ability 1: Shed Skin Adv Ability 1: Silk Threads Adv Ability 2: Battle Armor Adv Ability 3: Overcoat High Ability: Sturdy",
+      "move_id": "snore-hp-attack-defense-special-attack-special-defense-speed-base-stats-5-4-6-3-3-2-basic-information-type-bug-basic-ability-1-shed-skin-adv-ability-1-silk-threads-adv-ability-2-battle-armor-adv-ability-3-overcoat-high-ability-sturdy",
+      "note": null,
+      "reference_status": "unresolved"
+    },
+    "after": {
+      "move": "Snore",
+      "move_id": "snore",
+      "note": null,
+      "reference_status": "resolved_final_normalization"
+    }
+  },
+  {
+    "species_id": "snom",
+    "source_id": "gen8",
+    "field": "tm_moves",
+    "reason": "Conservative final reference cleanup (section contamination, type suffix, punctuation, or exact alias).",
+    "confidence": "high",
+    "before": {
+      "code": "100",
+      "move": "Confide HP: Attack: Defense: Special Attack: Special Defense: Speed: Base Stats: 3 3 4 5 3 2",
+      "move_id": "confide-hp-attack-defense-special-attack-special-defense-speed-base-stats-3-3-4-5-3-2",
+      "reference_status": "unresolved"
+    },
+    "after": {
+      "code": "100",
+      "move": "Confide",
+      "move_id": "confide",
+      "reference_status": "resolved_final_normalization"
+    }
+  },
+  {
+    "species_id": "snom",
+    "source_id": "gen8",
+    "field": "tutor_moves",
+    "reason": "Conservative final reference cleanup (section contamination, type suffix, punctuation, or exact alias).",
+    "confidence": "high",
+    "before": {
+      "move": "Snore Basic Information Type: Ice / Bug Basic Ability 1: Shield Dust Basic Ability 2: Ice Shield Adv Ability 1: Ice Scales Adv Ability 2: Permafrost High Ability: Frostbite",
+      "move_id": "snore-basic-information-type-ice-bug-basic-ability-1-shield-dust-basic-ability-2-ice-shield-adv-ability-1-ice-scales-adv-ability-2-permafrost-high-ability-frostbite",
+      "note": null,
+      "reference_status": "unresolved"
+    },
+    "after": {
+      "move": "Snore",
+      "move_id": "snore",
+      "note": null,
+      "reference_status": "resolved_final_normalization"
+    }
+  },
+  {
+    "species_id": "spewpa",
+    "source_id": "gen8",
+    "field": "tutor_moves",
+    "reason": "Conservative final reference cleanup (section contamination, type suffix, punctuation, or exact alias).",
+    "confidence": "high",
+    "before": {
+      "move": "Iron Defense HP: Attack: Defense: Special Attack: Special Defense: Speed: Base Stats: 5 2 6 3 3 3 Basic Information Type: Bug Basic Ability 1: Compound Eyes Adv Ability 1: Shed Skin Adv Ability 2: Friend Guard Adv Ability 3: Wonder Skin High Ability: Effect Spore",
+      "move_id": "iron-defense-hp-attack-defense-special-attack-special-defense-speed-base-stats-5-2-6-3-3-3-basic-information-type-bug-basic-ability-1-compound-eyes-adv-ability-1-shed-skin-adv-ability-2-friend-guard-adv-ability-3-wonder-skin-high-ability-effect-spore",
+      "note": null,
+      "reference_status": "unresolved"
+    },
+    "after": {
+      "move": "Iron Defense",
+      "move_id": "iron-defense",
+      "note": null,
+      "reference_status": "resolved_final_normalization"
+    }
+  },
+  {
+    "species_id": "spheal",
+    "source_id": "gen8",
+    "field": "tutor_moves",
+    "reason": "Conservative final reference cleanup (section contamination, type suffix, punctuation, or exact alias).",
+    "confidence": "high",
+    "before": {
+      "move": "Water Pulse Basic Information Breeding Information Gender Ratio: 50% M / 50% F Egg Group: Water 1 / Field Average Hatch Rate: 10 Days",
+      "move_id": "water-pulse-basic-information-breeding-information-gender-ratio-50-m-50-f-egg-group-water-1-field-average-hatch-rate-10-days",
+      "note": null,
+      "reference_status": "unresolved"
+    },
+    "after": {
+      "move": "Water Pulse",
+      "move_id": "water-pulse",
+      "note": null,
+      "reference_status": "resolved_final_normalization"
+    }
+  },
+  {
+    "species_id": "stantler",
+    "source_id": "gen8",
+    "field": "tutor_moves",
+    "reason": "Conservative final reference cleanup (section contamination, type suffix, punctuation, or exact alias).",
+    "confidence": "high",
+    "before": {
+      "move": "Zen Headbutt Basic Information Type: Normal Basic Ability 1: Hypnotic Basic Ability 2: Probability Control Adv Ability 1: Frisk Adv Ability 2: Intimidate High Ability: Sap Sipper",
+      "move_id": "zen-headbutt-basic-information-type-normal-basic-ability-1-hypnotic-basic-ability-2-probability-control-adv-ability-1-frisk-adv-ability-2-intimidate-high-ability-sap-sipper",
+      "note": null,
+      "reference_status": "unresolved"
+    },
+    "after": {
+      "move": "Zen Headbutt",
+      "move_id": "zen-headbutt",
+      "note": null,
+      "reference_status": "resolved_final_normalization"
+    }
+  },
+  {
+    "species_id": "swadloon",
+    "source_id": "gen8",
+    "field": "tutor_moves",
+    "reason": "Conservative final reference cleanup (section contamination, type suffix, punctuation, or exact alias).",
+    "confidence": "high",
+    "before": {
+      "move": "Worry Seed Basic Information Type: Bug / Grass Basic Ability 1: Designer Adv Ability 1: Full Guard Adv Ability 2: Leafy Cloak Adv Ability 3: Swarm High Ability: Accelerate",
+      "move_id": "worry-seed-basic-information-type-bug-grass-basic-ability-1-designer-adv-ability-1-full-guard-adv-ability-2-leafy-cloak-adv-ability-3-swarm-high-ability-accelerate",
+      "note": null,
+      "reference_status": "unresolved"
+    },
+    "after": {
+      "move": "Worry Seed",
+      "move_id": "worry-seed",
+      "note": null,
+      "reference_status": "resolved_final_normalization"
+    }
+  },
+  {
+    "species_id": "tapu-bulu",
+    "source_id": "gen8",
+    "field": "tm_moves",
+    "reason": "Concatenated reference split only because every segment exactly matched a known supplied Move.",
+    "confidence": "high",
+    "before": {
+      "code": "01",
+      "move": "Work Up. 04 Calm Mind",
+      "move_id": "work-up-04-calm-mind",
+      "reference_status": "unresolved"
+    },
+    "after": [
+      {
+        "code": "01",
+        "move": "Work Up",
+        "move_id": "work-up",
+        "reference_status": "resolved_final_split"
+      },
+      {
+        "code": null,
+        "move": "Calm Mind",
+        "move_id": "calm-mind",
+        "reference_status": "resolved_final_split"
+      }
+    ]
+  },
+  {
+    "species_id": "thundurus-incarnate-forme",
+    "source_id": "gen8",
+    "field": "level_up_moves",
+    "reason": "Conservative final reference cleanup (section contamination, type suffix, punctuation, or exact alias).",
+    "confidence": "high",
+    "before": {
+      "level": "10",
+      "move": "Shock Wave- Electric",
+      "type_hint": null,
+      "move_id": "shock-wave-electric",
+      "reference_status": "unresolved"
+    },
+    "after": {
+      "level": "10",
+      "move": "Shock Wave",
+      "type_hint": null,
+      "move_id": "shock-wave",
+      "reference_status": "resolved_final_normalization"
+    }
+  },
+  {
+    "species_id": "thundurus-therian-forme",
+    "source_id": "gen8",
+    "field": "level_up_moves",
+    "reason": "Conservative final reference cleanup (section contamination, type suffix, punctuation, or exact alias).",
+    "confidence": "high",
+    "before": {
+      "level": "10",
+      "move": "Shock Wave- Electric",
+      "type_hint": null,
+      "move_id": "shock-wave-electric",
+      "reference_status": "unresolved"
+    },
+    "after": {
+      "level": "10",
+      "move": "Shock Wave",
+      "type_hint": null,
+      "move_id": "shock-wave",
+      "reference_status": "resolved_final_normalization"
+    }
+  },
+  {
+    "species_id": "toxel",
+    "source_id": "gen8",
+    "field": "tutor_moves",
+    "reason": "Conservative final reference cleanup (section contamination, type suffix, punctuation, or exact alias).",
+    "confidence": "high",
+    "before": {
+      "move": "Snore Basic Information Type: Electric / Poison Basic Ability 1: Static Basic Ability 2: Poison Point Adv Ability 1: Rattled Adv Ability 2: Klutz High Ability: Cute Tears",
+      "move_id": "snore-basic-information-type-electric-poison-basic-ability-1-static-basic-ability-2-poison-point-adv-ability-1-rattled-adv-ability-2-klutz-high-ability-cute-tears",
+      "note": null,
+      "reference_status": "unresolved"
+    },
+    "after": {
+      "move": "Snore",
+      "move_id": "snore",
+      "note": null,
+      "reference_status": "resolved_final_normalization"
+    }
+  },
+  {
+    "species_id": "tynamo",
+    "source_id": "gen8",
+    "field": "tm_moves",
+    "reason": "Conservative final reference cleanup (section contamination, type suffix, punctuation, or exact alias).",
+    "confidence": "high",
+    "before": {
+      "code": "73",
+      "move": "Thunder Wave Base Stats: HP: 4 Attack: 6 Defense: 4 Special Attack: 5 Special Defense: 4 Speed: 6",
+      "move_id": "thunder-wave-base-stats-hp-4-attack-6-defense-4-special-attack-5-special-defense-4-speed-6",
+      "reference_status": "unresolved"
+    },
+    "after": {
+      "code": "73",
+      "move": "Thunder Wave",
+      "move_id": "thunder-wave",
+      "reference_status": "resolved_final_normalization"
+    }
+  },
+  {
+    "species_id": "tynamo",
+    "source_id": "gen8",
+    "field": "tutor_moves",
+    "reason": "Conservative final reference cleanup (section contamination, type suffix, punctuation, or exact alias).",
+    "confidence": "high",
+    "before": {
+      "move": "Magnet Rise Basic Information Type: Electric Basic Ability 1: Levitate Adv Ability 1: Electrodash Adv Ability 2: Sequence Adv Ability 3: Storm Drain High Ability: Lightning Rod",
+      "move_id": "magnet-rise-basic-information-type-electric-basic-ability-1-levitate-adv-ability-1-electrodash-adv-ability-2-sequence-adv-ability-3-storm-drain-high-ability-lightning-rod",
+      "note": null,
+      "reference_status": "unresolved"
+    },
+    "after": {
+      "move": "Magnet Rise",
+      "move_id": "magnet-rise",
+      "note": null,
+      "reference_status": "resolved_final_normalization"
+    }
+  },
+  {
+    "species_id": "unown",
+    "source_id": "gen8",
+    "field": "tm_moves",
+    "reason": "Conservative final reference cleanup (section contamination, type suffix, punctuation, or exact alias).",
+    "confidence": "high",
+    "before": {
+      "code": "10",
+      "move": "Hidden Power HP: Attack: Defense: Special Attack: Special Defense: Speed: Base Stats: 5 7 5 7 5 5 Basic Information Type: Psychic Basic Ability 1: Levitate Adv Ability 1: Forewarn Adv Ability 2: Perception Adv Ability 3: Anticipation High Ability: Keen Eye",
+      "move_id": "hidden-power-hp-attack-defense-special-attack-special-defense-speed-base-stats-5-7-5-7-5-5-basic-information-type-psychic-basic-ability-1-levitate-adv-ability-1-forewarn-adv-ability-2-perception-adv-ability-3-anticipation-high-ability-keen-eye",
+      "reference_status": "unresolved"
+    },
+    "after": {
+      "code": "10",
+      "move": "Hidden Power",
+      "move_id": "hidden-power",
+      "reference_status": "resolved_final_normalization"
+    }
+  },
+  {
+    "species_id": "venonat",
+    "source_id": "gen8",
+    "field": "egg_moves",
+    "reason": "Concatenated reference split only because every segment exactly matched a known supplied Move.",
+    "confidence": "high",
+    "before": {
+      "move": "Secret Power Skill Swap",
+      "move_id": "secret-power-skill-swap",
+      "note": null,
+      "reference_status": "unresolved"
+    },
+    "after": [
+      {
+        "move": "Secret Power",
+        "move_id": "secret-power",
+        "note": null,
+        "reference_status": "resolved_final_split"
+      },
+      {
+        "move": "Skill Swap",
+        "move_id": "skill-swap",
+        "note": null,
+        "reference_status": "resolved_final_split"
+      }
+    ]
+  },
+  {
+    "species_id": "weedle",
+    "source_id": "gen8",
+    "field": "tutor_moves",
+    "reason": "Conservative final reference cleanup (section contamination, type suffix, punctuation, or exact alias).",
+    "confidence": "high",
+    "before": {
+      "move": "Electroweb HP: Attack: Defense: Special Attack: Special Defense: Speed: Base Stats: 4 4 3 2 2 5 Basic Information Type: Bug / Poison Basic Ability 1: Shield Dust Adv Ability 1: Run Away Adv Ability 2: Silk Threads Adv Ability 3: Swarm High Ability: Poison Touch",
+      "move_id": "electroweb-hp-attack-defense-special-attack-special-defense-speed-base-stats-4-4-3-2-2-5-basic-information-type-bug-poison-basic-ability-1-shield-dust-adv-ability-1-run-away-adv-ability-2-silk-threads-adv-ability-3-swarm-high-ability-poison-touch",
+      "note": null,
+      "reference_status": "unresolved"
+    },
+    "after": {
+      "move": "Electroweb",
+      "move_id": "electroweb",
+      "note": null,
+      "reference_status": "resolved_final_normalization"
+    }
+  },
+  {
+    "species_id": "wimpod",
+    "source_id": "gen8",
+    "field": "tutor_moves",
+    "reason": "Conservative final reference cleanup (section contamination, type suffix, punctuation, or exact alias).",
+    "confidence": "high",
+    "before": {
+      "move": "Snore Basic Information Type: Bug / Water Basic Ability 1: Emergency Exit Adv Ability 1: Shell Armor Adv Ability 2: Poison Point Adv Ability 3: Damp High Ability: Run Away",
+      "move_id": "snore-basic-information-type-bug-water-basic-ability-1-emergency-exit-adv-ability-1-shell-armor-adv-ability-2-poison-point-adv-ability-3-damp-high-ability-run-away",
+      "note": null,
+      "reference_status": "unresolved"
+    },
+    "after": {
+      "move": "Snore",
+      "move_id": "snore",
+      "note": null,
+      "reference_status": "resolved_final_normalization"
+    }
+  },
+  {
+    "species_id": "wobbuffet",
+    "source_id": "gen8",
+    "field": "tm_moves",
+    "reason": "Conservative final reference cleanup (section contamination, type suffix, punctuation, or exact alias).",
+    "confidence": "high",
+    "before": {
+      "code": "20",
+      "move": "Safeguard HP: Attack: Defense: Special Attack: Special Defense: Speed: Base Stats: 19 3 6 3 6 3 Basic Information Type: Psychic Basic Ability 1: Weeble Adv Ability 1: Telepathy Adv Ability 2: Oblivious Adv Ability 3: Shadow Tag High Ability: Wobble",
+      "move_id": "safeguard-hp-attack-defense-special-attack-special-defense-speed-base-stats-19-3-6-3-6-3-basic-information-type-psychic-basic-ability-1-weeble-adv-ability-1-telepathy-adv-ability-2-oblivious-adv-ability-3-shadow-tag-high-ability-wobble",
+      "reference_status": "unresolved"
+    },
+    "after": {
+      "code": "20",
+      "move": "Safeguard",
+      "move_id": "safeguard",
+      "reference_status": "resolved_final_normalization"
+    }
+  },
+  {
+    "species_id": "wurmple",
+    "source_id": "gen8",
+    "field": "tutor_moves",
+    "reason": "Conservative final reference cleanup (section contamination, type suffix, punctuation, or exact alias).",
+    "confidence": "high",
+    "before": {
+      "move": "Snore HP: Attack: Defense: Special Attack: Special Defense: Speed: Base Stats: 5 5 4 2 3 2 Basic Information Type: Bug Basic Ability 1: Shield Dust Adv Ability 1: Silk Threads Adv Ability 2: Run Away Adv Ability 3: Poison Point High Ability: Suction Cups",
+      "move_id": "snore-hp-attack-defense-special-attack-special-defense-speed-base-stats-5-5-4-2-3-2-basic-information-type-bug-basic-ability-1-shield-dust-adv-ability-1-silk-threads-adv-ability-2-run-away-adv-ability-3-poison-point-high-ability-suction-cups",
+      "note": null,
+      "reference_status": "unresolved"
+    },
+    "after": {
+      "move": "Snore",
+      "move_id": "snore",
+      "note": null,
+      "reference_status": "resolved_final_normalization"
+    }
+  },
+  {
+    "species_id": "wynaut",
+    "source_id": "gen8",
+    "field": "tm_moves",
+    "reason": "Conservative final reference cleanup (section contamination, type suffix, punctuation, or exact alias).",
+    "confidence": "high",
+    "before": {
+      "code": "20",
+      "move": "Safeguard HP: Attack: Defense: Special Attack: Special Defense: Speed: Base Stats: 10 2 5 2 5 2 Basic Information Type: Psychic Basic Ability 1: Weeble Adv Ability 1: Telepathy Adv Ability 2: Oblivious Adv Ability 3: Shadow Tag High Ability: Wobble",
+      "move_id": "safeguard-hp-attack-defense-special-attack-special-defense-speed-base-stats-10-2-5-2-5-2-basic-information-type-psychic-basic-ability-1-weeble-adv-ability-1-telepathy-adv-ability-2-oblivious-adv-ability-3-shadow-tag-high-ability-wobble",
+      "reference_status": "unresolved"
+    },
+    "after": {
+      "code": "20",
+      "move": "Safeguard",
+      "move_id": "safeguard",
+      "reference_status": "resolved_final_normalization"
+    }
+  },
+  {
+    "species_id": "zoroark",
+    "source_id": "gen8",
+    "field": "tutor_moves",
+    "reason": "Concatenated reference split only because every segment exactly matched a known supplied Move.",
+    "confidence": "high",
+    "before": {
+      "move": "Hyper Voice Imprison",
+      "move_id": "hyper-voice-imprison",
+      "note": "N",
+      "reference_status": "unresolved"
+    },
+    "after": [
+      {
+        "move": "Hyper Voice",
+        "move_id": "hyper-voice",
+        "note": "N",
+        "reference_status": "resolved_final_split"
+      },
+      {
+        "move": "Imprison",
+        "move_id": "imprison",
+        "note": "N",
+        "reference_status": "resolved_final_split"
+      }
+    ]
+  },
+  {
+    "species_id": "zygarde-10-forme",
+    "source_id": "gen8",
+    "field": "tutor_moves",
+    "reason": "Conservative final reference cleanup (section contamination, type suffix, punctuation, or exact alias).",
+    "confidence": "high",
+    "before": {
+      "move": "Zen Headbutt Zygarde Cube Move List § Core Enforcer",
+      "move_id": "zen-headbutt-zygarde-cube-move-list-core-enforcer",
+      "note": null,
+      "reference_status": "unresolved"
+    },
+    "after": {
+      "move": "Zen Headbutt",
+      "move_id": "zen-headbutt",
+      "note": null,
+      "reference_status": "resolved_final_normalization"
+    }
+  },
+  {
+    "species_id": "zygarde-50-forme",
+    "source_id": "gen8",
+    "field": "tutor_moves",
+    "reason": "Conservative final reference cleanup (section contamination, type suffix, punctuation, or exact alias).",
+    "confidence": "high",
+    "before": {
+      "move": "Zen Headbutt Zygarde Cube Move List § Core Enforcer",
+      "move_id": "zen-headbutt-zygarde-cube-move-list-core-enforcer",
+      "note": null,
+      "reference_status": "unresolved"
+    },
+    "after": {
+      "move": "Zen Headbutt",
+      "move_id": "zen-headbutt",
+      "note": null,
+      "reference_status": "resolved_final_normalization"
+    }
+  },
+  {
+    "species_id": "zygarde-complete-forme",
+    "source_id": "gen8",
+    "field": "tutor_moves",
+    "reason": "Conservative final reference cleanup (section contamination, type suffix, punctuation, or exact alias).",
+    "confidence": "high",
+    "before": {
+      "move": "Zen Headbutt Zygarde Cube Move List § Core Enforcer",
+      "move_id": "zen-headbutt-zygarde-cube-move-list-core-enforcer",
+      "note": null,
+      "reference_status": "unresolved"
+    },
+    "after": {
+      "move": "Zen Headbutt",
+      "move_id": "zen-headbutt",
+      "note": null,
+      "reference_status": "resolved_final_normalization"
+    }
+  }
+]

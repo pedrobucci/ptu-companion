@@ -1,0 +1,552 @@
+[
+  {
+    "from_species_name": "Kubfu",
+    "from_ref_key": "kubfu",
+    "to_species_name": "Urshifu",
+    "to_ref_key": "urshifu",
+    "source_kind": "external_factual_relation",
+    "source_id": "pokeapi_species_csv",
+    "ptu_condition": null,
+    "note": "Canonical species relation only. PTU mechanical evolution requirement must come from an enabled PTU content source or GM override."
+  },
+  {
+    "from_species_name": "Stantler",
+    "from_ref_key": "stantler",
+    "to_species_name": "Wyrdeer",
+    "to_ref_key": "wyrdeer",
+    "source_kind": "external_factual_relation",
+    "source_id": "pokeapi_species_csv",
+    "ptu_condition": null,
+    "note": "Canonical species relation only. PTU mechanical evolution requirement must come from an enabled PTU content source or GM override."
+  },
+  {
+    "from_species_name": "Scyther",
+    "from_ref_key": "scyther",
+    "to_species_name": "Kleavor",
+    "to_ref_key": "kleavor",
+    "source_kind": "external_factual_relation",
+    "source_id": "pokeapi_species_csv",
+    "ptu_condition": null,
+    "note": "Canonical species relation only. PTU mechanical evolution requirement must come from an enabled PTU content source or GM override."
+  },
+  {
+    "from_species_name": "Ursaring",
+    "from_ref_key": "ursaring",
+    "to_species_name": "Ursaluna",
+    "to_ref_key": "ursaluna",
+    "source_kind": "external_factual_relation",
+    "source_id": "pokeapi_species_csv",
+    "ptu_condition": null,
+    "note": "Canonical species relation only. PTU mechanical evolution requirement must come from an enabled PTU content source or GM override."
+  },
+  {
+    "from_species_name": "Basculin",
+    "from_ref_key": "basculin",
+    "to_species_name": "Basculegion",
+    "to_ref_key": "basculegion",
+    "source_kind": "external_factual_relation",
+    "source_id": "pokeapi_species_csv",
+    "ptu_condition": null,
+    "note": "Canonical species relation only. PTU mechanical evolution requirement must come from an enabled PTU content source or GM override."
+  },
+  {
+    "from_species_name": "Sneasel",
+    "from_ref_key": "sneasel",
+    "to_species_name": "Sneasler",
+    "to_ref_key": "sneasler",
+    "source_kind": "external_factual_relation",
+    "source_id": "pokeapi_species_csv",
+    "ptu_condition": null,
+    "note": "Canonical species relation only. PTU mechanical evolution requirement must come from an enabled PTU content source or GM override."
+  },
+  {
+    "from_species_name": "Qwilfish",
+    "from_ref_key": "qwilfish",
+    "to_species_name": "Overqwil",
+    "to_ref_key": "overqwil",
+    "source_kind": "external_factual_relation",
+    "source_id": "pokeapi_species_csv",
+    "ptu_condition": null,
+    "note": "Canonical species relation only. PTU mechanical evolution requirement must come from an enabled PTU content source or GM override."
+  },
+  {
+    "from_species_name": "Sprigatito",
+    "from_ref_key": "sprigatito",
+    "to_species_name": "Floragato",
+    "to_ref_key": "floragato",
+    "source_kind": "external_factual_relation",
+    "source_id": "pokeapi_species_csv",
+    "ptu_condition": null,
+    "note": "Canonical species relation only. PTU mechanical evolution requirement must come from an enabled PTU content source or GM override."
+  },
+  {
+    "from_species_name": "Floragato",
+    "from_ref_key": "floragato",
+    "to_species_name": "Meowscarada",
+    "to_ref_key": "meowscarada",
+    "source_kind": "external_factual_relation",
+    "source_id": "pokeapi_species_csv",
+    "ptu_condition": null,
+    "note": "Canonical species relation only. PTU mechanical evolution requirement must come from an enabled PTU content source or GM override."
+  },
+  {
+    "from_species_name": "Fuecoco",
+    "from_ref_key": "fuecoco",
+    "to_species_name": "Crocalor",
+    "to_ref_key": "crocalor",
+    "source_kind": "external_factual_relation",
+    "source_id": "pokeapi_species_csv",
+    "ptu_condition": null,
+    "note": "Canonical species relation only. PTU mechanical evolution requirement must come from an enabled PTU content source or GM override."
+  },
+  {
+    "from_species_name": "Crocalor",
+    "from_ref_key": "crocalor",
+    "to_species_name": "Skeledirge",
+    "to_ref_key": "skeledirge",
+    "source_kind": "external_factual_relation",
+    "source_id": "pokeapi_species_csv",
+    "ptu_condition": null,
+    "note": "Canonical species relation only. PTU mechanical evolution requirement must come from an enabled PTU content source or GM override."
+  },
+  {
+    "from_species_name": "Quaxly",
+    "from_ref_key": "quaxly",
+    "to_species_name": "Quaxwell",
+    "to_ref_key": "quaxwell",
+    "source_kind": "external_factual_relation",
+    "source_id": "pokeapi_species_csv",
+    "ptu_condition": null,
+    "note": "Canonical species relation only. PTU mechanical evolution requirement must come from an enabled PTU content source or GM override."
+  },
+  {
+    "from_species_name": "Quaxwell",
+    "from_ref_key": "quaxwell",
+    "to_species_name": "Quaquaval",
+    "to_ref_key": "quaquaval",
+    "source_kind": "external_factual_relation",
+    "source_id": "pokeapi_species_csv",
+    "ptu_condition": null,
+    "note": "Canonical species relation only. PTU mechanical evolution requirement must come from an enabled PTU content source or GM override."
+  },
+  {
+    "from_species_name": "Lechonk",
+    "from_ref_key": "lechonk",
+    "to_species_name": "Oinkologne",
+    "to_ref_key": "oinkologne",
+    "source_kind": "external_factual_relation",
+    "source_id": "pokeapi_species_csv",
+    "ptu_condition": null,
+    "note": "Canonical species relation only. PTU mechanical evolution requirement must come from an enabled PTU content source or GM override."
+  },
+  {
+    "from_species_name": "Tarountula",
+    "from_ref_key": "tarountula",
+    "to_species_name": "Spidops",
+    "to_ref_key": "spidops",
+    "source_kind": "external_factual_relation",
+    "source_id": "pokeapi_species_csv",
+    "ptu_condition": null,
+    "note": "Canonical species relation only. PTU mechanical evolution requirement must come from an enabled PTU content source or GM override."
+  },
+  {
+    "from_species_name": "Nymble",
+    "from_ref_key": "nymble",
+    "to_species_name": "Lokix",
+    "to_ref_key": "lokix",
+    "source_kind": "external_factual_relation",
+    "source_id": "pokeapi_species_csv",
+    "ptu_condition": null,
+    "note": "Canonical species relation only. PTU mechanical evolution requirement must come from an enabled PTU content source or GM override."
+  },
+  {
+    "from_species_name": "Pawmi",
+    "from_ref_key": "pawmi",
+    "to_species_name": "Pawmo",
+    "to_ref_key": "pawmo",
+    "source_kind": "external_factual_relation",
+    "source_id": "pokeapi_species_csv",
+    "ptu_condition": null,
+    "note": "Canonical species relation only. PTU mechanical evolution requirement must come from an enabled PTU content source or GM override."
+  },
+  {
+    "from_species_name": "Pawmo",
+    "from_ref_key": "pawmo",
+    "to_species_name": "Pawmot",
+    "to_ref_key": "pawmot",
+    "source_kind": "external_factual_relation",
+    "source_id": "pokeapi_species_csv",
+    "ptu_condition": null,
+    "note": "Canonical species relation only. PTU mechanical evolution requirement must come from an enabled PTU content source or GM override."
+  },
+  {
+    "from_species_name": "Tandemaus",
+    "from_ref_key": "tandemaus",
+    "to_species_name": "Maushold",
+    "to_ref_key": "maushold",
+    "source_kind": "external_factual_relation",
+    "source_id": "pokeapi_species_csv",
+    "ptu_condition": null,
+    "note": "Canonical species relation only. PTU mechanical evolution requirement must come from an enabled PTU content source or GM override."
+  },
+  {
+    "from_species_name": "Fidough",
+    "from_ref_key": "fidough",
+    "to_species_name": "Dachsbun",
+    "to_ref_key": "dachsbun",
+    "source_kind": "external_factual_relation",
+    "source_id": "pokeapi_species_csv",
+    "ptu_condition": null,
+    "note": "Canonical species relation only. PTU mechanical evolution requirement must come from an enabled PTU content source or GM override."
+  },
+  {
+    "from_species_name": "Smoliv",
+    "from_ref_key": "smoliv",
+    "to_species_name": "Dolliv",
+    "to_ref_key": "dolliv",
+    "source_kind": "external_factual_relation",
+    "source_id": "pokeapi_species_csv",
+    "ptu_condition": null,
+    "note": "Canonical species relation only. PTU mechanical evolution requirement must come from an enabled PTU content source or GM override."
+  },
+  {
+    "from_species_name": "Dolliv",
+    "from_ref_key": "dolliv",
+    "to_species_name": "Arboliva",
+    "to_ref_key": "arboliva",
+    "source_kind": "external_factual_relation",
+    "source_id": "pokeapi_species_csv",
+    "ptu_condition": null,
+    "note": "Canonical species relation only. PTU mechanical evolution requirement must come from an enabled PTU content source or GM override."
+  },
+  {
+    "from_species_name": "Nacli",
+    "from_ref_key": "nacli",
+    "to_species_name": "Naclstack",
+    "to_ref_key": "naclstack",
+    "source_kind": "external_factual_relation",
+    "source_id": "pokeapi_species_csv",
+    "ptu_condition": null,
+    "note": "Canonical species relation only. PTU mechanical evolution requirement must come from an enabled PTU content source or GM override."
+  },
+  {
+    "from_species_name": "Naclstack",
+    "from_ref_key": "naclstack",
+    "to_species_name": "Garganacl",
+    "to_ref_key": "garganacl",
+    "source_kind": "external_factual_relation",
+    "source_id": "pokeapi_species_csv",
+    "ptu_condition": null,
+    "note": "Canonical species relation only. PTU mechanical evolution requirement must come from an enabled PTU content source or GM override."
+  },
+  {
+    "from_species_name": "Charcadet",
+    "from_ref_key": "charcadet",
+    "to_species_name": "Armarouge",
+    "to_ref_key": "armarouge",
+    "source_kind": "external_factual_relation",
+    "source_id": "pokeapi_species_csv",
+    "ptu_condition": null,
+    "note": "Canonical species relation only. PTU mechanical evolution requirement must come from an enabled PTU content source or GM override."
+  },
+  {
+    "from_species_name": "Charcadet",
+    "from_ref_key": "charcadet",
+    "to_species_name": "Ceruledge",
+    "to_ref_key": "ceruledge",
+    "source_kind": "external_factual_relation",
+    "source_id": "pokeapi_species_csv",
+    "ptu_condition": null,
+    "note": "Canonical species relation only. PTU mechanical evolution requirement must come from an enabled PTU content source or GM override."
+  },
+  {
+    "from_species_name": "Tadbulb",
+    "from_ref_key": "tadbulb",
+    "to_species_name": "Bellibolt",
+    "to_ref_key": "bellibolt",
+    "source_kind": "external_factual_relation",
+    "source_id": "pokeapi_species_csv",
+    "ptu_condition": null,
+    "note": "Canonical species relation only. PTU mechanical evolution requirement must come from an enabled PTU content source or GM override."
+  },
+  {
+    "from_species_name": "Wattrel",
+    "from_ref_key": "wattrel",
+    "to_species_name": "Kilowattrel",
+    "to_ref_key": "kilowattrel",
+    "source_kind": "external_factual_relation",
+    "source_id": "pokeapi_species_csv",
+    "ptu_condition": null,
+    "note": "Canonical species relation only. PTU mechanical evolution requirement must come from an enabled PTU content source or GM override."
+  },
+  {
+    "from_species_name": "Maschiff",
+    "from_ref_key": "maschiff",
+    "to_species_name": "Mabosstiff",
+    "to_ref_key": "mabosstiff",
+    "source_kind": "external_factual_relation",
+    "source_id": "pokeapi_species_csv",
+    "ptu_condition": null,
+    "note": "Canonical species relation only. PTU mechanical evolution requirement must come from an enabled PTU content source or GM override."
+  },
+  {
+    "from_species_name": "Shroodle",
+    "from_ref_key": "shroodle",
+    "to_species_name": "Grafaiai",
+    "to_ref_key": "grafaiai",
+    "source_kind": "external_factual_relation",
+    "source_id": "pokeapi_species_csv",
+    "ptu_condition": null,
+    "note": "Canonical species relation only. PTU mechanical evolution requirement must come from an enabled PTU content source or GM override."
+  },
+  {
+    "from_species_name": "Bramblin",
+    "from_ref_key": "bramblin",
+    "to_species_name": "Brambleghast",
+    "to_ref_key": "brambleghast",
+    "source_kind": "external_factual_relation",
+    "source_id": "pokeapi_species_csv",
+    "ptu_condition": null,
+    "note": "Canonical species relation only. PTU mechanical evolution requirement must come from an enabled PTU content source or GM override."
+  },
+  {
+    "from_species_name": "Toedscool",
+    "from_ref_key": "toedscool",
+    "to_species_name": "Toedscruel",
+    "to_ref_key": "toedscruel",
+    "source_kind": "external_factual_relation",
+    "source_id": "pokeapi_species_csv",
+    "ptu_condition": null,
+    "note": "Canonical species relation only. PTU mechanical evolution requirement must come from an enabled PTU content source or GM override."
+  },
+  {
+    "from_species_name": "Capsakid",
+    "from_ref_key": "capsakid",
+    "to_species_name": "Scovillain",
+    "to_ref_key": "scovillain",
+    "source_kind": "external_factual_relation",
+    "source_id": "pokeapi_species_csv",
+    "ptu_condition": null,
+    "note": "Canonical species relation only. PTU mechanical evolution requirement must come from an enabled PTU content source or GM override."
+  },
+  {
+    "from_species_name": "Rellor",
+    "from_ref_key": "rellor",
+    "to_species_name": "Rabsca",
+    "to_ref_key": "rabsca",
+    "source_kind": "external_factual_relation",
+    "source_id": "pokeapi_species_csv",
+    "ptu_condition": null,
+    "note": "Canonical species relation only. PTU mechanical evolution requirement must come from an enabled PTU content source or GM override."
+  },
+  {
+    "from_species_name": "Flittle",
+    "from_ref_key": "flittle",
+    "to_species_name": "Espathra",
+    "to_ref_key": "espathra",
+    "source_kind": "external_factual_relation",
+    "source_id": "pokeapi_species_csv",
+    "ptu_condition": null,
+    "note": "Canonical species relation only. PTU mechanical evolution requirement must come from an enabled PTU content source or GM override."
+  },
+  {
+    "from_species_name": "Tinkatink",
+    "from_ref_key": "tinkatink",
+    "to_species_name": "Tinkatuff",
+    "to_ref_key": "tinkatuff",
+    "source_kind": "external_factual_relation",
+    "source_id": "pokeapi_species_csv",
+    "ptu_condition": null,
+    "note": "Canonical species relation only. PTU mechanical evolution requirement must come from an enabled PTU content source or GM override."
+  },
+  {
+    "from_species_name": "Tinkatuff",
+    "from_ref_key": "tinkatuff",
+    "to_species_name": "Tinkaton",
+    "to_ref_key": "tinkaton",
+    "source_kind": "external_factual_relation",
+    "source_id": "pokeapi_species_csv",
+    "ptu_condition": null,
+    "note": "Canonical species relation only. PTU mechanical evolution requirement must come from an enabled PTU content source or GM override."
+  },
+  {
+    "from_species_name": "Wiglett",
+    "from_ref_key": "wiglett",
+    "to_species_name": "Wugtrio",
+    "to_ref_key": "wugtrio",
+    "source_kind": "external_factual_relation",
+    "source_id": "pokeapi_species_csv",
+    "ptu_condition": null,
+    "note": "Canonical species relation only. PTU mechanical evolution requirement must come from an enabled PTU content source or GM override."
+  },
+  {
+    "from_species_name": "Finizen",
+    "from_ref_key": "finizen",
+    "to_species_name": "Palafin",
+    "to_ref_key": "palafin",
+    "source_kind": "external_factual_relation",
+    "source_id": "pokeapi_species_csv",
+    "ptu_condition": null,
+    "note": "Canonical species relation only. PTU mechanical evolution requirement must come from an enabled PTU content source or GM override."
+  },
+  {
+    "from_species_name": "Varoom",
+    "from_ref_key": "varoom",
+    "to_species_name": "Revavroom",
+    "to_ref_key": "revavroom",
+    "source_kind": "external_factual_relation",
+    "source_id": "pokeapi_species_csv",
+    "ptu_condition": null,
+    "note": "Canonical species relation only. PTU mechanical evolution requirement must come from an enabled PTU content source or GM override."
+  },
+  {
+    "from_species_name": "Glimmet",
+    "from_ref_key": "glimmet",
+    "to_species_name": "Glimmora",
+    "to_ref_key": "glimmora",
+    "source_kind": "external_factual_relation",
+    "source_id": "pokeapi_species_csv",
+    "ptu_condition": null,
+    "note": "Canonical species relation only. PTU mechanical evolution requirement must come from an enabled PTU content source or GM override."
+  },
+  {
+    "from_species_name": "Greavard",
+    "from_ref_key": "greavard",
+    "to_species_name": "Houndstone",
+    "to_ref_key": "houndstone",
+    "source_kind": "external_factual_relation",
+    "source_id": "pokeapi_species_csv",
+    "ptu_condition": null,
+    "note": "Canonical species relation only. PTU mechanical evolution requirement must come from an enabled PTU content source or GM override."
+  },
+  {
+    "from_species_name": "Cetoddle",
+    "from_ref_key": "cetoddle",
+    "to_species_name": "Cetitan",
+    "to_ref_key": "cetitan",
+    "source_kind": "external_factual_relation",
+    "source_id": "pokeapi_species_csv",
+    "ptu_condition": null,
+    "note": "Canonical species relation only. PTU mechanical evolution requirement must come from an enabled PTU content source or GM override."
+  },
+  {
+    "from_species_name": "Primeape",
+    "from_ref_key": "primeape",
+    "to_species_name": "Annihilape",
+    "to_ref_key": "annihilape",
+    "source_kind": "external_factual_relation",
+    "source_id": "pokeapi_species_csv",
+    "ptu_condition": null,
+    "note": "Canonical species relation only. PTU mechanical evolution requirement must come from an enabled PTU content source or GM override."
+  },
+  {
+    "from_species_name": "Wooper",
+    "from_ref_key": "wooper",
+    "to_species_name": "Clodsire",
+    "to_ref_key": "clodsire",
+    "source_kind": "external_factual_relation",
+    "source_id": "pokeapi_species_csv",
+    "ptu_condition": null,
+    "note": "Canonical species relation only. PTU mechanical evolution requirement must come from an enabled PTU content source or GM override."
+  },
+  {
+    "from_species_name": "Girafarig",
+    "from_ref_key": "girafarig",
+    "to_species_name": "Farigiraf",
+    "to_ref_key": "farigiraf",
+    "source_kind": "external_factual_relation",
+    "source_id": "pokeapi_species_csv",
+    "ptu_condition": null,
+    "note": "Canonical species relation only. PTU mechanical evolution requirement must come from an enabled PTU content source or GM override."
+  },
+  {
+    "from_species_name": "Dunsparce",
+    "from_ref_key": "dunsparce",
+    "to_species_name": "Dudunsparce",
+    "to_ref_key": "dudunsparce",
+    "source_kind": "external_factual_relation",
+    "source_id": "pokeapi_species_csv",
+    "ptu_condition": null,
+    "note": "Canonical species relation only. PTU mechanical evolution requirement must come from an enabled PTU content source or GM override."
+  },
+  {
+    "from_species_name": "Bisharp",
+    "from_ref_key": "bisharp",
+    "to_species_name": "Kingambit",
+    "to_ref_key": "kingambit",
+    "source_kind": "external_factual_relation",
+    "source_id": "pokeapi_species_csv",
+    "ptu_condition": null,
+    "note": "Canonical species relation only. PTU mechanical evolution requirement must come from an enabled PTU content source or GM override."
+  },
+  {
+    "from_species_name": "Frigibax",
+    "from_ref_key": "frigibax",
+    "to_species_name": "Arctibax",
+    "to_ref_key": "arctibax",
+    "source_kind": "external_factual_relation",
+    "source_id": "pokeapi_species_csv",
+    "ptu_condition": null,
+    "note": "Canonical species relation only. PTU mechanical evolution requirement must come from an enabled PTU content source or GM override."
+  },
+  {
+    "from_species_name": "Arctibax",
+    "from_ref_key": "arctibax",
+    "to_species_name": "Baxcalibur",
+    "to_ref_key": "baxcalibur",
+    "source_kind": "external_factual_relation",
+    "source_id": "pokeapi_species_csv",
+    "ptu_condition": null,
+    "note": "Canonical species relation only. PTU mechanical evolution requirement must come from an enabled PTU content source or GM override."
+  },
+  {
+    "from_species_name": "Gimmighoul",
+    "from_ref_key": "gimmighoul",
+    "to_species_name": "Gholdengo",
+    "to_ref_key": "gholdengo",
+    "source_kind": "external_factual_relation",
+    "source_id": "pokeapi_species_csv",
+    "ptu_condition": null,
+    "note": "Canonical species relation only. PTU mechanical evolution requirement must come from an enabled PTU content source or GM override."
+  },
+  {
+    "from_species_name": "Applin",
+    "from_ref_key": "applin",
+    "to_species_name": "Dipplin",
+    "to_ref_key": "dipplin",
+    "source_kind": "external_factual_relation",
+    "source_id": "pokeapi_species_csv",
+    "ptu_condition": null,
+    "note": "Canonical species relation only. PTU mechanical evolution requirement must come from an enabled PTU content source or GM override."
+  },
+  {
+    "from_species_name": "Dipplin",
+    "from_ref_key": "dipplin",
+    "to_species_name": "Hydrapple",
+    "to_ref_key": "hydrapple",
+    "source_kind": "external_factual_relation",
+    "source_id": "pokeapi_species_csv",
+    "ptu_condition": null,
+    "note": "Canonical species relation only. PTU mechanical evolution requirement must come from an enabled PTU content source or GM override."
+  },
+  {
+    "from_species_name": "Poltchageist",
+    "from_ref_key": "poltchageist",
+    "to_species_name": "Sinistcha",
+    "to_ref_key": "sinistcha",
+    "source_kind": "external_factual_relation",
+    "source_id": "pokeapi_species_csv",
+    "ptu_condition": null,
+    "note": "Canonical species relation only. PTU mechanical evolution requirement must come from an enabled PTU content source or GM override."
+  },
+  {
+    "from_species_name": "Duraludon",
+    "from_ref_key": "duraludon",
+    "to_species_name": "Archaludon",
+    "to_ref_key": "archaludon",
+    "source_kind": "external_factual_relation",
+    "source_id": "pokeapi_species_csv",
+    "ptu_condition": null,
+    "note": "Canonical species relation only. PTU mechanical evolution requirement must come from an enabled PTU content source or GM override."
+  }
+]

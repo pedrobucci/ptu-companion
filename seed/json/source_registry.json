@@ -1,0 +1,162 @@
+[
+  {
+    "id": "core",
+    "title": "Pokémon Tabletop United 1.05 Core",
+    "kind": "official_core",
+    "priority": 100,
+    "filename": "Pokemon Tabletop United 1.05 Core.pdf",
+    "available": true
+  },
+  {
+    "id": "blessed",
+    "title": "Blessed and the Damned",
+    "kind": "official_supplement",
+    "priority": 110,
+    "filename": "Blessed and the Damned.pdf",
+    "available": true
+  },
+  {
+    "id": "porygon",
+    "title": "Do Porygon Dream of Mareep?",
+    "kind": "official_supplement",
+    "priority": 110,
+    "filename": "Do Porygon Dream of Mareep.pdf",
+    "available": true
+  },
+  {
+    "id": "got",
+    "title": "Game of Throhs",
+    "kind": "official_supplement",
+    "priority": 110,
+    "filename": "Game of Throhs.pdf",
+    "available": true
+  },
+  {
+    "id": "may2015",
+    "title": "PTU May 2015 Playtest Packet",
+    "kind": "official_playtest",
+    "priority": 120,
+    "filename": "PTU May 2015 Playtest Packet.pdf",
+    "available": true
+  },
+  {
+    "id": "sep2015",
+    "title": "PTU September 2015 Playtest Packet",
+    "kind": "official_playtest",
+    "priority": 125,
+    "filename": "PTU September 2015 Playtest Packet.pdf",
+    "available": true
+  },
+  {
+    "id": "feb2016",
+    "title": "February 2016 Playtest Packet",
+    "kind": "official_playtest",
+    "priority": 130,
+    "filename": "February 2016 Playtest Packet.pdf",
+    "available": true
+  },
+  {
+    "id": "gen8",
+    "title": "Gen 8ish PokeDex",
+    "kind": "unofficial_pokedex",
+    "priority": 140,
+    "filename": "Gen 8ish PokeDex.pdf",
+    "available": true
+  },
+  {
+    "id": "sumo",
+    "title": "SuMo References",
+    "kind": "supplement_reference",
+    "priority": 145,
+    "filename": "SuMo References.pdf",
+    "available": true
+  },
+  {
+    "id": "new",
+    "title": "New Abilities and Moves",
+    "kind": "homebrew_or_later_supplement",
+    "priority": 150,
+    "filename": "New Abilities and Moves.pdf",
+    "available": true
+  },
+  {
+    "id": "edit",
+    "title": "PTU 1.05 Editation",
+    "kind": "homebrew_rebalance",
+    "priority": 160,
+    "filename": "PTU 1.05 Editation.pdf",
+    "available": true
+  },
+  {
+    "id": "chickute",
+    "title": "Chickute",
+    "kind": "homebrew_species",
+    "priority": 180,
+    "filename": "Chickute.pdf",
+    "available": true
+  },
+  {
+    "id": "classes_extra",
+    "title": "Classes extras",
+    "kind": "homebrew",
+    "priority": 180,
+    "filename": "Classes extras.pdf",
+    "available": true
+  },
+  {
+    "id": "especial",
+    "title": "Especial Classes",
+    "kind": "homebrew",
+    "priority": 180,
+    "filename": "Especial Classes.pdf",
+    "available": true
+  },
+  {
+    "id": "needlene",
+    "title": "Needlene",
+    "kind": "homebrew_species",
+    "priority": 180,
+    "filename": "Needlene.pdf",
+    "available": true
+  },
+  {
+    "id": "pidgey",
+    "title": "Paldean pidgey",
+    "kind": "homebrew_species",
+    "priority": 180,
+    "filename": "Paldean pidgey.pdf",
+    "available": true
+  },
+  {
+    "id": "pokeapi_pokemon_types_csv",
+    "title": "PokeAPI pokemon_types.csv",
+    "kind": "external_factual_registry",
+    "url": "https://raw.githubusercontent.com/PokeAPI/pokeapi/master/data/v2/csv/pokemon_types.csv",
+    "accessed": "2026-09-03",
+    "usage": "Factual canonical Type metadata for current official species stubs only."
+  },
+  {
+    "id": "pokeapi_species_csv",
+    "title": "PokeAPI pokemon_species.csv",
+    "kind": "external_factual_registry",
+    "url": "https://raw.githubusercontent.com/PokeAPI/pokeapi/master/data/v2/csv/pokemon_species.csv",
+    "accessed": "2026-09-03",
+    "usage": "Factual species identifiers / National Dex metadata only; no flavor text bundled."
+  },
+  {
+    "id": "pokemon_winds_waves",
+    "title": "Pokémon Winds and Pokémon Waves official site",
+    "kind": "official_external_factual_registry",
+    "url": "https://windswaves.pokemon.com/en-ca/",
+    "accessed": "2026-09-03",
+    "usage": "Official announced Gen X starter names, types, height, weight, category and Ability."
+  },
+  {
+    "id": "bulbapedia_natdex_2026",
+    "title": "Bulbapedia List of Pokémon by National Pokédex number",
+    "kind": "external_factual_registry",
+    "url": "https://bulbapedia.bulbagarden.net/wiki/List_of_Pok%C3%A9mon_by_National_Pok%C3%A9dex_number",
+    "accessed": "2026-09-03",
+    "usage": "Cross-check of current species count and unnumbered announced Gen X species."
+  }
+]

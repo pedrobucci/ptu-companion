@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ptu-companion.local/schemas/pokedex-flavor-entry-v1.schema.json",
+  "type": "object",
+  "required": [
+    "species_key",
+    "game",
+    "language",
+    "text",
+    "source_id"
+  ],
+  "properties": {
+    "species_key": {
+      "type": "string"
+    },
+    "game": {
+      "type": "string"
+    },
+    "language": {
+      "type": "string"
+    },
+    "text": {
+      "type": "string"
+    },
+    "source_id": {
+      "type": "string"
+    }
+  }
+}

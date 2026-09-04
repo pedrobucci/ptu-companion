@@ -1,0 +1,76 @@
+[
+  {
+    "level": 2,
+    "name": "Adept Skills",
+    "effects": [
+      "Qualify to Rank Up Skills to Adept",
+      "Gain one Skill Edge; it may not itself Rank Up a Skill to Adept"
+    ],
+    "source_page": 19
+  },
+  {
+    "level": 5,
+    "name": "Amateur Trainer",
+    "choice_options": [
+      "Attack/Special Attack bonus Stat Point stream on even levels 6-10 plus +2 retroactive points for levels 2 and 4",
+      "Gain one General Feature for which you qualify"
+    ],
+    "source_page": 19
+  },
+  {
+    "level": 6,
+    "name": "Expert Skills",
+    "effects": [
+      "Qualify to Rank Up Skills to Expert",
+      "Gain one Skill Edge; it may not itself Rank Up a Skill to Expert"
+    ],
+    "source_page": 19
+  },
+  {
+    "level": 10,
+    "name": "Capable Trainer",
+    "choice_options": [
+      "Attack/Special Attack bonus Stat Point stream on even levels 12-20",
+      "Gain two Edges for which you qualify"
+    ],
+    "source_page": 19
+  },
+  {
+    "level": 12,
+    "name": "Master Skills",
+    "effects": [
+      "Qualify to Rank Up Skills to Master",
+      "Gain one Skill Edge; it may not itself Rank Up a Skill to Master"
+    ],
+    "source_page": 19
+  },
+  {
+    "level": 20,
+    "name": "Veteran Trainer",
+    "choice_options": [
+      "Attack/Special Attack bonus Stat Point stream on even levels 22-30",
+      "Gain two Edges for which you qualify"
+    ],
+    "source_page": 19
+  },
+  {
+    "level": 30,
+    "name": "Elite Trainer",
+    "choice_options": [
+      "Attack/Special Attack bonus Stat Point stream on even levels 32-40",
+      "Gain two Edges for which you qualify",
+      "Gain one General Feature for which you qualify"
+    ],
+    "source_page": 19
+  },
+  {
+    "level": 40,
+    "name": "Champion",
+    "choice_options": [
+      "Attack/Special Attack bonus Stat Point stream on even levels 42-50",
+      "Gain two Edges for which you qualify",
+      "Gain one General Feature for which you qualify"
+    ],
+    "source_page": 19
+  }
+]

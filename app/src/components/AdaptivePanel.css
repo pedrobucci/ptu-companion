@@ -1,0 +1,51 @@
+.adaptive-panel {
+  border: none;
+  border-radius: 10px;
+  padding: 0;
+  max-width: min(32em, 90vw);
+  width: 100%;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
+}
+
+.adaptive-panel::backdrop {
+  background: rgba(0, 0, 0, 0.35);
+}
+
+.adaptive-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75em 1em;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.adaptive-panel-header h2 {
+  margin: 0;
+  font-size: 1.05em;
+}
+
+.adaptive-panel-header button {
+  border: none;
+  background: none;
+  font-size: 1.2em;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0.2em 0.4em;
+}
+
+.adaptive-panel-body {
+  padding: 1em;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+/* Narrow viewport (phone-class, e.g. Android): behave like a bottom sheet. */
+@media (max-width: 640px) {
+  .adaptive-panel {
+    position: fixed;
+    inset: auto 0 0 0;
+    max-width: 100%;
+    margin: 0;
+    border-radius: 12px 12px 0 0;
+  }
+}

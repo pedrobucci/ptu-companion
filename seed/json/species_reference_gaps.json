@@ -1,0 +1,815 @@
+[
+  {
+    "kind": "ability",
+    "reference_name": "Hydrate",
+    "count": 2,
+    "species_examples": [
+      "dewgong",
+      "seel"
+    ],
+    "containers": [
+      "ability_slots"
+    ],
+    "status": "manual_review_required"
+  },
+  {
+    "kind": "capability",
+    "reference_name": "Breathless",
+    "count": 36,
+    "species_examples": [
+      "aegislash",
+      "baltoy",
+      "beldum",
+      "bronzong",
+      "bronzor",
+      "claydol",
+      "deoxys-attack-forme",
+      "deoxys-defense-forme",
+      "deoxys-normal-forme",
+      "deoxys-speed-forme",
+      "doublade",
+      "genesect",
+      "golett",
+      "golurk",
+      "honedge",
+      "klang",
+      "klink",
+      "klinklang",
+      "lunatone",
+      "magearna"
+    ],
+    "containers": [
+      "capabilities"
+    ],
+    "status": "manual_review_required"
+  },
+  {
+    "kind": "capability",
+    "reference_name": "Sticky Hold",
+    "count": 20,
+    "species_examples": [
+      "alcremie",
+      "comfey",
+      "cradily",
+      "garbodor",
+      "gastrodon",
+      "goodra",
+      "goomy",
+      "grimer",
+      "grimer-alola",
+      "gulpin",
+      "lileep",
+      "melmetal",
+      "meltan",
+      "milcery",
+      "muk",
+      "muk-alola",
+      "shellos",
+      "sliggoo",
+      "swalot",
+      "trubbish"
+    ],
+    "containers": [
+      "capabilities"
+    ],
+    "status": "manual_review_required"
+  },
+  {
+    "kind": "capability",
+    "reference_name": "Therian Forme",
+    "count": 6,
+    "species_examples": [
+      "landorus-incarnate-forme",
+      "landorus-therian-forme",
+      "thundurus-incarnate-forme",
+      "thundurus-therian-forme",
+      "tornadus-incarnate-forme",
+      "tornadus-therian-forme"
+    ],
+    "containers": [
+      "capabilities"
+    ],
+    "status": "manual_review_required"
+  },
+  {
+    "kind": "capability",
+    "reference_name": "Multiform",
+    "count": 4,
+    "species_examples": [
+      "deoxys-attack-forme",
+      "deoxys-defense-forme",
+      "deoxys-normal-forme",
+      "deoxys-speed-forme"
+    ],
+    "containers": [
+      "capabilities"
+    ],
+    "status": "manual_review_required"
+  },
+  {
+    "kind": "capability",
+    "reference_name": "Dragon Fusion",
+    "count": 3,
+    "species_examples": [
+      "kyurem-black-fusion-forme",
+      "kyurem-normal-forme",
+      "kyurem-white-fusion-forme"
+    ],
+    "containers": [
+      "capabilities"
+    ],
+    "status": "manual_review_required"
+  },
+  {
+    "kind": "capability",
+    "reference_name": "Confined",
+    "count": 2,
+    "species_examples": [
+      "hoopa-confined",
+      "hoopa-unbound"
+    ],
+    "containers": [
+      "capabilities"
+    ],
+    "status": "manual_review_required"
+  },
+  {
+    "kind": "capability",
+    "reference_name": "Origin Forme",
+    "count": 2,
+    "species_examples": [
+      "giratina-altered-forme",
+      "giratina-origin-forme"
+    ],
+    "containers": [
+      "capabilities"
+    ],
+    "status": "manual_review_required"
+  },
+  {
+    "kind": "capability",
+    "reference_name": "Sky Forme",
+    "count": 2,
+    "species_examples": [
+      "shaymin-land-forme",
+      "shaymin-sky-forme"
+    ],
+    "containers": [
+      "capabilities"
+    ],
+    "status": "manual_review_required"
+  },
+  {
+    "kind": "capability",
+    "reference_name": "Alluring (while in rain only)",
+    "count": 1,
+    "species_examples": [
+      "venusaur"
+    ],
+    "containers": [
+      "capabilities"
+    ],
+    "status": "manual_review_required"
+  },
+  {
+    "kind": "capability",
+    "reference_name": "Gather",
+    "count": 1,
+    "species_examples": [
+      "unown"
+    ],
+    "containers": [
+      "capabilities"
+    ],
+    "status": "manual_review_required"
+  },
+  {
+    "kind": "capability",
+    "reference_name": "Heat Rotom: Overland",
+    "count": 1,
+    "species_examples": [
+      "rotom-appliance-forms"
+    ],
+    "containers": [
+      "capabilities"
+    ],
+    "status": "manual_review_required"
+  },
+  {
+    "kind": "capability",
+    "reference_name": "Line Charge",
+    "count": 1,
+    "species_examples": [
+      "linoone"
+    ],
+    "containers": [
+      "capabilities"
+    ],
+    "status": "manual_review_required"
+  },
+  {
+    "kind": "capability",
+    "reference_name": "Linked Evolution (Dark-Type Pokémon)",
+    "count": 1,
+    "species_examples": [
+      "pancham"
+    ],
+    "containers": [
+      "capabilities"
+    ],
+    "status": "manual_review_required"
+  },
+  {
+    "kind": "capability",
+    "reference_name": "Linked Evolution (Karrablast)",
+    "count": 1,
+    "species_examples": [
+      "shelmet"
+    ],
+    "containers": [
+      "capabilities"
+    ],
+    "status": "manual_review_required"
+  },
+  {
+    "kind": "capability",
+    "reference_name": "Linked Evolution (Remoraid)",
+    "count": 1,
+    "species_examples": [
+      "mantyke"
+    ],
+    "containers": [
+      "capabilities"
+    ],
+    "status": "manual_review_required"
+  },
+  {
+    "kind": "capability",
+    "reference_name": "Linked Evolution (Shelmet)",
+    "count": 1,
+    "species_examples": [
+      "karrablast"
+    ],
+    "containers": [
+      "capabilities"
+    ],
+    "status": "manual_review_required"
+  },
+  {
+    "kind": "capability",
+    "reference_name": "Nectar Dancer",
+    "count": 1,
+    "species_examples": [
+      "oricorio"
+    ],
+    "containers": [
+      "capabilities"
+    ],
+    "status": "manual_review_required"
+  },
+  {
+    "kind": "capability",
+    "reference_name": "Power 11 Chilled",
+    "count": 1,
+    "species_examples": [
+      "regice"
+    ],
+    "containers": [
+      "capabilities"
+    ],
+    "status": "manual_review_required"
+  },
+  {
+    "kind": "capability",
+    "reference_name": "Shed Evolution",
+    "count": 1,
+    "species_examples": [
+      "nincada"
+    ],
+    "containers": [
+      "capabilities"
+    ],
+    "status": "manual_review_required"
+  },
+  {
+    "kind": "capability",
+    "reference_name": "Sky 7 (only in strong winds)",
+    "count": 1,
+    "species_examples": [
+      "whimsicott"
+    ],
+    "containers": [
+      "capabilities"
+    ],
+    "status": "manual_review_required"
+  },
+  {
+    "kind": "capability",
+    "reference_name": "Zapper Frost Rotom: Overland",
+    "count": 1,
+    "species_examples": [
+      "rotom-appliance-forms"
+    ],
+    "containers": [
+      "capabilities"
+    ],
+    "status": "manual_review_required"
+  },
+  {
+    "kind": "capability",
+    "reference_name": "Zapper Wash Rotom: Overland",
+    "count": 1,
+    "species_examples": [
+      "rotom-appliance-forms"
+    ],
+    "containers": [
+      "capabilities"
+    ],
+    "status": "manual_review_required"
+  },
+  {
+    "kind": "move",
+    "reference_name": "Tera Blast",
+    "count": 3,
+    "species_examples": [
+      "charcadet",
+      "ceruledge",
+      "kingambit"
+    ],
+    "containers": [
+      "tutor_moves"
+    ],
+    "status": "manual_review_required"
+  },
+  {
+    "kind": "move",
+    "reference_name": "11SunnyDay",
+    "count": 2,
+    "species_examples": [
+      "pidgey--pidgey",
+      "pidgeotto--pidgey"
+    ],
+    "containers": [
+      "tm_moves"
+    ],
+    "status": "manual_review_required"
+  },
+  {
+    "kind": "move",
+    "reference_name": "17Protect",
+    "count": 2,
+    "species_examples": [
+      "pidgey--pidgey",
+      "pidgeotto--pidgey"
+    ],
+    "containers": [
+      "tm_moves"
+    ],
+    "status": "manual_review_required"
+  },
+  {
+    "kind": "move",
+    "reference_name": "18RainDance",
+    "count": 2,
+    "species_examples": [
+      "pidgey--pidgey",
+      "pidgeotto--pidgey"
+    ],
+    "containers": [
+      "tm_moves"
+    ],
+    "status": "manual_review_required"
+  },
+  {
+    "kind": "move",
+    "reference_name": "46Thief",
+    "count": 2,
+    "species_examples": [
+      "pidgey--pidgey",
+      "pidgeotto--pidgey"
+    ],
+    "containers": [
+      "tm_moves"
+    ],
+    "status": "manual_review_required"
+  },
+  {
+    "kind": "move",
+    "reference_name": "51Steel Wing",
+    "count": 2,
+    "species_examples": [
+      "dragapult",
+      "drakloak"
+    ],
+    "containers": [
+      "tm_moves"
+    ],
+    "status": "manual_review_required"
+  },
+  {
+    "kind": "move",
+    "reference_name": "Attack:",
+    "count": 2,
+    "species_examples": [
+      "cleffa",
+      "seedot"
+    ],
+    "containers": [
+      "level_up_moves"
+    ],
+    "status": "manual_review_required"
+  },
+  {
+    "kind": "move",
+    "reference_name": "Defense:",
+    "count": 2,
+    "species_examples": [
+      "cleffa",
+      "seedot"
+    ],
+    "containers": [
+      "level_up_moves"
+    ],
+    "status": "manual_review_required"
+  },
+  {
+    "kind": "move",
+    "reference_name": "Focus Bunch",
+    "count": 2,
+    "species_examples": [
+      "deoxys-normal-forme",
+      "deoxys-speed-forme"
+    ],
+    "containers": [
+      "tutor_moves"
+    ],
+    "status": "manual_review_required"
+  },
+  {
+    "kind": "move",
+    "reference_name": "Mean Look – Normal",
+    "count": 2,
+    "species_examples": [
+      "cofagrigus",
+      "yamask"
+    ],
+    "containers": [
+      "level_up_moves"
+    ],
+    "status": "manual_review_required"
+  },
+  {
+    "kind": "move",
+    "reference_name": "Special Attack:",
+    "count": 2,
+    "species_examples": [
+      "cleffa",
+      "seedot"
+    ],
+    "containers": [
+      "level_up_moves"
+    ],
+    "status": "manual_review_required"
+  },
+  {
+    "kind": "move",
+    "reference_name": "Special Defense:",
+    "count": 2,
+    "species_examples": [
+      "cleffa",
+      "seedot"
+    ],
+    "containers": [
+      "level_up_moves"
+    ],
+    "status": "manual_review_required"
+  },
+  {
+    "kind": "move",
+    "reference_name": "Speed:",
+    "count": 2,
+    "species_examples": [
+      "cleffa",
+      "seedot"
+    ],
+    "containers": [
+      "level_up_moves"
+    ],
+    "status": "manual_review_required"
+  },
+  {
+    "kind": "move",
+    "reference_name": "Telekinesis Ultra Burst Type: Psychic / Dragon Ability: Neuroforce",
+    "count": 2,
+    "species_examples": [
+      "necrozma-dawn-wings",
+      "necrozma-dusk-mane"
+    ],
+    "containers": [
+      "tutor_moves"
+    ],
+    "status": "manual_review_required"
+  },
+  {
+    "kind": "move",
+    "reference_name": "Wide Guard (N) Unofficial PTU 1.05.5 PokéDex. DataNinja's Homebrew",
+    "count": 2,
+    "species_examples": [
+      "guzzlord",
+      "probopass"
+    ],
+    "containers": [
+      "tutor_moves"
+    ],
+    "status": "manual_review_required"
+  },
+  {
+    "kind": "move",
+    "reference_name": "Zen Headbutt Linked Moves Confined Hyperspace Hole Shadow Ball Phantom Force Unofficial PTU 1.05.5 PokéDex. DataNinja's Homebrew. Unbound Hyperspace Fury Dark Pulse Knock Off",
+    "count": 2,
+    "species_examples": [
+      "hoopa-confined",
+      "hoopa-unbound"
+    ],
+    "containers": [
+      "tutor_moves"
+    ],
+    "status": "manual_review_required"
+  },
+  {
+    "kind": "move",
+    "reference_name": "51SteelWing",
+    "count": 1,
+    "species_examples": [
+      "pidgeot--pidgey"
+    ],
+    "containers": [
+      "tm_moves"
+    ],
+    "status": "manual_review_required"
+  },
+  {
+    "kind": "move",
+    "reference_name": "68GigaImpact",
+    "count": 1,
+    "species_examples": [
+      "pidgeot--pidgey"
+    ],
+    "containers": [
+      "tm_moves"
+    ],
+    "status": "manual_review_required"
+  },
+  {
+    "kind": "move",
+    "reference_name": "76Fly",
+    "count": 1,
+    "species_examples": [
+      "pidgeot--pidgey"
+    ],
+    "containers": [
+      "tm_moves"
+    ],
+    "status": "manual_review_required"
+  },
+  {
+    "kind": "move",
+    "reference_name": "Mew can be Tutored to learn any Move",
+    "count": 1,
+    "species_examples": [
+      "mew"
+    ],
+    "containers": [
+      "tutor_moves"
+    ],
+    "status": "manual_review_required"
+  },
+  {
+    "kind": "move",
+    "reference_name": "Mew can learn any TM",
+    "count": 1,
+    "species_examples": [
+      "mew"
+    ],
+    "containers": [
+      "tm_moves"
+    ],
+    "status": "manual_review_required"
+  },
+  {
+    "kind": "move",
+    "reference_name": "Mud-Slap Ground",
+    "count": 1,
+    "species_examples": [
+      "heafinha"
+    ],
+    "containers": [
+      "level_up_moves"
+    ],
+    "status": "manual_review_required"
+  },
+  {
+    "kind": "move",
+    "reference_name": "Muddy Watter",
+    "count": 1,
+    "species_examples": [
+      "marshtomp"
+    ],
+    "containers": [
+      "level_up_moves"
+    ],
+    "status": "manual_review_required"
+  },
+  {
+    "kind": "move",
+    "reference_name": "Poltergeist",
+    "count": 1,
+    "species_examples": [
+      "ceruledge"
+    ],
+    "containers": [
+      "tutor_moves"
+    ],
+    "status": "manual_review_required"
+  },
+  {
+    "kind": "move",
+    "reference_name": "Steel Beam Type: Steel Basic Ability 1: Magnet Pull Adv Ability 1: Frisk Adv Ability 2: Keen Eye Adv Ability 3: Light Metal High Ability: Absorb Force",
+    "count": 1,
+    "species_examples": [
+      "meltan"
+    ],
+    "containers": [
+      "tutor_moves"
+    ],
+    "status": "manual_review_required"
+  },
+  {
+    "kind": "move",
+    "reference_name": "Sweet Scent (N) Breeding Information Gender Ratio: 50% M / 50% F Egg Group: Plant / Dragon",
+    "count": 1,
+    "species_examples": [
+      "appletun"
+    ],
+    "containers": [
+      "tutor_moves"
+    ],
+    "status": "manual_review_required"
+  },
+  {
+    "kind": "move",
+    "reference_name": "Thunder Fang (N) Breeding Information Gender Ratio: 50% M / 50% F Egg Group: Field",
+    "count": 1,
+    "species_examples": [
+      "donphan"
+    ],
+    "containers": [
+      "tutor_moves"
+    ],
+    "status": "manual_review_required"
+  },
+  {
+    "kind": "move",
+    "reference_name": "Thunder Fang (N) Breeding Information Gender Ratio: 50% M / 50% F Egg Group: Field / Dragon",
+    "count": 1,
+    "species_examples": [
+      "arbok"
+    ],
+    "containers": [
+      "tutor_moves"
+    ],
+    "status": "manual_review_required"
+  },
+  {
+    "kind": "move",
+    "reference_name": "Torment (N) Breeding Information Gender Ratio: 0% M / 100% F Egg Group: Dragon / Monster",
+    "count": 1,
+    "species_examples": [
+      "salazzle"
+    ],
+    "containers": [
+      "tutor_moves"
+    ],
+    "status": "manual_review_required"
+  },
+  {
+    "kind": "move",
+    "reference_name": "Tri Attack (N) Breeding Information Gender Ratio: 50% M / 50% F Egg Group: Field",
+    "count": 1,
+    "species_examples": [
+      "dugtrio-alola"
+    ],
+    "containers": [
+      "tutor_moves"
+    ],
+    "status": "manual_review_required"
+  },
+  {
+    "kind": "move",
+    "reference_name": "Water Shuriken (N) Breeding Information Gender Ratio: 50% M / 50% F Egg Group: Bug",
+    "count": 1,
+    "species_examples": [
+      "accelgor"
+    ],
+    "containers": [
+      "tutor_moves"
+    ],
+    "status": "manual_review_required"
+  },
+  {
+    "kind": "move",
+    "reference_name": "Whirlwind (N) Breeding Information Gender Ratio: 50% M / 50% F Egg Group: Water 1 / Bug",
+    "count": 1,
+    "species_examples": [
+      "masquerain"
+    ],
+    "containers": [
+      "tutor_moves"
+    ],
+    "status": "manual_review_required"
+  },
+  {
+    "kind": "move",
+    "reference_name": "Wide Guard (N) Breeding Information Gender Ratio: 50% M / 50% F Egg Group: Monster",
+    "count": 1,
+    "species_examples": [
+      "avalugg"
+    ],
+    "containers": [
+      "tutor_moves"
+    ],
+    "status": "manual_review_required"
+  },
+  {
+    "kind": "move",
+    "reference_name": "Wrap (N) Breeding Information Gender Ratio: 50% M / 50% F Egg Group: Water 1 / Dragon",
+    "count": 1,
+    "species_examples": [
+      "milotic"
+    ],
+    "containers": [
+      "tutor_moves"
+    ],
+    "status": "manual_review_required"
+  },
+  {
+    "kind": "move",
+    "reference_name": "Wring Out (N) Breeding Information Gender Ratio: 50% M / 50% F Egg Group: Indeterminate",
+    "count": 1,
+    "species_examples": [
+      "jellicent"
+    ],
+    "containers": [
+      "tutor_moves"
+    ],
+    "status": "manual_review_required"
+  },
+  {
+    "kind": "move",
+    "reference_name": "Wring Out (N) Breeding Information Gender Ratio: 50% M / 50% F Egg Group: Water 3",
+    "count": 1,
+    "species_examples": [
+      "tentacruel"
+    ],
+    "containers": [
+      "tutor_moves"
+    ],
+    "status": "manual_review_required"
+  },
+  {
+    "kind": "move",
+    "reference_name": "Wring Out (N) Breeding Information Gender Ratio: 87.5% M / 12.5% F Egg Group: Water 3",
+    "count": 1,
+    "species_examples": [
+      "cradily"
+    ],
+    "containers": [
+      "tutor_moves"
+    ],
+    "status": "manual_review_required"
+  },
+  {
+    "kind": "move",
+    "reference_name": "Zap Cannon (N) Breeding Information Gender Ratio: 50% M / 50% F Egg Group: Indeterminate",
+    "count": 1,
+    "species_examples": [
+      "eelektross"
+    ],
+    "containers": [
+      "tutor_moves"
+    ],
+    "status": "manual_review_required"
+  },
+  {
+    "kind": "move",
+    "reference_name": "Zen Headbutt (N) Breeding Information Gender Ratio: 50% M / 50% F Egg Group: Water 2",
+    "count": 1,
+    "species_examples": [
+      "whiscash"
+    ],
+    "containers": [
+      "tutor_moves"
+    ],
+    "status": "manual_review_required"
+  }
+]

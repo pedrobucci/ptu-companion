@@ -1,0 +1,16 @@
+{
+  "max_level": 100,
+  "initial_tutor_points_at_hatching": 1,
+  "stat_points_per_level_up": 1,
+  "ability_unlock_levels": [
+    20,
+    40
+  ],
+  "tutor_point_levels_rule": "Level 5 and every level evenly divisible by 5 thereafter",
+  "check_pokedex_for_moves_and_evolution_each_level_up": true,
+  "source_id": "core",
+  "source_pages": [
+    202,
+    203
+  ]
+}

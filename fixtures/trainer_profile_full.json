@@ -1,0 +1,133 @@
+{
+  "format": "ptu-trainer-fixture",
+  "version": 1,
+  "id": "fixture-trainer-investigator",
+  "name": "Test Investigator",
+  "level": 5,
+  "exp": 0,
+  "money": 5000,
+  "background": {
+    "name": "Former Investigator",
+    "raised_skills": [
+      "perception",
+      "intuition"
+    ],
+    "lowered_skills": [
+      "charm"
+    ]
+  },
+  "skills": {
+    "stealth": {
+      "base_rank": "novice"
+    },
+    "perception": {
+      "base_rank": "adept"
+    },
+    "command": {
+      "base_rank": "novice"
+    }
+  },
+  "gm_grants": [
+    {
+      "id": "grant-stealth",
+      "kind": "fixed",
+      "target": "trainer.skill.stealth.check_bonus",
+      "operation": "add",
+      "value": 2,
+      "permanent": true
+    },
+    {
+      "id": "grant-edge",
+      "kind": "resource",
+      "resource": "edge",
+      "amount": 1,
+      "allocation": {
+        "definition_id": "skill-edge",
+        "parameters": {
+          "skill": "command",
+          "rank": "novice"
+        }
+      }
+    }
+  ],
+  "rosters": [
+    {
+      "id": "roster-personal",
+      "name": "Personal",
+      "active": true,
+      "max_members": 6,
+      "rules": {
+        "combat": true,
+        "personal_use": true,
+        "mount": true
+      }
+    },
+    {
+      "id": "roster-company",
+      "name": "Company",
+      "active": true,
+      "max_members": 6,
+      "rules": {
+        "combat": true,
+        "personal_use": false,
+        "mount": true,
+        "trade": false
+      }
+    }
+  ],
+  "pokemon": [
+    {
+      "id": "pkm-sableye",
+      "species_definition_id": "sableye",
+      "nickname": "Fixture Sableye",
+      "level": 20,
+      "exp": null,
+      "capture_ball_item_id": "poke-ball",
+      "injuries": 0,
+      "held_item_id": null,
+      "storage_state": "carried",
+      "roster_memberships": [
+        "roster-personal",
+        "roster-company"
+      ],
+      "battle_state": {
+        "current_hp": 42,
+        "temporary_hp": 0,
+        "combat_stages": {
+          "attack": 0,
+          "defense": 0,
+          "special_attack": 0,
+          "special_defense": 0,
+          "speed": 0
+        },
+        "statuses": []
+      }
+    }
+  ],
+  "inventory": {
+    "backpack": [
+      {
+        "item_id": "potion",
+        "quantity": 3
+      }
+    ],
+    "storage": [
+      {
+        "item_id": "antidote",
+        "quantity": 2
+      }
+    ],
+    "equipped": {}
+  },
+  "timeline": [
+    {
+      "kind": "level_up",
+      "level": 5,
+      "note": "Fixture milestone"
+    },
+    {
+      "kind": "gm_grant",
+      "grant_id": "grant-edge"
+    }
+  ]
+}

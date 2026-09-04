@@ -1,0 +1,30 @@
+# Reproducible Android (arm64-v8a) release build, isolated from the host.
+# Usage: docker compose run --rm android-builder
+# The resulting APK (+ .sha256) lands in ./dist-android on the host.
+#
+# This builds the APK only. Installing it and running the offline smoke
+# test still happens on the host via adb against a real device/emulator
+# (see app/README.md) — this container does not run an emulator.
+services:
+  android-builder:
+    build:
+      context: .
+      dockerfile: docker/android-builder.Dockerfile
+    volumes:
+      - .:/workspace
+      - ./dist-android:/workspace/dist-android
+      # Isolated from the host's own Windows-built artifacts (target/,
+      # node_modules) so this container never reads or overwrites
+      # platform-incompatible binaries produced by a host build.
+      - cargo-target:/workspace/app/target
+      - node-modules:/workspace/app/node_modules
+      - cargo-registry:/opt/cargo/registry
+      - gradle-cache:/root/.gradle
+      - npm-cache:/root/.npm
+
+volumes:
+  cargo-target:
+  node-modules:
+  cargo-registry:
+  gradle-cache:
+  npm-cache:

@@ -1,0 +1,107 @@
+{
+  "seed_version": "0.3",
+  "sqlite_integrity_check": "ok",
+  "checks": {
+    "sqlite_integrity": "ok",
+    "solar_beam_present": true,
+    "skull_bash_present": true,
+    "damage_db_28": [
+      "8d12+80",
+      130
+    ],
+    "exp_level_100": 20555
+  },
+  "counts": {
+    "move_versions": 769,
+    "moves_canonical": 749,
+    "move_needs_review": 8,
+    "move_fallback_source_records": 9,
+    "ability_versions": 621,
+    "abilities_canonical": 473,
+    "ability_needs_review": 3,
+    "ability_fallback_source_records": 4,
+    "capability_versions": 89,
+    "capabilities_canonical": 89,
+    "features": 999,
+    "feature_needs_review": 32,
+    "edges": 61,
+    "poke_edges": 20,
+    "items": 351,
+    "species_records": 967,
+    "species_enabled": 961,
+    "species_complete": 961,
+    "damage_chart_rows": 28,
+    "type_matchup_rows": 324,
+    "trainer_progression_rows": 50,
+    "pokemon_experience_rows": 100,
+    "reference_alias_resolutions": 1596,
+    "reference_unresolved": 369
+  },
+  "feature_counts_by_source": {
+    "blessed": 174,
+    "classes_extra": 13,
+    "core": 435,
+    "edit": 200,
+    "especial": 14,
+    "got": 85,
+    "may2015": 16,
+    "porygon": 43,
+    "sep2015": 19
+  },
+  "item_counts_by_category": {
+    "Berry": 67,
+    "Combat Item": 6,
+    "Crafting Kit": 6,
+    "Equipment": 34,
+    "Evolution Item": 23,
+    "Food": 4,
+    "HM": 6,
+    "Held Item": 15,
+    "Herb": 6,
+    "Medicine": 24,
+    "Poké Ball": 25,
+    "Pokémon Toolkit": 3,
+    "Refreshment": 5,
+    "Repel": 3,
+    "Special Pokémon Item": 3,
+    "TM": 100,
+    "Travel Gear": 13,
+    "Vitamin": 8
+  },
+  "species_duplicate_ids": [],
+  "known_gaps": [
+    "National Pokédex numbers remain nullable: the supplied PTU Pokédex source is not organized as a directly authoritative National Dex-number field for every extracted record.",
+    "Console-game flavor Pokédex entries are not contained in the supplied PTU PDFs and are intentionally not fabricated in this offline seed.",
+    "Rotom Appliance Forms are split into partial disabled form records because the source states their Move Lists change but the provided form summary does not enumerate the replacement Move Lists.",
+    "Some homebrew/rebalance Features and fallback records remain marked needs_review where PDF layout or non-standard formatting prevents safe full normalization.",
+    "reference_unresolved.json is a review queue; fuzzy suggestions are never silently applied."
+  ],
+  "v0.5_species_enrichment": {
+    "counts": {
+      "species_definitions": 1101,
+      "browse_catalog_rows": 1084,
+      "new_external_stubs": 134,
+      "capability_definitions": 93,
+      "complete_ptu_definitions": 961,
+      "character_creation_enabled": 961,
+      "numbered_catalog_rows": 131,
+      "unnumbered_announced_catalog_rows": 3,
+      "ptu_evolution_families": 552,
+      "ptu_evolution_edges_safe": 493,
+      "ambiguous_evolution_family_reviews": 1,
+      "quarantined_extraction_rows": 166,
+      "species_with_unresolved_moves": 135,
+      "species_with_unresolved_abilities": 43,
+      "species_with_unresolved_capabilities": 85,
+      "defense_profile_rows": 19800,
+      "grouped_reference_gaps": 168
+    },
+    "sqlite_integrity_check": "ok",
+    "known_intentional_gaps": [
+      "National Dex numbers for supplied species #1-890 remain null unless a safe external mapping was available; they are not guessed.",
+      "Console-game Pokédex flavor text is not reproduced because it is not present in the supplied PTU PDFs. The schema/import target is ready for a user-provided flavor pack.",
+      "Externally cataloged official species without supplied PTU mechanics are browseable/editor-ready stubs and disabled for character creation.",
+      "PTU evolution graph edges are emitted only where stage topology is unambiguous; complex branching families are sent to review."
+    ]
+  }
+}

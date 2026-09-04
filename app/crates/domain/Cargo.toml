@@ -1,0 +1,19 @@
+[package]
+name = "ptu-domain"
+version = "0.1.0"
+edition = "2021"
+description = "PTU Companion rules/domain layer, independent of the Tauri/UI runtime."
+
+[lib]
+name = "ptu_domain"
+
+[dependencies]
+chrono = "0.4.45"
+jsonschema = { version = "0.53.0", default-features = false }
+rusqlite = { version = "0.40.2", features = ["bundled"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+sha2 = "0.11.0"
+thiserror = "2.0.20"
+uuid = { version = "1.26.0", features = ["v4"] }
+zip = { version = "8.6.0", default-features = false, features = ["deflate"] }

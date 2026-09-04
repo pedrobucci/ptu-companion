@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "PTU compiled effect",
+  "type": "object",
+  "required": [
+    "kind",
+    "source_text",
+    "confidence"
+  ],
+  "properties": {
+    "kind": {
+      "type": "string"
+    },
+    "source_text": {
+      "type": "string"
+    },
+    "confidence": {
+      "enum": [
+        "high",
+        "medium",
+        "low"
+      ]
+    }
+  },
+  "additionalProperties": true
+}

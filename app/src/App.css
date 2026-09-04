@@ -1,0 +1,438 @@
+:root {
+  font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 400;
+
+  color: #0f0f0f;
+  background-color: #f6f6f6;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
+}
+
+.app-shell {
+  display: flex;
+  min-height: 100vh;
+}
+
+.app-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25em;
+  padding: 1em;
+  min-width: 10em;
+  border-right: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.nav-link {
+  padding: 0.5em 0.75em;
+  border-radius: 8px;
+  color: inherit;
+  text-decoration: none;
+}
+
+.nav-link:hover {
+  background-color: rgba(42, 117, 187, 0.1);
+}
+
+.nav-link-active {
+  background-color: rgba(42, 117, 187, 0.16);
+  border-left: 3px solid var(--ui-primary);
+  padding-left: calc(0.75em - 3px);
+  font-weight: 600;
+}
+
+.app-content {
+  flex: 1;
+  padding: 1.5em 2em;
+  min-width: 0;
+}
+
+h1 {
+  margin-top: 0;
+}
+
+button {
+  cursor: pointer;
+  border-radius: 6px;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  padding: 0.4em 0.8em;
+  background: #fff;
+  color: inherit;
+  font: inherit;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+button:hover:not(:disabled) {
+  border-color: var(--ui-primary);
+}
+button:active:not(:disabled) {
+  background-color: rgba(42, 117, 187, 0.12);
+  border-color: var(--ui-primary-dark);
+}
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+button[type="submit"]:not(:disabled) {
+  border-color: var(--ui-primary);
+  background: var(--ui-primary);
+  color: #fff;
+}
+button[type="submit"]:hover:not(:disabled) {
+  background: var(--ui-primary-dark);
+  border-color: var(--ui-primary-dark);
+}
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+a:focus-visible {
+  outline: 2px solid var(--ui-primary);
+  outline-offset: 2px;
+}
+
+input,
+select {
+  border-radius: 6px;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  padding: 0.35em 0.6em;
+  font: inherit;
+  background: #fff;
+  color: inherit;
+}
+
+/* -------- shared states -------- */
+.state-loading,
+.state-empty {
+  opacity: 0.75;
+}
+.state-error {
+  border: 1px solid var(--ui-danger);
+  background: rgba(238, 21, 21, 0.08);
+  border-radius: 8px;
+  padding: 0.75em 1em;
+}
+.state-error button {
+  margin-top: 0.5em;
+}
+
+/* -------- forms / layout helpers -------- */
+.inline-form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 0.5em 0.8em;
+  margin: 0.75em 0;
+}
+.inline-form label {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.85em;
+  gap: 0.25em;
+}
+.button-row {
+  display: flex;
+  gap: 0.5em;
+  flex-wrap: wrap;
+}
+.checkbox-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3em;
+  margin-right: 0.75em;
+}
+
+.sheet-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(18em, 1fr));
+  gap: 1.5em;
+  align-items: start;
+}
+.sheet-grid section {
+  min-width: 0;
+}
+
+.kv-list {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.2em 0.75em;
+  margin: 0.5em 0;
+}
+.kv-list dt {
+  font-weight: 600;
+  opacity: 0.75;
+}
+.kv-list dd {
+  margin: 0;
+}
+
+.callout-info,
+.callout-warning,
+.callout-danger {
+  border-radius: 6px;
+  padding: 0.5em 0.75em;
+  margin: 0.5em 0;
+  border-left: 3px solid transparent;
+}
+.callout-info {
+  background: rgba(42, 117, 187, 0.1);
+  border-left-color: var(--ui-primary);
+}
+.callout-warning {
+  background: rgba(250, 192, 0, 0.18);
+  border-left-color: var(--hp-warning);
+  color: #6b5100;
+}
+.callout-danger {
+  background: rgba(238, 21, 21, 0.1);
+  border-left-color: var(--ui-danger);
+  color: #8c0e0e;
+}
+
+/* -------- tabs -------- */
+.tab-bar {
+  display: flex;
+  gap: 0.25em;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+  margin-bottom: 1em;
+  flex-wrap: wrap;
+}
+.tab-button {
+  border: none;
+  border-bottom: 2px solid transparent;
+  border-radius: 0;
+  background: none;
+  padding: 0.5em 0.9em;
+}
+.tab-button-active {
+  border-bottom-color: var(--ui-primary);
+  color: var(--ui-primary);
+  font-weight: 600;
+}
+
+/* -------- trainer list -------- */
+.trainer-list {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4em;
+}
+.trainer-list-item {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  text-align: left;
+}
+.trainer-list-meta {
+  opacity: 0.7;
+}
+
+/* -------- pokemon / gm-grant lists -------- */
+.pokemon-list,
+.gm-grant-list {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6em;
+}
+.pokemon-card {
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 8px;
+  padding: 0.6em 0.8em;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4em;
+}
+.pokemon-roster-toggles {
+  display: flex;
+  flex-wrap: wrap;
+}
+.collection-manager {
+  border-top: 1px dashed rgba(0, 0, 0, 0.12);
+  padding-top: 0.4em;
+  margin-top: 0.2em;
+}
+.collection-manager h3 {
+  margin: 0 0 0.2em;
+  font-size: 0.85em;
+  text-transform: capitalize;
+  opacity: 0.8;
+}
+.collection-manager ul {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 0.3em;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2em;
+}
+.collection-manager li {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  font-size: 0.85em;
+}
+.gm-grant-list li {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+}
+
+.money-display {
+  font-size: 1.5em;
+  font-weight: 700;
+}
+
+.shop-list {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4em;
+}
+.shop-list li {
+  display: flex;
+  align-items: center;
+  gap: 0.6em;
+}
+
+/* -------- provenance badge -------- */
+.provenance-badge {
+  border-radius: 999px;
+  font-size: 0.8em;
+  padding: 0.25em 0.7em;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  background: rgba(0, 0, 0, 0.04);
+}
+.provenance-badge-review {
+  background: rgba(221, 150, 0, 0.15);
+  border-color: rgba(221, 150, 0, 0.4);
+}
+.provenance-badge-gm {
+  background: rgba(100, 108, 255, 0.15);
+  border-color: rgba(100, 108, 255, 0.4);
+}
+
+/* -------- content pack table -------- */
+.pack-table {
+  border-collapse: collapse;
+  width: 100%;
+}
+.pack-table th,
+.pack-table td {
+  text-align: left;
+  padding: 0.35em 0.6em;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+/* -------- virtualized search results -------- */
+.virtual-list {
+  height: min(60vh, 500px);
+  overflow-y: auto;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 8px;
+  position: relative;
+}
+.virtual-row {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.75em;
+  padding: 0 0.8em;
+  border: none;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: 0;
+  background: transparent;
+  text-align: left;
+}
+.virtual-row:hover {
+  background: rgba(100, 108, 255, 0.08);
+}
+.search-hit-kind {
+  font-size: 0.75em;
+  text-transform: uppercase;
+  opacity: 0.6;
+  min-width: 5em;
+}
+.search-hit-pack {
+  margin-left: auto;
+  font-size: 0.8em;
+  opacity: 0.6;
+}
+.load-more {
+  width: 100%;
+  border-radius: 0;
+}
+
+.detail-json {
+  white-space: pre-wrap;
+  word-break: break-word;
+  background: rgba(0, 0, 0, 0.04);
+  padding: 0.75em;
+  border-radius: 6px;
+  max-height: 40vh;
+  overflow: auto;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color: #f6f6f6;
+    background-color: #2f2f2f;
+  }
+
+  .app-nav {
+    border-right-color: rgba(255, 255, 255, 0.1);
+  }
+
+  .nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+  }
+
+  button,
+  input,
+  select {
+    background: #1f1f1f;
+    color: #f6f6f6;
+    border-color: rgba(255, 255, 255, 0.2);
+  }
+
+  .tab-bar,
+  .virtual-list,
+  .pokemon-card,
+  .pack-table th,
+  .pack-table td {
+    border-color: rgba(255, 255, 255, 0.12);
+  }
+
+  .detail-json {
+    background: rgba(255, 255, 255, 0.06);
+  }
+}
+
+/* Narrow viewport (Android-class) layout adjustments. */
+@media (max-width: 640px) {
+  .app-shell {
+    flex-direction: column;
+  }
+  .app-nav {
+    flex-direction: row;
+    min-width: 0;
+    border-right: none;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    overflow-x: auto;
+  }
+  .app-content {
+    padding: 1em;
+  }
+  .sheet-grid {
+    grid-template-columns: 1fr;
+  }
+}

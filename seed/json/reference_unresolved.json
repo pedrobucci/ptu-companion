@@ -1,0 +1,1178 @@
+[
+  {
+    "kind": "move",
+    "species_id": "pidgey--pidgey",
+    "container": "tm_moves",
+    "reference": "11SunnyDay",
+    "reference_key": "11sunnyday",
+    "suggestions": []
+  },
+  {
+    "kind": "move",
+    "species_id": "pidgey--pidgey",
+    "container": "tm_moves",
+    "reference": "17Protect",
+    "reference_key": "17protect",
+    "suggestions": []
+  },
+  {
+    "kind": "move",
+    "species_id": "pidgey--pidgey",
+    "container": "tm_moves",
+    "reference": "18RainDance",
+    "reference_key": "18raindance",
+    "suggestions": []
+  },
+  {
+    "kind": "move",
+    "species_id": "pidgey--pidgey",
+    "container": "tm_moves",
+    "reference": "46Thief",
+    "reference_key": "46thief",
+    "suggestions": []
+  },
+  {
+    "kind": "move",
+    "species_id": "pidgeotto--pidgey",
+    "container": "tm_moves",
+    "reference": "11SunnyDay",
+    "reference_key": "11sunnyday",
+    "suggestions": []
+  },
+  {
+    "kind": "move",
+    "species_id": "pidgeotto--pidgey",
+    "container": "tm_moves",
+    "reference": "17Protect",
+    "reference_key": "17protect",
+    "suggestions": []
+  },
+  {
+    "kind": "move",
+    "species_id": "pidgeotto--pidgey",
+    "container": "tm_moves",
+    "reference": "18RainDance",
+    "reference_key": "18raindance",
+    "suggestions": []
+  },
+  {
+    "kind": "move",
+    "species_id": "pidgeotto--pidgey",
+    "container": "tm_moves",
+    "reference": "46Thief",
+    "reference_key": "46thief",
+    "suggestions": []
+  },
+  {
+    "kind": "move",
+    "species_id": "pidgeot--pidgey",
+    "container": "tm_moves",
+    "reference": "51SteelWing",
+    "reference_key": "51steelwing",
+    "suggestions": []
+  },
+  {
+    "kind": "move",
+    "species_id": "pidgeot--pidgey",
+    "container": "tm_moves",
+    "reference": "68GigaImpact",
+    "reference_key": "68gigaimpact",
+    "suggestions": []
+  },
+  {
+    "kind": "move",
+    "species_id": "pidgeot--pidgey",
+    "container": "tm_moves",
+    "reference": "76Fly",
+    "reference_key": "76fly",
+    "suggestions": []
+  },
+  {
+    "kind": "move",
+    "species_id": "charcadet",
+    "container": "tutor_moves",
+    "reference": "Tera Blast",
+    "reference_key": "terablast",
+    "suggestions": []
+  },
+  {
+    "kind": "move",
+    "species_id": "ceruledge",
+    "container": "tutor_moves",
+    "reference": "Tera Blast",
+    "reference_key": "terablast",
+    "suggestions": []
+  },
+  {
+    "kind": "move",
+    "species_id": "ceruledge",
+    "container": "tutor_moves",
+    "reference": "Poltergeist",
+    "reference_key": "poltergeist",
+    "suggestions": []
+  },
+  {
+    "kind": "move",
+    "species_id": "kingambit",
+    "container": "tutor_moves",
+    "reference": "Tera Blast",
+    "reference_key": "terablast",
+    "suggestions": []
+  },
+  {
+    "kind": "move",
+    "species_id": "accelgor",
+    "container": "tutor_moves",
+    "reference": "Water Shuriken (N) Breeding Information Gender Ratio: 50% M / 50% F Egg Group: Bug",
+    "reference_key": "watershurikennbreedinginformationgenderratio50m50fegggroupbug",
+    "suggestions": []
+  },
+  {
+    "kind": "capability",
+    "species_id": "aegislash",
+    "container": "capabilities",
+    "reference": "Breathless",
+    "reference_key": "breathless",
+    "suggestions": []
+  },
+  {
+    "kind": "capability",
+    "species_id": "alcremie",
+    "container": "capabilities",
+    "reference": "Sticky Hold",
+    "reference_key": "stickyhold",
+    "suggestions": []
+  },
+  {
+    "kind": "move",
+    "species_id": "appletun",
+    "container": "tutor_moves",
+    "reference": "Sweet Scent (N) Breeding Information Gender Ratio: 50% M / 50% F Egg Group: Plant / Dragon",
+    "reference_key": "sweetscentnbreedinginformationgenderratio50m50fegggroupplantdragon",
+    "suggestions": []
+  },
+  {
+    "kind": "move",
+    "species_id": "arbok",
+    "container": "tutor_moves",
+    "reference": "Thunder Fang (N) Breeding Information Gender Ratio: 50% M / 50% F Egg Group: Field / Dragon",
+    "reference_key": "thunderfangnbreedinginformationgenderratio50m50fegggroupfielddragon",
+    "suggestions": []
+  },
+  {
+    "kind": "move",
+    "species_id": "avalugg",
+    "container": "tutor_moves",
+    "reference": "Wide Guard (N) Breeding Information Gender Ratio: 50% M / 50% F Egg Group: Monster",
+    "reference_key": "wideguardnbreedinginformationgenderratio50m50fegggroupmonster",
+    "suggestions": []
+  },
+  {
+    "kind": "capability",
+    "species_id": "baltoy",
+    "container": "capabilities",
+    "reference": "Breathless",
+    "reference_key": "breathless",
+    "suggestions": []
+  },
+  {
+    "kind": "capability",
+    "species_id": "beldum",
+    "container": "capabilities",
+    "reference": "Breathless",
+    "reference_key": "breathless",
+    "suggestions": []
+  },
+  {
+    "kind": "capability",
+    "species_id": "bronzong",
+    "container": "capabilities",
+    "reference": "Breathless",
+    "reference_key": "breathless",
+    "suggestions": []
+  },
+  {
+    "kind": "capability",
+    "species_id": "bronzor",
+    "container": "capabilities",
+    "reference": "Breathless",
+    "reference_key": "breathless",
+    "suggestions": []
+  },
+  {
+    "kind": "capability",
+    "species_id": "claydol",
+    "container": "capabilities",
+    "reference": "Breathless",
+    "reference_key": "breathless",
+    "suggestions": []
+  },
+  {
+    "kind": "move",
+    "species_id": "cleffa",
+    "container": "level_up_moves",
+    "reference": "Attack:",
+    "reference_key": "attack",
+    "suggestions": []
+  },
+  {
+    "kind": "move",
+    "species_id": "cleffa",
+    "container": "level_up_moves",
+    "reference": "Defense:",
+    "reference_key": "defense",
+    "suggestions": []
+  },
+  {
+    "kind": "move",
+    "species_id": "cleffa",
+    "container": "level_up_moves",
+    "reference": "Special Attack:",
+    "reference_key": "specialattack",
+    "suggestions": []
+  },
+  {
+    "kind": "move",
+    "species_id": "cleffa",
+    "container": "level_up_moves",
+    "reference": "Special Defense:",
+    "reference_key": "specialdefense",
+    "suggestions": []
+  },
+  {
+    "kind": "move",
+    "species_id": "cleffa",
+    "container": "level_up_moves",
+    "reference": "Speed:",
+    "reference_key": "speed",
+    "suggestions": []
+  },
+  {
+    "kind": "move",
+    "species_id": "cofagrigus",
+    "container": "level_up_moves",
+    "reference": "Mean Look – Normal",
+    "reference_key": "meanlooknormal",
+    "suggestions": []
+  },
+  {
+    "kind": "capability",
+    "species_id": "comfey",
+    "container": "capabilities",
+    "reference": "Sticky Hold",
+    "reference_key": "stickyhold",
+    "suggestions": []
+  },
+  {
+    "kind": "move",
+    "species_id": "cradily",
+    "container": "tutor_moves",
+    "reference": "Wring Out (N) Breeding Information Gender Ratio: 87.5% M / 12.5% F Egg Group: Water 3",
+    "reference_key": "wringoutnbreedinginformationgenderratio875m125fegggroupwater3",
+    "suggestions": []
+  },
+  {
+    "kind": "capability",
+    "species_id": "cradily",
+    "container": "capabilities",
+    "reference": "Sticky Hold",
+    "reference_key": "stickyhold",
+    "suggestions": []
+  },
+  {
+    "kind": "capability",
+    "species_id": "deoxys-attack-forme",
+    "container": "capabilities",
+    "reference": "Breathless",
+    "reference_key": "breathless",
+    "suggestions": []
+  },
+  {
+    "kind": "capability",
+    "species_id": "deoxys-attack-forme",
+    "container": "capabilities",
+    "reference": "Multiform",
+    "reference_key": "multiform",
+    "suggestions": []
+  },
+  {
+    "kind": "capability",
+    "species_id": "deoxys-defense-forme",
+    "container": "capabilities",
+    "reference": "Breathless",
+    "reference_key": "breathless",
+    "suggestions": []
+  },
+  {
+    "kind": "capability",
+    "species_id": "deoxys-defense-forme",
+    "container": "capabilities",
+    "reference": "Multiform",
+    "reference_key": "multiform",
+    "suggestions": []
+  },
+  {
+    "kind": "move",
+    "species_id": "deoxys-normal-forme",
+    "container": "tutor_moves",
+    "reference": "Focus Bunch",
+    "reference_key": "focusbunch",
+    "suggestions": []
+  },
+  {
+    "kind": "capability",
+    "species_id": "deoxys-normal-forme",
+    "container": "capabilities",
+    "reference": "Breathless",
+    "reference_key": "breathless",
+    "suggestions": []
+  },
+  {
+    "kind": "capability",
+    "species_id": "deoxys-normal-forme",
+    "container": "capabilities",
+    "reference": "Multiform",
+    "reference_key": "multiform",
+    "suggestions": []
+  },
+  {
+    "kind": "move",
+    "species_id": "deoxys-speed-forme",
+    "container": "tutor_moves",
+    "reference": "Focus Bunch",
+    "reference_key": "focusbunch",
+    "suggestions": []
+  },
+  {
+    "kind": "capability",
+    "species_id": "deoxys-speed-forme",
+    "container": "capabilities",
+    "reference": "Breathless",
+    "reference_key": "breathless",
+    "suggestions": []
+  },
+  {
+    "kind": "capability",
+    "species_id": "deoxys-speed-forme",
+    "container": "capabilities",
+    "reference": "Multiform",
+    "reference_key": "multiform",
+    "suggestions": []
+  },
+  {
+    "kind": "ability",
+    "species_id": "dewgong",
+    "container": "ability_slots",
+    "reference": "Hydrate",
+    "reference_key": "hydrate",
+    "suggestions": []
+  },
+  {
+    "kind": "move",
+    "species_id": "donphan",
+    "container": "tutor_moves",
+    "reference": "Thunder Fang (N) Breeding Information Gender Ratio: 50% M / 50% F Egg Group: Field",
+    "reference_key": "thunderfangnbreedinginformationgenderratio50m50fegggroupfield",
+    "suggestions": []
+  },
+  {
+    "kind": "capability",
+    "species_id": "doublade",
+    "container": "capabilities",
+    "reference": "Breathless",
+    "reference_key": "breathless",
+    "suggestions": []
+  },
+  {
+    "kind": "move",
+    "species_id": "dragapult",
+    "container": "tm_moves",
+    "reference": "51Steel Wing",
+    "reference_key": "51steelwing",
+    "suggestions": []
+  },
+  {
+    "kind": "move",
+    "species_id": "drakloak",
+    "container": "tm_moves",
+    "reference": "51Steel Wing",
+    "reference_key": "51steelwing",
+    "suggestions": []
+  },
+  {
+    "kind": "move",
+    "species_id": "dugtrio-alola",
+    "container": "tutor_moves",
+    "reference": "Tri Attack (N) Breeding Information Gender Ratio: 50% M / 50% F Egg Group: Field",
+    "reference_key": "triattacknbreedinginformationgenderratio50m50fegggroupfield",
+    "suggestions": []
+  },
+  {
+    "kind": "move",
+    "species_id": "eelektross",
+    "container": "tutor_moves",
+    "reference": "Zap Cannon (N) Breeding Information Gender Ratio: 50% M / 50% F Egg Group: Indeterminate",
+    "reference_key": "zapcannonnbreedinginformationgenderratio50m50fegggroupindeterminate",
+    "suggestions": []
+  },
+  {
+    "kind": "capability",
+    "species_id": "garbodor",
+    "container": "capabilities",
+    "reference": "Sticky Hold",
+    "reference_key": "stickyhold",
+    "suggestions": []
+  },
+  {
+    "kind": "capability",
+    "species_id": "gastrodon",
+    "container": "capabilities",
+    "reference": "Sticky Hold",
+    "reference_key": "stickyhold",
+    "suggestions": []
+  },
+  {
+    "kind": "capability",
+    "species_id": "genesect",
+    "container": "capabilities",
+    "reference": "Breathless",
+    "reference_key": "breathless",
+    "suggestions": []
+  },
+  {
+    "kind": "capability",
+    "species_id": "giratina-altered-forme",
+    "container": "capabilities",
+    "reference": "Origin Forme",
+    "reference_key": "originforme",
+    "suggestions": []
+  },
+  {
+    "kind": "capability",
+    "species_id": "giratina-origin-forme",
+    "container": "capabilities",
+    "reference": "Origin Forme",
+    "reference_key": "originforme",
+    "suggestions": []
+  },
+  {
+    "kind": "capability",
+    "species_id": "golett",
+    "container": "capabilities",
+    "reference": "Breathless",
+    "reference_key": "breathless",
+    "suggestions": []
+  },
+  {
+    "kind": "capability",
+    "species_id": "golurk",
+    "container": "capabilities",
+    "reference": "Breathless",
+    "reference_key": "breathless",
+    "suggestions": []
+  },
+  {
+    "kind": "capability",
+    "species_id": "goodra",
+    "container": "capabilities",
+    "reference": "Sticky Hold",
+    "reference_key": "stickyhold",
+    "suggestions": []
+  },
+  {
+    "kind": "capability",
+    "species_id": "goomy",
+    "container": "capabilities",
+    "reference": "Sticky Hold",
+    "reference_key": "stickyhold",
+    "suggestions": []
+  },
+  {
+    "kind": "capability",
+    "species_id": "grimer",
+    "container": "capabilities",
+    "reference": "Sticky Hold",
+    "reference_key": "stickyhold",
+    "suggestions": []
+  },
+  {
+    "kind": "capability",
+    "species_id": "grimer-alola",
+    "container": "capabilities",
+    "reference": "Sticky Hold",
+    "reference_key": "stickyhold",
+    "suggestions": []
+  },
+  {
+    "kind": "capability",
+    "species_id": "gulpin",
+    "container": "capabilities",
+    "reference": "Sticky Hold",
+    "reference_key": "stickyhold",
+    "suggestions": []
+  },
+  {
+    "kind": "move",
+    "species_id": "guzzlord",
+    "container": "tutor_moves",
+    "reference": "Wide Guard (N) Unofficial PTU 1.05.5 PokéDex. DataNinja's Homebrew",
+    "reference_key": "wideguardnunofficialptu1055pokedexdataninjashomebrew",
+    "suggestions": []
+  },
+  {
+    "kind": "move",
+    "species_id": "heafinha",
+    "container": "level_up_moves",
+    "reference": "Mud-Slap Ground",
+    "reference_key": "mudslapground",
+    "suggestions": []
+  },
+  {
+    "kind": "capability",
+    "species_id": "honedge",
+    "container": "capabilities",
+    "reference": "Breathless",
+    "reference_key": "breathless",
+    "suggestions": []
+  },
+  {
+    "kind": "move",
+    "species_id": "hoopa-confined",
+    "container": "tutor_moves",
+    "reference": "Zen Headbutt Linked Moves Confined Hyperspace Hole Shadow Ball Phantom Force Unofficial PTU 1.05.5 PokéDex. DataNinja's Homebrew. Unbound Hyperspace Fury Dark Pulse Knock Off",
+    "reference_key": "zenheadbuttlinkedmovesconfinedhyperspaceholeshadowballphantomforceunofficialptu1055pokedexdataninjashomebrewunboundhyperspacefurydarkpulseknockoff",
+    "suggestions": []
+  },
+  {
+    "kind": "capability",
+    "species_id": "hoopa-confined",
+    "container": "capabilities",
+    "reference": "Confined",
+    "reference_key": "confined",
+    "suggestions": []
+  },
+  {
+    "kind": "move",
+    "species_id": "hoopa-unbound",
+    "container": "tutor_moves",
+    "reference": "Zen Headbutt Linked Moves Confined Hyperspace Hole Shadow Ball Phantom Force Unofficial PTU 1.05.5 PokéDex. DataNinja's Homebrew. Unbound Hyperspace Fury Dark Pulse Knock Off",
+    "reference_key": "zenheadbuttlinkedmovesconfinedhyperspaceholeshadowballphantomforceunofficialptu1055pokedexdataninjashomebrewunboundhyperspacefurydarkpulseknockoff",
+    "suggestions": []
+  },
+  {
+    "kind": "capability",
+    "species_id": "hoopa-unbound",
+    "container": "capabilities",
+    "reference": "Confined",
+    "reference_key": "confined",
+    "suggestions": []
+  },
+  {
+    "kind": "move",
+    "species_id": "jellicent",
+    "container": "tutor_moves",
+    "reference": "Wring Out (N) Breeding Information Gender Ratio: 50% M / 50% F Egg Group: Indeterminate",
+    "reference_key": "wringoutnbreedinginformationgenderratio50m50fegggroupindeterminate",
+    "suggestions": []
+  },
+  {
+    "kind": "capability",
+    "species_id": "karrablast",
+    "container": "capabilities",
+    "reference": "Linked Evolution (Shelmet)",
+    "reference_key": "linkedevolutionshelmet",
+    "suggestions": []
+  },
+  {
+    "kind": "capability",
+    "species_id": "klang",
+    "container": "capabilities",
+    "reference": "Breathless",
+    "reference_key": "breathless",
+    "suggestions": []
+  },
+  {
+    "kind": "capability",
+    "species_id": "klink",
+    "container": "capabilities",
+    "reference": "Breathless",
+    "reference_key": "breathless",
+    "suggestions": []
+  },
+  {
+    "kind": "capability",
+    "species_id": "klinklang",
+    "container": "capabilities",
+    "reference": "Breathless",
+    "reference_key": "breathless",
+    "suggestions": []
+  },
+  {
+    "kind": "capability",
+    "species_id": "kyurem-black-fusion-forme",
+    "container": "capabilities",
+    "reference": "Dragon Fusion",
+    "reference_key": "dragonfusion",
+    "suggestions": []
+  },
+  {
+    "kind": "capability",
+    "species_id": "kyurem-normal-forme",
+    "container": "capabilities",
+    "reference": "Dragon Fusion",
+    "reference_key": "dragonfusion",
+    "suggestions": []
+  },
+  {
+    "kind": "capability",
+    "species_id": "kyurem-white-fusion-forme",
+    "container": "capabilities",
+    "reference": "Dragon Fusion",
+    "reference_key": "dragonfusion",
+    "suggestions": []
+  },
+  {
+    "kind": "capability",
+    "species_id": "landorus-incarnate-forme",
+    "container": "capabilities",
+    "reference": "Therian Forme",
+    "reference_key": "therianforme",
+    "suggestions": []
+  },
+  {
+    "kind": "capability",
+    "species_id": "landorus-therian-forme",
+    "container": "capabilities",
+    "reference": "Therian Forme",
+    "reference_key": "therianforme",
+    "suggestions": []
+  },
+  {
+    "kind": "capability",
+    "species_id": "lileep",
+    "container": "capabilities",
+    "reference": "Sticky Hold",
+    "reference_key": "stickyhold",
+    "suggestions": []
+  },
+  {
+    "kind": "capability",
+    "species_id": "linoone",
+    "container": "capabilities",
+    "reference": "Line Charge",
+    "reference_key": "linecharge",
+    "suggestions": []
+  },
+  {
+    "kind": "capability",
+    "species_id": "lunatone",
+    "container": "capabilities",
+    "reference": "Breathless",
+    "reference_key": "breathless",
+    "suggestions": []
+  },
+  {
+    "kind": "capability",
+    "species_id": "magearna",
+    "container": "capabilities",
+    "reference": "Breathless",
+    "reference_key": "breathless",
+    "suggestions": []
+  },
+  {
+    "kind": "capability",
+    "species_id": "magnemite",
+    "container": "capabilities",
+    "reference": "Breathless",
+    "reference_key": "breathless",
+    "suggestions": []
+  },
+  {
+    "kind": "capability",
+    "species_id": "magneton",
+    "container": "capabilities",
+    "reference": "Breathless",
+    "reference_key": "breathless",
+    "suggestions": []
+  },
+  {
+    "kind": "capability",
+    "species_id": "magnezone",
+    "container": "capabilities",
+    "reference": "Breathless",
+    "reference_key": "breathless",
+    "suggestions": []
+  },
+  {
+    "kind": "capability",
+    "species_id": "mantyke",
+    "container": "capabilities",
+    "reference": "Linked Evolution (Remoraid)",
+    "reference_key": "linkedevolutionremoraid",
+    "suggestions": []
+  },
+  {
+    "kind": "move",
+    "species_id": "marshtomp",
+    "container": "level_up_moves",
+    "reference": "Muddy Watter",
+    "reference_key": "muddywatter",
+    "suggestions": []
+  },
+  {
+    "kind": "move",
+    "species_id": "masquerain",
+    "container": "tutor_moves",
+    "reference": "Whirlwind (N) Breeding Information Gender Ratio: 50% M / 50% F Egg Group: Water 1 / Bug",
+    "reference_key": "whirlwindnbreedinginformationgenderratio50m50fegggroupwater1bug",
+    "suggestions": []
+  },
+  {
+    "kind": "capability",
+    "species_id": "melmetal",
+    "container": "capabilities",
+    "reference": "Sticky Hold",
+    "reference_key": "stickyhold",
+    "suggestions": []
+  },
+  {
+    "kind": "move",
+    "species_id": "meltan",
+    "container": "tutor_moves",
+    "reference": "Steel Beam Type: Steel Basic Ability 1: Magnet Pull Adv Ability 1: Frisk Adv Ability 2: Keen Eye Adv Ability 3: Light Metal High Ability: Absorb Force",
+    "reference_key": "steelbeamtypesteelbasicability1magnetpulladvability1friskadvability2keeneyeadvability3lightmetalhighabilityabsorbforce",
+    "suggestions": []
+  },
+  {
+    "kind": "capability",
+    "species_id": "meltan",
+    "container": "capabilities",
+    "reference": "Sticky Hold",
+    "reference_key": "stickyhold",
+    "suggestions": []
+  },
+  {
+    "kind": "capability",
+    "species_id": "metagross",
+    "container": "capabilities",
+    "reference": "Breathless",
+    "reference_key": "breathless",
+    "suggestions": []
+  },
+  {
+    "kind": "capability",
+    "species_id": "metang",
+    "container": "capabilities",
+    "reference": "Breathless",
+    "reference_key": "breathless",
+    "suggestions": []
+  },
+  {
+    "kind": "move",
+    "species_id": "mew",
+    "container": "tm_moves",
+    "reference": "Mew can learn any TM",
+    "reference_key": "mewcanlearnanytm",
+    "suggestions": []
+  },
+  {
+    "kind": "move",
+    "species_id": "mew",
+    "container": "tutor_moves",
+    "reference": "Mew can be Tutored to learn any Move",
+    "reference_key": "mewcanbetutoredtolearnanymove",
+    "suggestions": []
+  },
+  {
+    "kind": "capability",
+    "species_id": "milcery",
+    "container": "capabilities",
+    "reference": "Sticky Hold",
+    "reference_key": "stickyhold",
+    "suggestions": []
+  },
+  {
+    "kind": "move",
+    "species_id": "milotic",
+    "container": "tutor_moves",
+    "reference": "Wrap (N) Breeding Information Gender Ratio: 50% M / 50% F Egg Group: Water 1 / Dragon",
+    "reference_key": "wrapnbreedinginformationgenderratio50m50fegggroupwater1dragon",
+    "suggestions": []
+  },
+  {
+    "kind": "capability",
+    "species_id": "minior-core",
+    "container": "capabilities",
+    "reference": "Breathless",
+    "reference_key": "breathless",
+    "suggestions": []
+  },
+  {
+    "kind": "capability",
+    "species_id": "minior-meteor",
+    "container": "capabilities",
+    "reference": "Breathless",
+    "reference_key": "breathless",
+    "suggestions": []
+  },
+  {
+    "kind": "capability",
+    "species_id": "muk",
+    "container": "capabilities",
+    "reference": "Sticky Hold",
+    "reference_key": "stickyhold",
+    "suggestions": []
+  },
+  {
+    "kind": "capability",
+    "species_id": "muk-alola",
+    "container": "capabilities",
+    "reference": "Sticky Hold",
+    "reference_key": "stickyhold",
+    "suggestions": []
+  },
+  {
+    "kind": "move",
+    "species_id": "necrozma-dawn-wings",
+    "container": "tutor_moves",
+    "reference": "Telekinesis Ultra Burst Type: Psychic / Dragon Ability: Neuroforce",
+    "reference_key": "telekinesisultrabursttypepsychicdragonabilityneuroforce",
+    "suggestions": []
+  },
+  {
+    "kind": "move",
+    "species_id": "necrozma-dusk-mane",
+    "container": "tutor_moves",
+    "reference": "Telekinesis Ultra Burst Type: Psychic / Dragon Ability: Neuroforce",
+    "reference_key": "telekinesisultrabursttypepsychicdragonabilityneuroforce",
+    "suggestions": []
+  },
+  {
+    "kind": "capability",
+    "species_id": "nincada",
+    "container": "capabilities",
+    "reference": "Shed Evolution",
+    "reference_key": "shedevolution",
+    "suggestions": []
+  },
+  {
+    "kind": "capability",
+    "species_id": "oricorio",
+    "container": "capabilities",
+    "reference": "Nectar Dancer",
+    "reference_key": "nectardancer",
+    "suggestions": []
+  },
+  {
+    "kind": "capability",
+    "species_id": "pancham",
+    "container": "capabilities",
+    "reference": "Linked Evolution (Dark-Type Pokémon)",
+    "reference_key": "linkedevolutiondarktypepokemon",
+    "suggestions": []
+  },
+  {
+    "kind": "capability",
+    "species_id": "porygon",
+    "container": "capabilities",
+    "reference": "Breathless",
+    "reference_key": "breathless",
+    "suggestions": []
+  },
+  {
+    "kind": "capability",
+    "species_id": "porygon-z",
+    "container": "capabilities",
+    "reference": "Breathless",
+    "reference_key": "breathless",
+    "suggestions": []
+  },
+  {
+    "kind": "capability",
+    "species_id": "porygon2",
+    "container": "capabilities",
+    "reference": "Breathless",
+    "reference_key": "breathless",
+    "suggestions": []
+  },
+  {
+    "kind": "move",
+    "species_id": "probopass",
+    "container": "tutor_moves",
+    "reference": "Wide Guard (N) Unofficial PTU 1.05.5 PokéDex. DataNinja's Homebrew",
+    "reference_key": "wideguardnunofficialptu1055pokedexdataninjashomebrew",
+    "suggestions": []
+  },
+  {
+    "kind": "capability",
+    "species_id": "regice",
+    "container": "capabilities",
+    "reference": "Power 11 Chilled",
+    "reference_key": "power11chilled",
+    "suggestions": []
+  },
+  {
+    "kind": "capability",
+    "species_id": "regice",
+    "container": "capabilities",
+    "reference": "Breathless",
+    "reference_key": "breathless",
+    "suggestions": []
+  },
+  {
+    "kind": "capability",
+    "species_id": "regigigas",
+    "container": "capabilities",
+    "reference": "Breathless",
+    "reference_key": "breathless",
+    "suggestions": []
+  },
+  {
+    "kind": "capability",
+    "species_id": "regirock",
+    "container": "capabilities",
+    "reference": "Breathless",
+    "reference_key": "breathless",
+    "suggestions": []
+  },
+  {
+    "kind": "capability",
+    "species_id": "registeel",
+    "container": "capabilities",
+    "reference": "Breathless",
+    "reference_key": "breathless",
+    "suggestions": []
+  },
+  {
+    "kind": "capability",
+    "species_id": "rotom-appliance-forms",
+    "container": "capabilities",
+    "reference": "Heat Rotom: Overland",
+    "reference_key": "heatrotomoverland",
+    "suggestions": []
+  },
+  {
+    "kind": "capability",
+    "species_id": "rotom-appliance-forms",
+    "container": "capabilities",
+    "reference": "Zapper Wash Rotom: Overland",
+    "reference_key": "zapperwashrotomoverland",
+    "suggestions": []
+  },
+  {
+    "kind": "capability",
+    "species_id": "rotom-appliance-forms",
+    "container": "capabilities",
+    "reference": "Zapper Frost Rotom: Overland",
+    "reference_key": "zapperfrostrotomoverland",
+    "suggestions": []
+  },
+  {
+    "kind": "move",
+    "species_id": "salazzle",
+    "container": "tutor_moves",
+    "reference": "Torment (N) Breeding Information Gender Ratio: 0% M / 100% F Egg Group: Dragon / Monster",
+    "reference_key": "tormentnbreedinginformationgenderratio0m100fegggroupdragonmonster",
+    "suggestions": []
+  },
+  {
+    "kind": "move",
+    "species_id": "seedot",
+    "container": "level_up_moves",
+    "reference": "Attack:",
+    "reference_key": "attack",
+    "suggestions": []
+  },
+  {
+    "kind": "move",
+    "species_id": "seedot",
+    "container": "level_up_moves",
+    "reference": "Defense:",
+    "reference_key": "defense",
+    "suggestions": []
+  },
+  {
+    "kind": "move",
+    "species_id": "seedot",
+    "container": "level_up_moves",
+    "reference": "Special Attack:",
+    "reference_key": "specialattack",
+    "suggestions": []
+  },
+  {
+    "kind": "move",
+    "species_id": "seedot",
+    "container": "level_up_moves",
+    "reference": "Special Defense:",
+    "reference_key": "specialdefense",
+    "suggestions": []
+  },
+  {
+    "kind": "move",
+    "species_id": "seedot",
+    "container": "level_up_moves",
+    "reference": "Speed:",
+    "reference_key": "speed",
+    "suggestions": []
+  },
+  {
+    "kind": "ability",
+    "species_id": "seel",
+    "container": "ability_slots",
+    "reference": "Hydrate",
+    "reference_key": "hydrate",
+    "suggestions": []
+  },
+  {
+    "kind": "capability",
+    "species_id": "shaymin-land-forme",
+    "container": "capabilities",
+    "reference": "Sky Forme",
+    "reference_key": "skyforme",
+    "suggestions": []
+  },
+  {
+    "kind": "capability",
+    "species_id": "shaymin-sky-forme",
+    "container": "capabilities",
+    "reference": "Sky Forme",
+    "reference_key": "skyforme",
+    "suggestions": []
+  },
+  {
+    "kind": "capability",
+    "species_id": "shedinja",
+    "container": "capabilities",
+    "reference": "Breathless",
+    "reference_key": "breathless",
+    "suggestions": []
+  },
+  {
+    "kind": "capability",
+    "species_id": "shellos",
+    "container": "capabilities",
+    "reference": "Sticky Hold",
+    "reference_key": "stickyhold",
+    "suggestions": []
+  },
+  {
+    "kind": "capability",
+    "species_id": "shelmet",
+    "container": "capabilities",
+    "reference": "Linked Evolution (Karrablast)",
+    "reference_key": "linkedevolutionkarrablast",
+    "suggestions": []
+  },
+  {
+    "kind": "capability",
+    "species_id": "sliggoo",
+    "container": "capabilities",
+    "reference": "Sticky Hold",
+    "reference_key": "stickyhold",
+    "suggestions": []
+  },
+  {
+    "kind": "capability",
+    "species_id": "solrock",
+    "container": "capabilities",
+    "reference": "Breathless",
+    "reference_key": "breathless",
+    "suggestions": []
+  },
+  {
+    "kind": "capability",
+    "species_id": "swalot",
+    "container": "capabilities",
+    "reference": "Sticky Hold",
+    "reference_key": "stickyhold",
+    "suggestions": []
+  },
+  {
+    "kind": "move",
+    "species_id": "tentacruel",
+    "container": "tutor_moves",
+    "reference": "Wring Out (N) Breeding Information Gender Ratio: 50% M / 50% F Egg Group: Water 3",
+    "reference_key": "wringoutnbreedinginformationgenderratio50m50fegggroupwater3",
+    "suggestions": []
+  },
+  {
+    "kind": "capability",
+    "species_id": "thundurus-incarnate-forme",
+    "container": "capabilities",
+    "reference": "Therian Forme",
+    "reference_key": "therianforme",
+    "suggestions": []
+  },
+  {
+    "kind": "capability",
+    "species_id": "thundurus-therian-forme",
+    "container": "capabilities",
+    "reference": "Therian Forme",
+    "reference_key": "therianforme",
+    "suggestions": []
+  },
+  {
+    "kind": "capability",
+    "species_id": "tornadus-incarnate-forme",
+    "container": "capabilities",
+    "reference": "Therian Forme",
+    "reference_key": "therianforme",
+    "suggestions": []
+  },
+  {
+    "kind": "capability",
+    "species_id": "tornadus-therian-forme",
+    "container": "capabilities",
+    "reference": "Therian Forme",
+    "reference_key": "therianforme",
+    "suggestions": []
+  },
+  {
+    "kind": "capability",
+    "species_id": "trubbish",
+    "container": "capabilities",
+    "reference": "Sticky Hold",
+    "reference_key": "stickyhold",
+    "suggestions": []
+  },
+  {
+    "kind": "capability",
+    "species_id": "unown",
+    "container": "capabilities",
+    "reference": "Gather",
+    "reference_key": "gather",
+    "suggestions": []
+  },
+  {
+    "kind": "capability",
+    "species_id": "venusaur",
+    "container": "capabilities",
+    "reference": "Alluring (while in rain only)",
+    "reference_key": "alluringwhileinrainonly",
+    "suggestions": []
+  },
+  {
+    "kind": "capability",
+    "species_id": "whimsicott",
+    "container": "capabilities",
+    "reference": "Sky 7 (only in strong winds)",
+    "reference_key": "sky7onlyinstrongwinds",
+    "suggestions": []
+  },
+  {
+    "kind": "move",
+    "species_id": "whiscash",
+    "container": "tutor_moves",
+    "reference": "Zen Headbutt (N) Breeding Information Gender Ratio: 50% M / 50% F Egg Group: Water 2",
+    "reference_key": "zenheadbuttnbreedinginformationgenderratio50m50fegggroupwater2",
+    "suggestions": []
+  },
+  {
+    "kind": "move",
+    "species_id": "yamask",
+    "container": "level_up_moves",
+    "reference": "Mean Look – Normal",
+    "reference_key": "meanlooknormal",
+    "suggestions": []
+  }
+]

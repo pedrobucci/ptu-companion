@@ -1,0 +1,254 @@
+[
+  {
+    "definition_kind": "feature",
+    "definition_id": "power-enhance",
+    "definition_name": "Power Enhance",
+    "effect_index": 0,
+    "entity_kind": "move",
+    "entity_name": "Concealed Power",
+    "status": "unresolved_exact"
+  },
+  {
+    "definition_kind": "feature",
+    "definition_id": "type-mastery",
+    "definition_name": "Type Mastery",
+    "effect_index": 0,
+    "entity_kind": "ability",
+    "entity_name": "one",
+    "status": "unresolved_exact"
+  },
+  {
+    "definition_kind": "feature",
+    "definition_id": "archive-tutor",
+    "definition_name": "Archive Tutor",
+    "effect_index": 0,
+    "entity_kind": "move",
+    "entity_name": "and loses 2 Tutor Points",
+    "status": "unresolved_exact"
+  },
+  {
+    "definition_kind": "feature",
+    "definition_id": "dilettante",
+    "definition_name": "Dilettante",
+    "effect_index": 0,
+    "entity_kind": "edge",
+    "entity_name": "both an",
+    "status": "unresolved_exact"
+  },
+  {
+    "definition_kind": "feature",
+    "definition_id": "martial-achievement",
+    "definition_name": "Martial Achievement",
+    "effect_index": 0,
+    "entity_kind": "ability",
+    "entity_name": "Martial Achievement based on your Chosen",
+    "status": "unresolved_exact"
+  },
+  {
+    "definition_kind": "feature",
+    "definition_id": "stat-embodiment",
+    "definition_name": "Stat Embodiment",
+    "effect_index": 0,
+    "entity_kind": "ability",
+    "entity_name": "an",
+    "status": "unresolved_exact"
+  },
+  {
+    "definition_kind": "feature",
+    "definition_id": "telepath",
+    "definition_name": "Telepath",
+    "effect_index": 0,
+    "entity_kind": "capability",
+    "entity_name": "Telepathy",
+    "status": "unresolved_exact"
+  },
+  {
+    "definition_kind": "feature",
+    "definition_id": "extra-ordinary",
+    "definition_name": "Extra Ordinary",
+    "effect_index": 0,
+    "entity_kind": "ability",
+    "entity_name": "Last Chance or Normal Strategist",
+    "status": "unresolved_exact"
+  },
+  {
+    "definition_kind": "feature",
+    "definition_id": "archive-tutor",
+    "definition_name": "Archive Tutor",
+    "effect_index": 0,
+    "entity_kind": "move",
+    "entity_name": "and loses 2 Tutor Points",
+    "status": "unresolved_exact"
+  },
+  {
+    "definition_kind": "feature",
+    "definition_id": "leadership",
+    "definition_name": "Leadership",
+    "effect_index": 1,
+    "entity_kind": "edge",
+    "entity_name": "chosen Feature and the Leader",
+    "status": "unresolved_exact"
+  },
+  {
+    "definition_kind": "feature",
+    "definition_id": "peerless-elegance",
+    "definition_name": "Peerless Elegance",
+    "effect_index": 0,
+    "entity_kind": "edge",
+    "entity_name": "Trickster Orders Feature and the Leader",
+    "status": "unresolved_exact"
+  },
+  {
+    "definition_kind": "feature",
+    "definition_id": "shade-caller",
+    "definition_name": "Shade Caller",
+    "effect_index": 0,
+    "entity_kind": "move",
+    "entity_name": "Faint Attack",
+    "status": "unresolved_exact"
+  },
+  {
+    "definition_kind": "feature",
+    "definition_id": "too-spooky",
+    "definition_name": "Too Spooky",
+    "effect_index": 0,
+    "entity_kind": "ability",
+    "entity_name": "cho- sen",
+    "status": "unresolved_exact"
+  },
+  {
+    "definition_kind": "feature",
+    "definition_id": "druid",
+    "definition_name": "Druid",
+    "effect_index": 0,
+    "entity_kind": "ability",
+    "entity_name": "an",
+    "status": "unresolved_exact"
+  },
+  {
+    "definition_kind": "feature",
+    "definition_id": "green-path",
+    "definition_name": "Green Path",
+    "effect_index": 0,
+    "entity_kind": "capability",
+    "entity_name": "Naturewalk (Grassland)",
+    "status": "unresolved_exact"
+  },
+  {
+    "definition_kind": "feature",
+    "definition_id": "green-path",
+    "definition_name": "Green Path",
+    "effect_index": 1,
+    "entity_kind": "capability",
+    "entity_name": "Na- turewalk (Forest)",
+    "status": "unresolved_exact"
+  },
+  {
+    "definition_kind": "feature",
+    "definition_id": "luminous-aura",
+    "definition_name": "Luminous Aura",
+    "effect_index": 0,
+    "entity_kind": "ability",
+    "entity_name": "Cho- sen",
+    "status": "unresolved_exact"
+  },
+  {
+    "definition_kind": "feature",
+    "definition_id": "shade-caller",
+    "definition_name": "Shade Caller",
+    "effect_index": 0,
+    "entity_kind": "move",
+    "entity_name": "Faint Attack",
+    "status": "unresolved_exact"
+  },
+  {
+    "definition_kind": "feature",
+    "definition_id": "shards-of-stone",
+    "definition_name": "Shards of Stone",
+    "effect_index": 1,
+    "entity_kind": "move",
+    "entity_name": "Stealth Rock Stone Cold Finish [+Defense] vival Static You learn Stone Edge",
+    "status": "unresolved_exact"
+  },
+  {
+    "definition_kind": "feature",
+    "definition_id": "how-to-shoot-web",
+    "definition_name": "How To Shoot Web",
+    "effect_index": 0,
+    "entity_kind": "ability",
+    "entity_name": "following",
+    "status": "unresolved_exact"
+  },
+  {
+    "definition_kind": "feature",
+    "definition_id": "swarmlord",
+    "definition_name": "Swarmlord",
+    "effect_index": 0,
+    "entity_kind": "ability",
+    "entity_name": "an",
+    "status": "unresolved_exact"
+  },
+  {
+    "definition_kind": "feature",
+    "definition_id": "movement-mastery",
+    "definition_name": "Movement Mastery",
+    "effect_index": 1,
+    "entity_kind": "edge",
+    "entity_name": "chosen",
+    "status": "unresolved_exact"
+  },
+  {
+    "definition_kind": "feature",
+    "definition_id": "improvised-gadgets",
+    "definition_name": "Improvised Gadgets",
+    "effect_index": 1,
+    "entity_kind": "capability",
+    "entity_name": "user the chosen",
+    "status": "unresolved_exact"
+  },
+  {
+    "definition_kind": "feature",
+    "definition_id": "experimental-designs",
+    "definition_name": "Experimental Designs",
+    "effect_index": 0,
+    "entity_kind": "move",
+    "entity_name": "Feint without taking a Move Slot",
+    "status": "unresolved_exact"
+  },
+  {
+    "definition_kind": "ability",
+    "definition_id": "power-of-alchemy",
+    "definition_name": "Power of Alchemy",
+    "effect_index": 0,
+    "entity_kind": "ability",
+    "entity_name": "an",
+    "status": "unresolved_exact"
+  },
+  {
+    "definition_kind": "ability",
+    "definition_id": "receiver",
+    "definition_name": "Receiver",
+    "effect_index": 0,
+    "entity_kind": "ability",
+    "entity_name": "that",
+    "status": "unresolved_exact"
+  },
+  {
+    "definition_kind": "ability",
+    "definition_id": "seasonal",
+    "definition_name": "Seasonal",
+    "effect_index": 0,
+    "entity_kind": "ability",
+    "entity_name": "an",
+    "status": "unresolved_exact"
+  },
+  {
+    "definition_kind": "ability",
+    "definition_id": "trace",
+    "definition_name": "Trace",
+    "effect_index": 0,
+    "entity_kind": "ability",
+    "entity_name": "an",
+    "status": "unresolved_exact"
+  }
+]

@@ -1,0 +1,177 @@
+{
+  "semantic_version": "0.4",
+  "skill_ranks": {
+    "untrained": 0,
+    "pathetic": 1,
+    "novice": 2,
+    "adept": 3,
+    "expert": 4,
+    "master": 5
+  },
+  "skills": [
+    {
+      "id": "acrobatics",
+      "name": "Acrobatics"
+    },
+    {
+      "id": "athletics",
+      "name": "Athletics"
+    },
+    {
+      "id": "combat",
+      "name": "Combat"
+    },
+    {
+      "id": "intimidate",
+      "name": "Intimidate"
+    },
+    {
+      "id": "stealth",
+      "name": "Stealth"
+    },
+    {
+      "id": "survival",
+      "name": "Survival"
+    },
+    {
+      "id": "general-education",
+      "name": "General Education"
+    },
+    {
+      "id": "medicine-education",
+      "name": "Medicine Education"
+    },
+    {
+      "id": "occult-education",
+      "name": "Occult Education"
+    },
+    {
+      "id": "pokemon-education",
+      "name": "Pokémon Education"
+    },
+    {
+      "id": "technology-education",
+      "name": "Technology Education"
+    },
+    {
+      "id": "guile",
+      "name": "Guile"
+    },
+    {
+      "id": "perception",
+      "name": "Perception"
+    },
+    {
+      "id": "charm",
+      "name": "Charm"
+    },
+    {
+      "id": "command",
+      "name": "Command"
+    },
+    {
+      "id": "focus",
+      "name": "Focus"
+    },
+    {
+      "id": "intuition",
+      "name": "Intuition"
+    }
+  ],
+  "combat_stats": [
+    {
+      "id": "hp",
+      "name": "HP"
+    },
+    {
+      "id": "attack",
+      "name": "Attack"
+    },
+    {
+      "id": "defense",
+      "name": "Defense"
+    },
+    {
+      "id": "special-attack",
+      "name": "Special Attack"
+    },
+    {
+      "id": "special-defense",
+      "name": "Special Defense"
+    },
+    {
+      "id": "speed",
+      "name": "Speed"
+    }
+  ],
+  "pokemon_types": [
+    "Normal",
+    "Fighting",
+    "Flying",
+    "Poison",
+    "Ground",
+    "Rock",
+    "Bug",
+    "Ghost",
+    "Steel",
+    "Fire",
+    "Water",
+    "Grass",
+    "Electric",
+    "Psychic",
+    "Ice",
+    "Dragon",
+    "Dark",
+    "Fairy"
+  ],
+  "prerequisite_leaf_kinds": [
+    "none",
+    "gm_permission",
+    "no_gifts",
+    "level_min",
+    "skill_rank_min",
+    "type_linked_skill_rank_min",
+    "skill_group_rank_min",
+    "skill_count_at_rank",
+    "stat_min",
+    "feature_count_min",
+    "class_feature_count_min",
+    "tagged_feature_count_min",
+    "has_edge_or_feature_parameter",
+    "chosen_type_equals",
+    "has_ability_keyword",
+    "has_capability",
+    "has_ability",
+    "has_feature",
+    "has_edge",
+    "ambiguous_entity",
+    "campaign_or_bundle_requirement",
+    "chosen_type_requirement",
+    "legendary_gift_requirement",
+    "trainer_level_requirement",
+    "manual"
+  ],
+  "effect_kinds": [
+    "grant_entity",
+    "choose_and_grant_entity",
+    "grant_build_resource",
+    "modifier",
+    "state_change",
+    "apply_status",
+    "type_defense_rule"
+  ],
+  "modifier_operations": [
+    "add",
+    "multiply",
+    "set",
+    "clamp_min",
+    "clamp_max",
+    "resistance_steps_add"
+  ],
+  "automation_levels": [
+    "machine_ready",
+    "hybrid",
+    "manual_text",
+    "metadata_only"
+  ]
+}

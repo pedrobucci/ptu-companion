@@ -1,0 +1,237 @@
+/* Pokémon design tokens (per canvas note "pokemon-ui-design-compliance",
+   sections 1-7). Fan-made reference palette, not an official Pokémon
+   Company asset — see that note for sourcing (A6: no logos/sprites/other
+   proprietary assets). Every value below is transcribed verbatim from that
+   note; light/base/dark triplets exist only where the note itself defines
+   three variants (types, item categories, stats, move categories, HP
+   green) — branding and HP warning/danger are single values in the source
+   note, so they stay single values here rather than inventing variants. */
+
+:root {
+  /* ---- Section 1: brand ---- */
+  --pk-blue: #2a75bb;
+  --pk-blue-dark: #3c5aa6;
+  --pk-yellow: #ffcb05;
+  --pk-yellow-dark: #c7a008;
+  --pk-red: #ee1515;
+  --pk-black: #222224;
+  --pk-white: #f0f0f0;
+
+  --ui-primary: var(--pk-blue);
+  --ui-primary-dark: var(--pk-blue-dark);
+  --ui-accent: var(--pk-yellow);
+  --ui-accent-dark: var(--pk-yellow-dark);
+  --ui-danger: var(--pk-red);
+
+  /* ---- Section 2: 18 types (+ optional Stellar, A7: only if runtime
+     exposes that type — not wired into TYPE_TOKENS unless it is) ---- */
+  --type-normal-light: #c1c2c1;
+  --type-normal-base: #9fa19f;
+  --type-normal-dark: #676967;
+  --type-fire-light: #ef7374;
+  --type-fire-base: #e62829;
+  --type-fire-dark: #961a1b;
+  --type-water-light: #74acf5;
+  --type-water-base: #2980ef;
+  --type-water-dark: #1b539b;
+  --type-electric-light: #fcd659;
+  --type-electric-base: #fac000;
+  --type-electric-dark: #a37d00;
+  --type-grass-light: #82c274;
+  --type-grass-base: #3fa129;
+  --type-grass-dark: #29691b;
+  --type-ice-light: #81dff7;
+  --type-ice-base: #3dcef3;
+  --type-ice-dark: #28869e;
+  --type-fighting-light: #ffac59;
+  --type-fighting-base: #ff8000;
+  --type-fighting-dark: #a65300;
+  --type-poison-light: #b884dd;
+  --type-poison-base: #9141cb;
+  --type-poison-dark: #5e2a84;
+  --type-ground-light: #b88e6f;
+  --type-ground-base: #915121;
+  --type-ground-dark: #5e3515;
+  --type-flying-light: #add2f5;
+  --type-flying-base: #81b9ef;
+  --type-flying-dark: #54789b;
+  --type-psychic-light: #f584a8;
+  --type-psychic-base: #ef4179;
+  --type-psychic-dark: #9b2a4f;
+  --type-bug-light: #b8c26a;
+  --type-bug-base: #91a119;
+  --type-bug-dark: #5e6910;
+  --type-rock-light: #cbc7ad;
+  --type-rock-base: #afa981;
+  --type-rock-dark: #726e54;
+  --type-ghost-light: #a284a2;
+  --type-ghost-base: #704170;
+  --type-ghost-dark: #492a49;
+  --type-dragon-light: #8d98ec;
+  --type-dragon-base: #5060e1;
+  --type-dragon-dark: #343e92;
+  --type-dark-light: #998b8c;
+  --type-dark-base: #624d4e;
+  --type-dark-dark: #403233;
+  --type-steel-light: #98c2d1;
+  --type-steel-base: #60a1b8;
+  --type-steel-dark: #3e6978;
+  --type-fairy-light: #f5a2f5;
+  --type-fairy-base: #ef70ef;
+  --type-fairy-dark: #9b499b;
+  --type-stellar-light: #83cfc5;
+  --type-stellar-base: #40b5a5;
+  --type-stellar-dark: #2a766b;
+
+  /* ---- Section 3: item categories (13) ---- */
+  --item-general-light: #d89db7;
+  --item-general-base: #c86890;
+  --item-general-dark: #82445e;
+  --item-medicine-light: #eba27e;
+  --item-medicine-base: #e07038;
+  --item-medicine-dark: #924924;
+  --item-pokeball-light: #dbb26e;
+  --item-pokeball-base: #c88820;
+  --item-pokeball-dark: #825815;
+  --item-tm-light: #acc66e;
+  --item-tm-base: #80a820;
+  --item-tm-dark: #536d15;
+  --item-berry-light: #6ec188;
+  --item-berry-base: #20a048;
+  --item-berry-dark: #15682f;
+  --item-battle-light: #78a2eb;
+  --item-battle-base: #3070e0;
+  --item-battle-dark: #1f4992;
+  --item-key-light: #b788e6;
+  --item-key-base: #9048d8;
+  --item-key-dark: #5e2f8c;
+  --item-mail-light: #69b7cc;
+  --item-mail-base: #1890b0;
+  --item-mail-dark: #105e72;
+  --item-treasure-light: #f7db8c;
+  --item-treasure-base: #f2c74e;
+  --item-treasure-dark: #9d8133;
+  --item-ingredient-light: #ca8263;
+  --item-ingredient-base: #ad3f0f;
+  --item-ingredient-dark: #70290a;
+  --item-zcrystal-light: #ceb38a;
+  --item-zcrystal-base: #b48a4b;
+  --item-zcrystal-dark: #755a31;
+  --item-apricorn-light: #f5c169;
+  --item-apricorn-base: #f0a018;
+  --item-apricorn-dark: #9c6810;
+  --item-cologne-light: #d2ccdc;
+  --item-cologne-base: #bab1c9;
+  --item-cologne-dark: #797383;
+
+  /* ---- Section 4: stats (6) ---- */
+  --stat-hp-light: #9ee865;
+  --stat-hp-base: #69dc12;
+  --stat-hp-dark: #448f0c;
+  --stat-atk-light: #f5de69;
+  --stat-atk-base: #efcc18;
+  --stat-atk-dark: #9b8510;
+  --stat-def-light: #f09a65;
+  --stat-def-base: #e86412;
+  --stat-def-dark: #97410c;
+  --stat-spatk-light: #66d8f6;
+  --stat-spatk-base: #14c3f1;
+  --stat-spatk-dark: #0d7f9d;
+  --stat-spdef-light: #899eea;
+  --stat-spdef-base: #4a6adf;
+  --stat-spdef-dark: #304591;
+  --stat-speed-light: #e46cca;
+  --stat-speed-base: #d51dad;
+  --stat-speed-dark: #8b1370;
+
+  /* ---- Section 5: move categories (3) ---- */
+  --move-physical-light: #f29173;
+  --move-physical-base: #eb5628;
+  --move-physical-dark: #99381a;
+  --move-special-light: #7d94cd;
+  --move-special-base: #375ab2;
+  --move-special-dark: #243b74;
+  --move-status-light: #aeaeae;
+  --move-status-base: #828282;
+  --move-status-dark: #555555;
+
+  /* ---- Section 6: HP state ---- */
+  --hp-green-light: #9ee865;
+  --hp-green-base: #69dc12;
+  --hp-green-dark: #448f0c;
+  --hp-warning: #fac000;
+  --hp-danger: #ee1515;
+}
+
+/* ===================== Badge base + semantic instances ===================== */
+
+.semantic-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3em;
+  padding: 0.15em 0.6em;
+  border-radius: 999px;
+  font-size: 0.78em;
+  font-weight: 600;
+  background: var(--badge-bg, var(--type-normal-base));
+  color: var(--badge-fg, #fff);
+}
+
+.move-category-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.1em 0.55em;
+  border-radius: 4px;
+  font-size: 0.72em;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  background: var(--badge-bg, var(--move-status-base));
+  color: var(--badge-fg, #fff);
+}
+
+/* ===================== HP bar ===================== */
+
+.hp-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+}
+.hp-bar-track {
+  flex: 1;
+  height: 0.65em;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.12);
+  overflow: hidden;
+  min-width: 5em;
+}
+.hp-bar-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: var(--hp-green-base);
+  transition: width 0.2s ease, background-color 0.2s ease;
+}
+.hp-bar-fill[data-state="warning"] {
+  background: var(--hp-warning);
+}
+.hp-bar-fill[data-state="danger"] {
+  background: var(--hp-danger);
+}
+.hp-bar-fill[data-state="fainted"] {
+  background: var(--ui-text, #666);
+  opacity: 0.4;
+}
+.hp-bar-label {
+  font-size: 0.85em;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+/* Color is never the only signal (note §9.9/15): the label text and the
+   numeric value always accompany the fill color, and the state is also
+   exposed via [data-state] for anything (tests, a11y tooling) that wants
+   it without parsing color. */
+.hp-bar-state-text {
+  font-size: 0.75em;
+  text-transform: uppercase;
+  opacity: 0.7;
+}

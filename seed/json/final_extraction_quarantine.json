@@ -1,0 +1,172 @@
+[
+  {
+    "species_id": "beedrill",
+    "source_id": "gen8",
+    "container": "tutor_moves",
+    "record": {
+      "move": "-3 Sp. Atk",
+      "move_id": "3-sp-atk",
+      "note": null,
+      "reference_status": "unresolved"
+    },
+    "reason": "final_layout_junk"
+  },
+  {
+    "species_id": "beedrill",
+    "source_id": "gen8",
+    "container": "tutor_moves",
+    "record": {
+      "move": "+7 Speed",
+      "move_id": "7-speed",
+      "note": null,
+      "reference_status": "unresolved"
+    },
+    "reason": "final_layout_junk"
+  },
+  {
+    "species_id": "cleffa",
+    "source_id": "gen8",
+    "container": "level_up_moves",
+    "record": {
+      "level": "2",
+      "move": "Basic Information",
+      "type_hint": null,
+      "move_id": "basic-information",
+      "reference_status": "unresolved"
+    },
+    "reason": "final_layout_junk"
+  },
+  {
+    "species_id": "metagross",
+    "source_id": "gen8",
+    "container": "tutor_moves",
+    "record": {
+      "move": "+2 Def",
+      "move_id": "2-def",
+      "note": null,
+      "reference_status": "unresolved"
+    },
+    "reason": "final_layout_junk"
+  },
+  {
+    "species_id": "metagross",
+    "source_id": "gen8",
+    "container": "tutor_moves",
+    "record": {
+      "move": "+1 Sp. Atk",
+      "move_id": "1-sp-atk",
+      "note": null,
+      "reference_status": "unresolved"
+    },
+    "reason": "final_layout_junk"
+  },
+  {
+    "species_id": "metagross",
+    "source_id": "gen8",
+    "container": "tutor_moves",
+    "record": {
+      "move": "+2 Sp. Def",
+      "move_id": "2-sp-def",
+      "note": null,
+      "reference_status": "unresolved"
+    },
+    "reason": "final_layout_junk"
+  },
+  {
+    "species_id": "metagross",
+    "source_id": "gen8",
+    "container": "tutor_moves",
+    "record": {
+      "move": "+4 Speed",
+      "move_id": "4-speed",
+      "note": null,
+      "reference_status": "unresolved"
+    },
+    "reason": "final_layout_junk"
+  },
+  {
+    "species_id": "pumpkaboo",
+    "source_id": "gen8",
+    "container": "tm_moves",
+    "record": {
+      "move": "Basic Information Type: Ghost / Grass Basic Ability 1: Pickup Basic Ability 2: Frisk Adv Ability 1: Insomnia Adv Ability 2: Life Force High Ability: Flash Fire",
+      "move_id": "basic-information-type-ghost-grass-basic-ability-1-pickup-basic-ability-2-frisk-adv-ability-1-insomnia-adv-ability-2-life-force-high-ability-flash-fire",
+      "note": null,
+      "reference_status": "unresolved"
+    },
+    "reason": "final_layout_junk"
+  },
+  {
+    "species_id": "seedot",
+    "source_id": "gen8",
+    "container": "level_up_moves",
+    "record": {
+      "level": "3",
+      "move": "Basic Information",
+      "type_hint": null,
+      "move_id": "basic-information",
+      "reference_status": "unresolved"
+    },
+    "reason": "final_layout_junk"
+  },
+  {
+    "species_id": "spewpa",
+    "source_id": "gen8",
+    "container": "tm_moves",
+    "record": {
+      "move": "None",
+      "move_id": "none",
+      "note": null,
+      "reference_status": "unresolved"
+    },
+    "reason": "final_layout_junk"
+  },
+  {
+    "species_id": "swampert",
+    "source_id": "gen8",
+    "container": "tutor_moves",
+    "record": {
+      "move": "+2 Def",
+      "move_id": "2-def",
+      "note": null,
+      "reference_status": "unresolved"
+    },
+    "reason": "final_layout_junk"
+  },
+  {
+    "species_id": "swampert",
+    "source_id": "gen8",
+    "container": "tutor_moves",
+    "record": {
+      "move": "+1 Sp. Atk",
+      "move_id": "1-sp-atk",
+      "note": null,
+      "reference_status": "unresolved"
+    },
+    "reason": "final_layout_junk"
+  },
+  {
+    "species_id": "swampert",
+    "source_id": "gen8",
+    "container": "tutor_moves",
+    "record": {
+      "move": "+2 Sp. Def",
+      "move_id": "2-sp-def",
+      "note": null,
+      "reference_status": "unresolved"
+    },
+    "reason": "final_layout_junk"
+  },
+  {
+    "species_id": "swampert",
+    "source_id": "gen8",
+    "container": "tutor_moves",
+    "record": {
+      "move": "+1 Speed",
+      "move_id": "1-speed",
+      "note": null,
+      "reference_status": "unresolved"
+    },
+    "reason": "final_layout_junk"
+  }
+]

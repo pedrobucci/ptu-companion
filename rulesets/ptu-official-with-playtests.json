@@ -1,0 +1,45 @@
+{
+  "id": "ptu-official-with-playtests",
+  "name": "PTU Official Materials + Selected Playtests",
+  "version": "1.0.0",
+  "description": "Core, official supplements, and all three supplied official playtest packets.",
+  "packs": [
+    {
+      "id": "ptu-core-1.05",
+      "enabled": true,
+      "priority": 100
+    },
+    {
+      "id": "ptu-blessed-and-damned",
+      "enabled": true,
+      "priority": 110
+    },
+    {
+      "id": "ptu-do-porygon-dream-of-mareep",
+      "enabled": true,
+      "priority": 110
+    },
+    {
+      "id": "ptu-game-of-throhs",
+      "enabled": true,
+      "priority": 110
+    },
+    {
+      "id": "ptu-may-2015-playtest",
+      "enabled": true,
+      "priority": 120
+    },
+    {
+      "id": "ptu-september-2015-playtest",
+      "enabled": true,
+      "priority": 125
+    },
+    {
+      "id": "ptu-february-2016-playtest",
+      "enabled": true,
+      "priority": 130
+    }
+  ],
+  "version_pins": {},
+  "gm_overrides_enabled": true
+}

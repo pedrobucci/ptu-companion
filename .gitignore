@@ -1,0 +1,18 @@
+.maestri/
+dist-android/
+PTU_Companion_Handoff_v1.0.zip
+
+# OS/editor state
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Local secrets and machine-specific configuration
+.env
+.env.*
+!.env.example
+*.jks
+*.keystore
+*.pem
+*.key
