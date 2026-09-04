@@ -1,28 +1,29 @@
-import { useState } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { api, CollectionEntry, ContentKindSlug } from "../lib/api";
+import { api, CollectionEntry, ContentKindSlug, SearchHit } from "../lib/api";
 import { ErrorState } from "./StateViews";
 import { MoveCategoryBadge, TypeBadge } from "./TypeBadge";
+import { DefinitionPicker } from "./DefinitionPicker";
+import { IconClose } from "./icons";
+import { logicalIdOf } from "../lib/definitionId";
 
-/** "moves:crunch@core" -> "crunch". The collection's own logical id is
- * always the middle segment between the plural-kind prefix and the
- * "@pack" suffix (content/import.rs's definition_version_id shape). */
-function logicalIdOf(definitionVersionId: string): string {
-  const afterColon = definitionVersionId.includes(":")
-    ? definitionVersionId.slice(definitionVersionId.indexOf(":") + 1)
-    : definitionVersionId;
-  const at = afterColon.indexOf("@");
-  return at >= 0 ? afterColon.slice(0, at) : afterColon;
-}
-
-/** Resolves one collection entry to its definition so the row can show a
+/** Resolves one collection entry to its definition so the card shows a
  * real name plus type/category badges (canvas note
  * "pokemon-ui-design-compliance" §9: "moves mostram tipo+categoria")
  * instead of a bare id. Resolution is by kind+logical id (the resolver's
  * current winner), so display may differ from the exact pinned version in
  * an edge case with overlapping packs — the stored reference itself is
  * untouched either way. Tolerant of unresolved ids. */
-function ResolvedEntryLabel({ entry, kind }: { entry: CollectionEntry; kind: ContentKindSlug }) {
+function ResolvedEntryCard({
+  entry,
+  kind,
+  onRemove,
+  removePending,
+}: {
+  entry: CollectionEntry;
+  kind: ContentKindSlug;
+  onRemove: () => void;
+  removePending: boolean;
+}) {
   const logicalId = logicalIdOf(entry.definition_version_id);
   const resolved = useQuery({
     queryKey: ["collection-entry-definition", kind, logicalId],
@@ -36,17 +37,25 @@ function ResolvedEntryLabel({ entry, kind }: { entry: CollectionEntry; kind: Con
       : [];
   const moveClass = data && typeof data.class === "string" ? (data.class as string) : null;
 
-  if (!resolved.data) {
-    return <code>{entry.definition_version_id}</code>;
-  }
   return (
-    <span className="button-row" style={{ display: "inline-flex" }}>
-      <span>{resolved.data.name}</span>
-      {types.map((t) => (
-        <TypeBadge key={t} type={t} />
-      ))}
-      {moveClass && <MoveCategoryBadge category={moveClass} />}
-    </span>
+    <li className="definition-card">
+      <span className="definition-card-name">{resolved.data?.name ?? entry.definition_version_id}</span>
+      <span className="button-row definition-card-badges">
+        {types.map((t) => (
+          <TypeBadge key={t} type={t} />
+        ))}
+        {moveClass && <MoveCategoryBadge category={moveClass} />}
+      </span>
+      <button
+        type="button"
+        className="definition-card-remove"
+        onClick={onRemove}
+        disabled={removePending}
+        aria-label={`Remove ${resolved.data?.name ?? "entry"}`}
+      >
+        <IconClose />
+      </button>
+    </li>
   );
 }
 
@@ -59,9 +68,10 @@ const COLLECTION_KIND: Record<string, ContentKindSlug> = {
   capabilities: "capability",
 };
 
-/** List/add-by-id/remove for one mechanical collection (T09a data,
- * T08a visual pass): each row resolves and shows the real definition
- * (name, type, move category) rather than a raw id. */
+/** List/add-by-search/remove for one mechanical collection (T09a data,
+ * T13 search-picker pass): each card resolves and shows the real
+ * definition (name, type, move category); adding is a name search, never
+ * a raw definition id. */
 export function CollectionManager({
   label,
   entries,
@@ -73,13 +83,9 @@ export function CollectionManager({
   onAdd: (definitionVersionId: string) => Promise<unknown>;
   onRemove: (definitionVersionId: string) => Promise<unknown>;
 }) {
-  const [newId, setNewId] = useState("");
   const kind = COLLECTION_KIND[label];
 
-  const add = useMutation({
-    mutationFn: (id: string) => onAdd(id),
-    onSuccess: () => setNewId(""),
-  });
+  const add = useMutation({ mutationFn: (hit: SearchHit) => onAdd(hit.definition_version_id) });
   const remove = useMutation({ mutationFn: (id: string) => onRemove(id) });
 
   return (
@@ -88,35 +94,34 @@ export function CollectionManager({
       {entries.length === 0 ? (
         <p>None yet.</p>
       ) : (
-        <ul>
-          {entries.map((e) => (
-            <li key={e.definition_version_id}>
-              {kind ? <ResolvedEntryLabel entry={e} kind={kind} /> : <code>{e.definition_version_id}</code>}
-              <button type="button" onClick={() => remove.mutate(e.definition_version_id)} disabled={remove.isPending}>
-                Remove
-              </button>
-            </li>
-          ))}
+        <ul className="definition-card-list">
+          {entries.map((e) =>
+            kind ? (
+              <ResolvedEntryCard
+                key={e.definition_version_id}
+                entry={e}
+                kind={kind}
+                onRemove={() => remove.mutate(e.definition_version_id)}
+                removePending={remove.isPending}
+              />
+            ) : (
+              <li className="definition-card" key={e.definition_version_id}>
+                <span className="definition-card-name">{e.definition_version_id}</span>
+                <button
+                  type="button"
+                  className="definition-card-remove"
+                  onClick={() => remove.mutate(e.definition_version_id)}
+                  disabled={remove.isPending}
+                  aria-label="Remove entry"
+                >
+                  <IconClose />
+                </button>
+              </li>
+            ),
+          )}
         </ul>
       )}
-      <form
-        className="inline-form"
-        onSubmit={(e) => {
-          e.preventDefault();
-          if (newId.trim()) add.mutate(newId.trim());
-        }}
-      >
-        <label htmlFor={`add-${label}`}>Add by definition id</label>
-        <input
-          id={`add-${label}`}
-          value={newId}
-          onChange={(e) => setNewId(e.currentTarget.value)}
-          placeholder="e.g. moves:crunch@core"
-        />
-        <button type="submit" disabled={add.isPending}>
-          Add
-        </button>
-      </form>
+      {kind && <DefinitionPicker kind={kind} label={`Add ${label}`} onSelect={(hit) => add.mutate(hit)} />}
       {add.isError && <ErrorState error={add.error} />}
       {remove.isError && <ErrorState error={remove.error} />}
     </div>

@@ -5,6 +5,7 @@ import { ErrorState } from "../../components/StateViews";
 import { useAppStore } from "../../store/appStore";
 import { MoveCategoryBadge, TypeBadge } from "../../components/TypeBadge";
 import { StatBadge } from "../../components/StatBadge";
+import { PokemonMoveResolver } from "../../components/PokemonMoveResolver";
 
 /** Flows 6 (active combat sheet) and 7 (precomputed damage/STAB/type). No
  * dice are rolled anywhere in this file — only display resolution. */
@@ -117,13 +118,17 @@ export function CombatTab({ profile, refetch }: { profile: TrainerProfile; refet
               ) : (
                 <span> no battle state recorded</span>
               )}
+              <PokemonMoveResolver pokemon={p} contentPackId={contentPackId} />
             </li>
           ))}
         </ul>
       </section>
 
       <section>
-        <h2>Resolved Move (STAB/DB/damage)</h2>
+        <h2>Resolved Move (manual entry)</h2>
+        <p className="section-subtitle">
+          For a move that isn't on a carried Pokémon's move list yet, or to check a hypothetical combination.
+        </p>
         <form
           className="inline-form"
           onSubmit={(e) => {

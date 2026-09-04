@@ -4,8 +4,8 @@ import { useVirtualizer } from "@tanstack/react-virtual";
 import { api, ContentKindSlug, ResolvedDefinition, SearchHit } from "../lib/api";
 import { Empty, ErrorState, Loading } from "../components/StateViews";
 import { AdaptivePanel } from "../components/AdaptivePanel";
-import { ProvenanceBadge } from "../components/ProvenanceBadge";
-import { MoveCategoryBadge, TypeBadge } from "../components/TypeBadge";
+import { DefinitionDetail } from "../components/DefinitionDetail";
+import { IconSearch, IconWarning } from "../components/icons";
 
 const PAGE_SIZE = 40;
 
@@ -30,6 +30,7 @@ export default function Pokedex() {
   const [query, setQuery] = useState("");
   const [kind, setKind] = useState<ContentKindSlug | "">("");
   const [detail, setDetail] = useState<ResolvedDefinition | null>(null);
+  const [unavailableHit, setUnavailableHit] = useState<SearchHit | null>(null);
   const parentRef = useRef<HTMLDivElement>(null);
 
   const searchQuery = useInfiniteQuery({
@@ -50,8 +51,18 @@ export default function Pokedex() {
   });
 
   const openDetail = async (hit: SearchHit) => {
+    // A search hit can exist (search covers every imported pack) but still
+    // fail to resolve if its pack isn't part of the active Campaign
+    // Ruleset (content/resolver.rs scopes resolution to the active
+    // ruleset's packs by design) — never a silent dead click, explain why.
     const resolved = await api.resolveDefinition(hit.kind as ContentKindSlug, hit.logical_id);
-    setDetail(resolved);
+    if (resolved) {
+      setDetail(resolved);
+      setUnavailableHit(null);
+    } else {
+      setDetail(null);
+      setUnavailableHit(hit);
+    }
   };
 
   return (
@@ -59,12 +70,15 @@ export default function Pokedex() {
       <h1>Pokédex &amp; Rules Search</h1>
       <form className="inline-form" onSubmit={(e) => e.preventDefault()}>
         <label htmlFor="search-query">Search</label>
-        <input
-          id="search-query"
-          value={query}
-          onChange={(e) => setQuery(e.currentTarget.value)}
-          placeholder="e.g. fire, crunch, stealth"
-        />
+        <span className="input-with-icon">
+          <IconSearch className="input-icon" />
+          <input
+            id="search-query"
+            value={query}
+            onChange={(e) => setQuery(e.currentTarget.value)}
+            placeholder="e.g. fire, crunch, stealth"
+          />
+        </span>
         <label htmlFor="search-kind">Kind</label>
         <select id="search-kind" value={kind} onChange={(e) => setKind(e.currentTarget.value as ContentKindSlug | "")}>
           {KIND_OPTIONS.map((o) => (
@@ -115,32 +129,22 @@ export default function Pokedex() {
         </div>
       )}
 
-      <AdaptivePanel open={!!detail} onClose={() => setDetail(null)} title={detail?.name ?? ""}>
-        {detail &&
-          (() => {
-            const data = JSON.parse(detail.data_json) as Record<string, unknown>;
-            const types: string[] = Array.isArray(data.types)
-              ? (data.types as string[])
-              : typeof data.type === "string"
-                ? [data.type as string]
-                : [];
-            return (
-              <>
-                <div className="button-row" style={{ marginBottom: "0.5em" }}>
-                  {types.map((t) => (
-                    <TypeBadge key={t} type={t} />
-                  ))}
-                  {typeof data.class === "string" && <MoveCategoryBadge category={data.class as string} />}
-                </div>
-                <ProvenanceBadge
-                  variant={detail.needs_review ? "review" : "info"}
-                  label={detail.needs_review ? "Needs review" : `Source: ${detail.content_pack_id}`}
-                  detail={<p>Resolved via {detail.reason} from pack "{detail.content_pack_id}".</p>}
-                />
-                <pre className="detail-json">{JSON.stringify(data, null, 2)}</pre>
-              </>
-            );
-          })()}
+      <AdaptivePanel
+        open={!!detail || !!unavailableHit}
+        onClose={() => {
+          setDetail(null);
+          setUnavailableHit(null);
+        }}
+        title={detail?.name ?? unavailableHit?.name ?? ""}
+      >
+        {detail && <DefinitionDetail resolved={detail} />}
+        {unavailableHit && (
+          <p className="callout-warning" role="status">
+            <IconWarning /> "{unavailableHit.name}" is in pack "{unavailableHit.content_pack_id}", which isn't part of
+            the active Campaign Ruleset — its full detail isn't available until that pack is enabled. Check Settings
+            to switch or add rulesets.
+          </p>
+        )}
       </AdaptivePanel>
     </section>
   );
