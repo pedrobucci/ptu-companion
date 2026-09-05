@@ -10,6 +10,11 @@
 //! used for standalone `.ptucp` imports, so zip-slip/hash/schema/transaction
 //! protections apply identically to embedded content — no protection is
 //! reimplemented or weakened for the embedded case.
+//!
+//! T13D1 (§3.3): a single `.ptutrainer` export intentionally excludes this
+//! Trainer's build drafts (`trainer_build_drafts` rows) — only the
+//! committed `TrainerProfile` graph round-trips here. A full `.ptubackup`
+//! (`portability::backup`) is the only export that also retains drafts.
 
 use std::collections::BTreeSet;
 use std::io::{Cursor, Read, Write};
@@ -388,7 +393,24 @@ mod tests {
         drop(profiles);
         let reopened_profiles = open_and_migrate_profiles(&dir.join("profiles.sqlite")).unwrap();
         let reloaded = load_trainer_profile(&reopened_profiles, "t1").unwrap().unwrap();
-        assert_eq!(reloaded, profile, "every collection must round-trip exactly through close/reopen");
+
+        // T13D1: `trainer_edges`/`trainer_features` now carry a server-
+        // assigned `acquisition_id` (persistence::profiles migration 6) — a
+        // value saved without one gets a fresh, stable id on its first read
+        // back. Every other field, and every other collection, is
+        // untouched — asserted below by diffing against `profile` with
+        // only `edges`/`features` swapped for the now-tagged versions.
+        let edge_acquisition_id = reloaded.edges[0]["acquisition_id"].as_str().unwrap().to_string();
+        assert!(!edge_acquisition_id.is_empty());
+        let feature_acquisition_id = reloaded.features[0]["acquisition_id"].as_str().unwrap().to_string();
+        assert!(!feature_acquisition_id.is_empty());
+        assert_eq!(reloaded.edges[0]["definition_version_id"], "edges:acrobat@core");
+        assert_eq!(reloaded.features[0]["definition_version_id"], "features:accentuated-taste@core");
+
+        let mut expected = profile.clone();
+        expected.edges = reloaded.edges.clone();
+        expected.features = reloaded.features.clone();
+        assert_eq!(reloaded, expected, "every collection must round-trip exactly through close/reopen, aside from edges/features gaining a stable acquisition_id");
 
         // Export embeds the homebrew ability's pack, not core.
         let export = export_trainer_pack(&definitions, &reopened_profiles, "t1").unwrap();
@@ -403,7 +425,7 @@ mod tests {
         assert_eq!(outcome.embedded_packs_imported, vec!["t09a-homebrew".to_string()]);
 
         let restored = load_trainer_profile(&fresh_profiles, "t1").unwrap().unwrap();
-        assert_eq!(restored, profile, "collections must round-trip through a full .ptutrainer export/import too");
+        assert_eq!(restored, expected, "collections must round-trip through a full .ptutrainer export/import too, with the same acquisition_id preserved (not reassigned)");
 
         let restored_ability = get_definition_by_version_id(&fresh_definitions, ContentKind::Ability, "abilities:custom-ability@t09a-homebrew")
             .unwrap()

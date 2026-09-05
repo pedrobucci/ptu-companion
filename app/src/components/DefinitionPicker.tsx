@@ -53,6 +53,7 @@ export function DefinitionPicker({
           aria-expanded={open && results.length > 0}
           aria-controls={listId}
           aria-autocomplete="list"
+          aria-activedescendant={open && activeIndex >= 0 && results[activeIndex] ? `${listId}-option-${activeIndex}` : undefined}
           autoComplete="off"
           value={query}
           placeholder={placeholder ?? `Search ${label.toLowerCase()} by name…`}
@@ -89,6 +90,7 @@ export function DefinitionPicker({
           {results.map((hit, i) => (
             <li
               key={hit.definition_version_id}
+              id={`${listId}-option-${i}`}
               role="option"
               aria-selected={i === activeIndex}
               className={i === activeIndex ? "active" : undefined}

@@ -1,3 +1,4 @@
+import { SheetTabs } from "../components/SheetTabs";
 import { useEffect, useState } from "react";
 import { Link, useLocation, useParams } from "react-router-dom";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -62,31 +63,17 @@ export default function TrainerSheet() {
         <IconChevronLeft /> All Trainers
       </Link>
       <div className="button-row" style={{ justifyContent: "space-between", alignItems: "baseline" }}>
-        <h1>{profile.name}</h1>
+        <h1>Trainer Sheet</h1>
         <ExportTrainerButton trainerId={profile.id} trainerName={profile.name} />
       </div>
-      <div role="tablist" aria-label="Trainer sheet sections" className="tab-bar">
-        {TABS.map((t) => (
-          <button
-            key={t.key}
-            role="tab"
-            aria-selected={tab === t.key}
-            className={tab === t.key ? "tab-button tab-button-active" : "tab-button"}
-            onClick={() => setTab(t.key)}
-          >
-            {t.label}
-          </button>
-        ))}
-      </div>
-
-      <div role="tabpanel">
+      <SheetTabs tabs={TABS} value={tab} onChange={key => setTab(key as Tab)} label="Trainer sheet sections">
         {tab === "overview" && (
           <OverviewTab profile={profile} refetch={refetch} openAllocationOnMount={openAllocationOnMount} />
         )}
         {tab === "pokemon" && <PokemonTab profile={profile} refetch={refetch} />}
         {tab === "combat" && <CombatTab profile={profile} refetch={refetch} />}
         {tab === "inventory" && <InventoryTab profile={profile} refetch={refetch} />}
-      </div>
+      </SheetTabs>
     </section>
   );
 }
@@ -107,7 +94,7 @@ function ExportTrainerButton({ trainerId, trainerName }: { trainerId: string; tr
   return (
     <div>
       <button type="button" onClick={() => exportTrainer.mutate()} disabled={exportTrainer.isPending}>
-        Export .ptutrainer…
+        Export Trainer…
       </button>
       {exportTrainer.isError && <ErrorState error={exportTrainer.error} />}
       {exportTrainer.isSuccess && exportTrainer.data && (

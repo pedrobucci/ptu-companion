@@ -1,3 +1,4 @@
+import { CreatureTile } from "../../components/CreatureTile";
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api, GmGrant, TrainerCollection, TrainerCoreResult, TrainerProfile } from "../../lib/api";
@@ -86,8 +87,8 @@ export function OverviewTab({
   });
 
   return (
-    <div className="sheet-grid">
-      <section className="card">
+    <div className="trainer-dashboard">
+      <section className="card trainer-identity">
         <div className="card-header">Trainer</div>
         <div className="identity-hero">
           <Avatar label={profile.name} />
@@ -110,15 +111,22 @@ export function OverviewTab({
 
       <TrainerCoreStatsSection profile={profile} onOpenAllocation={() => setAllocationOpen(true)} />
 
+      <section className="card trainer-roster">
+        <div className="card-header">Active companions</div>
+        {profile.pokemon.filter(p => profile.rosters.some(r => r.active && p.roster_memberships.includes(r.id))).length === 0 ? <Empty>No active roster members yet.</Empty> :
+          <div className="creature-grid">{profile.pokemon.filter(p => profile.rosters.some(r => r.active && p.roster_memberships.includes(r.id))).map(p =>
+            <a className="creature-choice" href={`#/trainer/${profile.id}/pokemon/${p.id}`} key={p.id}><CreatureTile pokemon={p} /></a>)}</div>}
+        <a className="text-action" href="#/rosters">View Rosters →</a>
+      </section>
       <EquipmentBackpackSummary profile={profile} />
 
-      <section className="card">
-        <div className="card-header">Temporary Modifiers</div>
+      <details className="card maintenance-panel">
+        <summary>Temporary Modifiers</summary>
         <Empty>No temporary modifiers are tracked yet — duration-bearing modifiers are a later task.</Empty>
-      </section>
+      </details>
 
-      <section className="card">
-        <div className="card-header">Level Up</div>
+      <details className="card maintenance-panel">
+        <summary>Level Up</summary>
         <button type="button" onClick={() => previewLevelUp.mutate()} disabled={previewLevelUp.isPending}>
           Preview Level {profile.level + 1}
         </button>
@@ -139,10 +147,10 @@ export function OverviewTab({
             </button>
           </div>
         )}
-      </section>
+      </details>
 
-      <section className="card">
-        <div className="card-header">GM Grants</div>
+      <details className="card maintenance-panel">
+        <summary>GM Grants</summary>
         <button type="button" onClick={() => respec.mutate()} disabled={respec.isPending}>
           Respec (rebuild progression ledger)
         </button>
@@ -171,10 +179,10 @@ export function OverviewTab({
             ))}
           </ul>
         )}
-      </section>
+      </details>
 
-      <section className="card">
-        <div className="card-header">Moves, Edges, Features, Abilities, Capabilities</div>
+      <details className="card maintenance-panel">
+        <summary>Moves, Edges, Features, Abilities, Capabilities</summary>
         <p>Unlimited Trainer Move list (spec §7) — no fixed-size cap here.</p>
         {(["moves", "edges", "features", "abilities", "capabilities"] as TrainerCollection[]).map((collection) => (
           <CollectionManager
@@ -191,7 +199,7 @@ export function OverviewTab({
             }}
           />
         ))}
-      </section>
+      </details>
 
       <StatAllocationPanel
         open={allocationOpen}
@@ -212,7 +220,7 @@ export function OverviewTab({
 function SkillsSection({ skills }: { skills: Record<string, unknown> | null }) {
   const entries = skills ? Object.entries(skills) : [];
   return (
-    <section className="card">
+    <section className="card trainer-skills">
       <div className="card-header">Skills</div>
       {entries.length === 0 ? (
         <Empty>No skills recorded yet.</Empty>
@@ -254,16 +262,16 @@ function TrainerCoreStatsSection({ profile, onOpenAllocation }: { profile: Train
   });
 
   return (
-    <section className="card card-span-full">
+    <section className="card card-span-full trainer-core">
       <div className="card-header">
-        Combat Stats &amp; Step 6 Capabilities
+        Combat Stats
         <div className="card-header-actions">
           <button type="button" onClick={onOpenAllocation}>
             Allocate Stat Points
           </button>
         </div>
       </div>
-      <p className="section-subtitle">PTU 1.05 Core Step 6, resolved in Rust — tap a value for its breakdown.</p>
+      <p className="section-subtitle">Your six attributes. Select a value to explore its sources.</p>
       {coreStats.isLoading && <Loading label="Resolving Trainer attributes…" />}
       {coreStats.isError && <ErrorState error={coreStats.error} onRetry={() => coreStats.refetch()} />}
       {coreStats.data && (
@@ -279,9 +287,8 @@ function TrainerCoreStatsSection({ profile, onOpenAllocation }: { profile: Train
               {issue.message}
             </p>
           ))}
-          <div className="card-grid">
+          <div className="combat-summary">
             <ResolvedStat label="HP" value={coreStats.data.combat_stats.hp} accent={STAT_COLORS.hp.base} />
-            <ResolvedStat label="Max HP" value={coreStats.data.max_hp} accent={STAT_COLORS.hp.base} />
             <ResolvedStat label="Attack" value={coreStats.data.combat_stats.attack} accent={STAT_COLORS.attack.base} />
             <ResolvedStat label="Defense" value={coreStats.data.combat_stats.defense} accent={STAT_COLORS.defense.base} />
             <ResolvedStat
@@ -295,7 +302,14 @@ function TrainerCoreStatsSection({ profile, onOpenAllocation }: { profile: Train
               accent={STAT_COLORS.special_defense.base}
             />
             <ResolvedStat label="Speed" value={coreStats.data.combat_stats.speed} accent={STAT_COLORS.speed.base} />
+          </div>
+          <div className="vitals-summary">
+            <ResolvedStat label="Max HP" value={coreStats.data.max_hp} accent={STAT_COLORS.hp.base} />
             <ResolvedStat label="AP" value={coreStats.data.ap} />
+          </div>
+          <details className="derived-disclosure">
+            <summary>Derived capabilities &amp; evasions</summary>
+            <div className="derived-stats">
             <ResolvedStat label="Power" value={coreStats.data.power} />
             <ResolvedStat label="Physical Evasion" value={coreStats.data.physical_evasion} />
             <ResolvedStat label="Special Evasion" value={coreStats.data.special_evasion} />
@@ -306,7 +320,8 @@ function TrainerCoreStatsSection({ profile, onOpenAllocation }: { profile: Train
             <ResolvedStat label="Swim" value={coreStats.data.swim} />
             <ResolvedStat label="Throwing Range" value={coreStats.data.throwing_range} />
           </div>
-          <dl className="kv-list">
+          </details>
+          <dl className="kv-list size-summary">
             <dt>Size</dt>
             <dd>{coreStats.data.size}</dd>
             <dt>Weight Class</dt>
@@ -330,7 +345,7 @@ function TrainerCoreStatsSection({ profile, onOpenAllocation }: { profile: Train
 function EquipmentBackpackSummary({ profile }: { profile: TrainerProfile }) {
   const equippedCount = Object.keys(profile.inventory.equipped).length;
   return (
-    <section className="card">
+    <section className="card trainer-equipment">
       <div className="card-header">Equipment &amp; Backpack</div>
       <dl className="kv-list">
         <dt>Equipped</dt>

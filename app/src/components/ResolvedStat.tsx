@@ -1,3 +1,4 @@
+import { AdaptivePanel } from "./AdaptivePanel";
 import { useState } from "react";
 import type { ResolvedValue } from "../lib/api";
 
@@ -43,7 +44,8 @@ export function ResolvedStat({
           {suffix}
         </span>
       </button>
-      {hasBreakdown && open && (
+      {hasBreakdown && (
+        <AdaptivePanel open={open} onClose={() => setOpen(false)} title={`${label} — sources`}>
         <ul className="resolved-stat-breakdown">
           <li>Base {value.base}</li>
           {value.breakdown.map((entry, i) => (
@@ -52,6 +54,7 @@ export function ResolvedStat({
             </li>
           ))}
         </ul>
+        </AdaptivePanel>
       )}
     </div>
   );

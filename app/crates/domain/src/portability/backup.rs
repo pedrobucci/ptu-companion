@@ -21,7 +21,9 @@ use crate::content::repository::list_packs;
 use crate::content::zip_safety::is_safe_entry_path;
 use crate::error::TrainerPackError;
 use crate::profile::model::TrainerProfile;
-use crate::profile::repository::{list_trainer_summaries, load_trainer_profile, save_trainer_profile};
+use crate::profile::repository::{
+    list_trainer_build_drafts, list_trainer_summaries, load_trainer_profile, restore_trainer_build_draft, save_trainer_profile,
+};
 
 pub struct BackupExportOutcome {
     pub bytes: Vec<u8>,
@@ -53,6 +55,28 @@ pub fn export_backup(
         content_pack_ids.push(pack.id.clone());
     }
 
+    // T13D1 (§3.3): "full backup also retains drafts" — unlike a single
+    // `.ptutrainer` export, which intentionally excludes drafts entirely
+    // (see `portability::trainer_pack`'s module doc: it only ever
+    // serializes `TrainerProfile` itself, which has no draft field).
+    let mut draft_ids: Vec<String> = Vec::new();
+    for trainer_id in &trainer_ids {
+        for (draft_id, intent) in list_trainer_build_drafts(profiles_conn, Some(trainer_id))? {
+            files.push((
+                format!("drafts/{draft_id}.json"),
+                serde_json::to_vec_pretty(&serde_json::json!({"id": draft_id, "trainer_id": trainer_id, "intent": intent}))?,
+            ));
+            draft_ids.push(draft_id);
+        }
+    }
+    for (draft_id, intent) in list_trainer_build_drafts(profiles_conn, None)? {
+        files.push((
+            format!("drafts/{draft_id}.json"),
+            serde_json::to_vec_pretty(&serde_json::json!({"id": draft_id, "trainer_id": Value::Null, "intent": intent}))?,
+        ));
+        draft_ids.push(draft_id);
+    }
+
     if let Some(ruleset) = active_ruleset {
         files.push(("ruleset.json".to_string(), serde_json::to_vec_pretty(ruleset)?));
     }
@@ -66,6 +90,7 @@ pub fn export_backup(
         "format_version": 1,
         "trainer_ids": trainer_ids,
         "content_pack_ids": content_pack_ids,
+        "draft_ids": draft_ids,
         "files": manifest_files,
     });
 
@@ -151,6 +176,18 @@ pub fn import_backup(
         let profile: TrainerProfile = serde_json::from_slice(bytes)?;
         save_trainer_profile(profiles_conn, &profile)?;
         trainers_imported.push(trainer_id.clone());
+    }
+
+    let draft_ids: Vec<String> = manifest["draft_ids"]
+        .as_array()
+        .map(|a| a.iter().filter_map(|v| v.as_str().map(str::to_string)).collect())
+        .unwrap_or_default();
+    for draft_id in &draft_ids {
+        let path = format!("drafts/{draft_id}.json");
+        let bytes = verified.get(&path).ok_or_else(|| TrainerPackError::ArchiveFileMissing(path.clone()))?;
+        let record: Value = serde_json::from_slice(bytes)?;
+        let trainer_id = record["trainer_id"].as_str();
+        restore_trainer_build_draft(profiles_conn, draft_id, trainer_id, &record["intent"])?;
     }
 
     Ok(BackupImportOutcome { trainers_imported, content_packs_imported })

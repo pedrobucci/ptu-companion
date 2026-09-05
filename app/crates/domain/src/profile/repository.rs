@@ -116,6 +116,16 @@ pub fn update_trainer_stat_allocation(conn: &Connection, trainer_id: &str, alloc
     Ok(())
 }
 
+/// Sets a Trainer's published-build metadata (T13D1 §3.3) without touching
+/// anything else — same narrow-mutation pattern as [`update_trainer_stat_allocation`].
+pub fn update_trainer_build_state(conn: &Connection, trainer_id: &str, build_state: &Value) -> rusqlite::Result<()> {
+    conn.execute(
+        "UPDATE trainers SET build_state_json = ?2, updated_at = ?3 WHERE id = ?1",
+        params![trainer_id, to_json(build_state), now()],
+    )?;
+    Ok(())
+}
+
 /// Appends one event to a Trainer's timeline (spec 18) without touching
 /// anything else — used for GM Override provenance (spec 16/25: "a
 /// successful override creates persistent provenance/history").
@@ -176,12 +186,33 @@ pub fn pokemon_collection_table(collection: &str) -> Option<&'static str> {
     POKEMON_COLLECTION_TABLES.iter().find(|(field, _)| *field == collection).map(|(_, table)| *table)
 }
 
+/// T13D1: `trainer_edges`/`trainer_features` moved off the generic
+/// "definition_version_id is the key" collection shape (see
+/// `persistence::profiles`'s migration 6 doc comment) because PTU legally
+/// allows some Edges/Features to be acquired more than once. Every other
+/// mechanical-collection table is unaffected.
+fn is_acquisition_table(table: &str) -> bool {
+    table == "trainer_edges" || table == "trainer_features"
+}
+
 /// Adds (or updates, if the same definition is added again) one entry to a
 /// mechanical collection without touching the rest of the Trainer/Pokémon
 /// graph — the targeted-mutation pattern (T06/T07) for "minimal management"
 /// UI actions like "learn this Move", as opposed to `save_trainer_profile`'s
 /// whole-graph replace.
+///
+/// T13D1: for `trainer_edges`/`trainer_features` specifically, this no
+/// longer upserts by `definition_version_id` (that would still silently
+/// overwrite a prior acquisition of the same Edge/Feature) — it delegates
+/// to [`add_trainer_acquisition`], which always inserts a new, independent
+/// instance. Older UI call sites that expected "add = upsert" for these two
+/// collections now get a second instance instead, matching PTU's actual
+/// rule for repeatable Edges rather than the old (incorrect) behavior.
 pub fn add_collection_entry(conn: &Connection, table: &'static str, owner_column: &str, owner_id: &str, entry: &Value) -> Result<(), ProfileError> {
+    if is_acquisition_table(table) {
+        add_trainer_acquisition(conn, table, owner_id, entry)?;
+        return Ok(());
+    }
     let definition_version_id = entry
         .get("definition_version_id")
         .and_then(Value::as_str)
@@ -203,12 +234,148 @@ pub fn add_collection_entry(conn: &Connection, table: &'static str, owner_column
 }
 
 /// Removes one entry from a mechanical collection by its definition id.
-pub fn remove_collection_entry(conn: &Connection, table: &'static str, owner_column: &str, owner_id: &str, definition_version_id: &str) -> rusqlite::Result<()> {
+///
+/// T13D1: for `trainer_edges`/`trainer_features`, `definition_version_id`
+/// no longer uniquely identifies a row — two acquisitions of the same Edge
+/// (e.g. Elemental Connection, Fire + Water) can share it. Deleting "by
+/// definition" would either be ambiguous (which one?) or, if implemented as
+/// "delete every match", would delete every repeated instance by
+/// definition, which the plan explicitly forbids. This rejects with
+/// [`ProfileError::AmbiguousLegacyRemoval`] whenever more than one match
+/// exists for that owner, and only proceeds when exactly one does — callers
+/// that need to remove one specific instance out of several must use
+/// [`remove_trainer_acquisition`] with its `acquisition_id` instead.
+pub fn remove_collection_entry(conn: &Connection, table: &'static str, owner_column: &str, owner_id: &str, definition_version_id: &str) -> Result<(), ProfileError> {
+    if is_acquisition_table(table) {
+        let count: i64 = conn.query_row(
+            &format!("SELECT COUNT(*) FROM {table} WHERE {owner_column} = ?1 AND definition_version_id = ?2"),
+            params![owner_id, definition_version_id],
+            |row| row.get(0),
+        )?;
+        if count > 1 {
+            return Err(ProfileError::AmbiguousLegacyRemoval {
+                table: table.to_string(),
+                definition_version_id: definition_version_id.to_string(),
+                count,
+            });
+        }
+    }
     conn.execute(
         &format!("DELETE FROM {table} WHERE {owner_column} = ?1 AND definition_version_id = ?2"),
         params![owner_id, definition_version_id],
     )?;
     Ok(())
+}
+
+/// T13D1: always inserts a new, independent acquisition into
+/// `trainer_edges`/`trainer_features` — `acquisition_id` is a server-
+/// generated UUID (any incoming `"acquisition_id"` on `entry` is ignored,
+/// matching the plan's "acquisition_id (server UUID)"; choice ids are
+/// never client-supplied). Never conflicts, by construction: the new
+/// primary key is `(trainer_id, acquisition_id)`, and a fresh UUID is
+/// vanishingly unlikely to collide. Returns the stored value, with
+/// `acquisition_id` embedded, so the caller learns the new instance's id.
+pub fn add_trainer_acquisition(conn: &Connection, table: &'static str, owner_id: &str, entry: &Value) -> Result<Value, ProfileError> {
+    let definition_version_id = entry
+        .get("definition_version_id")
+        .and_then(Value::as_str)
+        .ok_or_else(|| ProfileError::CollectionEntryMissingDefinitionVersionId { table: table.to_string(), index: 0 })?
+        .to_string();
+    let acquisition_id = new_id();
+    let mut stored = entry.clone();
+    if let Some(obj) = stored.as_object_mut() {
+        obj.insert("acquisition_id".to_string(), Value::String(acquisition_id.clone()));
+    }
+    let next_sequence: i64 = conn.query_row(
+        &format!("SELECT COALESCE(MAX(sequence) + 1, 0) FROM {table} WHERE trainer_id = ?1"),
+        params![owner_id],
+        |row| row.get(0),
+    )?;
+    conn.execute(
+        &format!(
+            "INSERT INTO {table} (trainer_id, acquisition_id, definition_version_id, sequence, data_json, updated_at)
+             VALUES (?1, ?2, ?3, ?4, ?5, ?6)"
+        ),
+        params![owner_id, acquisition_id, definition_version_id, next_sequence, to_json(&stored), now()],
+    )?;
+    Ok(stored)
+}
+
+/// T13D1: removes exactly one acquisition by its own id — unambiguous by
+/// construction, unlike removal by `definition_version_id`.
+pub fn remove_trainer_acquisition(conn: &Connection, table: &'static str, owner_id: &str, acquisition_id: &str) -> rusqlite::Result<()> {
+    conn.execute(
+        &format!("DELETE FROM {table} WHERE trainer_id = ?1 AND acquisition_id = ?2"),
+        params![owner_id, acquisition_id],
+    )?;
+    Ok(())
+}
+
+/// T13D1 whole-profile-save counterpart to [`insert_definition_ref_collection`]
+/// for `trainer_edges`/`trainer_features`: preserves an entry's existing
+/// `acquisition_id` (present whenever the value came from a prior
+/// [`query_trainer_acquisition_collection`] read — see that function's doc
+/// comment) so identity is stable across a load -> edit -> save round trip,
+/// and assigns a fresh one only the first time an entry lacks it (a brand
+/// new acquisition, or a legacy value that predates this field). This is
+/// where "import legacy missing IDs assigns them once" happens for the
+/// whole-profile path.
+fn insert_trainer_acquisition_collection(
+    tx: &rusqlite::Transaction,
+    table: &str,
+    trainer_id: &str,
+    entries: &[Value],
+    now: &str,
+) -> Result<(), ProfileError> {
+    for (index, entry) in entries.iter().enumerate() {
+        let definition_version_id = entry
+            .get("definition_version_id")
+            .and_then(Value::as_str)
+            .ok_or_else(|| ProfileError::CollectionEntryMissingDefinitionVersionId { table: table.to_string(), index })?
+            .to_string();
+        let existing_id = match entry.get("acquisition_id") {
+            None => None,
+            Some(Value::String(s)) => Some(s.clone()),
+            Some(_) => return Err(ProfileError::AcquisitionIdNotAString { table: table.to_string(), index }),
+        };
+        let acquisition_id = existing_id.unwrap_or_else(new_id);
+        let mut stored = entry.clone();
+        if let Some(obj) = stored.as_object_mut() {
+            obj.insert("acquisition_id".to_string(), Value::String(acquisition_id.clone()));
+        }
+        tx.execute(
+            &format!(
+                "INSERT INTO {table} (trainer_id, acquisition_id, definition_version_id, sequence, data_json, updated_at)
+                 VALUES (?1, ?2, ?3, ?4, ?5, ?6)"
+            ),
+            params![trainer_id, acquisition_id, definition_version_id, index as i64, to_json(&stored), now],
+        )?;
+    }
+    Ok(())
+}
+
+/// T13D1 counterpart to [`query_definition_ref_collection`] for
+/// `trainer_edges`/`trainer_features`: always returns a value carrying
+/// `acquisition_id`, sourced from the indexed column (authoritative),
+/// overwriting/filling in whatever `data_json` happened to store — this is
+/// what lets a pre-migration-6 row (whose `data_json` predates the field)
+/// read back with a real, stable id on its very first read after upgrade,
+/// with no separate one-time backfill pass required.
+fn query_trainer_acquisition_collection(conn: &Connection, table: &str, trainer_id: &str) -> rusqlite::Result<Vec<Value>> {
+    let sql = format!("SELECT acquisition_id, data_json FROM {table} WHERE trainer_id = ?1 ORDER BY sequence");
+    let mut stmt = conn.prepare(&sql)?;
+    let rows = stmt.query_map(params![trainer_id], |row| {
+        Ok((row.get::<_, String>(0)?, row.get::<_, String>(1)?))
+    })?;
+    rows.map(|r| {
+        let (acquisition_id, data_json) = r?;
+        let mut value = parse_json(&data_json);
+        if let Some(obj) = value.as_object_mut() {
+            obj.insert("acquisition_id".to_string(), Value::String(acquisition_id));
+        }
+        Ok(value)
+    })
+    .collect()
 }
 
 fn insert_definition_ref_collection(
@@ -247,8 +414,8 @@ pub fn save_trainer_profile(conn: &mut Connection, profile: &TrainerProfile) -> 
     let now = now();
 
     tx.execute(
-        "INSERT INTO trainers (id, name, level, exp, money, background_json, skills_json, stat_allocation_json, weight_lb, created_at, updated_at)
-         VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?10)
+        "INSERT INTO trainers (id, name, level, exp, money, background_json, skills_json, stat_allocation_json, weight_lb, build_state_json, created_at, updated_at)
+         VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?11)
          ON CONFLICT(id) DO UPDATE SET
             name = excluded.name,
             level = excluded.level,
@@ -258,6 +425,7 @@ pub fn save_trainer_profile(conn: &mut Connection, profile: &TrainerProfile) -> 
             skills_json = excluded.skills_json,
             stat_allocation_json = excluded.stat_allocation_json,
             weight_lb = excluded.weight_lb,
+            build_state_json = excluded.build_state_json,
             updated_at = excluded.updated_at",
         params![
             profile.id,
@@ -269,6 +437,7 @@ pub fn save_trainer_profile(conn: &mut Connection, profile: &TrainerProfile) -> 
             to_json(&profile.skills),
             to_json_typed(&profile.stat_allocation),
             profile.weight_lb,
+            profile.build_state.as_ref().map(to_json),
             now,
         ],
     )?;
@@ -325,7 +494,11 @@ pub fn save_trainer_profile(conn: &mut Connection, profile: &TrainerProfile) -> 
             "capabilities" => &profile.capabilities,
             _ => unreachable!(),
         };
-        insert_definition_ref_collection(&tx, table, "trainer_id", &profile.id, entries, &now)?;
+        if is_acquisition_table(table) {
+            insert_trainer_acquisition_collection(&tx, table, &profile.id, entries, &now)?;
+        } else {
+            insert_definition_ref_collection(&tx, table, "trainer_id", &profile.id, entries, &now)?;
+        }
     }
 
     for (index, roster) in profile.rosters.iter().enumerate() {
@@ -482,7 +655,7 @@ pub fn save_trainer_profile(conn: &mut Connection, profile: &TrainerProfile) -> 
 pub fn load_trainer_profile(conn: &Connection, trainer_id: &str) -> Result<Option<TrainerProfile>, ProfileError> {
     let core = conn
         .query_row(
-            "SELECT id, name, level, exp, money, background_json, skills_json, stat_allocation_json, weight_lb FROM trainers WHERE id = ?1",
+            "SELECT id, name, level, exp, money, background_json, skills_json, stat_allocation_json, weight_lb, build_state_json FROM trainers WHERE id = ?1",
             params![trainer_id],
             |row| {
                 Ok((
@@ -495,6 +668,7 @@ pub fn load_trainer_profile(conn: &Connection, trainer_id: &str) -> Result<Optio
                     row.get::<_, Option<String>>(6)?,
                     row.get::<_, Option<String>>(7)?,
                     row.get::<_, Option<i64>>(8)?,
+                    row.get::<_, Option<String>>(9)?,
                 ))
             },
         )
@@ -504,9 +678,10 @@ pub fn load_trainer_profile(conn: &Connection, trainer_id: &str) -> Result<Optio
             other => Err(other),
         })?;
 
-    let Some((id, name, level, exp, money, background_json, skills_json, stat_allocation_json, weight_lb)) = core else {
+    let Some((id, name, level, exp, money, background_json, skills_json, stat_allocation_json, weight_lb, build_state_json)) = core else {
         return Ok(None);
     };
+    let build_state = build_state_json.as_deref().map(parse_json);
 
     let background = background_json.as_deref().map(parse_json);
     let skills = skills_json.as_deref().map(parse_json).unwrap_or(Value::Null);
@@ -525,8 +700,8 @@ pub fn load_trainer_profile(conn: &Connection, trainer_id: &str) -> Result<Optio
     )?;
 
     let moves = query_definition_ref_collection(conn, "trainer_moves", "trainer_id", trainer_id)?;
-    let edges = query_definition_ref_collection(conn, "trainer_edges", "trainer_id", trainer_id)?;
-    let features = query_definition_ref_collection(conn, "trainer_features", "trainer_id", trainer_id)?;
+    let edges = query_trainer_acquisition_collection(conn, "trainer_edges", trainer_id)?;
+    let features = query_trainer_acquisition_collection(conn, "trainer_features", trainer_id)?;
     let abilities = query_definition_ref_collection(conn, "trainer_abilities", "trainer_id", trainer_id)?;
     let capabilities = query_definition_ref_collection(conn, "trainer_capabilities", "trainer_id", trainer_id)?;
 
@@ -713,6 +888,7 @@ pub fn load_trainer_profile(conn: &Connection, trainer_id: &str) -> Result<Optio
         combat,
         stat_allocation,
         weight_lb,
+        build_state,
     }))
 }
 
@@ -736,6 +912,108 @@ fn query_json_list(conn: &Connection, sql: &str, trainer_id: &str) -> rusqlite::
     let mut stmt = conn.prepare(sql)?;
     let rows = stmt.query_map(params![trainer_id], |row| row.get::<_, String>(0))?;
     rows.map(|r| r.map(|text| parse_json(&text))).collect()
+}
+
+// =======================================================================
+// T13D1: build drafts (§3.3) — isolated, opaque persistence only. A draft
+// never touches `trainers` or any other Trainer-graph table; typed intent
+// validation/commit is T13D3/T13D4 scope.
+// =======================================================================
+
+/// Creates a new draft (`draft_id: None`) or overwrites an existing one's
+/// `intent` in place (`draft_id: Some`) — the latter is what "Save draft"
+/// (§3.3) repeats on every explicit save. Returns the draft's id either
+/// way. `trainer_id: None` means an uncommitted level-1 candidate not yet
+/// linked to any Trainer.
+pub fn save_trainer_build_draft(
+    conn: &Connection,
+    draft_id: Option<&str>,
+    trainer_id: Option<&str>,
+    intent: &Value,
+) -> Result<String, ProfileError> {
+    let now = now();
+    match draft_id {
+        Some(id) => {
+            let updated = conn.execute(
+                "UPDATE trainer_build_drafts SET trainer_id = ?2, data_json = ?3, updated_at = ?4 WHERE id = ?1",
+                params![id, trainer_id, to_json(intent), now],
+            )?;
+            if updated == 0 {
+                return Err(ProfileError::BuildDraftNotFound(id.to_string()));
+            }
+            Ok(id.to_string())
+        }
+        None => {
+            let id = new_id();
+            conn.execute(
+                "INSERT INTO trainer_build_drafts (id, trainer_id, data_json, created_at, updated_at) VALUES (?1, ?2, ?3, ?4, ?4)",
+                params![id, trainer_id, to_json(intent), now],
+            )?;
+            Ok(id)
+        }
+    }
+}
+
+/// Loads one draft's stored intent. `Ok(None)` if it was never created or
+/// was already discarded — a missing draft is not an error at load time
+/// (a UI may legitimately probe "is there a draft to resume?").
+pub fn load_trainer_build_draft(conn: &Connection, draft_id: &str) -> rusqlite::Result<Option<Value>> {
+    conn.query_row(
+        "SELECT data_json FROM trainer_build_drafts WHERE id = ?1",
+        params![draft_id],
+        |row| row.get::<_, String>(0),
+    )
+    .map(|text| Some(parse_json(&text)))
+    .or_else(|e| match e {
+        rusqlite::Error::QueryReturnedNoRows => Ok(None),
+        other => Err(other),
+    })
+}
+
+/// Permanently deletes a draft. Never touches the active profile — "Cancel
+/// discards unsaved edits without touching the active profile" (§3.3).
+pub fn discard_trainer_build_draft(conn: &Connection, draft_id: &str) -> Result<(), ProfileError> {
+    let deleted = conn.execute("DELETE FROM trainer_build_drafts WHERE id = ?1", params![draft_id])?;
+    if deleted == 0 {
+        return Err(ProfileError::BuildDraftNotFound(draft_id.to_string()));
+    }
+    Ok(())
+}
+
+/// Restores one draft at an EXACT, caller-supplied id — used only by
+/// `portability::backup`'s full-backup restore path, where the draft's id
+/// must survive export/import identically (unlike [`save_trainer_build_draft`]
+/// with `draft_id: None`, which always mints a fresh id and is for normal
+/// "create a new draft" use, not restore).
+pub fn restore_trainer_build_draft(conn: &Connection, id: &str, trainer_id: Option<&str>, intent: &Value) -> rusqlite::Result<()> {
+    let now = now();
+    conn.execute(
+        "INSERT INTO trainer_build_drafts (id, trainer_id, data_json, created_at, updated_at) VALUES (?1, ?2, ?3, ?4, ?4)
+         ON CONFLICT(id) DO UPDATE SET trainer_id = excluded.trainer_id, data_json = excluded.data_json, updated_at = excluded.updated_at",
+        params![id, trainer_id, to_json(intent), now],
+    )?;
+    Ok(())
+}
+
+/// Lists every draft for one Trainer, plus every unlinked (`trainer_id
+/// IS NULL`) draft when `trainer_id` is `None` — used by
+/// `portability::backup`'s full-backup path (§3.3: "full backup also
+/// retains drafts"), which is the only other consumer that needs every
+/// draft rather than one by id.
+pub fn list_trainer_build_drafts(conn: &Connection, trainer_id: Option<&str>) -> rusqlite::Result<Vec<(String, Value)>> {
+    let sql = match trainer_id {
+        Some(_) => "SELECT id, data_json FROM trainer_build_drafts WHERE trainer_id = ?1",
+        None => "SELECT id, data_json FROM trainer_build_drafts WHERE trainer_id IS NULL",
+    };
+    let mut stmt = conn.prepare(sql)?;
+    let rows = if let Some(id) = trainer_id {
+        stmt.query_map(params![id], |row| Ok((row.get::<_, String>(0)?, row.get::<_, String>(1)?)))?
+            .collect::<rusqlite::Result<Vec<_>>>()?
+    } else {
+        stmt.query_map([], |row| Ok((row.get::<_, String>(0)?, row.get::<_, String>(1)?)))?
+            .collect::<rusqlite::Result<Vec<_>>>()?
+    };
+    Ok(rows.into_iter().map(|(id, text)| (id, parse_json(&text))).collect())
 }
 
 fn query_item_stacks(conn: &Connection, trainer_id: &str, location: &str) -> rusqlite::Result<Vec<ItemStack>> {
@@ -978,6 +1256,138 @@ mod tests {
         assert_eq!(profile.moves.len(), 1);
         assert_eq!(profile.moves[0]["definition_version_id"], "moves:tackle@core");
 
+        let _ = std::fs::remove_dir_all(&dir);
+    }
+
+    /// T13D1 acceptance: distinct-parameter repeated acquisitions of the
+    /// same Edge (e.g. Elemental Connection, Fire + Water) persist as
+    /// independent instances, not an upsert-in-place.
+    #[test]
+    fn add_trainer_acquisition_allows_two_independent_instances_of_the_same_definition() {
+        let (dir, conn) = seed();
+        let fire = add_trainer_acquisition(
+            &conn,
+            "trainer_edges",
+            "t1",
+            &json!({"definition_version_id": "edges:elemental-connection@core", "parameters": {"type": "Fire"}}),
+        )
+        .unwrap();
+        let water = add_trainer_acquisition(
+            &conn,
+            "trainer_edges",
+            "t1",
+            &json!({"definition_version_id": "edges:elemental-connection@core", "parameters": {"type": "Water"}}),
+        )
+        .unwrap();
+
+        let fire_id = fire["acquisition_id"].as_str().unwrap().to_string();
+        let water_id = water["acquisition_id"].as_str().unwrap().to_string();
+        assert_ne!(fire_id, water_id, "each acquisition gets its own server-generated id");
+
+        let profile = load_trainer_profile(&conn, "t1").unwrap().unwrap();
+        assert_eq!(profile.edges.len(), 2, "both instances of the repeatable Edge must survive, not collapse to one");
+        let types: std::collections::BTreeSet<String> =
+            profile.edges.iter().map(|e| e["parameters"]["type"].as_str().unwrap().to_string()).collect();
+        assert_eq!(types, std::collections::BTreeSet::from(["Fire".to_string(), "Water".to_string()]));
+
+        // Removing one by its own acquisition_id leaves the other intact.
+        remove_trainer_acquisition(&conn, "trainer_edges", "t1", &fire_id).unwrap();
+        let after_removal = load_trainer_profile(&conn, "t1").unwrap().unwrap();
+        assert_eq!(after_removal.edges.len(), 1);
+        assert_eq!(after_removal.edges[0]["acquisition_id"], water_id);
+
+        let _ = std::fs::remove_dir_all(&dir);
+    }
+
+    /// T13D1: the legacy `add_collection_entry` route on `trainer_edges`
+    /// must add a new instance (never silently overwrite), unlike its
+    /// still-upserting behavior on every other collection.
+    #[test]
+    fn legacy_add_collection_entry_on_trainer_edges_adds_a_new_instance_not_an_upsert() {
+        let (dir, conn) = seed();
+        add_collection_entry(&conn, "trainer_edges", "trainer_id", "t1", &json!({"definition_version_id": "edges:acrobat@core"})).unwrap();
+        add_collection_entry(&conn, "trainer_edges", "trainer_id", "t1", &json!({"definition_version_id": "edges:acrobat@core"})).unwrap();
+
+        let profile = load_trainer_profile(&conn, "t1").unwrap().unwrap();
+        assert_eq!(profile.edges.len(), 2, "unlike trainer_moves, a repeated add on trainer_edges must not collapse to one row");
+
+        let _ = std::fs::remove_dir_all(&dir);
+    }
+
+    /// T13D1: the legacy `remove_collection_entry(..., definition_version_id)`
+    /// route must reject rather than guess or delete every match once more
+    /// than one acquisition shares that definition.
+    #[test]
+    fn legacy_remove_collection_entry_rejects_ambiguous_definition_on_trainer_edges() {
+        let (dir, conn) = seed();
+        add_trainer_acquisition(&conn, "trainer_edges", "t1", &json!({"definition_version_id": "edges:elemental-connection@core"})).unwrap();
+        add_trainer_acquisition(&conn, "trainer_edges", "t1", &json!({"definition_version_id": "edges:elemental-connection@core"})).unwrap();
+
+        let result = remove_collection_entry(&conn, "trainer_edges", "trainer_id", "t1", "edges:elemental-connection@core");
+        assert!(matches!(result, Err(ProfileError::AmbiguousLegacyRemoval { count: 2, .. })));
+
+        let profile = load_trainer_profile(&conn, "t1").unwrap().unwrap();
+        assert_eq!(profile.edges.len(), 2, "an ambiguous legacy removal must delete nothing");
+
+        // A single, unambiguous match still works through the legacy route.
+        add_collection_entry(&conn, "trainer_features", "trainer_id", "t1", &json!({"definition_version_id": "features:accentuated-taste@core"})).unwrap();
+        remove_collection_entry(&conn, "trainer_features", "trainer_id", "t1", "features:accentuated-taste@core").unwrap();
+        let profile = load_trainer_profile(&conn, "t1").unwrap().unwrap();
+        assert_eq!(profile.features.len(), 0);
+
+        let _ = std::fs::remove_dir_all(&dir);
+    }
+
+    /// T13D1: a whole-profile save preserves an edge's existing
+    /// `acquisition_id` (identity stable across a load -> save round trip)
+    /// rather than reassigning a new one every time.
+    #[test]
+    fn whole_profile_save_preserves_an_existing_acquisition_id() {
+        let (dir, mut conn) = seed();
+        add_trainer_acquisition(&conn, "trainer_edges", "t1", &json!({"definition_version_id": "edges:acrobat@core"})).unwrap();
+        let loaded = load_trainer_profile(&conn, "t1").unwrap().unwrap();
+        let original_id = loaded.edges[0]["acquisition_id"].as_str().unwrap().to_string();
+
+        save_trainer_profile(&mut conn, &loaded).unwrap();
+        let reloaded = load_trainer_profile(&conn, "t1").unwrap().unwrap();
+        assert_eq!(reloaded.edges[0]["acquisition_id"], original_id, "re-saving an already-loaded profile must not mint a new id");
+
+        let _ = std::fs::remove_dir_all(&dir);
+    }
+
+    #[test]
+    fn build_draft_round_trips_and_discards() {
+        let (dir, conn) = seed();
+        let draft_id = save_trainer_build_draft(&conn, None, Some("t1"), &json!({"background_name": "Rookie"})).unwrap();
+
+        let loaded = load_trainer_build_draft(&conn, &draft_id).unwrap().unwrap();
+        assert_eq!(loaded["background_name"], "Rookie");
+
+        // Saving again with the same id updates in place, not a second row.
+        save_trainer_build_draft(&conn, Some(&draft_id), Some("t1"), &json!({"background_name": "Updated"})).unwrap();
+        let updated = load_trainer_build_draft(&conn, &draft_id).unwrap().unwrap();
+        assert_eq!(updated["background_name"], "Updated");
+        assert_eq!(list_trainer_build_drafts(&conn, Some("t1")).unwrap().len(), 1);
+
+        discard_trainer_build_draft(&conn, &draft_id).unwrap();
+        assert!(load_trainer_build_draft(&conn, &draft_id).unwrap().is_none(), "a discarded draft must not be resumable");
+
+        // Discarding an unknown/already-discarded draft is a clean error,
+        // not a silent no-op.
+        assert!(matches!(discard_trainer_build_draft(&conn, &draft_id), Err(ProfileError::BuildDraftNotFound(_))));
+
+        let _ = std::fs::remove_dir_all(&dir);
+    }
+
+    #[test]
+    fn unlinked_build_draft_never_touches_the_active_profile() {
+        let (dir, conn) = seed();
+        let draft_id = save_trainer_build_draft(&conn, None, None, &json!({"level1_candidate_name": "New Trainer"})).unwrap();
+
+        let profile = load_trainer_profile(&conn, "t1").unwrap().unwrap();
+        assert_eq!(profile.name, "Narrow Test", "an unlinked draft must never mutate any existing Trainer");
+
+        discard_trainer_build_draft(&conn, &draft_id).unwrap();
         let _ = std::fs::remove_dir_all(&dir);
     }
 

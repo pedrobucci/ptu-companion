@@ -5,6 +5,7 @@ import { api } from "../lib/api";
 import { useAppStore } from "../store/appStore";
 import { PageHeader } from "../components/PageHeader";
 import { Empty, ErrorState, Loading } from "../components/StateViews";
+import { CreatureTile } from "../components/CreatureTile";
 import { Avatar } from "../components/Avatar";
 import { IconBag, IconCreatures, IconRoster, IconShop } from "../components/icons";
 
@@ -56,103 +57,57 @@ export default function Home() {
   const recentCreatures = profile.pokemon.slice(-5).reverse();
 
   return (
-    <section>
-      <PageHeader title="Home" actions={<Link to={`/trainer/${profile.id}`}>Open Trainer Sheet →</Link>} />
-
-      <div className="card-grid">
-        <div className="card">
-          <div className="card-header">Active Trainer</div>
-          <div className="identity-hero">
-            <Avatar label={profile.name} />
-            <div>
-              <p className="identity-hero-name">{profile.name}</p>
-              <p className="identity-hero-rank">
-                Lv {profile.level} · {profile.exp} EXP · ₽{profile.money}
-              </p>
+    <section className="home-page">
+      <PageHeader title="Your next adventure" subtitle="Your Trainer, companions and campaign. Together in one place."
+        actions={<Link className="btn-primary" to={`/trainer/${profile.id}`}>Open Trainer Sheet →</Link>} />
+      <div className="dashboard-layout">
+        <div className="dashboard-primary">
+          <div className="home-top-row">
+            <section className="card trainer-identity">
+              <div className="card-header">Active Trainer</div>
+              <Avatar label={profile.name} />
+              <h2>{profile.name}</h2>
+              <p className="eyebrow">Trainer profile</p>
+              <div className="resource-strip"><strong>Lv {profile.level}</strong><span>{profile.exp} EXP</span></div>
+              <div className="resource-strip"><span>Money</span><strong>₽{profile.money}</strong></div>
+              <Link className="text-action" to={`/trainer/${profile.id}`}>View your sheet →</Link>
+            </section>
+            <section className="card home-roster">
+              <div className="card-header">Active Roster{activeRosters.length === 1 ? "" : "s"}</div>
+              {activeRosters.length === 0 ? <Empty>No active roster yet.</Empty> : activeRosters.map(r => {
+                const members = profile.pokemon.filter(p => p.roster_memberships.includes(r.id));
+                return <div key={r.id}>
+                  <div className="section-heading"><h3>{r.name}</h3><span className="count-chip">{members.length}{r.max_members ? ` / ${r.max_members}` : ""}</span></div>
+                  {members.length === 0 ? <Empty>No creatures on this roster yet.</Empty> :
+                    <div className="creature-grid">{members.map(p => <Link className="creature-choice" key={p.id} to={`/trainer/${profile.id}/pokemon/${p.id}`}><CreatureTile pokemon={p} /></Link>)}</div>}
+                </div>;
+              })}
+              <Link className="text-action" to="/rosters">View Rosters →</Link>
+            </section>
+          </div>
+          <section className="card ruleset-context">
+            <div className="card-header">Ruleset Status</div>
+            {rulesetQuery.isLoading && <Loading label="Loading…" />}
+            {rulesetQuery.isError && <ErrorState error={rulesetQuery.error} onRetry={() => rulesetQuery.refetch()} />}
+            {rulesetQuery.data && <div className="section-heading"><div><p className="eyebrow">Active campaign rules</p><h2>{rulesetQuery.data}</h2></div><Link className="text-action" to="/settings">View settings →</Link></div>}
+          </section>
+        </div>
+        <aside className="dashboard-support">
+          <section className="card">
+            <div className="card-header">Quick Actions</div>
+            <div className="quick-actions-grid">
+              <Link to="/rosters" className="quick-action quick-action-roster"><IconRoster /> Open Roster</Link>
+              <Link to="/pokedex" className="quick-action quick-action-add"><IconCreatures /> Add Creature</Link>
+              <Link to="/items" className="quick-action quick-action-items"><IconBag /> View Items</Link>
+              <Link to="/shop" className="quick-action quick-action-shop"><IconShop /> Shop</Link>
             </div>
-          </div>
-          <p>
-            <Link to={`/trainer/${profile.id}`}>Open Trainer Sheet →</Link>
-          </p>
-        </div>
-
-        <div className="card">
-          <div className="card-header">Active Roster{activeRosters.length === 1 ? "" : "s"}</div>
-          {activeRosters.length === 0 ? (
-            <Empty>No active roster yet.</Empty>
-          ) : (
-            activeRosters.map((r) => {
-              const members = profile.pokemon.filter((p) => p.roster_memberships.includes(r.id));
-              return (
-                <div key={r.id}>
-                  <p>
-                    <strong>{r.name}</strong> ({members.length}
-                    {r.max_members ? `/${r.max_members}` : ""})
-                  </p>
-                  {members.length === 0 ? (
-                    <Empty>No creatures on this roster yet.</Empty>
-                  ) : (
-                    <ul className="pokemon-list">
-                      {members.map((p) => (
-                        <li key={p.id}>
-                          <Link to={`/trainer/${profile.id}/pokemon/${p.id}`}>{p.nickname || p.species_definition_id}</Link>{" "}
-                          · Lv {p.level}
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </div>
-              );
-            })
-          )}
-          <p>
-            <Link to="/rosters">View Rosters →</Link>
-          </p>
-        </div>
-
-        <div className="card">
-          <div className="card-header">Recent Creatures</div>
-          {recentCreatures.length === 0 ? (
-            <Empty>No Pokémon yet — add one from Creatures.</Empty>
-          ) : (
-            <ul className="pokemon-list">
-              {recentCreatures.map((p) => (
-                <li key={p.id}>
-                  <Link to={`/trainer/${profile.id}/pokemon/${p.id}`}>{p.nickname || p.species_definition_id}</Link> · Lv{" "}
-                  {p.level}
-                </li>
-              ))}
-            </ul>
-          )}
-          <p>
-            <Link to="/pokedex">Add a creature →</Link>
-          </p>
-        </div>
-
-        <div className="card">
-          <div className="card-header">Ruleset Status</div>
-          {rulesetQuery.isLoading && <Loading label="Loading…" />}
-          {rulesetQuery.isError && <ErrorState error={rulesetQuery.error} onRetry={() => rulesetQuery.refetch()} />}
-          {rulesetQuery.data && <p>{rulesetQuery.data}</p>}
-        </div>
-
-        <div className="card">
-          <div className="card-header">Quick Actions</div>
-          <div className="quick-actions-grid">
-            <Link to="/rosters" className="quick-action quick-action-roster">
-              <IconRoster /> Open Roster
-            </Link>
-            <Link to="/pokedex" className="quick-action quick-action-add">
-              <IconCreatures /> Add Creature
-            </Link>
-            <Link to="/items" className="quick-action quick-action-items">
-              <IconBag /> View Items
-            </Link>
-            <Link to="/shop" className="quick-action quick-action-shop">
-              <IconShop /> Shop
-            </Link>
-          </div>
-        </div>
+          </section>
+          <section className="card">
+            <div className="card-header">Recent Creatures</div>
+            {recentCreatures.length === 0 ? <Empty>No Pokémon yet — add one from Creatures.</Empty> :
+              <div className="recent-creatures">{recentCreatures.map(p => <Link className="creature-choice" key={p.id} to={`/trainer/${profile.id}/pokemon/${p.id}`}><CreatureTile pokemon={p} compact /></Link>)}</div>}
+          </section>
+        </aside>
       </div>
     </section>
   );

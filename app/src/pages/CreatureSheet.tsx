@@ -1,3 +1,4 @@
+import { SheetTabs } from "../components/SheetTabs";
 import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -23,6 +24,7 @@ import { Avatar } from "../components/Avatar";
 export default function CreatureSheet() {
   const { trainerId, pokemonId } = useParams<{ trainerId: string; pokemonId: string }>();
   const contentPackId = useAppStore((s) => s.activeContentPackId);
+  const [tab, setTab] = useState("sheet");
   const [speciesPanelOpen, setSpeciesPanelOpen] = useState(false);
 
   const trainerQuery = useQuery({
@@ -57,10 +59,10 @@ export default function CreatureSheet() {
       <Link to={`/trainer/${trainerId}`} className="breadcrumb-back">
         <IconChevronLeft /> {trainerQuery.data.name}
       </Link>
-      <div className="identity-hero">
-        <Avatar label={pokemon.nickname || pokemon.species_definition_id} />
+      <div className="identity-hero creature-hero card">
+        <Avatar kind="creature" label={pokemon.nickname || speciesQuery.data?.name || pokemon.species_definition_id} />
         <div>
-          <h1 style={{ margin: 0 }}>{pokemon.nickname || pokemon.species_definition_id}</h1>
+          <h1 style={{ margin: 0 }}>{pokemon.nickname || speciesQuery.data?.name || pokemon.species_definition_id}</h1>
           <div className="button-row" style={{ marginTop: "0.35em" }}>
             {types.map((t) => (
               <TypeBadge key={t} type={t} />
@@ -71,7 +73,8 @@ export default function CreatureSheet() {
         </div>
       </div>
 
-      <div className="sheet-grid">
+      <SheetTabs tabs={[{ key: "sheet", label: "Sheet" }, { key: "moves", label: "Moves" }]} value={tab} onChange={setTab} label="Creature sheet sections">
+      <div className="creature-sections" hidden={tab !== "sheet"}>
         <section className="card">
           <div className="card-header">HP</div>
           {pokemon.battle_state ? (
@@ -119,12 +122,15 @@ export default function CreatureSheet() {
           )}
         </section>
 
+      </div>
+      <div hidden={tab !== "moves"}>
         <section className="card">
           <div className="card-header">Moves</div>
           <PokemonMoveResolver pokemon={pokemon} contentPackId={contentPackId} />
         </section>
       </div>
 
+      </SheetTabs>
       <AdaptivePanel open={speciesPanelOpen} onClose={() => setSpeciesPanelOpen(false)} title={speciesQuery.data?.name ?? ""}>
         {speciesQuery.data && <DefinitionDetail resolved={speciesQuery.data} />}
       </AdaptivePanel>

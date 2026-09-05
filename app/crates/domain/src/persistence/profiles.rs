@@ -238,7 +238,79 @@ pub(crate) fn migrations() -> Vec<String> {
         ALTER TABLE trainers ADD COLUMN weight_lb INTEGER;
     "#
     .to_string(),
+    // Migration 6 (T13D1): `trainer_edges`/`trainer_features` gain a real
+    // per-instance identity. Every other mechanical-collection table
+    // (moves/abilities/capabilities, and all 4 Pokémon-owned ones) is
+    // intentionally untouched — see T13D_TRAINER_BUILD_REPLAN.md task
+    // T13D1's scope ("no all-nine-collections migration").
+    //
+    // `definition_version_id` alone can no longer be these two tables' key:
+    // PTU legally allows some Edges (e.g. Elemental Connection, once per
+    // distinct Type) and Features to be acquired more than once. The old
+    // `PRIMARY KEY (trainer_id, definition_version_id)` made a second
+    // legitimate acquisition either crash a whole-profile save (plain
+    // `INSERT`) or silently overwrite the first pick's `data_json` (the
+    // upsert `add_collection_entry` path) — see Claude Code Revisor's
+    // T13D_PLAN_REVIEW_APPROVE_v2.md, which independently reproduced this.
+    //
+    // `acquisition_id` here is only ever a per-owner-row uniqueness token
+    // assigned at migration time via `randomblob` — it is NOT yet embedded
+    // in `data_json` for a pre-existing row (raw SQL has no clean JSON
+    // mutation available without depending on SQLite's optional JSON1
+    // extension). `profile::repository`'s acquisition-aware reader is the
+    // single place that reconciles the two, injecting the column's id into
+    // the returned value on every read so a caller never sees a Value
+    // missing `acquisition_id` and the round trip (read -> unchanged ->
+    // save) is exactly idempotent — the id is stable, never reassigned.
+    mechanical_collections_acquisition_id_migration(),
     ]
+}
+
+fn mechanical_collections_acquisition_id_migration() -> String {
+    let mut sql = String::new();
+    for table in ["trainer_edges", "trainer_features"] {
+        sql.push_str(&format!(
+            "ALTER TABLE {table} RENAME TO {table}_pre_acquisition_id;
+            DROP INDEX IF EXISTS idx_{table}_trainer;
+            CREATE TABLE {table} (
+                trainer_id TEXT NOT NULL REFERENCES trainers(id) ON DELETE CASCADE,
+                acquisition_id TEXT NOT NULL,
+                definition_version_id TEXT NOT NULL,
+                sequence INTEGER NOT NULL,
+                data_json TEXT NOT NULL,
+                updated_at TEXT NOT NULL,
+                PRIMARY KEY (trainer_id, acquisition_id)
+            );
+            CREATE INDEX IF NOT EXISTS idx_{table}_trainer ON {table}(trainer_id);
+            CREATE INDEX IF NOT EXISTS idx_{table}_definition ON {table}(trainer_id, definition_version_id);
+            INSERT INTO {table} (trainer_id, acquisition_id, definition_version_id, sequence, data_json, updated_at)
+                SELECT trainer_id, lower(hex(randomblob(16))), definition_version_id, sequence, data_json, updated_at
+                FROM {table}_pre_acquisition_id;
+            DROP TABLE {table}_pre_acquisition_id;
+            "
+        ));
+    }
+
+    // T13D1: an isolated build draft (§3.3) — either an uncommitted
+    // level-1 candidate (`trainer_id IS NULL`) or tentative edits to an
+    // existing Trainer. `data_json` is deliberately opaque here: the
+    // typed intent schema it will eventually carry is T13D3/T13D4 scope;
+    // D1 only needs a safe place to persist/reload/discard it that never
+    // touches `trainers` or any other Trainer-graph table.
+    sql.push_str(
+        "CREATE TABLE IF NOT EXISTS trainer_build_drafts (
+            id TEXT PRIMARY KEY,
+            trainer_id TEXT REFERENCES trainers(id) ON DELETE CASCADE,
+            data_json TEXT NOT NULL,
+            created_at TEXT NOT NULL,
+            updated_at TEXT NOT NULL
+        );
+        CREATE INDEX IF NOT EXISTS idx_trainer_build_drafts_trainer ON trainer_build_drafts(trainer_id);
+
+        ALTER TABLE trainers ADD COLUMN build_state_json TEXT;
+        ",
+    );
+    sql
 }
 
 /// Migration 4 (T09a): the mechanical collections spec §23 names
@@ -374,8 +446,8 @@ mod tests {
         let all_migrations = migrations();
         assert_eq!(
             all_migrations.len(),
-            5,
-            "expected exactly 5 migrations: T02 core, T06 usage_counters, T07 shops/transactions, T09a collections, T15A stat_allocation/weight"
+            6,
+            "expected exactly 6 migrations: T02 core, T06 usage_counters, T07 shops/transactions, T09a collections, T15A stat_allocation/weight, T13D1 acquisition_id/drafts/build_state"
         );
 
         // Simulate a database that only ever saw the first 3 migrations
@@ -437,5 +509,89 @@ mod tests {
         assert_eq!(profile.name, "Pre-T15A Trainer", "pre-existing Trainer data must survive the upgrade");
         assert_eq!(profile.stat_allocation, TrainerStatAllocation::default(), "no fabricated allocation");
         assert_eq!(profile.weight_lb, None, "no fabricated weight");
+    }
+
+    /// T13D1 acceptance: "Existing DB upgrades/reopens twice with identical
+    /// C1 allocations/GM/progression/other graph; migrated Edge/Feature
+    /// acquisitions have stable unique IDs." Simulates a real pre-T13D1
+    /// database (migrations 1-5 only, `trainer_edges`/`trainer_features`
+    /// still keyed by `definition_version_id` alone) that already has data
+    /// in every graph area T13D1 must never disturb, then upgrades it.
+    #[test]
+    fn pre_t13d1_database_upgrades_twice_with_stable_acquisition_ids_and_untouched_c1_graph() {
+        use crate::profile::model::{StatAllocationEntry, StatAllocationSource, TrainerCombatStat, TrainerStatAllocation};
+        use crate::profile::repository::load_trainer_profile;
+
+        let conn = Connection::open_in_memory().unwrap();
+        let all_migrations = migrations();
+        assert_eq!(all_migrations.len(), 6);
+        let pre_t13d1: Vec<&str> = all_migrations[..5].iter().map(String::as_str).collect();
+        super::super::apply_migrations(&conn, &pre_t13d1).unwrap();
+
+        let now = "2026-01-01T00:00:00Z";
+        conn.execute(
+            "INSERT INTO trainers (id, name, level, exp, money, stat_allocation_json, weight_lb, created_at, updated_at)
+             VALUES ('t1','Pre-T13D1 Trainer',5,0,100,?1,150,?2,?2)",
+            rusqlite::params![
+                serde_json::to_string(&TrainerStatAllocation {
+                    entries: vec![StatAllocationEntry { stat: TrainerCombatStat::Hp, source: StatAllocationSource::Creation, level: 1, points: 4, note: None }],
+                })
+                .unwrap(),
+                now,
+            ],
+        )
+        .unwrap();
+        // Two pre-existing acquisitions, still keyed only by
+        // definition_version_id — the exact old shape that used to make a
+        // second real acquisition of the same Edge either crash a
+        // whole-profile save or silently overwrite in place.
+        conn.execute(
+            "INSERT INTO trainer_edges (trainer_id, definition_version_id, sequence, data_json, updated_at)
+             VALUES ('t1', 'edges:acrobat@core', 0, '{\"definition_version_id\":\"edges:acrobat@core\"}', ?1)",
+            [now],
+        )
+        .unwrap();
+        conn.execute(
+            "INSERT INTO trainer_features (trainer_id, definition_version_id, sequence, data_json, updated_at)
+             VALUES ('t1', 'features:accentuated-taste@core', 0, '{\"definition_version_id\":\"features:accentuated-taste@core\"}', ?1)",
+            [now],
+        )
+        .unwrap();
+        conn.execute(
+            "INSERT INTO trainer_gm_grants (id, trainer_id, kind, sequence, data_json, updated_at)
+             VALUES ('grant-1', 't1', 'fixed', 0, '{\"id\":\"grant-1\",\"kind\":\"fixed\",\"target\":\"trainer.stat.hp\",\"operation\":\"add\",\"value\":2}', ?1)",
+            [now],
+        )
+        .unwrap();
+        conn.execute(
+            "INSERT INTO trainer_progression (trainer_id, level, data_json, updated_at) VALUES ('t1', 1, '{\"level\":1}', ?1)",
+            [now],
+        )
+        .unwrap();
+
+        let all_refs: Vec<&str> = all_migrations.iter().map(String::as_str).collect();
+        super::super::apply_migrations(&conn, &all_refs).unwrap();
+
+        let first = load_trainer_profile(&conn, "t1").unwrap().unwrap();
+        assert_eq!(first.name, "Pre-T13D1 Trainer");
+        assert_eq!(first.weight_lb, Some(150), "T15A fields must survive untouched");
+        assert_eq!(first.stat_allocation.entries.len(), 1, "C1 allocation must survive untouched");
+        assert_eq!(first.gm_grants.len(), 1, "GM grants must survive untouched");
+        assert_eq!(first.progression.len(), 1, "progression ledger must survive untouched");
+        assert_eq!(first.build_state, None, "a pre-T13D1 Trainer has no build_state — legacy, never fabricated");
+
+        assert_eq!(first.edges.len(), 1);
+        let edge_id_1 = first.edges[0]["acquisition_id"].as_str().unwrap().to_string();
+        assert!(!edge_id_1.is_empty(), "the migrated Edge must get a real, non-empty acquisition_id");
+        assert_eq!(first.features[0]["acquisition_id"].as_str().unwrap().is_empty(), false);
+
+        // Re-open (a second "upgrade" pass over an already-migrated
+        // database) and reload once more: applying the same migrations a
+        // second time must be a no-op (see `apply_migrations`'s
+        // `PRAGMA user_version` skip), and the assigned id must be
+        // completely stable, never reassigned.
+        super::super::apply_migrations(&conn, &all_refs).unwrap();
+        let second = load_trainer_profile(&conn, "t1").unwrap().unwrap();
+        assert_eq!(second, first, "reopening twice must be fully idempotent, including the assigned acquisition_id");
     }
 }

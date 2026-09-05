@@ -82,6 +82,17 @@ pub struct TrainerProfile {
     /// prior task added.
     #[serde(default)]
     pub weight_lb: Option<i64>,
+    /// T13D1 (§3.3): narrow, opaque published-build metadata/status and
+    /// campaign-variant provenance (e.g. "Elemental Connection uses the
+    /// distinct-Type campaign variant, not Core") — kept separate from
+    /// `background`/mechanics so narrative identity fields never overload
+    /// Background's rule meaning. `None` means legacy/unknown, never a
+    /// reset — the same "NULL is not zero" precedent as `weight_lb`. Typed
+    /// interpretation (`BuildStatus`, campaign-variant flags) belongs to
+    /// `engine::trainer_build`, which is free to change its own shape
+    /// without a persistence migration as long as this stays valid JSON.
+    #[serde(default)]
+    pub build_state: Option<Value>,
 }
 
 /// The six persisted Trainer Combat Stats (T15A, PTU 1.05 Core Step 6).

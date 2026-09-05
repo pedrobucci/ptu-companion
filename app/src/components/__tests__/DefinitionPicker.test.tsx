@@ -54,7 +54,12 @@ describe("DefinitionPicker", () => {
     await user.type(input, "c");
     await waitFor(() => expect(screen.getByText("Cut")).toBeInTheDocument());
 
-    await user.keyboard("{ArrowDown}{ArrowDown}{Enter}");
+    await user.keyboard("{ArrowDown}{ArrowDown}");
+    const option = screen.getByRole("option", { name: /Cut/ });
+    expect(input).toHaveAttribute("aria-activedescendant", option.id);
+    expect(input).toHaveFocus();
+    await user.keyboard("{Enter}");
+    expect(input).not.toHaveAttribute("aria-activedescendant");
 
     expect(onSelect).toHaveBeenCalledWith(hits[1]);
   });

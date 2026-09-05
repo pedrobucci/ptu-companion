@@ -1,0 +1,129 @@
+[
+  {
+    "id": "skills-catalog-is-exactly-17-across-three-groups",
+    "source_page": 33,
+    "expected": {
+      "count": 17,
+      "body_count": 6,
+      "mind_count": 7,
+      "spirit_count": 4,
+      "body_ids": ["acrobatics", "athletics", "combat", "intimidate", "stealth", "survival"],
+      "mind_ids": ["general-education", "medicine-education", "occult-education", "pokemon-education", "technology-education", "guile", "perception"],
+      "spirit_ids": ["charm", "command", "focus", "intuition"]
+    }
+  },
+  {
+    "id": "core-rank-ordinal-table",
+    "source_page": "33-34",
+    "expected": {
+      "ranks": [
+        { "name": "pathetic", "ordinal": 1, "dice": 1 },
+        { "name": "untrained", "ordinal": 2, "dice": 2 },
+        { "name": "novice", "ordinal": 3, "dice": 3 },
+        { "name": "adept", "ordinal": 4, "dice": 4 },
+        { "name": "expert", "ordinal": 5, "dice": 5 },
+        { "name": "master", "ordinal": 6, "dice": 6 }
+      ],
+      "seed_rank_value_is_wrong_for": { "untrained": 0, "novice": 2, "adept": 3, "expert": 4, "master": 5 }
+    }
+  },
+  {
+    "id": "ordinary-rank-caps-by-level",
+    "source_page": "19-20,34",
+    "expected": {
+      "novice_available_at_level": 1,
+      "adept_available_at_level": 2,
+      "expert_available_at_level": 6,
+      "master_available_at_level": 12,
+      "background_adept_is_level_1_exception": true
+    }
+  },
+  {
+    "id": "background-rule",
+    "source_page": "13,18,33-34",
+    "expected": {
+      "adept_skill_count": 1,
+      "novice_skill_count": 1,
+      "pathetic_skill_count": 3,
+      "remaining_skills_rank": "untrained",
+      "pathetic_skills_locked_during_creation": true
+    }
+  },
+  {
+    "id": "eight-skill-edges-exactly",
+    "source_page": 52,
+    "expected": {
+      "ids": [
+        "basic-skills", "adept-skills", "expert-skills", "master-skills",
+        "skill-enhancement", "categoric-inclination", "skill-stunt", "virtuoso"
+      ],
+      "count": 8,
+      "virtuoso_effective_rank_for_effects": 8,
+      "virtuoso_grants_extra_dice": false,
+      "skill_enhancement_check_bonus": 2,
+      "categoric_inclination_check_bonus": 1,
+      "categoric_inclination_repeatable": false
+    }
+  },
+  {
+    "id": "elemental-connection-modes",
+    "source_page": "19,56",
+    "expected": {
+      "definition_version_id": "edges:elemental-connection@core",
+      "conflicts_with_definition_version_id": "edges:mystic-senses@core",
+      "check_bonus": 2,
+      "checks": ["charm", "command", "guile", "intimidate", "intuition"],
+      "core_mode_allow_repeat": false,
+      "campaign_variant_allow_repeat": true,
+      "campaign_variant_repeat_rule": "distinct_type_only",
+      "mutual_exclusion_applies_in_all_modes": true
+    }
+  },
+  {
+    "id": "four-free-training-features",
+    "source_page": 60,
+    "expected": {
+      "ids": ["agility-training", "brutal-training", "focused-training", "inspired-training"],
+      "definition_version_ids": [
+        "features:agility-training@core",
+        "features:brutal-training@core",
+        "features:focused-training@core",
+        "features:inspired-training@core"
+      ]
+    }
+  },
+  {
+    "id": "creation-budget",
+    "source_page": "13,18",
+    "expected": {
+      "paid_edges": 4,
+      "paid_features": 4,
+      "free_training_features": 1,
+      "free_training_feature_skips_prerequisites": true,
+      "normal_selections_check_prerequisites": true
+    }
+  },
+  {
+    "id": "level-2-6-12-bonus-skill-edge-already-counted-in-seed",
+    "source_page": 19,
+    "expected": {
+      "levels": [2, 6, 12],
+      "restriction": "cannot_attain_newly_unlocked_rank_at_same_level",
+      "note": "trainer_progression.json edges_at_level=2 at these levels already includes this bonus alongside the one ordinary Edge; do not add it a second time"
+    }
+  },
+  {
+    "id": "offensive-stat-streams-l5-10-20-30-40",
+    "source_page": "19-20",
+    "expected": {
+      "milestone_levels": [5, 10, 20, 30, 40],
+      "streams": [
+        { "milestone_level": 5, "retroactive_bonus_levels": [2, 4], "retroactive_bonus_points_each": 2, "ongoing_bonus_levels": [6, 8, 10], "ongoing_bonus_points_each": 1 },
+        { "milestone_level": 10, "ongoing_bonus_levels": [12, 14, 16, 18, 20], "ongoing_bonus_points_each": 1 },
+        { "milestone_level": 20, "ongoing_bonus_levels": [22, 24, 26, 28, 30], "ongoing_bonus_points_each": 1 },
+        { "milestone_level": 30, "ongoing_bonus_levels": [32, 34, 36, 38, 40], "ongoing_bonus_points_each": 1 },
+        { "milestone_level": 40, "ongoing_bonus_levels": [42, 44, 46, 48, 50], "ongoing_bonus_points_each": 1 }
+      ]
+    }
+  }
+]

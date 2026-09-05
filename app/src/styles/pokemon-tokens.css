@@ -188,6 +188,13 @@
      surface-nav vs white text = 15.76:1, pk-blue vs white = 4.82:1. */
   --surface-canvas: var(--pk-white);
   --surface-card: #ffffff;
+  /* D2: original field-console materials, separate from mechanical colors. */
+  --console-paper: #faf8f2;
+  --console-ink: #16223e;
+  --console-muted: #526078;
+  --console-line: #c4ccd5;
+  --console-red-shadow: #9b161e;
+  --console-blue-light: #e3f2fd;
   --surface-nav: #16223e;
   --surface-nav-text: #ffffff;
 

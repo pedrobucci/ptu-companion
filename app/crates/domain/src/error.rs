@@ -114,8 +114,42 @@ pub enum ProfileError {
     #[error("{table}[{index}] is missing required string field \"definition_version_id\"")]
     CollectionEntryMissingDefinitionVersionId { table: String, index: usize },
 
+    /// T13D1: `trainer_edges`/`trainer_features` key on `acquisition_id`
+    /// (a server-generated per-instance id, not the definition), so PTU's
+    /// legally repeatable Edges (e.g. Elemental Connection taken once per
+    /// Type) can coexist. This only fires for a caller-supplied value that
+    /// isn't a string when the field IS present; a genuinely missing field
+    /// is never an error here — the repository assigns a fresh id instead
+    /// (see `profile::repository::insert_trainer_acquisition_collection`).
+    #[error("{table}[{index}] field \"acquisition_id\" is present but is not a string")]
+    AcquisitionIdNotAString { table: String, index: usize },
+
+    /// The legacy single-value `remove_collection_entry(..., definition_version_id)`
+    /// path is ambiguous once more than one acquisition shares that
+    /// `definition_version_id` (e.g. two Elemental Connection instances) —
+    /// it must reject rather than guess which instance to delete or delete
+    /// every repeated instance by definition.
+    #[error("{table}: {count} acquisitions share definition_version_id \"{definition_version_id}\" for this owner; remove by acquisition_id instead")]
+    AmbiguousLegacyRemoval { table: String, definition_version_id: String, count: i64 },
+
+    /// T13D1: a `trainer_build_drafts` row referenced by id does not exist
+    /// (already discarded, or never created).
+    #[error("build draft \"{0}\" not found")]
+    BuildDraftNotFound(String),
+
     #[error("database error: {0}")]
     Sqlite(#[from] rusqlite::Error),
+}
+
+/// T13D1: capabilities the frozen `trainer_build` API contract declares but
+/// whose rule evaluation is explicitly out of this task's scope (T13D3
+/// authoritative build validation, T13D4 milestone/GM/respec effects). Every
+/// command returning this is declared unavailable, never a fake success —
+/// see `T13D_TRAINER_BUILD_REPLAN.md` task T13D1's scope note.
+#[derive(Debug, Error, Clone, PartialEq)]
+pub enum BuildError {
+    #[error("{capability} is not yet implemented (scheduled for {scheduled_for}); T13D1 only freezes its wire contract")]
+    NotYetImplemented { capability: String, scheduled_for: String },
 }
 
 /// Errors raised while re-exporting an already-imported content pack

@@ -365,6 +365,236 @@ export interface StorageTransferOutcome {
 }
 
 // ---------------------------------------------------------------------
+// T13D1: Trainer Build contracts (Trainer Build + Visual Identity
+// Corrective REPLAN). `getTrainerBuildContext`/the draft functions below
+// are real; every preview/commit function is a frozen-contract stub that
+// rejects with a `NotYetImplemented`-shaped message until T13D3/T13D4
+// implement the actual rule evaluation — never a fabricated success. Types
+// here mirror `ptu_domain::engine::{datasets, trainer_build}` field-for-field.
+// ---------------------------------------------------------------------
+
+export type AcquisitionSource = "creation" | "level_up" | "bonus_skill_edge" | "milestone" | "gm_fixed" | "gm_resource" | "legacy";
+
+/** Additive extension of ValidationIssue (T13D1 §3.4) — every ValidationIssue
+ * field is present at the top level (Rust serializes it via `#[serde(flatten)]`),
+ * plus these optional address fields. */
+export interface BuildIssue extends ValidationIssue {
+  field?: string;
+  step?: string;
+  acquisition_id?: string;
+  source?: string;
+}
+
+export type BuildStatus = "legacy" | "draft" | "published";
+
+export interface BuildState {
+  status: BuildStatus;
+  elemental_connection_mode: string | null;
+  campaign_setup_pending: boolean;
+  narrative: unknown | null;
+}
+
+export interface SkillCatalogEntry {
+  id: string;
+  name: string;
+}
+
+export interface SkillGroups {
+  body: SkillCatalogEntry[];
+  mind: SkillCatalogEntry[];
+  spirit: SkillCatalogEntry[];
+}
+
+export interface SkillsSection {
+  source_page: number;
+  count: number;
+  groups: SkillGroups;
+}
+
+export interface CoreRankRow {
+  name: string;
+  ordinal: number;
+  dice: number;
+}
+
+export interface OrdinaryRankCapsByLevel {
+  novice_available_at_level: number;
+  adept_available_at_level: number;
+  expert_available_at_level: number;
+  master_available_at_level: number;
+  background_adept_is_level_1_exception: boolean;
+}
+
+export interface RankTableSection {
+  ranks: CoreRankRow[];
+  ordinary_rank_caps_by_level: OrdinaryRankCapsByLevel;
+}
+
+export interface BackgroundRuleSection {
+  adept_skill_count: number;
+  novice_skill_count: number;
+  pathetic_skill_count: number;
+  remaining_skills_rank: string;
+  distinct_skills_required: boolean;
+  pathetic_skills_locked_during_creation: boolean;
+}
+
+/** One of the eight Core p52 Skill Edges — a closed, exhaustive list; an
+ * Edge that merely has a skill-rank prerequisite is not a Skill Edge by
+ * that fact alone (T13D_PLAN_REVIEW_APPROVE_v2.md). */
+export interface SkillEdgeCatalogEntry {
+  id: string;
+  name: string;
+  definition_version_id: string;
+  policy: string;
+  repeatable: boolean;
+  repeat_rule: string | null;
+  requires_level: number | null;
+  requires_preceding_rank: string | null;
+  requires_rank: string | null;
+  target_rank: string | null;
+  check_bonus: number | null;
+  categories: string[];
+  minimum_rank: string | null;
+  conditional_bonus: string | null;
+  effective_rank_for_effects: number | null;
+  grants_extra_dice: boolean | null;
+  notes: string | null;
+}
+
+export interface SkillEdgesSection {
+  source_page: number;
+  entries: SkillEdgeCatalogEntry[];
+}
+
+export interface ElementalConnectionMode {
+  label: string;
+  allow_repeat: boolean;
+  repeat_rule: string | null;
+  requires_explicit_opt_in: boolean;
+}
+
+export interface ElementalConnectionModes {
+  core: ElementalConnectionMode;
+  campaign_variant_distinct_type: ElementalConnectionMode;
+}
+
+export interface ElementalConnectionSection {
+  definition_version_id: string;
+  conflicts_with_definition_version_id: string;
+  check_bonus: number;
+  checks: string[];
+  modes: ElementalConnectionModes;
+  mutual_exclusion_applies_in_all_modes: boolean;
+}
+
+export interface TrainingFeatureOption {
+  id: string;
+  name: string;
+  definition_version_id: string;
+}
+
+export interface TrainingFeaturesSection {
+  options: TrainingFeatureOption[];
+}
+
+export interface CreationBudgetSection {
+  steps: string[];
+  paid_edges: number;
+  paid_features: number;
+  free_training_features: number;
+  free_training_feature_skips_prerequisites: boolean;
+  normal_selections_check_prerequisites: boolean;
+}
+
+export interface OffensiveStatStream {
+  milestone_level: number;
+  milestone_name: string;
+  stat_choice: unknown;
+  retroactive_bonus_levels: number[];
+  retroactive_bonus_points_each: number | null;
+  ongoing_bonus_levels: number[];
+  ongoing_bonus_points_each: number;
+  alternative_options: unknown[];
+}
+
+export interface OffensiveStatStreamsSection {
+  milestone_levels: number[];
+  streams: OffensiveStatStream[];
+}
+
+export interface TrainerBuildRules {
+  skills: SkillsSection;
+  rank_table: RankTableSection;
+  background: BackgroundRuleSection;
+  skill_edges: SkillEdgesSection;
+  elemental_connection: ElementalConnectionSection;
+  training_features: TrainingFeaturesSection;
+  creation_budget: CreationBudgetSection;
+  offensive_stat_streams: OffensiveStatStreamsSection;
+}
+
+export interface BuildContext {
+  base_revision: string;
+  rules_fingerprint: string;
+  rules: TrainerBuildRules;
+  build_status: BuildStatus;
+  existing_profile: TrainerProfile | null;
+}
+
+export interface PreviewTrainerBuildRequest {
+  trainer_id: string | null;
+  content_pack_id: string;
+  base_revision: string | null;
+  intent: unknown;
+  manual_adjudications?: unknown[];
+}
+
+export interface CommitTrainerBuildRequest {
+  draft_id: string | null;
+  intent: unknown;
+  expected_base_revision: string;
+  confirm: boolean;
+}
+
+export interface PreviewTrainerAdvancementRequest {
+  trainer_id: string;
+  content_pack_id: string;
+  expected_base_revision: string;
+  next_level: number;
+  milestone_option_id?: string | null;
+  acquired_choices?: unknown[];
+}
+
+export interface CommitTrainerAdvancementRequest extends PreviewTrainerAdvancementRequest {
+  confirm: boolean;
+}
+
+export interface PreviewTrainerGmChangeRequest {
+  trainer_id: string;
+  expected_base_revision: string;
+  action: "add" | "edit" | "remove";
+  grant_kind: "fixed" | "resource";
+  payload: unknown;
+  note?: string | null;
+}
+
+export interface CommitTrainerGmChangeRequest extends PreviewTrainerGmChangeRequest {
+  confirm: boolean;
+}
+
+export interface PreviewTrainerRespecRequest {
+  trainer_id: string;
+  expected_base_revision: string;
+  proposed_normal_rebuild: unknown;
+  authorized_resource_reallocations?: unknown[];
+}
+
+export interface CommitTrainerRespecRequest extends PreviewTrainerRespecRequest {
+  confirm: boolean;
+}
+
+// ---------------------------------------------------------------------
 // Content
 // ---------------------------------------------------------------------
 
@@ -449,6 +679,27 @@ export const api = {
     invoke<GmGrant>("reallocate_resource_grant", { trainerId, grantId, newAllocation }),
   resolveModifierValue: (base: number, modifiers: Modifier[]) =>
     invoke<ResolvedValue>("resolve_modifier_value", { base, modifiers }),
+
+  // T13D1: Trainer Build context/drafts. getTrainerBuildContext and the
+  // draft functions are real; every preview*/commit* function below them
+  // rejects with a NotYetImplemented-shaped error until T13D3/T13D4 land —
+  // see this section's header comment above the types.
+  getTrainerBuildContext: (trainerId: string | null, contentPackId: string) =>
+    invoke<BuildContext>("get_trainer_build_context", { trainerId, contentPackId }),
+  saveTrainerBuildDraft: (draftId: string | null, trainerId: string | null, intent: unknown) =>
+    invoke<string>("save_trainer_build_draft", { draftId, trainerId, intent }),
+  loadTrainerBuildDraft: (draftId: string) => invoke<unknown | null>("load_trainer_build_draft", { draftId }),
+  discardTrainerBuildDraft: (draftId: string) => invoke<void>("discard_trainer_build_draft", { draftId }),
+  previewTrainerBuild: (request: PreviewTrainerBuildRequest) => invoke<unknown>("preview_trainer_build", { request }),
+  commitTrainerBuild: (request: CommitTrainerBuildRequest) => invoke<unknown>("commit_trainer_build", { request }),
+  previewTrainerBuildAdvancement: (request: PreviewTrainerAdvancementRequest) =>
+    invoke<unknown>("preview_trainer_advancement", { request }),
+  commitTrainerBuildAdvancement: (request: CommitTrainerAdvancementRequest) =>
+    invoke<unknown>("commit_trainer_advancement", { request }),
+  previewTrainerGmChange: (request: PreviewTrainerGmChangeRequest) => invoke<unknown>("preview_trainer_gm_change", { request }),
+  commitTrainerGmChange: (request: CommitTrainerGmChangeRequest) => invoke<unknown>("commit_trainer_gm_change", { request }),
+  previewTrainerBuildRespec: (request: PreviewTrainerRespecRequest) => invoke<unknown>("preview_trainer_respec", { request }),
+  commitTrainerBuildRespec: (request: CommitTrainerRespecRequest) => invoke<unknown>("commit_trainer_respec", { request }),
 
   // Inventory / equipment / shop
   getShop: (shopId: string) => invoke<ShopPreset | null>("get_shop", { shopId }),

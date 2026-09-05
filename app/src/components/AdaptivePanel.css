@@ -49,3 +49,32 @@
     border-radius: 12px 12px 0 0;
   }
 }
+
+/* D2: readable detail, safe-area-aware confirmation, independent of OS theme. */
+.adaptive-panel { width: min(580px, calc(100vw - 32px)); max-width: none; max-height: calc(100dvh - 32px); color: var(--console-ink); background: var(--console-paper); border: 1px solid var(--console-line); border-top: 5px solid var(--pk-red); border-radius: 16px; }
+.adaptive-panel-header { background: var(--console-paper); color: var(--console-ink); gap: 12px; }
+.adaptive-panel-header button { color: var(--console-ink); background: white; width: 44px; min-width: 44px; height: 44px; border: 1px solid var(--console-line); border-radius: 50%; }
+.adaptive-panel-body { max-height: calc(100dvh - 140px); overscroll-behavior: contain; padding: 20px; }
+.adaptive-panel :is(button,input,select) { color: var(--console-ink); background: white; min-height: 44px; }
+.adaptive-panel .btn-primary { color: white; background: var(--pk-blue-dark); }
+.adaptive-panel .button-row:has(> .btn-primary), .adaptive-panel .button-row:has(> button:last-child) { padding-block: 10px; }
+.adaptive-panel-body > div > .button-row:last-child, .adaptive-panel-body > .button-row:last-child { position: sticky; bottom: -20px; background: var(--console-paper); border-top: 1px solid var(--console-line); padding-bottom: max(12px,env(safe-area-inset-bottom)); z-index: 1; }
+.adaptive-panel :focus-visible { outline: 2px solid var(--pk-blue-dark); outline-offset: 2px; }
+@media (max-width: 640px) {
+  .adaptive-panel { width: 100%; max-width: 100%; max-height: calc(100dvh - 16px); margin: 0; border-radius: 18px 18px 0 0; }
+  .adaptive-panel-body { padding: 16px; max-height: calc(100dvh - 115px); }
+  .adaptive-panel-body > div > .button-row:last-child, .adaptive-panel-body > .button-row:last-child { bottom: -16px; }
+  .stat-allocation-row { gap: 5px; }
+  .stat-allocation-row input[type=number] { width: 44px; }
+  .stat-allocation-row button { min-width: 44px; }
+}
+
+/* Keep all three C1 controls in separate 44px tracks in the shared panel. */
+.adaptive-panel .stat-allocation-row { grid-template-columns: 12px minmax(0,1fr) 44px 64px 44px; gap: 6px; }
+.adaptive-panel .stat-allocation-dot { grid-column: 1; grid-row: 1; }
+.adaptive-panel .stat-allocation-label { grid-column: 2; grid-row: 1; }
+.adaptive-panel .stat-allocation-floor { grid-column: 2; grid-row: 2; }
+.adaptive-panel .stat-allocation-row button:first-of-type { grid-column: 3; grid-row: 1; }
+.adaptive-panel .stat-allocation-row input[type=number] { grid-column: 4; grid-row: 1; width: 100%; box-sizing: border-box; min-width: 0; }
+.adaptive-panel .stat-allocation-row button:last-of-type { grid-column: 5; grid-row: 1; }
+.adaptive-panel .stat-allocation-resolved { grid-column: 3 / 6; grid-row: 2; }

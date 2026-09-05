@@ -453,6 +453,155 @@ pub fn save_trainer_stat_allocation(
     profile_repo::update_trainer_stat_allocation(&profiles, &trainer_id, &allocation).map_err(to_err)
 }
 
+// ---------------------------------------------------------------------
+// T13D1: Trainer build context/drafts (Trainer Build + Visual Identity
+// Corrective REPLAN). `get_trainer_build_context` and the draft CRUD
+// commands are real — pure data assembly / opaque persistence, no rule
+// evaluation. Every preview/commit command below them is a frozen-contract
+// stub: it returns `BuildError::NotYetImplemented` rather than a fabricated
+// success, since actual build/advancement/GM/respec rule evaluation is
+// T13D3/T13D4 scope. See `ptu_domain::engine::trainer_build`'s module doc.
+// ---------------------------------------------------------------------
+
+/// Real: assembles the source-backed skills/rank/Skill-Edge/Elemental-
+/// Connection/milestone-stream catalog (from the `trainer_build_rules`
+/// dataset) plus, when `trainer_id` is given, the existing Trainer's
+/// current build status and read model. `base_revision`/`rules_fingerprint`
+/// are real opaque hashes a future `commit_trainer_build` can compare
+/// against — never a placeholder string.
+#[tauri::command]
+pub fn get_trainer_build_context(
+    state: State<AppState>,
+    trainer_id: Option<String>,
+    content_pack_id: String,
+) -> Result<engine::trainer_build::BuildContext, String> {
+    let definitions = state.definitions.lock().map_err(to_err)?;
+    let rules = engine::datasets::load_trainer_build_rules(&definitions, &content_pack_id).map_err(to_err)?;
+    drop(definitions);
+
+    let existing_profile = match &trainer_id {
+        Some(id) => {
+            let profiles = state.profiles.lock().map_err(to_err)?;
+            profile_repo::load_trainer_profile(&profiles, id).map_err(to_err)?
+        }
+        None => None,
+    };
+
+    let rules_fingerprint = engine::trainer_build::compute_rules_fingerprint(&content_pack_id, &rules);
+    let build_status = existing_profile
+        .as_ref()
+        .map(|p| engine::trainer_build::resolve_build_state(&p.build_state).status)
+        .unwrap_or(engine::trainer_build::BuildStatus::Legacy);
+    let base_revision = existing_profile
+        .as_ref()
+        .map(|p| engine::trainer_build::compute_base_revision(p, &rules_fingerprint))
+        .unwrap_or_else(|| rules_fingerprint.clone());
+
+    Ok(engine::trainer_build::BuildContext {
+        base_revision,
+        rules_fingerprint,
+        rules,
+        build_status,
+        existing_profile,
+    })
+}
+
+/// Real: opaque draft persistence only — see `profile_repo::save_trainer_build_draft`.
+#[tauri::command]
+pub fn save_trainer_build_draft(
+    state: State<AppState>,
+    draft_id: Option<String>,
+    trainer_id: Option<String>,
+    intent: Value,
+) -> Result<String, String> {
+    let conn = state.profiles.lock().map_err(to_err)?;
+    profile_repo::save_trainer_build_draft(&conn, draft_id.as_deref(), trainer_id.as_deref(), &intent).map_err(to_err)
+}
+
+#[tauri::command]
+pub fn load_trainer_build_draft(state: State<AppState>, draft_id: String) -> Result<Option<Value>, String> {
+    let conn = state.profiles.lock().map_err(to_err)?;
+    profile_repo::load_trainer_build_draft(&conn, &draft_id).map_err(to_err)
+}
+
+#[tauri::command]
+pub fn discard_trainer_build_draft(state: State<AppState>, draft_id: String) -> Result<(), String> {
+    let conn = state.profiles.lock().map_err(to_err)?;
+    profile_repo::discard_trainer_build_draft(&conn, &draft_id).map_err(to_err)
+}
+
+#[tauri::command]
+pub fn preview_trainer_build(
+    state: State<AppState>,
+    request: engine::trainer_build::PreviewTrainerBuildRequest,
+) -> Result<Value, String> {
+    let _ = (&state, &request);
+    Err(engine::trainer_build::not_yet_implemented("preview_trainer_build").to_string())
+}
+
+#[tauri::command]
+pub fn commit_trainer_build(
+    state: State<AppState>,
+    request: engine::trainer_build::CommitTrainerBuildRequest,
+) -> Result<Value, String> {
+    let _ = (&state, &request);
+    Err(engine::trainer_build::not_yet_implemented("commit_trainer_build").to_string())
+}
+
+#[tauri::command]
+pub fn preview_trainer_advancement(
+    state: State<AppState>,
+    request: engine::trainer_build::PreviewTrainerAdvancementRequest,
+) -> Result<Value, String> {
+    let _ = (&state, &request);
+    Err(engine::trainer_build::not_yet_implemented("preview_trainer_advancement").to_string())
+}
+
+#[tauri::command]
+pub fn commit_trainer_advancement(
+    state: State<AppState>,
+    request: engine::trainer_build::CommitTrainerAdvancementRequest,
+) -> Result<Value, String> {
+    let _ = (&state, &request);
+    Err(engine::trainer_build::not_yet_implemented("commit_trainer_advancement").to_string())
+}
+
+#[tauri::command]
+pub fn preview_trainer_gm_change(
+    state: State<AppState>,
+    request: engine::trainer_build::PreviewTrainerGmChangeRequest,
+) -> Result<Value, String> {
+    let _ = (&state, &request);
+    Err(engine::trainer_build::not_yet_implemented("preview_trainer_gm_change").to_string())
+}
+
+#[tauri::command]
+pub fn commit_trainer_gm_change(
+    state: State<AppState>,
+    request: engine::trainer_build::CommitTrainerGmChangeRequest,
+) -> Result<Value, String> {
+    let _ = (&state, &request);
+    Err(engine::trainer_build::not_yet_implemented("commit_trainer_gm_change").to_string())
+}
+
+#[tauri::command]
+pub fn preview_trainer_respec(
+    state: State<AppState>,
+    request: engine::trainer_build::PreviewTrainerRespecRequest,
+) -> Result<Value, String> {
+    let _ = (&state, &request);
+    Err(engine::trainer_build::not_yet_implemented("preview_trainer_respec").to_string())
+}
+
+#[tauri::command]
+pub fn commit_trainer_respec(
+    state: State<AppState>,
+    request: engine::trainer_build::CommitTrainerRespecRequest,
+) -> Result<Value, String> {
+    let _ = (&state, &request);
+    Err(engine::trainer_build::not_yet_implemented("commit_trainer_respec").to_string())
+}
+
 #[tauri::command]
 pub fn respec_progression(state: State<AppState>, trainer_id: String, new_progression: Vec<Value>) -> Result<(), String> {
     let mut conn = state.profiles.lock().map_err(to_err)?;

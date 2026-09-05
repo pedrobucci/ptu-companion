@@ -1,3 +1,5 @@
+import { useState } from "react";
+import { CreatureTile } from "../components/CreatureTile";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "../lib/api";
@@ -26,6 +28,8 @@ function rosterKindLabels(rules: Record<string, unknown>): string[] {
  * full experience per T13R1_DESIGN_CONTRACT.md); this route's job is only
  * to prove a newly added creature is visible here, honestly. */
 export default function Rosters() {
+  const [selectedRosterId, setSelectedRosterId] = useState<string | null>(null);
+  const [selectedPokemonId, setSelectedPokemonId] = useState<string | null>(null);
   const activeTrainerId = useAppStore((s) => s.activeTrainerId);
 
   const trainerQuery = useQuery({
@@ -50,59 +54,39 @@ export default function Rosters() {
   if (!trainerQuery.data) return <Empty>Trainer not found.</Empty>;
 
   const profile = trainerQuery.data;
+  const roster = profile.rosters.find(r => r.id === selectedRosterId) ?? profile.rosters[0];
+  const members = roster ? profile.pokemon.filter(p => p.roster_memberships.includes(roster.id)) : [];
+  const selected = members.find(p => p.id === selectedPokemonId) ?? members[0];
 
-  return (
-    <section>
-      <PageHeader title="Rosters" subtitle={`${profile.name}'s teams`} />
-      {profile.rosters.length === 0 ? (
-        <Empty>No rosters yet — create one from this Trainer's "Pokémon &amp; Rosters" tab.</Empty>
-      ) : (
-        <div className="card-grid">
-          {profile.rosters.map((r) => {
-            const members = profile.pokemon.filter((p) => p.roster_memberships.includes(r.id));
-            const kinds = rosterKindLabels(r.rules);
-            return (
-              <div key={r.id} className="card">
-                <div className="card-header">
-                  <span>
-                    {r.name}
-                    {!r.active && " (inactive)"}
-                  </span>
-                  {kinds.length > 0 && (
-                    <div className="card-header-actions">
-                      {kinds.map((kind) => (
-                        <span key={kind} className="roster-kind-badge" data-kind={kind}>
-                          {kind}
-                        </span>
-                      ))}
-                    </div>
-                  )}
-                </div>
-                <p>
-                  {members.length}
-                  {r.max_members ? ` / ${r.max_members}` : ""} member(s)
-                </p>
-                {members.length === 0 ? (
-                  <Empty>No creatures on this roster yet.</Empty>
-                ) : (
-                  <ul className="pokemon-list">
-                    {members.map((p) => (
-                      <li key={p.id}>
-                        <Link to={`/trainer/${profile.id}/pokemon/${p.id}`}>{p.nickname || p.species_definition_id}</Link>{" "}
-                        · Lv {p.level}
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </div>
-            );
-          })}
-        </div>
-      )}
-      <p className="section-subtitle" style={{ marginTop: "var(--space-4)" }}>
-        Full roster creation and management (drag-and-drop, multi-select) is coming in a later task — use this
-        Trainer's "Pokémon &amp; Rosters" tab to create rosters and add members today.
-      </p>
-    </section>
-  );
+  return <section>
+    <PageHeader title="Rosters" subtitle={`${profile.name}'s teams — select a roster, then a companion.`}
+      actions={<Link className="text-action" to={`/trainer/${profile.id}`}>Open Trainer Sheet →</Link>} />
+    {profile.rosters.length === 0 ? <Empty>No rosters yet — create one from this Trainer's "Pokémon &amp; Rosters" tab.</Empty> : <>
+      <div className="roster-selector" aria-label="Choose a roster">
+        {profile.rosters.map(r => <button key={r.id} className="roster-context" aria-pressed={roster?.id === r.id}
+          onClick={() => { setSelectedRosterId(r.id); setSelectedPokemonId(null); }}>
+          <strong>{r.name}</strong><span className="type-row">{rosterKindLabels(r.rules).map(kind => <span className="roster-kind-badge" data-kind={kind} key={kind}>{kind}</span>)}</span>
+          <span>{r.active ? "Active" : "Inactive"}</span>
+        </button>)}
+      </div>
+      <div className="roster-workspace">
+        <section className="card"><div className="card-header"><span>{roster.name}</span><span>{members.length}{roster.max_members ? ` / ${roster.max_members}` : ""} members</span></div>
+          {members.length === 0 ? <Empty>No creatures on this roster yet.</Empty> : <div className="creature-grid roster-creatures">
+            {members.map(p => <button type="button" className="creature-choice" key={p.id} aria-pressed={selected?.id === p.id} onClick={() => setSelectedPokemonId(p.id)}><CreatureTile pokemon={p} /></button>)}
+          </div>}
+        </section>
+        <aside className="card roster-detail" aria-label="Selected creature">
+          <div className="card-header">Companion details</div>
+          {selected ? <>
+            <CreatureTile pokemon={selected} />
+            <div className="resource-strip"><span>Location</span><strong>{selected.storage_state}</strong></div>
+            <h3>Roster memberships</h3>
+            <ul className="membership-list">{profile.rosters.filter(r => selected.roster_memberships.includes(r.id)).map(r => <li key={r.id}>{r.name}</li>)}</ul>
+            <Link className="btn-primary" to={`/trainer/${profile.id}/pokemon/${selected.id}`}>Open owned sheet →</Link>
+          </> : <Empty>Select a populated roster to view a companion.</Empty>}
+        </aside>
+      </div>
+    </>}
+    <p className="section-subtitle roster-scope">Use the Trainer's Pokémon &amp; Rosters tab to create rosters and manage membership.</p>
+  </section>;
 }

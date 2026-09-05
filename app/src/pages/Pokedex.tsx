@@ -1,3 +1,4 @@
+import { Avatar } from "../components/Avatar";
 import { useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -57,6 +58,9 @@ const EMPTY_ADD_FLOW: AddFlowState = {
 export default function Pokedex() {
   const [query, setQuery] = useState("");
   const [kind, setKind] = useState<ContentKindSlug | "">("");
+  const [selectedHit, setSelectedHit] = useState<SearchHit | null>(null);
+  const [detailError, setDetailError] = useState<string | null>(null);
+  const [openingDetail, setOpeningDetail] = useState(false);
   const [detail, setDetail] = useState<ResolvedDefinition | null>(null);
   const [detailKind, setDetailKind] = useState<ContentKindSlug | null>(null);
   const [unavailableHit, setUnavailableHit] = useState<SearchHit | null>(null);
@@ -77,7 +81,7 @@ export default function Pokedex() {
   const virtualizer = useVirtualizer({
     count: hits.length,
     getScrollElement: () => parentRef.current,
-    estimateSize: () => 44,
+    estimateSize: () => 76,
     overscan: 10,
   });
 
@@ -86,7 +90,11 @@ export default function Pokedex() {
     // fail to resolve if its pack isn't part of the active Campaign
     // Ruleset (content/resolver.rs scopes resolution to the active
     // ruleset's packs by design) — never a silent dead click, explain why.
-    const resolved = await api.resolveDefinition(hit.kind as ContentKindSlug, hit.logical_id);
+    setSelectedHit(hit); setDetailError(null); setOpeningDetail(true);
+    let resolved: ResolvedDefinition | null;
+    try { resolved = await api.resolveDefinition(hit.kind as ContentKindSlug, hit.logical_id); }
+    catch (error) { setDetailError(String(error)); return; }
+    finally { setOpeningDetail(false); }
     if (resolved) {
       setDetail(resolved);
       setDetailKind(hit.kind as ContentKindSlug);
@@ -122,7 +130,10 @@ export default function Pokedex() {
   return (
     <section>
       <PageHeader title="Pokédex & Rules Search" subtitle="Search by name — view any entry, add species to a Trainer." />
-      <form className="inline-form" onSubmit={(e) => e.preventDefault()}>
+      <div className="library-workspace">
+      <section className="card library-results">
+      <div className="card-header">Content library</div>
+      <form className="inline-form library-search" onSubmit={(e) => e.preventDefault()}>
         <label htmlFor="search-query">Search</label>
         <span className="input-with-icon">
           <IconSearch className="input-icon" />
@@ -149,7 +160,7 @@ export default function Pokedex() {
       {searchQuery.isSuccess && hits.length === 0 && <Empty>No results for "{query}".</Empty>}
 
       {hits.length > 0 && (
-        <div ref={parentRef} className="virtual-list" role="listbox" aria-label="Search results">
+        <div ref={parentRef} className="virtual-list" role="region" aria-label="Search results">
           <div style={{ height: virtualizer.getTotalSize(), position: "relative" }}>
             {virtualizer.getVirtualItems().map((row) => {
               const hit = hits[row.index];
@@ -157,15 +168,15 @@ export default function Pokedex() {
                 <button
                   type="button"
                   key={hit.definition_version_id}
-                  role="option"
-                  aria-selected={false}
+                  aria-pressed={selectedHit?.definition_version_id === hit.definition_version_id}
+                  disabled={openingDetail}
                   className="virtual-row"
                   style={{ transform: `translateY(${row.start}px)`, height: row.size }}
                   onClick={() => openDetail(hit)}
                 >
                   <span className="search-hit-kind">{hit.kind}</span>
                   <span className="search-hit-name">{hit.name}</span>
-                  <span className="search-hit-pack">{hit.content_pack_id}</span>
+<span className="search-hit-pack">{hit.content_pack_id}</span><span aria-hidden="true">↗</span>
                 </button>
               );
             })}
@@ -183,6 +194,18 @@ export default function Pokedex() {
         </div>
       )}
 
+      {detailError && <ErrorState error={detailError} />}
+      </section>
+      <aside className="card library-context">
+        <div className="card-header">Field reference</div>
+        <Avatar kind="creature" label="Catalog entry" />
+        <h2>{selectedHit ? "Selected entry" : "Discover your next companion"}</h2>
+        {selectedHit ? <><p className="eyebrow">{selectedHit.kind}</p><p>{selectedHit.name}</p><p className="source-label">{selectedHit.content_pack_id}</p>
+          <button type="button" disabled={openingDetail} onClick={() => openDetail(selectedHit)}>View selected entry →</button></> : <p>Search the catalog for species, moves and rules. View an entry to read its details.</p>}
+        <ol className="browse-steps"><li>Search the library</li><li>View an entry</li><li>Choose Add to Trainer and confirm</li></ol>
+        <p className="section-subtitle">Viewing an entry never adds it to your Trainer.</p>
+      </aside>
+      </div>
       <AdaptivePanel open={!!detail || !!unavailableHit || addFlow.open} onClose={closePanel} title={panelTitle}>
         {!addFlow.open && detail && (
           <>

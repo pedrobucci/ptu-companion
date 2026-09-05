@@ -108,8 +108,8 @@ function AppHeader() {
   return (
     <header className="app-header">
       <div className="app-brand">
-        <span className="app-brand-mark" aria-hidden="true" />
-        PTU Companion
+        <span className="app-brand-mark" aria-hidden="true"><span /></span>
+        <span>PTU Companion<small className="brand-caption">YOUR TABLETOP FIELD GUIDE</small></span>
       </div>
       <Link to="/pokedex" className="app-header-search" aria-label="Search Creatures">
         <IconSearch />
@@ -123,6 +123,7 @@ function App() {
   return (
     <HashRouter>
       <div className="app-shell">
+        <a href="#main-content" className="skip-link" onClick={(event) => { event.preventDefault(); document.getElementById("main-content")?.focus(); }}>Skip to content</a>
         <AppHeader />
         <div className="app-body">
           <nav className="app-nav app-nav-desktop" aria-label="Main navigation">
@@ -136,7 +137,7 @@ function App() {
             ))}
             <MoreMenu />
           </nav>
-          <main className="app-content">
+          <main id="main-content" className="app-content" tabIndex={-1}>
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/trainer" element={<TrainerList />} />
