@@ -1,9 +1,11 @@
-import { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useLocation, useParams } from "react-router-dom";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { save } from "@tauri-apps/plugin-dialog";
 import { api } from "../lib/api";
 import { Empty, ErrorState, Loading } from "../components/StateViews";
+import { IconChevronLeft } from "../components/icons";
+import { useAppStore } from "../store/appStore";
 import { OverviewTab } from "./trainer-sheet/OverviewTab";
 import { PokemonTab } from "./trainer-sheet/PokemonTab";
 import { CombatTab } from "./trainer-sheet/CombatTab";
@@ -23,13 +25,28 @@ const TABS: { key: Tab; label: string }[] = [
  * all operate on the same loaded profile. */
 export default function TrainerSheet() {
   const { trainerId } = useParams<{ trainerId: string }>();
+  const location = useLocation();
   const [tab, setTab] = useState<Tab>("overview");
+  const setActiveTrainerId = useAppStore((s) => s.setActiveTrainerId);
+  // T13C1: TrainerList sets this after creating a Trainer, so the guided
+  // Stat Point allocation panel is reachable right on arrival — read once
+  // on mount only, never re-derived from a later navigation state.
+  const [openAllocationOnMount] = useState(
+    () => Boolean((location.state as { openAllocation?: boolean } | null)?.openAllocation),
+  );
 
   const trainerQuery = useQuery({
     queryKey: ["trainer", trainerId],
     queryFn: () => api.loadTrainer(trainerId!),
     enabled: !!trainerId,
   });
+
+  // T13R1_DESIGN_CONTRACT.md §10.1: opening a Trainer makes them "the
+  // active Trainer" — Home/Rosters/Pokédex-add-flow all key off this so
+  // they don't require re-navigating through /trainer every time.
+  useEffect(() => {
+    if (trainerId) setActiveTrainerId(trainerId);
+  }, [trainerId, setActiveTrainerId]);
 
   if (!trainerId) return <ErrorState error="No trainer id in URL." />;
   if (trainerQuery.isLoading) return <Loading label="Loading trainer…" />;
@@ -41,6 +58,9 @@ export default function TrainerSheet() {
 
   return (
     <section>
+      <Link to="/trainer" className="breadcrumb-back">
+        <IconChevronLeft /> All Trainers
+      </Link>
       <div className="button-row" style={{ justifyContent: "space-between", alignItems: "baseline" }}>
         <h1>{profile.name}</h1>
         <ExportTrainerButton trainerId={profile.id} trainerName={profile.name} />
@@ -60,7 +80,9 @@ export default function TrainerSheet() {
       </div>
 
       <div role="tabpanel">
-        {tab === "overview" && <OverviewTab profile={profile} refetch={refetch} />}
+        {tab === "overview" && (
+          <OverviewTab profile={profile} refetch={refetch} openAllocationOnMount={openAllocationOnMount} />
+        )}
         {tab === "pokemon" && <PokemonTab profile={profile} refetch={refetch} />}
         {tab === "combat" && <CombatTab profile={profile} refetch={refetch} />}
         {tab === "inventory" && <InventoryTab profile={profile} refetch={refetch} />}

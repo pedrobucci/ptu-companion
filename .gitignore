@@ -1,6 +1,6 @@
 .maestri/
 dist-android/
-PTU_Companion_Handoff_v1.0.zip
+*.zip
 
 # OS/editor state
 .DS_Store

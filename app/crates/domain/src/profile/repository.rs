@@ -16,7 +16,7 @@ use serde_json::Value;
 
 use super::model::{
     BattleState, CombatState, InventoryRecord, ItemStack, PokemonInstance, RosterRecord,
-    StorageState, TrainerProfile, TrainerSummary,
+    StorageState, TrainerProfile, TrainerStatAllocation, TrainerSummary,
 };
 use crate::error::ProfileError;
 
@@ -104,6 +104,18 @@ pub fn update_pokemon_level(conn: &Connection, pokemon_id: &str, new_level: i64)
     Ok(())
 }
 
+/// Sets a Trainer's Stat Point allocation without touching anything else
+/// (T13C1) — the same narrow-mutation pattern as [`update_pokemon_level`],
+/// used by the guided allocation panel's save action instead of
+/// round-tripping the whole profile.
+pub fn update_trainer_stat_allocation(conn: &Connection, trainer_id: &str, allocation: &TrainerStatAllocation) -> rusqlite::Result<()> {
+    conn.execute(
+        "UPDATE trainers SET stat_allocation_json = ?2, updated_at = ?3 WHERE id = ?1",
+        params![trainer_id, to_json_typed(allocation), now()],
+    )?;
+    Ok(())
+}
+
 /// Appends one event to a Trainer's timeline (spec 18) without touching
 /// anything else — used for GM Override provenance (spec 16/25: "a
 /// successful override creates persistent provenance/history").
@@ -122,6 +134,10 @@ pub fn append_history_event(conn: &Connection, trainer_id: &str, event: &Value) 
 }
 
 fn to_json(value: &Value) -> String {
+    serde_json::to_string(value).unwrap_or_else(|_| "null".to_string())
+}
+
+fn to_json_typed<T: serde::Serialize>(value: &T) -> String {
     serde_json::to_string(value).unwrap_or_else(|_| "null".to_string())
 }
 
@@ -231,8 +247,8 @@ pub fn save_trainer_profile(conn: &mut Connection, profile: &TrainerProfile) -> 
     let now = now();
 
     tx.execute(
-        "INSERT INTO trainers (id, name, level, exp, money, background_json, skills_json, created_at, updated_at)
-         VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?8)
+        "INSERT INTO trainers (id, name, level, exp, money, background_json, skills_json, stat_allocation_json, weight_lb, created_at, updated_at)
+         VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?10)
          ON CONFLICT(id) DO UPDATE SET
             name = excluded.name,
             level = excluded.level,
@@ -240,6 +256,8 @@ pub fn save_trainer_profile(conn: &mut Connection, profile: &TrainerProfile) -> 
             money = excluded.money,
             background_json = excluded.background_json,
             skills_json = excluded.skills_json,
+            stat_allocation_json = excluded.stat_allocation_json,
+            weight_lb = excluded.weight_lb,
             updated_at = excluded.updated_at",
         params![
             profile.id,
@@ -249,6 +267,8 @@ pub fn save_trainer_profile(conn: &mut Connection, profile: &TrainerProfile) -> 
             profile.money,
             profile.background.as_ref().map(to_json),
             to_json(&profile.skills),
+            to_json_typed(&profile.stat_allocation),
+            profile.weight_lb,
             now,
         ],
     )?;
@@ -462,7 +482,7 @@ pub fn save_trainer_profile(conn: &mut Connection, profile: &TrainerProfile) -> 
 pub fn load_trainer_profile(conn: &Connection, trainer_id: &str) -> Result<Option<TrainerProfile>, ProfileError> {
     let core = conn
         .query_row(
-            "SELECT id, name, level, exp, money, background_json, skills_json FROM trainers WHERE id = ?1",
+            "SELECT id, name, level, exp, money, background_json, skills_json, stat_allocation_json, weight_lb FROM trainers WHERE id = ?1",
             params![trainer_id],
             |row| {
                 Ok((
@@ -473,6 +493,8 @@ pub fn load_trainer_profile(conn: &Connection, trainer_id: &str) -> Result<Optio
                     row.get::<_, i64>(4)?,
                     row.get::<_, Option<String>>(5)?,
                     row.get::<_, Option<String>>(6)?,
+                    row.get::<_, Option<String>>(7)?,
+                    row.get::<_, Option<i64>>(8)?,
                 ))
             },
         )
@@ -482,12 +504,19 @@ pub fn load_trainer_profile(conn: &Connection, trainer_id: &str) -> Result<Optio
             other => Err(other),
         })?;
 
-    let Some((id, name, level, exp, money, background_json, skills_json)) = core else {
+    let Some((id, name, level, exp, money, background_json, skills_json, stat_allocation_json, weight_lb)) = core else {
         return Ok(None);
     };
 
     let background = background_json.as_deref().map(parse_json);
     let skills = skills_json.as_deref().map(parse_json).unwrap_or(Value::Null);
+    // A legacy (pre-T15A) row has NULL here — "not yet allocated", the same
+    // meaning as the in-memory `TrainerStatAllocation::default()` (empty
+    // entries), never a fabricated value.
+    let stat_allocation: TrainerStatAllocation = stat_allocation_json
+        .as_deref()
+        .and_then(|s| serde_json::from_str(s).ok())
+        .unwrap_or_default();
 
     let gm_grants = query_json_list(
         conn,
@@ -682,6 +711,8 @@ pub fn load_trainer_profile(conn: &Connection, trainer_id: &str) -> Result<Optio
         progression,
         timeline,
         combat,
+        stat_allocation,
+        weight_lb,
     }))
 }
 
@@ -724,7 +755,56 @@ fn query_item_stacks(conn: &Connection, trainer_id: &str, location: &str) -> rus
 mod tests {
     use super::*;
     use crate::persistence::profiles::open_and_migrate_profiles;
+    use crate::profile::model::{StatAllocationEntry, StatAllocationSource, TrainerCombatStat};
     use serde_json::json;
+
+    /// T15A: `stat_allocation` and `weight_lb` round-trip through
+    /// save/load exactly, including an explicit `GmOverride` entry's note.
+    #[test]
+    fn stat_allocation_and_weight_survive_save_and_load() {
+        let (dir, mut conn) = seed();
+        let mut profile = load_trainer_profile(&conn, "t1").unwrap().unwrap();
+        profile.weight_lb = Some(150);
+        profile.stat_allocation = TrainerStatAllocation {
+            entries: vec![
+                StatAllocationEntry {
+                    stat: TrainerCombatStat::Hp,
+                    source: StatAllocationSource::Creation,
+                    level: 1,
+                    points: 2,
+                    note: None,
+                },
+                StatAllocationEntry {
+                    stat: TrainerCombatStat::Attack,
+                    source: StatAllocationSource::GmOverride,
+                    level: 1,
+                    points: 6,
+                    note: Some("GM approved a bonus creation point".to_string()),
+                },
+            ],
+        };
+        save_trainer_profile(&mut conn, &profile).unwrap();
+
+        let reloaded = load_trainer_profile(&conn, "t1").unwrap().unwrap();
+        assert_eq!(reloaded.weight_lb, Some(150));
+        assert_eq!(reloaded.stat_allocation, profile.stat_allocation);
+
+        let _ = std::fs::remove_dir_all(&dir);
+    }
+
+    /// T15A: a Trainer saved before this migration existed (no stat
+    /// allocation ever written) must load with an empty allocation and
+    /// `weight_lb: None` — unknown, never a fabricated zero.
+    #[test]
+    fn missing_stat_allocation_loads_as_empty_not_zero() {
+        let (dir, conn) = seed();
+        let profile = load_trainer_profile(&conn, "t1").unwrap().unwrap();
+        assert_eq!(profile.stat_allocation, TrainerStatAllocation::default());
+        assert_eq!(profile.stat_allocation.entries.len(), 0);
+        assert_eq!(profile.weight_lb, None);
+
+        let _ = std::fs::remove_dir_all(&dir);
+    }
 
     fn seed() -> (std::path::PathBuf, Connection) {
         let dir = std::env::temp_dir().join(format!("ptu-repo-narrow-test-{}", uuid::Uuid::new_v4()));
@@ -814,6 +894,33 @@ mod tests {
         let profile = load_trainer_profile(&conn, "t1").unwrap().unwrap();
         assert_eq!(profile.pokemon[0].level, 101);
         assert_eq!(profile.pokemon[0].species_definition_id, "sableye", "other fields untouched");
+
+        let _ = std::fs::remove_dir_all(&dir);
+    }
+
+    #[test]
+    fn update_trainer_stat_allocation_changes_only_that_field() {
+        let (dir, conn) = seed();
+
+        update_trainer_stat_allocation(
+            &conn,
+            "t1",
+            &TrainerStatAllocation {
+                entries: vec![StatAllocationEntry {
+                    stat: TrainerCombatStat::Hp,
+                    source: StatAllocationSource::Creation,
+                    level: 1,
+                    points: 4,
+                    note: None,
+                }],
+            },
+        )
+        .unwrap();
+
+        let profile = load_trainer_profile(&conn, "t1").unwrap().unwrap();
+        assert_eq!(profile.stat_allocation.entries.len(), 1);
+        assert_eq!(profile.stat_allocation.entries[0].points, 4);
+        assert_eq!(profile.name, "Narrow Test", "other fields untouched");
 
         let _ = std::fs::remove_dir_all(&dir);
     }

@@ -227,6 +227,17 @@ pub(crate) fn migrations() -> Vec<String> {
     "#
     .to_string(),
     mechanical_collections_migration(),
+    // Migration 5 (T15A): the six persisted Trainer Combat Stat allocations
+    // (PTU 1.05 Core Step 6) and authoritative entered weight (for Trainer
+    // Weight Class). Both nullable additions to the existing `trainers`
+    // row — an old Trainer simply has NULL here (unknown/not-yet-allocated,
+    // never coerced to zero), matching the `background_json`/`skills_json`
+    // precedent already on this table.
+    r#"
+        ALTER TABLE trainers ADD COLUMN stat_allocation_json TEXT;
+        ALTER TABLE trainers ADD COLUMN weight_lb INTEGER;
+    "#
+    .to_string(),
     ]
 }
 
@@ -361,7 +372,11 @@ mod tests {
 
         let conn = Connection::open_in_memory().unwrap();
         let all_migrations = migrations();
-        assert_eq!(all_migrations.len(), 4, "expected exactly 4 migrations: T02 core, T06 usage_counters, T07 shops/transactions, T09a collections");
+        assert_eq!(
+            all_migrations.len(),
+            5,
+            "expected exactly 5 migrations: T02 core, T06 usage_counters, T07 shops/transactions, T09a collections, T15A stat_allocation/weight"
+        );
 
         // Simulate a database that only ever saw the first 3 migrations
         // (everything before T09a's, the last one).
@@ -391,5 +406,36 @@ mod tests {
         assert_eq!(profile.pokemon[0].id, "pkm-1", "pre-existing Pokémon data must survive the upgrade");
         assert_eq!(profile.moves, Vec::<serde_json::Value>::new(), "new collections start empty, not missing/erroring");
         assert_eq!(profile.pokemon[0].moves, Vec::<serde_json::Value>::new());
+    }
+
+    /// T15A acceptance: "Any schema addition is backward-compatible and
+    /// must distinguish unknown from zero." A database that predates the
+    /// T15A migration upgrades without losing its existing Trainer, and
+    /// the new `stat_allocation`/`weight_lb` fields come back as
+    /// empty/`None` (unknown) rather than any fabricated value.
+    #[test]
+    fn pre_t15a_database_upgrades_without_data_loss() {
+        use crate::profile::model::TrainerStatAllocation;
+        use crate::profile::repository::load_trainer_profile;
+
+        let conn = Connection::open_in_memory().unwrap();
+        let all_migrations = migrations();
+        let pre_t15a: Vec<&str> = all_migrations[..4].iter().map(String::as_str).collect();
+        super::super::apply_migrations(&conn, &pre_t15a).unwrap();
+
+        let now = "2026-01-01T00:00:00Z";
+        conn.execute(
+            "INSERT INTO trainers (id, name, level, exp, money, created_at, updated_at) VALUES ('t1','Pre-T15A Trainer',5,0,100,?1,?1)",
+            [now],
+        )
+        .unwrap();
+
+        let all_refs: Vec<&str> = all_migrations.iter().map(String::as_str).collect();
+        super::super::apply_migrations(&conn, &all_refs).unwrap();
+
+        let profile = load_trainer_profile(&conn, "t1").unwrap().unwrap();
+        assert_eq!(profile.name, "Pre-T15A Trainer", "pre-existing Trainer data must survive the upgrade");
+        assert_eq!(profile.stat_allocation, TrainerStatAllocation::default(), "no fabricated allocation");
+        assert_eq!(profile.weight_lb, None, "no fabricated weight");
     }
 }

@@ -102,3 +102,21 @@ describe("badge background/text contrast (WCAG UI-component minimum 3:1)", () =>
     expect(contrastRatio(hex, text)).toBeGreaterThanOrEqual(3);
   });
 });
+
+/** T13R2 shell tokens (T13R1_DESIGN_CONTRACT.md §2/§12): the desktop
+ * sidebar's navy background and the primary/active accent must clear the
+ * WCAG AA minimum for real body text (4.5:1), not just the looser 3:1
+ * UI-component minimum used for badges above — sidebar labels are read as
+ * text, not glanced at as a color chip. */
+describe("T13R2 shell surface contrast (WCAG AA text minimum 4.5:1)", () => {
+  const pairs: [string, string, string][] = [
+    ["surface-nav-vs-white-label", cssVarValue("surface-nav") ?? "", "#ffffff"],
+    ["pk-blue-vs-white (nav-link-active / primary buttons)", cssVarValue("pk-blue") ?? "", "#ffffff"],
+    ["surface-card-vs-body-text", cssVarValue("surface-card") ?? "", "#0f0f0f"],
+  ];
+
+  it.each(pairs)("%s clears 4.5:1", (_name, bg, fg) => {
+    expect(bg).not.toBe("");
+    expect(contrastRatio(bg, fg)).toBeGreaterThanOrEqual(4.5);
+  });
+});

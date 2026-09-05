@@ -68,6 +68,83 @@ pub struct TrainerProfile {
     /// has any (spec 37: unknown stays nullable, never coerced to zero).
     #[serde(default)]
     pub combat: Option<CombatState>,
+    /// PTU 1.05 Core Step 6 (T15A, book pp. 17-20): the six persisted
+    /// Combat Stat allocations this Trainer has actually spent — never a
+    /// computed number. Current HP stays in `combat` (dynamic state); Max
+    /// HP is derived (`engine::trainer_core::max_hp`), never duplicated
+    /// here. An empty `entries` list is "not yet allocated" (unknown), not
+    /// "zero" — see `engine::trainer_core::validate_stat_allocation`.
+    #[serde(default)]
+    pub stat_allocation: TrainerStatAllocation,
+    /// Authoritative entered weight in pounds, for Trainer Weight Class
+    /// (T15A, Step 6). `None` is "not entered yet", distinct from any
+    /// numeric value — spec 7 lists weight among the identity fields no
+    /// prior task added.
+    #[serde(default)]
+    pub weight_lb: Option<i64>,
+}
+
+/// The six persisted Trainer Combat Stats (T15A, PTU 1.05 Core Step 6).
+/// Current HP and Accuracy are deliberately absent: Current HP is dynamic
+/// combat state (`CombatState::current_hp`); Accuracy has no persisted
+/// base at all (T15A scope: "Accuracy is not one of the six persisted
+/// Combat Stats") and is reported only from combat-stage/modifier state.
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq, Hash)]
+#[serde(rename_all = "snake_case")]
+pub enum TrainerCombatStat {
+    Hp,
+    Attack,
+    Defense,
+    SpecialAttack,
+    SpecialDefense,
+    Speed,
+}
+
+/// Where one allocated Stat Point came from (T15A, PTU 1.05 Core Step 6 /
+/// Character Advancement, book pp. 17-20). Keeping this on every entry —
+/// rather than a flat per-stat total — is what lets validation check "the
+/// 10 creation points, capped at 5/stat" and "1 point per level after 1"
+/// without reverse-engineering a total (T15A scope).
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum StatAllocationSource {
+    /// Character creation's 10-point pool (book p. 17-18), always
+    /// recorded at level 1.
+    Creation,
+    /// The +1 Stat Point every level after 1 grants automatically (book
+    /// p. 20, `trainer_progression.json`'s `stat_points_at_level`).
+    LevelUp,
+    /// A milestone's optional bonus Stat Point stream (level 5/10/20/30/40
+    /// choice) — present only once the player has actually chosen it.
+    /// T15A does not compute these amounts (the milestone text describes a
+    /// multi-level conditional stream, not a closed formula); it only
+    /// types and passes through whatever a future T16 wizard records.
+    Milestone,
+    /// An explicit, provenance-recorded GM deviation from the normal
+    /// allocation rules (e.g. exceeding the 5-per-stat creation cap).
+    /// Never applied implicitly — only present when actually recorded.
+    GmOverride,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct StatAllocationEntry {
+    pub stat: TrainerCombatStat,
+    pub source: StatAllocationSource,
+    /// The Trainer level this allocation was granted/spent at. Creation
+    /// entries use level 1.
+    pub level: i64,
+    pub points: i64,
+    /// Optional narrative context (recommended for `GmOverride`, since the
+    /// entry's `source` alone is what makes an override "recorded" — this
+    /// module does not require a non-empty note).
+    #[serde(default)]
+    pub note: Option<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Default)]
+pub struct TrainerStatAllocation {
+    #[serde(default)]
+    pub entries: Vec<StatAllocationEntry>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]

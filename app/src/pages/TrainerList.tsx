@@ -22,7 +22,10 @@ export default function TrainerList() {
     mutationFn: (name: string) => api.createTrainer(name),
     onSuccess: (profile) => {
       queryClient.invalidateQueries({ queryKey: ["trainers"] });
-      navigate(`/trainer/${profile.id}`);
+      // T13C1: opens the guided Stat Point allocation panel immediately —
+      // the T13 UX GATE's finding was that attributes couldn't be filled
+      // right after creation.
+      navigate(`/trainer/${profile.id}`, { state: { openAllocation: true } });
     },
   });
 

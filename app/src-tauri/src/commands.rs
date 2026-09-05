@@ -332,6 +332,127 @@ pub fn level_up_trainer(
     Ok(engine::progression::resolve_trainer_level_up(level, &progression, &milestones))
 }
 
+/// T15A: PTU 1.05 Core Step 6 combat stats/derived capabilities, resolved
+/// with base/final/breakdown per value. Never computed in the UI — see
+/// `ptu_domain::engine::trainer_core`.
+#[tauri::command]
+pub fn resolve_trainer_core_stats(
+    state: State<AppState>,
+    trainer_id: String,
+    content_pack_id: String,
+) -> Result<engine::trainer_core::TrainerCoreResult, String> {
+    let definitions = state.definitions.lock().map_err(to_err)?;
+    let progression = engine::datasets::load_trainer_progression(&definitions, &content_pack_id).map_err(to_err)?;
+    drop(definitions);
+
+    let profiles = state.profiles.lock().map_err(to_err)?;
+    let profile = profile_repo::load_trainer_profile(&profiles, &trainer_id)
+        .map_err(to_err)?
+        .ok_or_else(|| format!("trainer \"{trainer_id}\" not found"))?;
+
+    Ok(engine::trainer_core::resolve_trainer_core(
+        profile.level,
+        &profile.stat_allocation,
+        &profile.skills,
+        profile.weight_lb,
+        &profile.gm_grants,
+        &progression,
+    ))
+}
+
+/// T15A: per-level advancement/milestone provenance (universal Stat Point
+/// grant, ordinary Feature/Edge grants, milestone choice/pending state) up
+/// through the Trainer's current level. Full advancement UX (making a
+/// milestone choice) is T16; this only resolves what's already recorded.
+#[tauri::command]
+pub fn resolve_trainer_advancement(
+    state: State<AppState>,
+    trainer_id: String,
+    content_pack_id: String,
+) -> Result<Vec<engine::trainer_core::AdvancementRecord>, String> {
+    let definitions = state.definitions.lock().map_err(to_err)?;
+    let progression = engine::datasets::load_trainer_progression(&definitions, &content_pack_id).map_err(to_err)?;
+    let milestones = engine::datasets::load_trainer_milestones(&definitions, &content_pack_id).map_err(to_err)?;
+    drop(definitions);
+
+    let profiles = state.profiles.lock().map_err(to_err)?;
+    let profile = profile_repo::load_trainer_profile(&profiles, &trainer_id)
+        .map_err(to_err)?
+        .ok_or_else(|| format!("trainer \"{trainer_id}\" not found"))?;
+
+    Ok(engine::trainer_core::resolve_advancement(profile.level, &profile.progression, &progression, &milestones))
+}
+
+/// T13C1: resolves what the Trainer's stats would become if `desired` were
+/// saved, without persisting anything — the guided allocation panel's live
+/// preview. `desired` is one combined points-per-stat number; Rust alone
+/// decides how it splits into provenance-correct Creation/LevelUp entries
+/// (`engine::trainer_core::build_normal_allocation_entries`) and always
+/// carries the Trainer's existing Milestone/GM Override entries forward
+/// untouched (`merge_with_preserved_provenance`).
+#[tauri::command]
+pub fn preview_trainer_stat_allocation(
+    state: State<AppState>,
+    trainer_id: String,
+    content_pack_id: String,
+    desired: Vec<engine::trainer_core::StatAllocationDraftEntry>,
+) -> Result<engine::trainer_core::TrainerCoreResult, String> {
+    let definitions = state.definitions.lock().map_err(to_err)?;
+    let progression = engine::datasets::load_trainer_progression(&definitions, &content_pack_id).map_err(to_err)?;
+    drop(definitions);
+
+    let profiles = state.profiles.lock().map_err(to_err)?;
+    let profile = profile_repo::load_trainer_profile(&profiles, &trainer_id)
+        .map_err(to_err)?
+        .ok_or_else(|| format!("trainer \"{trainer_id}\" not found"))?;
+
+    let normal_entries = engine::trainer_core::build_normal_allocation_entries(&desired, profile.level, &progression);
+    let allocation = engine::trainer_core::merge_with_preserved_provenance(normal_entries, &profile.stat_allocation);
+
+    Ok(engine::trainer_core::resolve_trainer_core(
+        profile.level,
+        &allocation,
+        &profile.skills,
+        profile.weight_lb,
+        &profile.gm_grants,
+        &progression,
+    ))
+}
+
+/// T13C1: persists `desired` the same way `preview_trainer_stat_allocation`
+/// resolves it, but only if the merged allocation carries no Error-severity
+/// `ValidationIssue` — an overridable error (e.g. overspending) still blocks
+/// this path, matching the plan's "Save is blocked while Error-severity
+/// validation issues remain" constraint. Uses the narrow single-column
+/// `update_trainer_stat_allocation` mutation rather than the whole-profile
+/// save, so no other field on the Trainer is touched.
+#[tauri::command]
+pub fn save_trainer_stat_allocation(
+    state: State<AppState>,
+    trainer_id: String,
+    content_pack_id: String,
+    desired: Vec<engine::trainer_core::StatAllocationDraftEntry>,
+) -> Result<(), String> {
+    let definitions = state.definitions.lock().map_err(to_err)?;
+    let progression = engine::datasets::load_trainer_progression(&definitions, &content_pack_id).map_err(to_err)?;
+    drop(definitions);
+
+    let profiles = state.profiles.lock().map_err(to_err)?;
+    let profile = profile_repo::load_trainer_profile(&profiles, &trainer_id)
+        .map_err(to_err)?
+        .ok_or_else(|| format!("trainer \"{trainer_id}\" not found"))?;
+
+    let normal_entries = engine::trainer_core::build_normal_allocation_entries(&desired, profile.level, &progression);
+    let allocation = engine::trainer_core::merge_with_preserved_provenance(normal_entries, &profile.stat_allocation);
+
+    let issues = engine::trainer_core::validate_stat_allocation(&allocation, profile.level, &progression);
+    if let Some(blocking) = issues.iter().find(|i| i.severity == engine::validation::Severity::Error) {
+        return Err(blocking.message.clone());
+    }
+
+    profile_repo::update_trainer_stat_allocation(&profiles, &trainer_id, &allocation).map_err(to_err)
+}
+
 #[tauri::command]
 pub fn respec_progression(state: State<AppState>, trainer_id: String, new_progression: Vec<Value>) -> Result<(), String> {
     let mut conn = state.profiles.lock().map_err(to_err)?;

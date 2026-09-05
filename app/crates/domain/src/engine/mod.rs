@@ -8,5 +8,6 @@ pub mod respec;
 pub mod roster;
 pub mod shop;
 pub mod storage;
+pub mod trainer_core;
 pub mod type_effectiveness;
 pub mod validation;

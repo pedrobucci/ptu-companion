@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useId, useRef } from "react";
 import "./AdaptivePanel.css";
 
 /**
@@ -24,6 +24,11 @@ export function AdaptivePanel({
   children: React.ReactNode;
 }) {
   const ref = useRef<HTMLDialogElement>(null);
+  // T13R2 a11y fix: a <dialog>'s accessible name is never inferred from an
+  // inner heading automatically — without this, every AdaptivePanel usage
+  // (move/ability detail, provenance, the new mobile "More" sheet) reached
+  // assistive tech as an unnamed dialog. One id, reused by every caller.
+  const titleId = useId();
 
   useEffect(() => {
     const el = ref.current;
@@ -39,6 +44,7 @@ export function AdaptivePanel({
     <dialog
       ref={ref}
       className="adaptive-panel"
+      aria-labelledby={titleId}
       onClose={onClose}
       onCancel={onClose}
       onClick={(e) => {
@@ -46,7 +52,7 @@ export function AdaptivePanel({
       }}
     >
       <div className="adaptive-panel-header">
-        <h2>{title}</h2>
+        <h2 id={titleId}>{title}</h2>
         <button type="button" onClick={onClose} aria-label="Close">
           ×
         </button>

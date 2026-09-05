@@ -123,6 +123,26 @@ export interface InventoryRecord {
   equipped: Record<string, string>;
 }
 
+/** The six persisted Trainer Combat Stats (T15A, PTU 1.05 Core Step 6).
+ * Current HP is dynamic combat state (`CombatState.current_hp`); Accuracy
+ * has no persisted base at all. */
+export type TrainerCombatStat = "hp" | "attack" | "defense" | "special_attack" | "special_defense" | "speed";
+
+/** Where one allocated Stat Point came from (T15A). */
+export type StatAllocationSource = "creation" | "level_up" | "milestone" | "gm_override";
+
+export interface StatAllocationEntry {
+  stat: TrainerCombatStat;
+  source: StatAllocationSource;
+  level: number;
+  points: number;
+  note: string | null;
+}
+
+export interface TrainerStatAllocation {
+  entries: StatAllocationEntry[];
+}
+
 export interface TrainerProfile {
   id: string;
   name: string;
@@ -144,6 +164,13 @@ export interface TrainerProfile {
   progression: unknown[];
   timeline: TimelineEvent[];
   combat: CombatState | null;
+  /** T15A: never a computed number — the points the player actually
+   * spent. An empty `entries` array means "not yet allocated" (unknown),
+   * never "zero". */
+  stat_allocation: TrainerStatAllocation;
+  /** T15A: authoritative entered weight in pounds, for Trainer Weight
+   * Class. `null` is "not entered yet". */
+  weight_lb: number | null;
 }
 
 export interface TrainerSummary {
@@ -231,6 +258,84 @@ export interface Modifier {
   operation: "add" | "multiply" | "set" | "min" | "max" | "type_resistance_step" | "grant_entity" | "remove_entity";
   value: number;
   priority: number;
+}
+
+// ---------------------------------------------------------------------
+// T15A: PTU 1.05 Core Trainer combat stats / Step 6 derived capabilities.
+// Every value is a ResolvedValue (base/final/breakdown) — never a plain
+// number the UI could mistake for something it's allowed to recompute.
+// ---------------------------------------------------------------------
+
+export interface TrainerCombatStatsResolved {
+  hp: ResolvedValue;
+  attack: ResolvedValue;
+  defense: ResolvedValue;
+  special_attack: ResolvedValue;
+  special_defense: ResolvedValue;
+  speed: ResolvedValue;
+}
+
+export type WeightClass = "wc3" | "wc4" | "wc5";
+
+export interface TrainerWeightResult {
+  weight_lb: number | null;
+  weight_class: WeightClass | null;
+}
+
+export interface TrainerCoreResult {
+  combat_stats: TrainerCombatStatsResolved;
+  max_hp: ResolvedValue;
+  physical_evasion: ResolvedValue;
+  special_evasion: ResolvedValue;
+  speed_evasion: ResolvedValue;
+  ap: ResolvedValue;
+  power: ResolvedValue;
+  high_jump: ResolvedValue;
+  /** Situational — a running start's High Jump bonus. Never folded into
+   * `high_jump` itself. */
+  high_jump_running_start_bonus: number;
+  long_jump: ResolvedValue;
+  overland: ResolvedValue;
+  swim: ResolvedValue;
+  throwing_range: ResolvedValue;
+  size: string;
+  weight: TrainerWeightResult;
+  validation: ValidationIssue[];
+  /** T13C1: the normal (Creation + LevelUp) Stat Point budget in plain
+   * numbers — "N of M points allocated, R remaining" without parsing
+   * `validation` or re-deriving the grant/spend arithmetic in React. */
+  allocation_summary: StatAllocationSummary;
+}
+
+export interface StatAllocationSummary {
+  granted: number;
+  spent: number;
+  remaining: number;
+}
+
+/** T13C1: one stat's combined desired point total, as the guided
+ * allocation panel sends it — Rust alone decides how this splits into
+ * provenance-correct Creation/LevelUp entries. */
+export interface StatAllocationDraftEntry {
+  stat: TrainerCombatStat;
+  points: number;
+}
+
+/** Why one progression-ledger level entry exists. */
+export type LevelSource = "xp" | "milestone" | "gm_action";
+
+export interface AdvancementRecord {
+  level: number;
+  level_source: LevelSource;
+  universal_stat_point_grant: number;
+  feature_grant: number;
+  edge_grant: number;
+  milestone_name: string | null;
+  milestone_choice_options: string[];
+  milestone_choice: string | null;
+  /** True only when this level's milestone offers a choice and none has
+   * been recorded yet — never auto-resolved. */
+  milestone_pending: boolean;
 }
 
 export interface ShopItemEntry {
@@ -326,6 +431,18 @@ export const api = {
     invoke<void>("record_gm_override", { trainerId, issue, note }),
   levelUpTrainer: (contentPackId: string, level: number) =>
     invoke<TrainerLevelUpResult | null>("level_up_trainer", { contentPackId, level }),
+  // T15A: PTU 1.05 Core Trainer combat stats / Step 6 derived capabilities
+  // and advancement/milestone provenance — resolved in Rust, never in React.
+  resolveTrainerCoreStats: (trainerId: string, contentPackId: string) =>
+    invoke<TrainerCoreResult>("resolve_trainer_core_stats", { trainerId, contentPackId }),
+  resolveTrainerAdvancement: (trainerId: string, contentPackId: string) =>
+    invoke<AdvancementRecord[]>("resolve_trainer_advancement", { trainerId, contentPackId }),
+  // T13C1: guided Stat Point allocation — preview never persists, save is
+  // rejected by Rust when an Error-severity validation issue remains.
+  previewTrainerStatAllocation: (trainerId: string, contentPackId: string, desired: StatAllocationDraftEntry[]) =>
+    invoke<TrainerCoreResult>("preview_trainer_stat_allocation", { trainerId, contentPackId, desired }),
+  saveTrainerStatAllocation: (trainerId: string, contentPackId: string, desired: StatAllocationDraftEntry[]) =>
+    invoke<void>("save_trainer_stat_allocation", { trainerId, contentPackId, desired }),
   respecProgression: (trainerId: string, newProgression: unknown[]) =>
     invoke<void>("respec_progression", { trainerId, newProgression }),
   reallocateResourceGrant: (trainerId: string, grantId: string, newAllocation: unknown) =>

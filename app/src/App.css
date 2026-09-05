@@ -16,7 +16,59 @@
 
 .app-shell {
   display: flex;
+  flex-direction: column;
   min-height: 100vh;
+}
+
+/* -------- header (T13R2: brand + search shortcut, no notification bell —
+   T13R1_DESIGN_CONTRACT.md §3/§7: no backing feature exists yet) -------- */
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: 0.7em var(--space-4);
+  background: var(--surface-card);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  min-height: 44px;
+}
+.app-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  font-weight: var(--font-weight-bold);
+  font-size: var(--text-lg);
+}
+.app-brand-mark {
+  width: 1.3em;
+  height: 1.3em;
+  border-radius: var(--radius-pill);
+  background: linear-gradient(135deg, var(--pk-blue) 50%, var(--pk-red) 50%);
+  flex-shrink: 0;
+}
+.app-header-search {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  padding: 0.4em 0.8em;
+  min-height: 44px;
+  border-radius: var(--radius-pill);
+  color: inherit;
+  text-decoration: none;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+}
+.app-header-search:hover {
+  background: var(--state-hover-tint);
+}
+.app-header-search:focus-visible {
+  outline: 2px solid var(--ui-primary);
+  outline-offset: 2px;
+}
+
+.app-body {
+  display: flex;
+  flex: 1;
+  min-height: 0;
 }
 
 .app-nav {
@@ -24,26 +76,131 @@
   flex-direction: column;
   gap: 0.25em;
   padding: 1em;
-  min-width: 10em;
-  border-right: 1px solid rgba(0, 0, 0, 0.1);
+  min-width: 12em;
+  background: var(--surface-nav);
+  color: var(--surface-nav-text);
+}
+.app-nav-mobile {
+  display: none;
 }
 
-.nav-link {
+.nav-link,
+.nav-link-more {
+  display: flex;
+  align-items: center;
+  gap: 0.6em;
   padding: 0.5em 0.75em;
-  border-radius: 8px;
+  min-height: 44px;
+  border-radius: var(--radius-sm);
   color: inherit;
   text-decoration: none;
+  background: none;
+  border: none;
+  font: inherit;
+  cursor: pointer;
+  width: 100%;
+}
+.nav-link-icon {
+  flex-shrink: 0;
+  opacity: 0.85;
+}
+.nav-link-note {
+  opacity: 0.6;
+  font-size: var(--text-xs);
 }
 
-.nav-link:hover {
-  background-color: rgba(42, 117, 187, 0.1);
+.breadcrumb-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2em;
+  margin-bottom: var(--space-2);
+  color: inherit;
+  opacity: 0.7;
+  text-decoration: none;
+  font-size: var(--text-sm);
+}
+.breadcrumb-back:hover {
+  opacity: 1;
+  text-decoration: underline;
 }
 
-.nav-link-active {
-  background-color: rgba(42, 117, 187, 0.16);
-  border-left: 3px solid var(--ui-primary);
-  padding-left: calc(0.75em - 3px);
+.nav-link:hover,
+.nav-link-more:hover {
+  background-color: var(--state-hover-tint-on-dark);
+}
+
+/* `.nav-link-active, .nav-link-active:hover` (not just `.nav-link-active`)
+   so this ties `.nav-link:hover`'s specificity (two class-level selectors)
+   instead of losing to it while the pointer rests on the active item —
+   the active state must stay visible on hover, not fall back to the
+   generic hover tint. */
+.nav-link-active,
+.nav-link-active:hover {
+  background-color: var(--pk-blue);
   font-weight: 600;
+}
+
+.app-nav .nav-link:focus-visible,
+.app-nav .nav-link-more:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: -2px;
+}
+
+/* -------- more menu (Android "More" sheet body) -------- */
+.more-menu-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25em;
+  color: inherit;
+}
+.more-menu-list .nav-link {
+  color: inherit;
+}
+.more-menu-list .nav-link:hover {
+  background-color: var(--state-hover-tint);
+}
+.more-menu-list .nav-link-active,
+.more-menu-list .nav-link-active:hover {
+  background-color: var(--ui-primary);
+  color: #fff;
+}
+
+/* -------- page header primitive (T13R2) -------- */
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
+  flex-wrap: wrap;
+}
+.page-header h1 {
+  margin: 0;
+}
+.page-header-subtitle {
+  margin: 0.25em 0 0;
+  opacity: 0.7;
+  font-size: var(--text-sm);
+}
+
+/* -------- action hierarchy (T13R2) -------- */
+.btn-primary {
+  border-color: var(--ui-primary);
+  background: var(--ui-primary);
+  color: #fff;
+}
+.btn-primary:hover:not(:disabled) {
+  background: var(--ui-primary-dark);
+  border-color: var(--ui-primary-dark);
+}
+.btn-danger {
+  border-color: var(--ui-danger);
+  background: var(--ui-danger);
+  color: #fff;
+}
+.btn-danger:hover:not(:disabled) {
+  background: #c41010;
+  border-color: #c41010;
 }
 
 .app-content {
@@ -229,6 +386,15 @@ select {
 .sheet-grid section {
   min-width: 0;
 }
+/* T13C2 REWORK (Reviewer MAJOR): the Combat Stats card holds its own
+   16-tile inner `.card-grid`, but confined to one `.sheet-grid` track
+   (~18-24em) that inner grid never had room for more than a single
+   column — a long list instead of the reference's compact multi-column
+   block. Spanning the full row gives it the width its content needs;
+   other sheet-grid cards stay in their normal auto-fit column. */
+.card-span-full {
+  grid-column: 1 / -1;
+}
 
 .kv-list {
   display: grid;
@@ -265,6 +431,110 @@ select {
   background: rgba(238, 21, 21, 0.1);
   border-left-color: var(--ui-danger);
   color: #8c0e0e;
+}
+
+.allocation-summary-badge {
+  display: inline-block;
+  margin: 0 0 0.75em;
+  padding: 0.4em 0.9em;
+  border-radius: var(--radius-pill);
+  background: var(--ui-primary);
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.9em;
+}
+
+.stat-allocation-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4em;
+  margin: 0.75em 0;
+}
+.stat-allocation-row {
+  display: grid;
+  /* Fixed widths on every column, including the +/- buttons — grid `auto`
+     tracks (with no `fr` track elsewhere) absorb all leftover row width,
+     which stretched the stepper buttons to fill the row (found via visual
+     verification, T13C2). */
+  grid-template-columns: 0.6em 6em 5em 2.2em 4em 2.2em 4em;
+  align-items: center;
+  gap: 0.5em;
+}
+.stat-allocation-dot {
+  width: 0.7em;
+  height: 0.7em;
+  border-radius: var(--radius-pill);
+  flex-shrink: 0;
+}
+.stat-allocation-row button {
+  padding: 0.3em;
+}
+.stat-allocation-row input[type="number"] {
+  width: 3.5em;
+  text-align: center;
+}
+.stat-allocation-floor,
+.stat-allocation-resolved {
+  font-size: 0.85em;
+  opacity: 0.75;
+}
+
+.roster-kind-badge {
+  display: inline-block;
+  padding: 0.15em 0.6em;
+  border-radius: var(--radius-pill);
+  font-size: var(--text-xs);
+  font-weight: 700;
+  background: rgba(255, 255, 255, 0.25);
+  color: #fff;
+}
+.roster-kind-badge[data-kind="COMBAT"] {
+  background: var(--item-berry-base);
+}
+.roster-kind-badge[data-kind="COMPANY"] {
+  background: var(--item-key-base);
+}
+.roster-kind-badge[data-kind="MOUNT"] {
+  background: var(--item-medicine-base);
+}
+.roster-kind-badge[data-kind="TRADE"] {
+  background: var(--item-battle-base);
+}
+
+.quick-actions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(9em, 1fr));
+  gap: 0.6em;
+}
+.quick-action {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  padding: 0.7em 0.9em;
+  border-radius: var(--radius-sm);
+  color: #fff;
+  text-decoration: none;
+  font-weight: 600;
+  min-height: 44px;
+}
+.quick-action:hover {
+  filter: brightness(1.08);
+}
+.quick-action:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: -3px;
+}
+.quick-action-roster {
+  background: var(--ui-primary);
+}
+.quick-action-add {
+  background: var(--item-berry-base);
+}
+.quick-action-items {
+  background: var(--item-general-base);
+}
+.quick-action-shop {
+  background: var(--item-battle-base);
 }
 
 /* -------- tabs -------- */
@@ -541,12 +811,20 @@ select {
     background-color: #2f2f2f;
   }
 
-  .app-nav {
-    border-right-color: rgba(255, 255, 255, 0.1);
+  /* Desktop sidebar (.app-nav-desktop) stays navy in both themes — it's
+     brand chrome, not a page surface, per T13R1_DESIGN_CONTRACT.md §5.
+     Only the mobile bottom bar (a light surface in light mode) needs a
+     dark-mode equivalent. */
+  .app-nav-mobile {
+    background: #1f1f1f;
+    border-top-color: rgba(255, 255, 255, 0.12);
   }
-
-  .nav-link:hover {
-    background-color: rgba(255, 255, 255, 0.08);
+  .app-header {
+    background: #1f1f1f;
+    border-bottom-color: rgba(255, 255, 255, 0.1);
+  }
+  .app-header-search {
+    border-color: rgba(255, 255, 255, 0.2);
   }
 
   button,
@@ -584,22 +862,81 @@ select {
   }
 }
 
-/* Narrow viewport (Android-class) layout adjustments. */
+/* Narrow viewport (Android-class) layout: the sidebar becomes a fixed
+   bottom tab bar (standard mobile pattern) instead of a horizontally
+   scrolling row — every destination stays visible and reachable in one
+   tap, nothing is discoverable only by scrolling sideways. */
 @media (max-width: 640px) {
-  .app-shell {
+  .app-body {
     flex-direction: column;
   }
-  .app-nav {
+  .app-header-search-label {
+    display: none;
+  }
+  .app-nav-desktop {
+    display: none;
+  }
+  .app-nav-mobile {
+    display: flex;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 10;
     flex-direction: row;
+    justify-content: space-between;
     min-width: 0;
-    border-right: none;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-    overflow-x: auto;
+    gap: 0;
+    padding: 0.3em 0.2em calc(0.3em + env(safe-area-inset-bottom));
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    background: var(--surface-card);
+    color: inherit;
+  }
+  .app-nav-mobile .nav-link,
+  .app-nav-mobile .nav-link-more {
+    flex: 1;
+    flex-direction: column;
+    gap: 0.15em;
+    padding: 0.35em 0.2em;
+    min-height: 44px;
+    border-radius: var(--radius-sm);
+    text-align: center;
+    color: inherit;
+  }
+  .app-nav-mobile .nav-link-label {
+    font-size: var(--text-xs);
+  }
+  .app-nav-mobile .nav-link:hover,
+  .app-nav-mobile .nav-link-more:hover {
+    background-color: var(--state-hover-tint);
+  }
+  .app-nav-mobile .nav-link-active,
+  .app-nav-mobile .nav-link-active:hover {
+    background-color: var(--pk-blue);
+    color: #fff;
+  }
+  .app-nav-mobile .nav-link:focus-visible,
+  .app-nav-mobile .nav-link-more:focus-visible {
+    outline: 2px solid var(--ui-primary);
+    outline-offset: -2px;
   }
   .app-content {
     padding: 1em;
+    padding-bottom: calc(4.5em + env(safe-area-inset-bottom));
   }
   .sheet-grid {
     grid-template-columns: 1fr;
+  }
+  /* T13C2 AC: "no page-level horizontal scrolling" — the desktop 7-column
+     stat-allocation row (dot/label/floor/steppers/input/resolved) is wider
+     than a 360-412px viewport; wrap the floor/resolved captions onto their
+     own row instead of letting the row overflow. */
+  .stat-allocation-row {
+    grid-template-columns: 0.6em 1fr auto auto auto;
+    row-gap: 0.15em;
+  }
+  .stat-allocation-floor,
+  .stat-allocation-resolved {
+    grid-column: 2 / -1;
   }
 }
