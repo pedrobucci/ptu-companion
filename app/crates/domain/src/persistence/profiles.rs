@@ -263,6 +263,106 @@ pub(crate) fn migrations() -> Vec<String> {
     // missing `acquisition_id` and the round trip (read -> unchanged ->
     // save) is exactly idempotent — the id is stable, never reassigned.
     mechanical_collections_acquisition_id_migration(),
+    // Migration 7 (T13D3-R1A): a durable receipt of one confirmed
+    // `commit_trainer_build` operation, keyed by the client-generated
+    // `operation_id` (required on every commit request as of this
+    // migration). A retry of the SAME operation (same `operation_id`,
+    // same canonical semantic request) must return the SAME result
+    // without writing a second time, even for a brand-new Trainer
+    // (`trainer_id: None` on the original request) whose id the client
+    // could not have known to resend — a plain `expected_base_revision`
+    // staleness check alone cannot detect this case, since a fresh-
+    // creation candidate's base revision is a pure content/rules hash,
+    // identical across two back-to-back identical requests. See
+    // `engine::trainer_build::commit_build`'s operation-replay branch.
+    //
+    // `request_fingerprint` is a canonical hash of the semantic request
+    // (target/content_pack_id/draft_id/intent/adjudications/expected
+    // revision) — a THIRD request reusing the same `operation_id` with a
+    // genuinely different payload is a client bug (op-id collision or
+    // logic error), not a legitimate retry, and is rejected
+    // `operation_conflict` rather than silently replayed or re-applied.
+    // `response_json` is the immutable serialized success response
+    // (`TrainerBuildCommitResponse`) returned verbatim on replay.
+    // `trainer_id` is stored redundantly (also inside `response_json`)
+    // specifically so replay can cheaply check "does the committed target
+    // still exist" without deserializing the full response first.
+    r#"
+        CREATE TABLE IF NOT EXISTS trainer_build_operations (
+            operation_id TEXT PRIMARY KEY,
+            request_fingerprint TEXT NOT NULL,
+            trainer_id TEXT NOT NULL,
+            response_json TEXT NOT NULL,
+            created_at TEXT NOT NULL
+        );
+        CREATE INDEX IF NOT EXISTS idx_trainer_build_operations_trainer ON trainer_build_operations(trainer_id);
+    "#
+    .to_string(),
+    // Migration 8 (T13E03): Pokémon identity/media plumbing (E01-C1's five
+    // boundaries: `create_pokemon`/`update_pokemon_identity`/
+    // `reconcile_pokemon_species`/`import_pokemon_image`/
+    // `remove_pokemon_image`).
+    //
+    // `species_version_binding` is a NEW immutable pin of the exact Species
+    // `definition_version_id` this instance is bound to — added alongside,
+    // never replacing, the pre-existing `species_definition_id` (whose
+    // legacy free-string meaning is untouched; T13E01 §1's frozen
+    // reconciliation contract: "preserve legacy species_definition_id
+    // meaning alongside a new immutable version binding... never repurpose
+    // the legacy field in place").
+    //
+    // `needs_reconciliation` defaults to 1 (true) in this ALTER, which
+    // retroactively flags every pre-existing Pokémon row as a
+    // reconciliation candidate — correct, not merely conservative: the
+    // pre-T13E03 `add_pokemon`/`add_pokemon_to_trainer` paths wrote
+    // `species_definition_id` as an unchecked string (confirmed in
+    // T13E03_HANDOFF.md §2), so no existing row has ever actually been
+    // validated against a real Species definition. New rows written by
+    // `create_pokemon` explicitly set this to 0 when the species resolves
+    // to a complete, selectable definition (see
+    // `engine::pokemon_identity::resolve_species_for_creation`); SQLite
+    // fills any INSERT that omits the column with this same DEFAULT 1,
+    // which is the same "explicit legacy reconciliation" contract applied
+    // uniformly rather than only at migration time.
+    //
+    // `media_assets` gains the metadata T13E01 §3/§5 require to enforce and
+    // report the frozen media limits (decoded dimensions, byte size, format,
+    // source hash) and to distinguish a bundled default-catalog portrait
+    // from a user-managed custom upload (`managed`: this app's own
+    // write-managed derivative vs. a row describing something else it does
+    // not own the lifecycle of — current callers only ever create managed
+    // rows, but the column exists so removal logic never has to guess).
+    // `sha256` is the hash of the SOURCE bytes (the original decode input),
+    // not the derivative WebP output, so two different source images that
+    // happen to encode to the same WebP bytes remain distinguishable and a
+    // re-import of a byte-identical source is detectable without decoding.
+    //
+    // `pokemon_identity_operations` is `trainer_build_operations`'
+    // established replay-receipt shape, scoped separately (E01-C1: "narrow
+    // writes" — Pokémon identity mutations must not share a receipt
+    // namespace with unrelated Trainer Build operations, even though the
+    // replay mechanics are identical).
+    r#"
+        ALTER TABLE pokemon_instances ADD COLUMN species_version_binding TEXT;
+        ALTER TABLE pokemon_instances ADD COLUMN needs_reconciliation INTEGER NOT NULL DEFAULT 1;
+
+        ALTER TABLE media_assets ADD COLUMN sha256 TEXT;
+        ALTER TABLE media_assets ADD COLUMN format TEXT;
+        ALTER TABLE media_assets ADD COLUMN width INTEGER;
+        ALTER TABLE media_assets ADD COLUMN height INTEGER;
+        ALTER TABLE media_assets ADD COLUMN byte_size INTEGER;
+        ALTER TABLE media_assets ADD COLUMN managed INTEGER NOT NULL DEFAULT 1;
+
+        CREATE TABLE IF NOT EXISTS pokemon_identity_operations (
+            operation_id TEXT PRIMARY KEY,
+            request_fingerprint TEXT NOT NULL,
+            trainer_id TEXT NOT NULL,
+            response_json TEXT NOT NULL,
+            created_at TEXT NOT NULL
+        );
+        CREATE INDEX IF NOT EXISTS idx_pokemon_identity_operations_trainer ON pokemon_identity_operations(trainer_id);
+    "#
+    .to_string(),
     ]
 }
 
@@ -446,8 +546,8 @@ mod tests {
         let all_migrations = migrations();
         assert_eq!(
             all_migrations.len(),
-            6,
-            "expected exactly 6 migrations: T02 core, T06 usage_counters, T07 shops/transactions, T09a collections, T15A stat_allocation/weight, T13D1 acquisition_id/drafts/build_state"
+            8,
+            "expected exactly 8 migrations: T02 core, T06 usage_counters, T07 shops/transactions, T09a collections, T15A stat_allocation/weight, T13D1 acquisition_id/drafts/build_state, T13D3-R1A trainer_build_operations, T13E03 pokemon identity/media"
         );
 
         // Simulate a database that only ever saw the first 3 migrations
@@ -524,7 +624,7 @@ mod tests {
 
         let conn = Connection::open_in_memory().unwrap();
         let all_migrations = migrations();
-        assert_eq!(all_migrations.len(), 6);
+        assert_eq!(all_migrations.len(), 8);
         let pre_t13d1: Vec<&str> = all_migrations[..5].iter().map(String::as_str).collect();
         super::super::apply_migrations(&conn, &pre_t13d1).unwrap();
 
@@ -534,7 +634,7 @@ mod tests {
              VALUES ('t1','Pre-T13D1 Trainer',5,0,100,?1,150,?2,?2)",
             rusqlite::params![
                 serde_json::to_string(&TrainerStatAllocation {
-                    entries: vec![StatAllocationEntry { stat: TrainerCombatStat::Hp, source: StatAllocationSource::Creation, level: 1, points: 4, note: None }],
+                    entries: vec![StatAllocationEntry { stat: TrainerCombatStat::Hp, source: StatAllocationSource::Creation, level: 1, points: 4, note: None, source_id: None }],
                 })
                 .unwrap(),
                 now,
@@ -593,5 +693,66 @@ mod tests {
         super::super::apply_migrations(&conn, &all_refs).unwrap();
         let second = load_trainer_profile(&conn, "t1").unwrap().unwrap();
         assert_eq!(second, first, "reopening twice must be fully idempotent, including the assigned acquisition_id");
+    }
+
+    /// T13E03 migration 8: a Pokémon row that predates this migration (no
+    /// `species_version_binding`/`needs_reconciliation`/`portrait_media_id`
+    /// columns existed yet) must come back flagged `needs_reconciliation =
+    /// true` — its `species_definition_id` was never validated by the old
+    /// `add_pokemon`/`add_pokemon_to_trainer` code path (T13E03_HANDOFF.md
+    /// §2) — while every other field (id, roster memberships, moves,
+    /// battle state) survives untouched, proving this migration is purely
+    /// additive.
+    #[test]
+    fn pre_t13e03_pokemon_row_upgrades_flagged_needs_reconciliation_with_no_data_loss() {
+        use crate::profile::repository::load_trainer_profile;
+
+        let conn = Connection::open_in_memory().unwrap();
+        let all_migrations = migrations();
+        let pre_t13e03: Vec<&str> = all_migrations[..7].iter().map(String::as_str).collect();
+        super::super::apply_migrations(&conn, &pre_t13e03).unwrap();
+
+        let now = "2026-01-01T00:00:00Z";
+        conn.execute(
+            "INSERT INTO trainers (id, name, level, exp, money, created_at, updated_at) VALUES ('t1','Legacy Trainer',5,0,100,?1,?1)",
+            [now],
+        )
+        .unwrap();
+        conn.execute(
+            "INSERT INTO rosters (id, trainer_id, name, active, sequence, updated_at) VALUES ('r1','t1','Party',1,0,?1)",
+            [now],
+        )
+        .unwrap();
+        conn.execute(
+            "INSERT INTO pokemon_instances (id, trainer_id, species_definition_id, nickname, level, storage_state, sequence, created_at, updated_at)
+             VALUES ('p1','t1','sableye','Shady',12,'carried',0,?1,?1)",
+            [now],
+        )
+        .unwrap();
+        conn.execute(
+            "INSERT INTO roster_memberships (roster_id, pokemon_id, sequence) VALUES ('r1','p1',0)",
+            [],
+        )
+        .unwrap();
+
+        let all_refs: Vec<&str> = all_migrations.iter().map(String::as_str).collect();
+        super::super::apply_migrations(&conn, &all_refs).unwrap();
+
+        let profile = load_trainer_profile(&conn, "t1").unwrap().unwrap();
+        assert_eq!(profile.pokemon.len(), 1);
+        let pkm = &profile.pokemon[0];
+        assert_eq!(pkm.id, "p1");
+        assert_eq!(pkm.species_definition_id, "sableye", "legacy field's meaning must be untouched");
+        assert_eq!(pkm.nickname.as_deref(), Some("Shady"));
+        assert_eq!(pkm.level, 12);
+        assert_eq!(pkm.roster_memberships, vec!["r1".to_string()], "roster membership must survive untouched");
+        assert_eq!(pkm.species_version_binding, None, "a pre-T13E03 row was never bound to a real definition version");
+        assert!(pkm.needs_reconciliation, "a pre-T13E03 row must come back flagged as a reconciliation candidate, never silently treated as validated");
+        assert_eq!(pkm.portrait_media_id, None);
+
+        // Re-apply is a no-op (PRAGMA user_version skip) and stays stable.
+        super::super::apply_migrations(&conn, &all_refs).unwrap();
+        let reloaded = load_trainer_profile(&conn, "t1").unwrap().unwrap();
+        assert_eq!(reloaded, profile, "reopening twice must be fully idempotent");
     }
 }

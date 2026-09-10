@@ -73,6 +73,23 @@ pub enum ImportError {
     #[error("required dependency \"{0}\" is not imported")]
     MissingDependency(String),
 
+    /// T13E02: a record in this pack declares a `definition_version_id`
+    /// that is already installed with GENUINELY DIFFERENT content (a
+    /// byte-for-byte different `data_json`/`search_text`). Previously this
+    /// silently overwrote the installed row (`ON CONFLICT ... DO UPDATE`
+    /// unconditionally) — E01's decision requires this to surface as a
+    /// conflict instead: "if a shipped definition changes under an
+    /// existing ID, create a new version identity and retain the old
+    /// record." An identical re-import (same content) is NOT a conflict —
+    /// see `content::import::content_matches_existing`.
+    #[error("definition \"{definition_version_id}\" in table \"{table}\" already exists with different content under the same version id; a content change requires a new definition_version_id upstream")]
+    DefinitionVersionConflict { table: String, definition_version_id: String },
+
+    /// Same protection for `content_datasets` rows (spec: "dataset updates
+    /// must likewise version their source identity/fingerprint").
+    #[error("dataset \"{dataset_name}\" for pack \"{content_pack_id}\" already exists with different content under the same pack id")]
+    DatasetConflict { content_pack_id: String, dataset_name: String },
+
     #[error("database error: {0}")]
     Sqlite(#[from] rusqlite::Error),
 
@@ -222,6 +239,15 @@ pub enum TrainerPackError {
 
     #[error(transparent)]
     Profile(#[from] ProfileError),
+
+    /// T13E02: a `.ptubackup`'s embedded `ruleset.json` failed to parse or
+    /// schema-validate — the whole backup import rejects rather than
+    /// silently keeping the live app on its previous ruleset while every
+    /// other part of the backup restores (E01-C1: "Backup restores
+    /// selection only after ruleset validation; both memory and
+    /// persistent selection update or the operation rejects").
+    #[error(transparent)]
+    Ruleset(#[from] RulesetError),
 
     #[error("database error: {0}")]
     Sqlite(#[from] rusqlite::Error),

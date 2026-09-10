@@ -1,0 +1,20 @@
+{
+  "id": "ptu-core-with-pokedex",
+  "name": "PTU Core + Supplied Pokédex",
+  "version": "1.0.0",
+  "description": "Core plus the supplied Gen8ish Pokédex pack (ptu-gen8ish-pokedex), a non-official fan-compiled species source used only to fill in Pokémon base stats missing from Core itself. Recommended default for onboarding; Core-only remains selectable.",
+  "packs": [
+    {
+      "id": "ptu-core-1.05",
+      "enabled": true,
+      "priority": 100
+    },
+    {
+      "id": "ptu-gen8ish-pokedex",
+      "enabled": true,
+      "priority": 140
+    }
+  ],
+  "version_pins": {},
+  "gm_overrides_enabled": true
+}

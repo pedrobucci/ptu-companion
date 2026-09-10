@@ -52,12 +52,13 @@ pub fn resolve_definition(
 ) -> Result<Option<ResolvedDefinition>, String> {
     let conn = state.definitions.lock().map_err(to_err)?;
     let kind = ContentKind::from_kind_slug(&kind).ok_or_else(|| format!("unknown content kind \"{kind}\""))?;
-    content::resolver::resolve_definition(&conn, &state.ruleset, kind, &logical_id).map_err(to_err)
+    let ruleset = state.ruleset.lock().map_err(to_err)?;
+    content::resolver::resolve_definition(&conn, &ruleset, kind, &logical_id).map_err(to_err)
 }
 
 #[tauri::command]
 pub fn active_ruleset_name(state: State<AppState>) -> String {
-    state.ruleset.name.clone()
+    state.ruleset.lock().map(|r| r.name.clone()).unwrap_or_default()
 }
 
 // ---------------------------------------------------------------------
@@ -343,12 +344,17 @@ pub fn resolve_trainer_core_stats(
 ) -> Result<engine::trainer_core::TrainerCoreResult, String> {
     let definitions = state.definitions.lock().map_err(to_err)?;
     let progression = engine::datasets::load_trainer_progression(&definitions, &content_pack_id).map_err(to_err)?;
-    drop(definitions);
 
     let profiles = state.profiles.lock().map_err(to_err)?;
     let profile = profile_repo::load_trainer_profile(&profiles, &trainer_id)
         .map_err(to_err)?
         .ok_or_else(|| format!("trainer \"{trainer_id}\" not found"))?;
+    drop(profiles);
+
+    // T13D3-R1B: the shared sheet consumer also reflects acquired
+    // Features' Core p58 stat tags, not only the build-preview path.
+    let (feature_tag_modifiers, _issues) = engine::trainer_build::derive_feature_tag_modifiers(&definitions, &profile.features);
+    drop(definitions);
 
     Ok(engine::trainer_core::resolve_trainer_core(
         profile.level,
@@ -357,6 +363,7 @@ pub fn resolve_trainer_core_stats(
         profile.weight_lb,
         &profile.gm_grants,
         &progression,
+        &feature_tag_modifiers,
     ))
 }
 
@@ -399,12 +406,16 @@ pub fn preview_trainer_stat_allocation(
 ) -> Result<engine::trainer_core::TrainerCoreResult, String> {
     let definitions = state.definitions.lock().map_err(to_err)?;
     let progression = engine::datasets::load_trainer_progression(&definitions, &content_pack_id).map_err(to_err)?;
-    drop(definitions);
 
     let profiles = state.profiles.lock().map_err(to_err)?;
     let profile = profile_repo::load_trainer_profile(&profiles, &trainer_id)
         .map_err(to_err)?
         .ok_or_else(|| format!("trainer \"{trainer_id}\" not found"))?;
+    drop(profiles);
+
+    // T13D3-R1B: same reasoning as resolve_trainer_core_stats above.
+    let (feature_tag_modifiers, _issues) = engine::trainer_build::derive_feature_tag_modifiers(&definitions, &profile.features);
+    drop(definitions);
 
     let normal_entries = engine::trainer_core::build_normal_allocation_entries(&desired, profile.level, &progression);
     let allocation = engine::trainer_core::merge_with_preserved_provenance(normal_entries, &profile.stat_allocation);
@@ -416,6 +427,7 @@ pub fn preview_trainer_stat_allocation(
         profile.weight_lb,
         &profile.gm_grants,
         &progression,
+        &feature_tag_modifiers,
     ))
 }
 
@@ -463,6 +475,17 @@ pub fn save_trainer_stat_allocation(
 // T13D3/T13D4 scope. See `ptu_domain::engine::trainer_build`'s module doc.
 // ---------------------------------------------------------------------
 
+/// T13D3: E02's own real, installed-content-aware revision — see
+/// `engine::trainer_build::compute_rules_fingerprint`'s doc comment for
+/// why folding this in matters. Takes the ALREADY-LOCKED `definitions` and
+/// `ruleset` connections/guards (never locks either a second time — that
+/// would deadlock a single-threaded `Mutex`).
+fn e02_content_revision(state: &State<AppState>, definitions: &rusqlite::Connection, ruleset: &content::ruleset::CampaignRuleset) -> Result<String, String> {
+    content::context::get_content_context(definitions, ruleset, &state.rulesets_dir, &state.content_packs_dir)
+        .map_err(to_err)
+        .map(|ctx| ctx.revision)
+}
+
 /// Real: assembles the source-backed skills/rank/Skill-Edge/Elemental-
 /// Connection/milestone-stream catalog (from the `trainer_build_rules`
 /// dataset) plus, when `trainer_id` is given, the existing Trainer's
@@ -476,7 +499,14 @@ pub fn get_trainer_build_context(
     content_pack_id: String,
 ) -> Result<engine::trainer_build::BuildContext, String> {
     let definitions = state.definitions.lock().map_err(to_err)?;
+    let ruleset = state.ruleset.lock().map_err(to_err)?;
+    // T13D3-R1A (P3): a definition pin elsewhere does not implicitly
+    // activate the whole pack's datasets — `content_pack_id` must name an
+    // actually-enabled pack in the active ruleset.
+    engine::trainer_build::validate_content_pack_is_active(&ruleset, &content_pack_id)?;
     let rules = engine::datasets::load_trainer_build_rules(&definitions, &content_pack_id).map_err(to_err)?;
+    let e02_content_revision = e02_content_revision(&state, &definitions, &ruleset)?;
+    drop(ruleset);
     drop(definitions);
 
     let existing_profile = match &trainer_id {
@@ -487,7 +517,7 @@ pub fn get_trainer_build_context(
         None => None,
     };
 
-    let rules_fingerprint = engine::trainer_build::compute_rules_fingerprint(&content_pack_id, &rules);
+    let rules_fingerprint = engine::trainer_build::compute_rules_fingerprint(&content_pack_id, &rules, &e02_content_revision);
     let build_status = existing_profile
         .as_ref()
         .map(|p| engine::trainer_build::resolve_build_state(&p.build_state).status)
@@ -530,81 +560,174 @@ pub fn discard_trainer_build_draft(state: State<AppState>, draft_id: String) -> 
     profile_repo::discard_trainer_build_draft(&conn, &draft_id).map_err(to_err)
 }
 
+/// T13D3: real — validates/resolves a level-1 creation intent (Core
+/// pp12-18) without persisting anything. See
+/// `ptu_domain::engine::trainer_build::preview_build`.
 #[tauri::command]
 pub fn preview_trainer_build(
     state: State<AppState>,
     request: engine::trainer_build::PreviewTrainerBuildRequest,
-) -> Result<Value, String> {
-    let _ = (&state, &request);
-    Err(engine::trainer_build::not_yet_implemented("preview_trainer_build").to_string())
+) -> Result<engine::trainer_build::TrainerBuildPreviewResponse, engine::trainer_build::TrainerBuildError> {
+    let definitions = state.definitions.lock().map_err(|e| engine::trainer_build::TrainerBuildError::Internal { message: e.to_string() })?;
+    let ruleset = state.ruleset.lock().map_err(|e| engine::trainer_build::TrainerBuildError::Internal { message: e.to_string() })?;
+    let e02_content_revision = e02_content_revision(&state, &definitions, &ruleset).map_err(|e| engine::trainer_build::TrainerBuildError::Internal { message: e })?;
+    let profiles = state.profiles.lock().map_err(|e| engine::trainer_build::TrainerBuildError::Internal { message: e.to_string() })?;
+    engine::trainer_build::preview_build(&definitions, &profiles, &ruleset, &e02_content_revision, &request)
 }
 
+/// T13D3: real — revalidates and, only if no blocking issue survives,
+/// publishes the build. See
+/// `ptu_domain::engine::trainer_build::commit_build`.
 #[tauri::command]
 pub fn commit_trainer_build(
     state: State<AppState>,
     request: engine::trainer_build::CommitTrainerBuildRequest,
-) -> Result<Value, String> {
-    let _ = (&state, &request);
-    Err(engine::trainer_build::not_yet_implemented("commit_trainer_build").to_string())
+) -> Result<engine::trainer_build::TrainerBuildCommitResponse, engine::trainer_build::TrainerBuildError> {
+    let definitions = state.definitions.lock().map_err(|e| engine::trainer_build::TrainerBuildError::Internal { message: e.to_string() })?;
+    let ruleset = state.ruleset.lock().map_err(|e| engine::trainer_build::TrainerBuildError::Internal { message: e.to_string() })?;
+    let e02_content_revision = e02_content_revision(&state, &definitions, &ruleset).map_err(|e| engine::trainer_build::TrainerBuildError::Internal { message: e })?;
+    let mut profiles = state.profiles.lock().map_err(|e| engine::trainer_build::TrainerBuildError::Internal { message: e.to_string() })?;
+    engine::trainer_build::commit_build(&definitions, &mut profiles, &ruleset, &e02_content_revision, &request)
 }
 
+/// T13D4: real — validates/resolves an advancement (ordinary awards, the
+/// restricted L2/6/12 bonus Skill Edge, the L5/10/20/30/40 offensive-stat
+/// stream) without persisting anything. See
+/// `ptu_domain::engine::trainer_build::preview_trainer_advancement`.
 #[tauri::command]
 pub fn preview_trainer_advancement(
     state: State<AppState>,
     request: engine::trainer_build::PreviewTrainerAdvancementRequest,
-) -> Result<Value, String> {
-    let _ = (&state, &request);
-    Err(engine::trainer_build::not_yet_implemented("preview_trainer_advancement").to_string())
+) -> Result<engine::trainer_build::TrainerAdvancementPreviewResponse, engine::trainer_build::TrainerBuildError> {
+    let definitions = state.definitions.lock().map_err(|e| engine::trainer_build::TrainerBuildError::Internal { message: e.to_string() })?;
+    let ruleset = state.ruleset.lock().map_err(|e| engine::trainer_build::TrainerBuildError::Internal { message: e.to_string() })?;
+    let e02_content_revision = e02_content_revision(&state, &definitions, &ruleset).map_err(|e| engine::trainer_build::TrainerBuildError::Internal { message: e })?;
+    let profiles = state.profiles.lock().map_err(|e| engine::trainer_build::TrainerBuildError::Internal { message: e.to_string() })?;
+    engine::trainer_build::preview_trainer_advancement(&definitions, &profiles, &ruleset, &e02_content_revision, &request)
 }
 
+/// T13D4: real — revalidates and, only if no blocking issue survives,
+/// publishes the advancement atomically (transactional, retry-safe via
+/// the same operation-receipt mechanism T13D3-R1A already established).
 #[tauri::command]
 pub fn commit_trainer_advancement(
     state: State<AppState>,
     request: engine::trainer_build::CommitTrainerAdvancementRequest,
-) -> Result<Value, String> {
-    let _ = (&state, &request);
-    Err(engine::trainer_build::not_yet_implemented("commit_trainer_advancement").to_string())
+) -> Result<engine::trainer_build::TrainerAdvancementCommitResponse, engine::trainer_build::TrainerBuildError> {
+    let definitions = state.definitions.lock().map_err(|e| engine::trainer_build::TrainerBuildError::Internal { message: e.to_string() })?;
+    let ruleset = state.ruleset.lock().map_err(|e| engine::trainer_build::TrainerBuildError::Internal { message: e.to_string() })?;
+    let e02_content_revision = e02_content_revision(&state, &definitions, &ruleset).map_err(|e| engine::trainer_build::TrainerBuildError::Internal { message: e })?;
+    let mut profiles = state.profiles.lock().map_err(|e| engine::trainer_build::TrainerBuildError::Internal { message: e.to_string() })?;
+    engine::trainer_build::commit_trainer_advancement(&definitions, &mut profiles, &ruleset, &e02_content_revision, &request)
 }
 
+/// T13D4: real — validates/resolves a GM grant add/edit/remove without
+/// persisting anything. See
+/// `ptu_domain::engine::trainer_build::preview_trainer_gm_change`.
 #[tauri::command]
 pub fn preview_trainer_gm_change(
     state: State<AppState>,
     request: engine::trainer_build::PreviewTrainerGmChangeRequest,
-) -> Result<Value, String> {
-    let _ = (&state, &request);
-    Err(engine::trainer_build::not_yet_implemented("preview_trainer_gm_change").to_string())
+) -> Result<engine::trainer_build::TrainerGmChangePreviewResponse, engine::trainer_build::TrainerBuildError> {
+    let definitions = state.definitions.lock().map_err(|e| engine::trainer_build::TrainerBuildError::Internal { message: e.to_string() })?;
+    let ruleset = state.ruleset.lock().map_err(|e| engine::trainer_build::TrainerBuildError::Internal { message: e.to_string() })?;
+    let e02_content_revision = e02_content_revision(&state, &definitions, &ruleset).map_err(|e| engine::trainer_build::TrainerBuildError::Internal { message: e })?;
+    let profiles = state.profiles.lock().map_err(|e| engine::trainer_build::TrainerBuildError::Internal { message: e.to_string() })?;
+    engine::trainer_build::preview_trainer_gm_change(&definitions, &profiles, &ruleset, &e02_content_revision, &request)
 }
 
+/// T13D4: real — revalidates and, only if no blocking issue survives,
+/// publishes the GM grant change atomically.
 #[tauri::command]
 pub fn commit_trainer_gm_change(
     state: State<AppState>,
     request: engine::trainer_build::CommitTrainerGmChangeRequest,
-) -> Result<Value, String> {
-    let _ = (&state, &request);
-    Err(engine::trainer_build::not_yet_implemented("commit_trainer_gm_change").to_string())
+) -> Result<engine::trainer_build::TrainerGmChangeCommitResponse, engine::trainer_build::TrainerBuildError> {
+    let definitions = state.definitions.lock().map_err(|e| engine::trainer_build::TrainerBuildError::Internal { message: e.to_string() })?;
+    let ruleset = state.ruleset.lock().map_err(|e| engine::trainer_build::TrainerBuildError::Internal { message: e.to_string() })?;
+    let e02_content_revision = e02_content_revision(&state, &definitions, &ruleset).map_err(|e| engine::trainer_build::TrainerBuildError::Internal { message: e })?;
+    let mut profiles = state.profiles.lock().map_err(|e| engine::trainer_build::TrainerBuildError::Internal { message: e.to_string() })?;
+    engine::trainer_build::commit_trainer_gm_change(&definitions, &mut profiles, &ruleset, &e02_content_revision, &request)
 }
 
+/// T13D4: real — validates/resolves a respec (normal stat rebuild +
+/// authorized resource reallocations) without persisting anything. See
+/// `ptu_domain::engine::trainer_build::preview_trainer_respec`.
 #[tauri::command]
 pub fn preview_trainer_respec(
     state: State<AppState>,
     request: engine::trainer_build::PreviewTrainerRespecRequest,
-) -> Result<Value, String> {
-    let _ = (&state, &request);
-    Err(engine::trainer_build::not_yet_implemented("preview_trainer_respec").to_string())
+) -> Result<engine::trainer_build::TrainerRespecPreviewResponse, engine::trainer_build::TrainerBuildError> {
+    let definitions = state.definitions.lock().map_err(|e| engine::trainer_build::TrainerBuildError::Internal { message: e.to_string() })?;
+    let ruleset = state.ruleset.lock().map_err(|e| engine::trainer_build::TrainerBuildError::Internal { message: e.to_string() })?;
+    let e02_content_revision = e02_content_revision(&state, &definitions, &ruleset).map_err(|e| engine::trainer_build::TrainerBuildError::Internal { message: e })?;
+    let profiles = state.profiles.lock().map_err(|e| engine::trainer_build::TrainerBuildError::Internal { message: e.to_string() })?;
+    engine::trainer_build::preview_trainer_respec(&definitions, &profiles, &ruleset, &e02_content_revision, &request)
 }
 
+/// T13D4: real — revalidates and, only if no blocking issue survives,
+/// publishes the respec atomically.
 #[tauri::command]
 pub fn commit_trainer_respec(
     state: State<AppState>,
     request: engine::trainer_build::CommitTrainerRespecRequest,
-) -> Result<Value, String> {
-    let _ = (&state, &request);
-    Err(engine::trainer_build::not_yet_implemented("commit_trainer_respec").to_string())
+) -> Result<engine::trainer_build::TrainerRespecCommitResponse, engine::trainer_build::TrainerBuildError> {
+    let definitions = state.definitions.lock().map_err(|e| engine::trainer_build::TrainerBuildError::Internal { message: e.to_string() })?;
+    let ruleset = state.ruleset.lock().map_err(|e| engine::trainer_build::TrainerBuildError::Internal { message: e.to_string() })?;
+    let e02_content_revision = e02_content_revision(&state, &definitions, &ruleset).map_err(|e| engine::trainer_build::TrainerBuildError::Internal { message: e })?;
+    let mut profiles = state.profiles.lock().map_err(|e| engine::trainer_build::TrainerBuildError::Internal { message: e.to_string() })?;
+    engine::trainer_build::commit_trainer_respec(&definitions, &mut profiles, &ruleset, &e02_content_revision, &request)
+}
+
+/// T13D4-R2: real — resolves reconciling one already-reached, still-
+/// unresolved milestone choice (never a `next_level`, never a second
+/// level-up) without persisting anything. See
+/// `ptu_domain::engine::trainer_build::preview_trainer_milestone_reconciliation`.
+#[tauri::command]
+pub fn preview_trainer_milestone_reconciliation(
+    state: State<AppState>,
+    request: engine::trainer_build::PreviewTrainerMilestoneReconciliationRequest,
+) -> Result<engine::trainer_build::TrainerMilestoneReconciliationPreviewResponse, engine::trainer_build::TrainerBuildError> {
+    let definitions = state.definitions.lock().map_err(|e| engine::trainer_build::TrainerBuildError::Internal { message: e.to_string() })?;
+    let ruleset = state.ruleset.lock().map_err(|e| engine::trainer_build::TrainerBuildError::Internal { message: e.to_string() })?;
+    let e02_content_revision = e02_content_revision(&state, &definitions, &ruleset).map_err(|e| engine::trainer_build::TrainerBuildError::Internal { message: e })?;
+    let profiles = state.profiles.lock().map_err(|e| engine::trainer_build::TrainerBuildError::Internal { message: e.to_string() })?;
+    engine::trainer_build::preview_trainer_milestone_reconciliation(&definitions, &profiles, &ruleset, &e02_content_revision, &request)
+}
+
+/// T13D4-R2: real — revalidates and, only if no blocking issue survives,
+/// publishes the milestone reconciliation atomically.
+#[tauri::command]
+pub fn commit_trainer_milestone_reconciliation(
+    state: State<AppState>,
+    request: engine::trainer_build::CommitTrainerMilestoneReconciliationRequest,
+) -> Result<engine::trainer_build::TrainerMilestoneReconciliationCommitResponse, engine::trainer_build::TrainerBuildError> {
+    let definitions = state.definitions.lock().map_err(|e| engine::trainer_build::TrainerBuildError::Internal { message: e.to_string() })?;
+    let ruleset = state.ruleset.lock().map_err(|e| engine::trainer_build::TrainerBuildError::Internal { message: e.to_string() })?;
+    let e02_content_revision = e02_content_revision(&state, &definitions, &ruleset).map_err(|e| engine::trainer_build::TrainerBuildError::Internal { message: e })?;
+    let mut profiles = state.profiles.lock().map_err(|e| engine::trainer_build::TrainerBuildError::Internal { message: e.to_string() })?;
+    engine::trainer_build::commit_trainer_milestone_reconciliation(&definitions, &mut profiles, &ruleset, &e02_content_revision, &request)
+}
+
+/// T13D4: a Trainer with a `Published` `build_state` is a MANAGED build —
+/// this legacy, pre-D4 narrow mutation (a raw progression-ledger
+/// replacement with none of D4's real validation/transaction/retry
+/// guarantees) must not be usable as a bypass for one. An unmanaged
+/// (`Legacy`/`Draft`/no build_state) Trainer may still use it —
+/// `respec_trainer_progression` predates D3/D4 and is exactly the kind of
+/// narrow historical mutation those Trainers may still need.
+fn reject_if_managed_build(profile: &TrainerProfile) -> Result<(), String> {
+    if engine::trainer_build::resolve_build_state(&profile.build_state).status == engine::trainer_build::BuildStatus::Published {
+        return Err("this Trainer has a published (managed) build; use commit_trainer_respec instead of this legacy mutation".to_string());
+    }
+    Ok(())
 }
 
 #[tauri::command]
 pub fn respec_progression(state: State<AppState>, trainer_id: String, new_progression: Vec<Value>) -> Result<(), String> {
     let mut conn = state.profiles.lock().map_err(to_err)?;
+    let profile = profile_repo::load_trainer_profile(&conn, &trainer_id).map_err(to_err)?.ok_or_else(|| format!("trainer \"{trainer_id}\" not found"))?;
+    reject_if_managed_build(&profile)?;
     engine::respec::respec_trainer_progression(&mut conn, &trainer_id, &new_progression).map_err(to_err)
 }
 
@@ -616,6 +739,8 @@ pub fn reallocate_resource_grant(
     new_allocation: Value,
 ) -> Result<Value, String> {
     let conn = state.profiles.lock().map_err(to_err)?;
+    let profile = profile_repo::load_trainer_profile(&conn, &trainer_id).map_err(to_err)?.ok_or_else(|| format!("trainer \"{trainer_id}\" not found"))?;
+    reject_if_managed_build(&profile)?;
     engine::respec::apply_resource_reallocation(&conn, &trainer_id, &grant_id, new_allocation).map_err(to_err)
 }
 
@@ -707,19 +832,156 @@ pub fn import_trainer_pack(state: State<AppState>, src_path: String) -> Result<S
 pub fn export_backup(state: State<AppState>, dest_path: String) -> Result<(), String> {
     let definitions = state.definitions.lock().map_err(to_err)?;
     let profiles = state.profiles.lock().map_err(to_err)?;
-    let ruleset_value = serde_json::to_value(&state.ruleset).ok();
+    let ruleset_value = state.ruleset.lock().map_err(to_err).and_then(|r| serde_json::to_value(&*r).map_err(to_err)).ok();
     let outcome = backup::export_backup(&definitions, &profiles, ruleset_value.as_ref()).map_err(to_err)?;
     std::fs::write(&dest_path, &outcome.bytes).map_err(to_err)?;
     Ok(())
 }
 
+/// T13E02-R1 F3: the additive success shape `import_backup` now returns
+/// instead of bare `()` — an unapplied ruleset selection (valid schema,
+/// but an id outside this app's fixed preset registry) is reported as an
+/// explicit `warnings` entry, never a silent `Ok(())`. `trainers_imported`/
+/// `content_packs_imported` are unchanged from before; `ruleset_applied`/
+/// `warnings` are the only new fields, so a caller that only checked for
+/// success (ignored the old `()` payload) keeps working unmodified.
+#[derive(serde::Serialize)]
+pub struct ImportBackupOutcome {
+    pub trainers_imported: Vec<String>,
+    pub content_packs_imported: Vec<String>,
+    /// The preset id that WAS applied as the live/persisted selection, if
+    /// any — `None` both when the backup carried no ruleset at all AND
+    /// when it carried one that couldn't be applied (see `warnings` to
+    /// tell those two apart).
+    pub ruleset_applied: Option<String>,
+    pub warnings: Vec<content::context::ContentApiError>,
+}
+
+/// T13E02 (E01-C1 endpoint 2) + T13E02-R1 F3: applies a restored backup's
+/// embedded ruleset to live state — persisted selection AND in-memory
+/// ruleset both update, or (per `backup::import_backup`'s own validation-
+/// before-write ordering) neither does, since an invalid ruleset now fails
+/// the whole backup import before any database write happens. A VALID
+/// ruleset whose id isn't one of this app's known presets restores every
+/// Trainer/pack/draft normally but is reported via `warnings` — the
+/// previously active ruleset stays in effect, and the caller is told so
+/// explicitly rather than discovering it later as re-broken species
+/// resolution.
 #[tauri::command]
-pub fn import_backup(state: State<AppState>, src_path: String) -> Result<(), String> {
+pub fn import_backup(state: State<AppState>, src_path: String) -> Result<ImportBackupOutcome, String> {
     let bytes = std::fs::read(&src_path).map_err(to_err)?;
     let mut definitions = state.definitions.lock().map_err(to_err)?;
     let mut profiles = state.profiles.lock().map_err(to_err)?;
-    backup::import_backup(&mut definitions, &mut profiles, &bytes).map_err(to_err)?;
-    Ok(())
+    let outcome = backup::import_backup(&mut definitions, &mut profiles, &bytes).map_err(to_err)?;
+
+    let mut ruleset_applied = None;
+    let mut warnings = Vec::new();
+    if let Some(restored) = outcome.restored_ruleset {
+        let previously_active_name = state.ruleset.lock().map_err(to_err)?.name.clone();
+        match content::context::evaluate_restored_ruleset(&restored, &previously_active_name) {
+            Ok(preset_id) => {
+                ptu_domain::content::ruleset::save_active_preset_selection(&state.app_data_dir, &preset_id).map_err(to_err)?;
+                *state.ruleset.lock().map_err(to_err)? = restored;
+                ruleset_applied = Some(preset_id);
+            }
+            Err(warning) => warnings.push(warning),
+        }
+    }
+
+    Ok(ImportBackupOutcome { trainers_imported: outcome.trainers_imported, content_packs_imported: outcome.content_packs_imported, ruleset_applied, warnings })
+}
+
+// ---------------------------------------------------------------------
+// T13E02: content context / ruleset selection / catalog browse (E01-C1)
+// ---------------------------------------------------------------------
+
+#[tauri::command]
+pub fn get_content_context(state: State<AppState>) -> Result<content::context::ContentContext, content::context::ContentApiError> {
+    let conn = state.definitions.lock().map_err(|e| content::context::ContentApiError::internal(e.to_string()))?;
+    let ruleset = state.ruleset.lock().map_err(|e| content::context::ContentApiError::internal(e.to_string()))?;
+    content::context::get_content_context(&conn, &ruleset, &state.rulesets_dir, &state.content_packs_dir)
+        .map_err(content::context::ContentApiError::sqlite_error)
+}
+
+#[derive(serde::Deserialize)]
+pub struct SetActiveRulesetRequest {
+    pub preset_id: String,
+    pub expected_revision: String,
+    pub confirm: bool,
+}
+
+#[tauri::command]
+pub fn set_active_ruleset(state: State<AppState>, request: SetActiveRulesetRequest) -> Result<content::context::ContentContext, content::context::ContentApiError> {
+    let conn = state.definitions.lock().map_err(|e| content::context::ContentApiError::internal(e.to_string()))?;
+    let current = {
+        let ruleset = state.ruleset.lock().map_err(|e| content::context::ContentApiError::internal(e.to_string()))?;
+        content::context::get_content_context(&conn, &ruleset, &state.rulesets_dir, &state.content_packs_dir).map_err(content::context::ContentApiError::sqlite_error)?
+    };
+    let new_ruleset = content::context::validate_set_active_ruleset(&state.rulesets_dir, &current.revision, &request.expected_revision, &request.preset_id, request.confirm)?;
+
+    // Persist atomically BEFORE swapping memory (E01-C1: "Persist
+    // atomically before swapping memory, then return new revision").
+    ptu_domain::content::ruleset::save_active_preset_selection(&state.app_data_dir, &new_ruleset.id)
+        .map_err(|e| content::context::ContentApiError::internal(e.to_string()))?;
+    {
+        let mut ruleset = state.ruleset.lock().map_err(|e| content::context::ContentApiError::internal(e.to_string()))?;
+        *ruleset = new_ruleset.clone();
+    }
+
+    content::context::get_content_context(&conn, &new_ruleset, &state.rulesets_dir, &state.content_packs_dir).map_err(content::context::ContentApiError::sqlite_error)
+}
+
+#[derive(serde::Deserialize)]
+pub struct BrowseSelectableContentRequest {
+    pub kind: String,
+    pub query: String,
+    pub limit: i64,
+    pub offset: i64,
+    pub expected_revision: String,
+}
+
+#[tauri::command]
+pub fn browse_selectable_content(state: State<AppState>, request: BrowseSelectableContentRequest) -> Result<content::context::BrowseResult, content::context::ContentApiError> {
+    let conn = state.definitions.lock().map_err(|e| content::context::ContentApiError::internal(e.to_string()))?;
+    let ruleset = state.ruleset.lock().map_err(|e| content::context::ContentApiError::internal(e.to_string()))?;
+    content::context::browse_selectable_content(
+        &conn,
+        &ruleset,
+        &state.content_packs_dir,
+        &request.expected_revision,
+        &request.kind,
+        &request.query,
+        request.limit,
+        request.offset,
+    )
+}
+
+#[derive(serde::Deserialize)]
+pub struct GetDefinitionVersionRequest {
+    pub kind: String,
+    pub definition_version_id: String,
+}
+
+#[tauri::command]
+pub fn get_definition_version(state: State<AppState>, request: GetDefinitionVersionRequest) -> Result<content::context::ExactDefinitionVersion, content::context::ContentApiError> {
+    let conn = state.definitions.lock().map_err(|e| content::context::ContentApiError::internal(e.to_string()))?;
+    let kind = ContentKind::from_kind_slug(&request.kind).ok_or_else(|| content::context::ContentApiError::invalid_input("kind", format!("unknown content kind \"{}\"", request.kind)))?;
+    content::context::get_definition_version(&conn, kind, &request.definition_version_id)
+}
+
+#[derive(serde::Deserialize)]
+pub struct RefreshBundledContentRequest {
+    pub expected_revision: String,
+    pub confirm: bool,
+}
+
+#[tauri::command]
+pub fn refresh_bundled_content(state: State<AppState>, request: RefreshBundledContentRequest) -> Result<content::context::ContentContext, content::context::ContentApiError> {
+    let mut conn = state.definitions.lock().map_err(|e| content::context::ContentApiError::internal(e.to_string()))?;
+    let ruleset = state.ruleset.lock().map_err(|e| content::context::ContentApiError::internal(e.to_string()))?;
+    let current = content::context::get_content_context(&conn, &ruleset, &state.rulesets_dir, &state.content_packs_dir).map_err(content::context::ContentApiError::sqlite_error)?;
+    content::context::validate_refresh_request(&current.revision, &request.expected_revision, request.confirm)?;
+    content::context::refresh_bundled_content(&mut conn, &state.content_packs_dir, &state.rulesets_dir, &ruleset)
 }
 
 // ---------------------------------------------------------------------

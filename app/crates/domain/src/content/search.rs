@@ -60,6 +60,26 @@ pub fn search(
     rows.collect()
 }
 
+/// T13E02-R1 F2: the exact total row count [`search`] would match for this
+/// `query`/`kind` with no `LIMIT` at all — used by
+/// `content::context::browse_selectable_content` to size its own
+/// `search(...)` call precisely instead of guessing a fixed probe ceiling
+/// that could silently truncate a broad match. Same FTS-escaping as
+/// `search` (`build_fts_query`), so the two never disagree on what counts
+/// as a match.
+pub fn count_matches(conn: &Connection, query: &str, kind: Option<ContentKind>) -> rusqlite::Result<i64> {
+    let fts_query = build_fts_query(query);
+    if fts_query.is_empty() {
+        return Ok(0);
+    }
+    let kind_filter: Option<&str> = kind.map(ContentKind::kind_slug);
+    conn.query_row(
+        "SELECT COUNT(*) FROM content_search_index WHERE content_search_index MATCH ?1 AND (?2 IS NULL OR kind = ?2)",
+        params![fts_query, kind_filter],
+        |row| row.get(0),
+    )
+}
+
 /// Turns free text into a safe FTS5 query: each whitespace-separated token
 /// becomes an escaped, prefix-matched phrase (implicit AND between tokens),
 /// so user input can never inject FTS5 operators/syntax.

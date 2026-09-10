@@ -15,6 +15,13 @@
 //! Trainer's build drafts (`trainer_build_drafts` rows) — only the
 //! committed `TrainerProfile` graph round-trips here. A full `.ptubackup`
 //! (`portability::backup`) is the only export that also retains drafts.
+//!
+//! T13D3-R1A: the same boundary applies to `trainer_build_operations`
+//! (commit-idempotency receipts) — a per-Trainer export never includes
+//! them, since operation identity is an installation-level replay guard,
+//! not part of the Trainer's own data. `TrainerProfile` itself has no
+//! field for them, so this holds by construction, not by an explicit
+//! filter; documented here so the omission reads as a decision, not a gap.
 
 use std::collections::BTreeSet;
 use std::io::{Cursor, Read, Write};

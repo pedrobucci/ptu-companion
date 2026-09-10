@@ -317,7 +317,10 @@ pub fn validate_stat_allocation(
 // Modifier engine integration
 // =======================================================================
 
-fn stat_target_key(stat: TrainerCombatStat) -> &'static str {
+/// T13D3-R1B: also used by `engine::trainer_build`'s Feature-tag modifier
+/// derivation, to target the same `"trainer.stat.*"` keys a fixed GM Grant
+/// already does.
+pub fn stat_target_key(stat: TrainerCombatStat) -> &'static str {
     match stat {
         TrainerCombatStat::Hp => "trainer.stat.hp",
         TrainerCombatStat::Attack => "trainer.stat.attack",
@@ -361,7 +364,7 @@ pub fn stat_modifiers_from_gm_grants(gm_grants: &[Value], stat_target: &str) -> 
 // Aggregate resolver
 // =======================================================================
 
-#[derive(Debug, Clone, Serialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct TrainerCombatStatsResolved {
     pub hp: ResolvedValue,
     pub attack: ResolvedValue,
@@ -371,7 +374,7 @@ pub struct TrainerCombatStatsResolved {
     pub speed: ResolvedValue,
 }
 
-#[derive(Debug, Clone, Serialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct TrainerWeightResult {
     pub weight_lb: Option<i64>,
     pub weight_class: Option<WeightClass>,
@@ -381,14 +384,18 @@ pub struct TrainerWeightResult {
 /// allocation panel can show "N of M points allocated, R remaining"
 /// directly — never by parsing `validation`'s prose message or
 /// re-deriving the grant/spend arithmetic in React.
-#[derive(Debug, Clone, Serialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct StatAllocationSummary {
     pub granted: i64,
     pub spent: i64,
     pub remaining: i64,
 }
 
-#[derive(Debug, Clone, Serialize, PartialEq)]
+/// `Deserialize` is needed alongside `Serialize` here (T13D3-R1A): a
+/// stored `commit_trainer_build` operation receipt round-trips this exact
+/// shape through JSON so a replayed commit can return it verbatim — see
+/// `engine::trainer_build::TrainerBuildCommitResponse`.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct TrainerCoreResult {
     pub combat_stats: TrainerCombatStatsResolved,
     /// Derived from the *resolved* HP stat (base + any GM-grant modifier
@@ -420,6 +427,14 @@ pub struct TrainerCoreResult {
 /// datasets, returns everything the approved dashboard contract's Step 6
 /// panel needs in one shot, each value carrying its own base/resolved/
 /// breakdown per [`ResolvedValue`].
+///
+/// `feature_tag_modifiers` (T13D3-R1B): already-derived, already-verified
+/// Combat Stat modifiers from a Trainer's acquired Features' Core p58
+/// `[+Stat]`-family tags — see `engine::trainer_build::derive_feature_tag_modifiers`,
+/// the only producer of this list; this function stays pure/DB-free and
+/// simply feeds them into the same modifier pipeline `gm_grants` already
+/// uses, so both sources appear together in one `ResolvedValue.breakdown`.
+#[allow(clippy::too_many_arguments)]
 pub fn resolve_trainer_core(
     level: i64,
     allocation: &TrainerStatAllocation,
@@ -427,10 +442,13 @@ pub fn resolve_trainer_core(
     weight_lb: Option<i64>,
     gm_grants: &[Value],
     progression: &[TrainerProgressionRow],
+    feature_tag_modifiers: &[super::modifier::Modifier],
 ) -> TrainerCoreResult {
     let resolve_stat = |stat: TrainerCombatStat| -> ResolvedValue {
         let base = stat_base(allocation, stat) as f64;
-        let modifiers = stat_modifiers_from_gm_grants(gm_grants, stat_target_key(stat));
+        let target = stat_target_key(stat);
+        let mut modifiers = stat_modifiers_from_gm_grants(gm_grants, target);
+        modifiers.extend(feature_tag_modifiers.iter().filter(|m| m.target == target).cloned());
         resolve_value(base, &modifiers)
     };
 
@@ -533,6 +551,7 @@ pub fn build_normal_allocation_entries(
                 level: 1,
                 points: creation_here,
                 note: None,
+                source_id: None,
             });
             creation_used += creation_here;
         }
@@ -544,6 +563,7 @@ pub fn build_normal_allocation_entries(
                 level: trainer_level,
                 points: levelup_here,
                 note: None,
+                source_id: None,
             });
         }
     }
@@ -609,6 +629,69 @@ pub struct ProgressionLedgerEntry {
     /// once resolved. `None` means unresolved — never auto-selected.
     #[serde(default)]
     pub milestone_choice: Option<String>,
+    /// T13D4: for the offensive-stat-stream milestones only (Core p19-20,
+    /// levels 5/10/20/30/40) — `"stat_stream"` when this level's milestone
+    /// chose the stat stream (vs. an alternative Edge/Feature pick).
+    /// `Some(true)` at level 5 additionally records that the L5 choice was
+    /// specifically the stream (not the level-5 alternative), which is
+    /// what every later stream level's automatic ongoing bonus and
+    /// `stat_stream_choice` continuation validity are keyed on.
+    #[serde(default)]
+    pub milestone_option_kind: Option<String>,
+    /// The stat (`"attack"` or `"special_attack"`) locked in at level 5's
+    /// stream choice — recorded ONLY on the level-5 ledger entry, then
+    /// read back by every later stream level (5/10/20/30/40 all reuse
+    /// this one choice; Core never lets it change mid-stream) and by the
+    /// automatic ongoing-bonus application at every ordinary level in
+    /// between. `None` when level 5 didn't choose the stream at all.
+    #[serde(default)]
+    pub stat_stream_choice: Option<String>,
+    /// T13D4-R2: present only when THIS level's milestone was resolved by
+    /// `commit_trainer_milestone_reconciliation` rather than ordinary
+    /// advancement — narrow additive provenance for the reconciliation
+    /// itself (P4: "no SQLite migration proposed... a new optional object
+    /// inside the target progression JSON"). `skip_serializing_if` keeps a
+    /// reconciliation-untouched entry's JSON exactly as it already was.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub reconciliation: Option<MilestoneReconciliationMetadata>,
+}
+
+/// T13D4-R2 (P4): one reconciliation's own record of what it decided —
+/// the selected option, the GM's explicit legacy disposition/attribution,
+/// and the identity/status of every benefit this milestone tier owed.
+/// Reused as-is on replay (never recomputed from a later, possibly
+/// different, ruleset state).
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct MilestoneReconciliationMetadata {
+    /// Schema version for this metadata shape — `1` today, so a future
+    /// change can distinguish old records without guessing.
+    pub version: i64,
+    /// `"stat_stream" | "edges" | "general_feature"`.
+    pub option: String,
+    /// `"not_received" | "map_existing"` — the GM's explicit declaration
+    /// of whether this Trainer already held any of this tier's benefits
+    /// before reconciliation (P2: never inferred from an empty ledger).
+    pub prior_benefits_disposition: String,
+    pub attribution_note: String,
+    pub benefits: Vec<ReconciledBenefitRecord>,
+}
+
+/// One source-defined benefit this milestone tier owed (a retroactive
+/// stream bonus, one ongoing-level stream bonus, or one alternative
+/// Edge/General-Feature slot) and how it was resolved this reconciliation.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct ReconciledBenefitRecord {
+    /// Stable identity (e.g. `"reconcile:5:retroactive"`,
+    /// `"reconcile:5:ongoing:6"`, `"reconcile:10:alternative:0"`) — see
+    /// `StatAllocationEntry.source_id`/an acquisition's `source_id`, which
+    /// carry this SAME string when the benefit maps to a stat entry or an
+    /// Edge/Feature acquisition respectively.
+    pub benefit_id: String,
+    /// `"stat_stream_retroactive" | "stat_stream_ongoing" | "alternative_edge" | "alternative_general_feature"`.
+    pub kind: String,
+    /// `"new" | "adopted"` — freshly granted vs. mapped onto an existing
+    /// acquisition/stat entry the GM declared already covers it.
+    pub status: String,
 }
 
 #[derive(Debug, Clone, Serialize, PartialEq)]
@@ -825,7 +908,7 @@ mod tests {
     // -------------------------------------------------------------
 
     fn entry(stat: TrainerCombatStat, source: StatAllocationSource, level: i64, points: i64) -> StatAllocationEntry {
-        StatAllocationEntry { stat, source, level, points, note: None }
+        StatAllocationEntry { stat, source, level, points, note: None, source_id: None }
     }
 
     #[test]
@@ -972,7 +1055,7 @@ mod tests {
         let allocation = TrainerStatAllocation {
             entries: vec![entry(TrainerCombatStat::Hp, StatAllocationSource::Creation, 1, 4)],
         };
-        let result = resolve_trainer_core(1, &allocation, &json!({}), None, &[], &level1_progression());
+        let result = resolve_trainer_core(1, &allocation, &json!({}), None, &[], &level1_progression(), &[]);
         assert_eq!(result.allocation_summary, StatAllocationSummary { granted: 10, spent: 4, remaining: 6 });
     }
 
@@ -985,7 +1068,7 @@ mod tests {
                 entry(TrainerCombatStat::Defense, StatAllocationSource::Milestone, 2, 2),
             ],
         };
-        let result = resolve_trainer_core(1, &allocation, &json!({}), None, &[], &level1_progression());
+        let result = resolve_trainer_core(1, &allocation, &json!({}), None, &[], &level1_progression(), &[]);
         assert_eq!(result.allocation_summary, StatAllocationSummary { granted: 10, spent: 4, remaining: 6 }, "GmOverride/Milestone points never count against the normal budget");
     }
 
@@ -1088,7 +1171,7 @@ mod tests {
             entries: vec![entry(TrainerCombatStat::Attack, StatAllocationSource::Creation, 1, 2)],
         };
         let gm_grants = vec![json!({"id": "training-focus", "kind": "fixed", "target": "trainer.stat.attack", "operation": "add", "value": 5.0})];
-        let result = resolve_trainer_core(1, &allocation, &json!({}), None, &gm_grants, &level1_progression());
+        let result = resolve_trainer_core(1, &allocation, &json!({}), None, &gm_grants, &level1_progression(), &[]);
 
         assert_eq!(result.combat_stats.attack.base, 7.0); // 5 floor + 2 allocated
         assert_eq!(result.combat_stats.attack.final_value, 12.0); // + the GM grant
@@ -1098,7 +1181,7 @@ mod tests {
 
     #[test]
     fn missing_allocation_resolves_real_floor_values_not_zero_while_flagging_incomplete() {
-        let result = resolve_trainer_core(1, &TrainerStatAllocation::default(), &json!({}), None, &[], &level1_progression());
+        let result = resolve_trainer_core(1, &TrainerStatAllocation::default(), &json!({}), None, &[], &level1_progression(), &[]);
         assert_eq!(result.combat_stats.hp.final_value, 10.0, "the real Step 6 floor, never zero");
         assert_eq!(result.combat_stats.attack.final_value, 5.0);
         assert!(result.validation.iter().any(|i| i.code == "TRAINER_STAT_ALLOCATION_INCOMPLETE"));
@@ -1110,21 +1193,21 @@ mod tests {
             entries: vec![entry(TrainerCombatStat::Hp, StatAllocationSource::Creation, 1, 0)],
         };
         let gm_grants = vec![json!({"id": "tough", "kind": "fixed", "target": "trainer.stat.hp", "operation": "add", "value": 2.0})];
-        let result = resolve_trainer_core(1, &allocation, &json!({}), None, &gm_grants, &level1_progression());
+        let result = resolve_trainer_core(1, &allocation, &json!({}), None, &gm_grants, &level1_progression(), &[]);
         assert_eq!(result.combat_stats.hp.final_value, 12.0); // 10 floor + 2 grant
         assert_eq!(result.max_hp.base, (1 * 2 + 12 * 3 + 10) as f64);
     }
 
     #[test]
     fn weight_class_is_none_and_issue_free_when_weight_is_simply_not_entered_yet() {
-        let result = resolve_trainer_core(1, &TrainerStatAllocation::default(), &json!({}), None, &[], &level1_progression());
+        let result = resolve_trainer_core(1, &TrainerStatAllocation::default(), &json!({}), None, &[], &level1_progression(), &[]);
         assert_eq!(result.weight.weight_class, None);
         assert!(result.validation.iter().all(|i| i.code != "TRAINER_WEIGHT_BELOW_SUPPORTED_RANGE"));
     }
 
     #[test]
     fn weight_below_range_surfaces_as_a_validation_issue_on_the_aggregate_result() {
-        let result = resolve_trainer_core(1, &TrainerStatAllocation::default(), &json!({}), Some(40), &[], &level1_progression());
+        let result = resolve_trainer_core(1, &TrainerStatAllocation::default(), &json!({}), Some(40), &[], &level1_progression(), &[]);
         assert!(result.validation.iter().any(|i| i.code == "TRAINER_WEIGHT_BELOW_SUPPORTED_RANGE"));
     }
 
@@ -1206,7 +1289,7 @@ mod tests {
 
     #[test]
     fn trainer_core_result_serializes_with_the_exact_keys_api_ts_expects() {
-        let result = resolve_trainer_core(1, &TrainerStatAllocation::default(), &json!({}), Some(150), &[], &level1_progression());
+        let result = resolve_trainer_core(1, &TrainerStatAllocation::default(), &json!({}), Some(150), &[], &level1_progression(), &[]);
         let value = serde_json::to_value(&result).unwrap();
 
         for key in [

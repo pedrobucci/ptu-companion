@@ -18,11 +18,12 @@ use zip::ZipWriter;
 use crate::content::export::export_pack;
 use crate::content::import::{hex_sha256, import_pack};
 use crate::content::repository::list_packs;
+use crate::content::ruleset::CampaignRuleset;
 use crate::content::zip_safety::is_safe_entry_path;
 use crate::error::TrainerPackError;
 use crate::profile::model::TrainerProfile;
 use crate::profile::repository::{
-    list_trainer_build_drafts, list_trainer_summaries, load_trainer_profile, restore_trainer_build_draft, save_trainer_profile,
+    list_build_operations, list_trainer_build_drafts, list_trainer_summaries, load_trainer_profile, restore_build_operation, restore_trainer_build_draft, save_trainer_profile,
 };
 
 pub struct BackupExportOutcome {
@@ -77,6 +78,26 @@ pub fn export_backup(
         draft_ids.push(draft_id);
     }
 
+    // T13D3-R1A: "reuse backup mechanisms with a versioned optional
+    // receipt section, backward-compatible for backups without it" —
+    // `operation_ids` is simply ABSENT (not a version bump) on a backup
+    // written before this task, and import treats a missing/empty list
+    // identically to a present-but-empty one (see `import_backup` below),
+    // so an old `format_version: 1` backup keeps importing unchanged.
+    let mut operation_ids: Vec<String> = Vec::new();
+    for (operation_id, receipt) in list_build_operations(profiles_conn)? {
+        files.push((
+            format!("operations/{operation_id}.json"),
+            serde_json::to_vec_pretty(&serde_json::json!({
+                "id": operation_id,
+                "request_fingerprint": receipt.request_fingerprint,
+                "trainer_id": receipt.trainer_id,
+                "response_json": receipt.response_json,
+            }))?,
+        ));
+        operation_ids.push(operation_id);
+    }
+
     if let Some(ruleset) = active_ruleset {
         files.push(("ruleset.json".to_string(), serde_json::to_vec_pretty(ruleset)?));
     }
@@ -91,6 +112,7 @@ pub fn export_backup(
         "trainer_ids": trainer_ids,
         "content_pack_ids": content_pack_ids,
         "draft_ids": draft_ids,
+        "operation_ids": operation_ids,
         "files": manifest_files,
     });
 
@@ -110,6 +132,13 @@ pub fn export_backup(
 pub struct BackupImportOutcome {
     pub trainers_imported: Vec<String>,
     pub content_packs_imported: Vec<String>,
+    /// T13E02 (E01-C1 endpoint 2): the backup's embedded ruleset, already
+    /// schema-validated — `None` when the backup carried no `ruleset.json`
+    /// at all (best-effort inclusion, per this module's doc comment). The
+    /// Tauri command layer applies this to live `AppState` (persist the
+    /// selection + swap the in-memory ruleset); this crate has no
+    /// business writing outside the two SQLite databases.
+    pub restored_ruleset: Option<CampaignRuleset>,
 }
 
 pub fn import_backup(
@@ -153,6 +182,18 @@ pub fn import_backup(
         verified.insert(path.clone(), bytes);
     }
 
+    // T13E02: validate a present `ruleset.json` BEFORE any database write
+    // below — "both memory and persistent selection update or the
+    // operation rejects" means nothing else in this backup may commit
+    // either, if the ruleset itself is invalid.
+    let restored_ruleset = match verified.get("ruleset.json") {
+        Some(bytes) => {
+            let text = std::str::from_utf8(bytes).map_err(|_| TrainerPackError::ManifestMissing)?;
+            Some(CampaignRuleset::from_json_str(text)?)
+        }
+        None => None,
+    };
+
     let content_pack_ids: Vec<String> = manifest["content_pack_ids"]
         .as_array()
         .map(|a| a.iter().filter_map(|v| v.as_str().map(str::to_string)).collect())
@@ -190,7 +231,25 @@ pub fn import_backup(
         restore_trainer_build_draft(profiles_conn, draft_id, trainer_id, &record["intent"])?;
     }
 
-    Ok(BackupImportOutcome { trainers_imported, content_packs_imported })
+    // T13D3-R1A: `operation_ids` is simply absent on a backup written
+    // before this task — `.as_array()` on a missing key is `None`,
+    // `unwrap_or_default()` yields an empty `Vec`, so an old backup
+    // restores exactly as before with zero receipts, never an error.
+    let operation_ids: Vec<String> = manifest["operation_ids"]
+        .as_array()
+        .map(|a| a.iter().filter_map(|v| v.as_str().map(str::to_string)).collect())
+        .unwrap_or_default();
+    for operation_id in &operation_ids {
+        let path = format!("operations/{operation_id}.json");
+        let bytes = verified.get(&path).ok_or_else(|| TrainerPackError::ArchiveFileMissing(path.clone()))?;
+        let record: Value = serde_json::from_slice(bytes)?;
+        let request_fingerprint = record["request_fingerprint"].as_str().unwrap_or_default();
+        let trainer_id = record["trainer_id"].as_str().unwrap_or_default();
+        let response_json = record["response_json"].as_str().unwrap_or_default();
+        restore_build_operation(profiles_conn, operation_id, request_fingerprint, trainer_id, response_json)?;
+    }
+
+    Ok(BackupImportOutcome { trainers_imported, content_packs_imported, restored_ruleset })
 }
 
 fn read_entry(archive: &mut zip::ZipArchive<Cursor<&[u8]>>, name: &str) -> Result<Vec<u8>, TrainerPackError> {
@@ -246,6 +305,189 @@ mod tests {
 
         let move_count: i64 = fresh_definitions.query_row("SELECT COUNT(*) FROM moves", [], |r| r.get(0)).unwrap();
         assert!(move_count > 0);
+
+        let _ = std::fs::remove_dir_all(&dir);
+        let _ = std::fs::remove_dir_all(&restore_dir);
+    }
+
+    /// T13E02 (E01-C1 endpoint 2): "apply valid ruleset state during
+    /// backup restore" — a backup carrying a valid embedded ruleset
+    /// returns it, schema-validated, for the caller to apply.
+    #[test]
+    fn restores_a_valid_embedded_ruleset() {
+        let dir = std::env::temp_dir().join(format!("ptu-backup-ruleset-src-{}", uuid::Uuid::new_v4()));
+        std::fs::create_dir_all(&dir).unwrap();
+        let definitions = open_and_migrate_definitions(&dir.join("definitions.sqlite")).unwrap();
+        let profiles = open_and_migrate_profiles(&dir.join("profiles.sqlite")).unwrap();
+
+        let ruleset = crate::content::ruleset::load_preset(&repo_root().join("rulesets"), "ptu-core-with-pokedex").unwrap().unwrap();
+        let ruleset_value = serde_json::to_value(&ruleset).unwrap();
+        let outcome = export_backup(&definitions, &profiles, Some(&ruleset_value)).unwrap();
+
+        let restore_dir = std::env::temp_dir().join(format!("ptu-backup-ruleset-restore-{}", uuid::Uuid::new_v4()));
+        std::fs::create_dir_all(&restore_dir).unwrap();
+        let mut fresh_definitions = open_and_migrate_definitions(&restore_dir.join("definitions.sqlite")).unwrap();
+        let mut fresh_profiles = open_and_migrate_profiles(&restore_dir.join("profiles.sqlite")).unwrap();
+
+        let restored = import_backup(&mut fresh_definitions, &mut fresh_profiles, &outcome.bytes).unwrap();
+        let restored_ruleset = restored.restored_ruleset.expect("a valid embedded ruleset must be returned");
+        assert_eq!(restored_ruleset.id, "ptu-core-with-pokedex");
+        assert_eq!(restored_ruleset.packs.len(), 2);
+
+        let _ = std::fs::remove_dir_all(&dir);
+        let _ = std::fs::remove_dir_all(&restore_dir);
+    }
+
+    /// A backup with no embedded ruleset at all (the existing "best-effort"
+    /// case) must still restore everything else normally, with
+    /// `restored_ruleset: None` — never an error just for its absence.
+    #[test]
+    fn a_backup_without_an_embedded_ruleset_restores_with_none() {
+        let dir = std::env::temp_dir().join(format!("ptu-backup-noruleset-src-{}", uuid::Uuid::new_v4()));
+        std::fs::create_dir_all(&dir).unwrap();
+        let definitions = open_and_migrate_definitions(&dir.join("definitions.sqlite")).unwrap();
+        let profiles = open_and_migrate_profiles(&dir.join("profiles.sqlite")).unwrap();
+        let outcome = export_backup(&definitions, &profiles, None).unwrap();
+
+        let restore_dir = std::env::temp_dir().join(format!("ptu-backup-noruleset-restore-{}", uuid::Uuid::new_v4()));
+        std::fs::create_dir_all(&restore_dir).unwrap();
+        let mut fresh_definitions = open_and_migrate_definitions(&restore_dir.join("definitions.sqlite")).unwrap();
+        let mut fresh_profiles = open_and_migrate_profiles(&restore_dir.join("profiles.sqlite")).unwrap();
+
+        let restored = import_backup(&mut fresh_definitions, &mut fresh_profiles, &outcome.bytes).unwrap();
+        assert!(restored.restored_ruleset.is_none());
+
+        let _ = std::fs::remove_dir_all(&dir);
+        let _ = std::fs::remove_dir_all(&restore_dir);
+    }
+
+    /// "Both memory and persistent selection update or the operation
+    /// rejects": a malformed embedded ruleset must reject the WHOLE backup
+    /// import before any trainer/pack write happens — never a partial
+    /// restore with a silently-ignored bad ruleset.
+    #[test]
+    fn rejects_the_whole_backup_when_the_embedded_ruleset_fails_validation() {
+        let dir = std::env::temp_dir().join(format!("ptu-backup-badruleset-src-{}", uuid::Uuid::new_v4()));
+        std::fs::create_dir_all(&dir).unwrap();
+        let _definitions = open_and_migrate_definitions(&dir.join("definitions.sqlite")).unwrap();
+        let _profiles = open_and_migrate_profiles(&dir.join("profiles.sqlite")).unwrap();
+
+        // Build a minimal valid-looking backup archive by hand, with a
+        // ruleset.json that fails schema validation (missing required
+        // fields) — this exercises the exact validation path without
+        // depending on a helper that doesn't exist on `Connection`.
+        let bad_ruleset_bytes = br#"{"id":"broken"}"#;
+        let manifest = serde_json::json!({
+            "format": "ptu-backup",
+            "format_version": 1,
+            "trainer_ids": [],
+            "content_pack_ids": [],
+            "files": {
+                "ruleset.json": {"sha256": crate::content::import::hex_sha256(bad_ruleset_bytes), "bytes": bad_ruleset_bytes.len()}
+            }
+        });
+        let mut writer = ZipWriter::new(Cursor::new(Vec::new()));
+        let options = SimpleFileOptions::default();
+        writer.start_file("manifest.json", options).unwrap();
+        writer.write_all(&serde_json::to_vec(&manifest).unwrap()).unwrap();
+        writer.start_file("ruleset.json", options).unwrap();
+        writer.write_all(bad_ruleset_bytes).unwrap();
+        let bytes = writer.finish().unwrap().into_inner();
+
+        let restore_dir = std::env::temp_dir().join(format!("ptu-backup-badruleset-restore-{}", uuid::Uuid::new_v4()));
+        std::fs::create_dir_all(&restore_dir).unwrap();
+        let mut fresh_definitions = open_and_migrate_definitions(&restore_dir.join("definitions.sqlite")).unwrap();
+        let mut fresh_profiles = open_and_migrate_profiles(&restore_dir.join("profiles.sqlite")).unwrap();
+
+        let result = import_backup(&mut fresh_definitions, &mut fresh_profiles, &bytes);
+        assert!(matches!(result, Err(TrainerPackError::Ruleset(_))));
+
+        let trainer_count: i64 = fresh_profiles.query_row("SELECT COUNT(*) FROM trainers", [], |r| r.get(0)).unwrap();
+        assert_eq!(trainer_count, 0, "a rejected backup must write nothing, not even to a fresh target database");
+
+        let _ = std::fs::remove_dir_all(&dir);
+        let _ = std::fs::remove_dir_all(&restore_dir);
+    }
+
+    /// T13D3-R1A acceptance: "full backup round-trip preserves successful
+    /// receipts." Uses the real `record_build_operation_tx` (the exact
+    /// function `commit_build` calls), not a hand-typed row.
+    #[test]
+    fn full_backup_round_trips_operation_receipts() {
+        use crate::profile::repository::{load_build_operation, new_id};
+
+        let dir = std::env::temp_dir().join(format!("ptu-backup-ops-src-{}", uuid::Uuid::new_v4()));
+        std::fs::create_dir_all(&dir).unwrap();
+        let definitions = open_and_migrate_definitions(&dir.join("definitions.sqlite")).unwrap();
+        let mut profiles = open_and_migrate_profiles(&dir.join("profiles.sqlite")).unwrap();
+
+        let trainer = TrainerProfile { id: "t1".to_string(), name: "Receipt Test".to_string(), level: 1, exp: 0, money: 0, ..TrainerProfile::default() };
+        save_trainer_profile(&mut profiles, &trainer).unwrap();
+
+        let operation_id = new_id();
+        let tx = profiles.transaction().unwrap();
+        crate::profile::repository::record_build_operation_tx(&tx, &operation_id, "fp-abc123", "t1", r#"{"trainer_id":"t1"}"#).unwrap();
+        tx.commit().unwrap();
+
+        let outcome = export_backup(&definitions, &profiles, None).unwrap();
+
+        let restore_dir = std::env::temp_dir().join(format!("ptu-backup-ops-restore-{}", uuid::Uuid::new_v4()));
+        std::fs::create_dir_all(&restore_dir).unwrap();
+        let mut fresh_definitions = open_and_migrate_definitions(&restore_dir.join("definitions.sqlite")).unwrap();
+        let mut fresh_profiles = open_and_migrate_profiles(&restore_dir.join("profiles.sqlite")).unwrap();
+        import_backup(&mut fresh_definitions, &mut fresh_profiles, &outcome.bytes).unwrap();
+
+        let restored_receipt = load_build_operation(&fresh_profiles, &operation_id).unwrap().expect("the receipt must survive a full backup round trip");
+        assert_eq!(restored_receipt.request_fingerprint, "fp-abc123");
+        assert_eq!(restored_receipt.trainer_id, "t1");
+        assert_eq!(restored_receipt.response_json, r#"{"trainer_id":"t1"}"#);
+
+        let _ = std::fs::remove_dir_all(&dir);
+        let _ = std::fs::remove_dir_all(&restore_dir);
+    }
+
+    /// T13D3-R1A acceptance: "backward-compatible for backups without
+    /// [the receipt section]." A hand-built archive with a manifest that
+    /// literally lacks the `operation_ids` key at all (the true shape of
+    /// any backup written before this task, not merely one with an empty
+    /// array) must still restore everything else normally.
+    #[test]
+    fn a_backup_manifest_missing_operation_ids_entirely_still_restores() {
+        let dir = std::env::temp_dir().join(format!("ptu-backup-old-format-src-{}", uuid::Uuid::new_v4()));
+        std::fs::create_dir_all(&dir).unwrap();
+        let _definitions = open_and_migrate_definitions(&dir.join("definitions.sqlite")).unwrap();
+        let mut profiles = open_and_migrate_profiles(&dir.join("profiles.sqlite")).unwrap();
+        let trainer = TrainerProfile { id: "t1".to_string(), name: "Old Format".to_string(), level: 1, exp: 0, money: 0, ..TrainerProfile::default() };
+        save_trainer_profile(&mut profiles, &trainer).unwrap();
+        let trainer_bytes = serde_json::to_vec_pretty(&trainer).unwrap();
+
+        let manifest = serde_json::json!({
+            "format": "ptu-backup",
+            "format_version": 1,
+            "trainer_ids": ["t1"],
+            "content_pack_ids": [],
+            "draft_ids": [],
+            "files": {
+                "trainers/t1.json": {"sha256": crate::content::import::hex_sha256(&trainer_bytes), "bytes": trainer_bytes.len()}
+            }
+        });
+        let mut writer = ZipWriter::new(Cursor::new(Vec::new()));
+        let options = SimpleFileOptions::default();
+        writer.start_file("manifest.json", options).unwrap();
+        writer.write_all(&serde_json::to_vec(&manifest).unwrap()).unwrap();
+        writer.start_file("trainers/t1.json", options).unwrap();
+        writer.write_all(&trainer_bytes).unwrap();
+        let bytes = writer.finish().unwrap().into_inner();
+
+        let restore_dir = std::env::temp_dir().join(format!("ptu-backup-old-format-restore-{}", uuid::Uuid::new_v4()));
+        std::fs::create_dir_all(&restore_dir).unwrap();
+        let mut fresh_definitions = open_and_migrate_definitions(&restore_dir.join("definitions.sqlite")).unwrap();
+        let mut fresh_profiles = open_and_migrate_profiles(&restore_dir.join("profiles.sqlite")).unwrap();
+
+        let restored = import_backup(&mut fresh_definitions, &mut fresh_profiles, &bytes).unwrap();
+        assert_eq!(restored.trainers_imported, vec!["t1".to_string()]);
+        let reloaded = load_trainer_profile(&fresh_profiles, "t1").unwrap().unwrap();
+        assert_eq!(reloaded.name, "Old Format");
 
         let _ = std::fs::remove_dir_all(&dir);
         let _ = std::fs::remove_dir_all(&restore_dir);

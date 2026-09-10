@@ -1,4 +1,5 @@
 pub mod authoring;
+pub mod context;
 pub mod export;
 pub mod import;
 pub mod manifest;

@@ -226,6 +226,35 @@ pub fn import_pack(conn: &mut Connection, archive_bytes: &[u8]) -> Result<Import
         ],
     )?;
 
+    // T13E02: every definition_version_id is supposed to be immutable
+    // (spec/E01: "preserving immutable definition versions... if a shipped
+    // definition changes under an existing ID, create a new version
+    // identity"). Detect a genuine content change under an UNCHANGED id
+    // BEFORE writing anything — the whole pack import aborts rather than
+    // one row silently drifting. An identical re-import (byte-for-byte
+    // same `raw_json`) is not a conflict; it's a harmless no-op upsert.
+    for (kind, fields) in &parsed_definitions {
+        if let Some(existing_data_json) = existing_definition_data_json(&tx, kind.table_name(), &fields.definition_version_id)? {
+            if existing_data_json != fields.raw_json {
+                return Err(ImportError::DefinitionVersionConflict {
+                    table: kind.table_name().to_string(),
+                    definition_version_id: fields.definition_version_id.clone(),
+                });
+            }
+        }
+    }
+    for (dataset_name, value, _count) in &parsed_datasets {
+        if let Some(existing_data_json) = existing_dataset_data_json(&tx, &manifest.id, dataset_name)? {
+            let incoming = serde_json::to_string(value).unwrap_or_default();
+            if existing_data_json != incoming {
+                return Err(ImportError::DatasetConflict {
+                    content_pack_id: manifest.id.clone(),
+                    dataset_name: dataset_name.clone(),
+                });
+            }
+        }
+    }
+
     let definitions_imported = parsed_definitions.len() as u64;
     for (kind, fields) in &parsed_definitions {
         upsert_definition(&tx, *kind, fields, &now)?;
@@ -415,6 +444,32 @@ fn build_search_text(name: &str, obj: &serde_json::Map<String, Value>) -> String
         }
     }
     parts.join("\n")
+}
+
+fn existing_definition_data_json(tx: &rusqlite::Transaction, table: &str, definition_version_id: &str) -> Result<Option<String>, ImportError> {
+    tx.query_row(
+        &format!("SELECT data_json FROM {table} WHERE definition_version_id = ?1"),
+        params![definition_version_id],
+        |row| row.get::<_, String>(0),
+    )
+    .map(Some)
+    .or_else(|e| match e {
+        rusqlite::Error::QueryReturnedNoRows => Ok(None),
+        other => Err(ImportError::from(other)),
+    })
+}
+
+fn existing_dataset_data_json(tx: &rusqlite::Transaction, content_pack_id: &str, dataset_name: &str) -> Result<Option<String>, ImportError> {
+    tx.query_row(
+        "SELECT data_json FROM content_datasets WHERE content_pack_id = ?1 AND dataset_name = ?2",
+        params![content_pack_id, dataset_name],
+        |row| row.get::<_, String>(0),
+    )
+    .map(Some)
+    .or_else(|e| match e {
+        rusqlite::Error::QueryReturnedNoRows => Ok(None),
+        other => Err(ImportError::from(other)),
+    })
 }
 
 pub(crate) fn upsert_definition(

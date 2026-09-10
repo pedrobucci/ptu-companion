@@ -132,6 +132,20 @@ pub fn list_definitions_by_logical_id(
     rows.collect()
 }
 
+/// T13E02: every distinct `logical_id` for a kind, ordered by (a
+/// representative) name then logical_id — the stable listing
+/// `browse_selectable_content` walks for an empty query, before per-id
+/// ruleset resolution filters out anything that doesn't actually resolve.
+pub fn list_distinct_logical_ids(conn: &Connection, kind: ContentKind) -> rusqlite::Result<Vec<String>> {
+    let sql = format!(
+        "SELECT logical_id, MIN(name) AS rep_name FROM {} GROUP BY logical_id ORDER BY rep_name ASC, logical_id ASC",
+        kind.table_name()
+    );
+    let mut stmt = conn.prepare(&sql)?;
+    let rows = stmt.query_map([], |row| row.get::<_, String>(0))?;
+    rows.collect()
+}
+
 /// Runs `PRAGMA integrity_check` and returns the raw result (`"ok"` on a
 /// healthy database).
 pub fn integrity_check(conn: &Connection) -> rusqlite::Result<String> {

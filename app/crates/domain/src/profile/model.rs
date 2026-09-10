@@ -150,6 +150,26 @@ pub struct StatAllocationEntry {
     /// module does not require a non-empty note).
     #[serde(default)]
     pub note: Option<String>,
+    /// T13D4-R2: a stable milestone-benefit identity (e.g.
+    /// `"reconcile:5:retroactive"`), present ONLY on entries a milestone
+    /// reconciliation created or adopted — distinguishes this benefit from
+    /// any other so a later reconciliation attempt can detect it's already
+    /// resolved and never double-grant it. `#[serde(default,
+    /// skip_serializing_if = "Option::is_none")]`, NOT `#[serde(default)]`
+    /// alone: `default` only affects deserialization, never serialization
+    /// — `note` above (long-`default`-only) already proves this, since
+    /// every entry without a note still serializes `"note":null`
+    /// (see `T13D3_SERIALIZED_EXAMPLES.md`/`T13D4_SERIALIZED_EXAMPLES.md`).
+    /// Omitting this field entirely when absent is a MANDATORY condition
+    /// from `T13D4_R1_RECHECK_AND_R1Q_GATE.md`'s Decision B: adding a
+    /// field that always serializes (even as `null`) would change
+    /// `compute_base_revision`'s hashed bytes for every existing Trainer
+    /// with stat allocations, reproducing R1A's exact class of silent
+    /// regression by a different mechanism. See
+    /// `pre_r2_stat_allocation_serialization_and_base_revision_are_byte_identical_to_the_frozen_pre_r2_oracle`
+    /// in `trainer_advancement.rs` for the frozen proof.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub source_id: Option<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Default)]
@@ -235,6 +255,52 @@ pub struct PokemonInstance {
     /// gained (Poké Edge, GM grant, etc.).
     #[serde(default)]
     pub capabilities: Vec<Value>,
+    /// T13E03 (E01-C1): an immutable pin of the exact Species definition
+    /// version this instance is bound to, resolved once at `create_pokemon`/
+    /// `reconcile_pokemon_species` time — distinct from the legacy
+    /// `species_definition_id` above, which keeps its pre-existing
+    /// free-string meaning unchanged (never repurposed in place) so old
+    /// records/portability paths stay readable. `None` means either a
+    /// pre-T13E03 legacy row (never validated) or an explicit stub whose
+    /// species genuinely does not resolve yet — both cases also carry
+    /// `needs_reconciliation = true`. `#[serde(default,
+    /// skip_serializing_if = "Option::is_none")]`, not `#[serde(default)]`
+    /// alone, per the mandatory T13D4-R2 P4 lesson: omitting the field
+    /// entirely when absent keeps every pre-T13E03 record's serialization
+    /// byte-identical to before this field existed — see
+    /// `pokemon_instance_default_fields_serialize_byte_identically_to_the_frozen_pre_e03_oracle`
+    /// in this module's tests.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub species_version_binding: Option<String>,
+    /// T13E03: explicit legacy/incomplete-species reconciliation flag (E01
+    /// §1's frozen reconciliation contract: "stub stays editable for
+    /// identity/image while mechanically pending"). `true` means this
+    /// instance's species reference is either unvalidated (legacy, from
+    /// before T13E03) or was validated but resolved to an incomplete/
+    /// unselectable definition — `reconcile_pokemon_species` is how this
+    /// clears. `false` (the default/common case) is omitted from
+    /// serialization entirely via `skip_serializing_if`, same rationale as
+    /// `species_version_binding` above — a plain `#[serde(default)]` bool
+    /// would still always serialize `"needs_reconciliation":false` for
+    /// every existing record (proven empirically: `note: Option<String>`
+    /// without `skip_serializing_if` still serializes `"note":null`), which
+    /// would perturb every accepted fingerprint that hashes serialized
+    /// Pokémon data.
+    #[serde(default, skip_serializing_if = "is_false")]
+    pub needs_reconciliation: bool,
+    /// T13E03: the managed portrait this instance currently displays, if
+    /// any — a `media_assets.id` (see `persistence::profiles` migration 8).
+    /// `None` means "no custom/default-catalog portrait published yet" (the
+    /// frontend falls back to whatever offline default-catalog lookup it
+    /// performs by species). Wired onto the model for the first time this
+    /// task; the underlying SQL column already existed (migration 1) but no
+    /// model field or command logic used it before T13E03.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub portrait_media_id: Option<String>,
+}
+
+fn is_false(b: &bool) -> bool {
+    !*b
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Default)]
@@ -315,4 +381,71 @@ pub struct TrainerSummary {
     pub name: String,
     pub level: i64,
     pub money: i64,
+}
+
+#[cfg(test)]
+mod t13e03_pokemon_instance_serialization_tests {
+    use super::*;
+
+    /// Frozen BEFORE editing this file for T13E03 (captured via a scratch
+    /// `cargo run --example`, then the example was deleted): the exact
+    /// serialization of a `PokemonInstance` with every optional field at
+    /// its zero/absent value, from the genuinely unmodified pre-T13E03
+    /// struct (which had no `species_version_binding`/
+    /// `needs_reconciliation`/`portrait_media_id` fields at all).
+    const FROZEN_PRE_E03_MINIMAL: &str = r#"{"id":"pkm-1","species_definition_id":"sableye","nickname":null,"level":5,"exp":null,"capture_ball_item_id":null,"injuries":0,"held_item_id":null,"storage_state":"carried","roster_memberships":[],"battle_state":null,"moves":[],"abilities":[],"poke_edges":[],"capabilities":[]}"#;
+    const FROZEN_PRE_E03_WITH_NICKNAME: &str = r#"{"id":"pkm-1","species_definition_id":"sableye","nickname":"Shady","level":5,"exp":null,"capture_ball_item_id":null,"injuries":0,"held_item_id":null,"storage_state":"carried","roster_memberships":[],"battle_state":null,"moves":[],"abilities":[],"poke_edges":[],"capabilities":[]}"#;
+
+    fn minimal() -> PokemonInstance {
+        PokemonInstance {
+            id: "pkm-1".to_string(),
+            species_definition_id: "sableye".to_string(),
+            nickname: None,
+            level: 5,
+            exp: None,
+            capture_ball_item_id: None,
+            injuries: 0,
+            held_item_id: None,
+            storage_state: StorageState::Carried,
+            roster_memberships: vec![],
+            battle_state: None,
+            moves: vec![],
+            abilities: vec![],
+            poke_edges: vec![],
+            capabilities: vec![],
+            species_version_binding: None,
+            needs_reconciliation: false,
+            portrait_media_id: None,
+        }
+    }
+
+    #[test]
+    fn pokemon_instance_default_fields_serialize_byte_identically_to_the_frozen_pre_e03_oracle() {
+        assert_eq!(serde_json::to_string(&minimal()).unwrap(), FROZEN_PRE_E03_MINIMAL, "a PokemonInstance with all three new T13E03 fields at their default/absent value must serialize byte-identically to before those fields existed — a mandatory condition (T13D4-R2 P4) so this migration never silently perturbs an already-accepted fingerprint hashing serialized Pokémon data");
+
+        let with_nickname = PokemonInstance { nickname: Some("Shady".to_string()), ..minimal() };
+        assert_eq!(serde_json::to_string(&with_nickname).unwrap(), FROZEN_PRE_E03_WITH_NICKNAME);
+    }
+
+    #[test]
+    fn pokemon_instance_new_fields_serialize_when_actually_set() {
+        let bound = PokemonInstance {
+            species_version_binding: Some("dv-sableye-1".to_string()),
+            needs_reconciliation: true,
+            portrait_media_id: Some("media-1".to_string()),
+            ..minimal()
+        };
+        let json = serde_json::to_string(&bound).unwrap();
+        assert!(json.contains(r#""species_version_binding":"dv-sableye-1""#));
+        assert!(json.contains(r#""needs_reconciliation":true"#));
+        assert!(json.contains(r#""portrait_media_id":"media-1""#));
+    }
+
+    #[test]
+    fn pokemon_instance_deserializes_legacy_json_missing_the_new_fields() {
+        let legacy: PokemonInstance = serde_json::from_str(FROZEN_PRE_E03_MINIMAL).unwrap();
+        assert_eq!(legacy.species_version_binding, None);
+        assert_eq!(legacy.needs_reconciliation, false);
+        assert_eq!(legacy.portrait_media_id, None);
+    }
 }

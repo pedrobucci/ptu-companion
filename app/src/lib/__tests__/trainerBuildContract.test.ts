@@ -3,13 +3,20 @@ import { readFileSync } from "node:fs";
 import { resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import type {
+  AcquisitionIntent,
+  BackgroundIntent,
   BuildContext,
   BuildIssue,
   CommitTrainerBuildRequest,
   CoreRankRow,
+  CreationResolution,
   ElementalConnectionSection,
   PreviewTrainerBuildRequest,
   SkillEdgeCatalogEntry,
+  TrainerBuildCommitResponse,
+  TrainerBuildCreationIntent,
+  TrainerBuildError,
+  TrainerBuildPreviewResponse,
   TrainerBuildRules,
 } from "../api";
 
@@ -143,20 +150,77 @@ describe("trainer build contract: TypeScript types accept the real shapes", () =
     expect(issue.acquisition_id).toBeUndefined();
   });
 
-  it("PreviewTrainerBuildRequest and CommitTrainerBuildRequest compile against the frozen §3.4 command contract", () => {
+  it("PreviewTrainerBuildRequest and CommitTrainerBuildRequest compile against the §3.4 command contract, including T13D3's disclosed delta", () => {
     const preview: PreviewTrainerBuildRequest = {
       trainer_id: null,
       content_pack_id: "ptu-core-1.05",
       base_revision: null,
       intent: { background: { adept: "combat" } },
     };
+    // T13D3 contract delta (disclosed in the Worker Result): `trainer_id`
+    // and `content_pack_id` were added to distinguish "create" from
+    // "reconcile an existing Trainer" and to load the right datasets, and
+    // `manual_adjudications` was added because an overridable Error-severity
+    // BuildIssue needs a real way to be overridden at commit time — none of
+    // these existed in D1's original frozen shape. T13D3-R1A additionally
+    // requires `operation_id` (a client-generated retry identity) — see
+    // that interface's own doc comment.
     const commit: CommitTrainerBuildRequest = {
+      trainer_id: null,
+      content_pack_id: "ptu-core-1.05",
       draft_id: "draft-1",
       intent: preview.intent,
       expected_base_revision: "deadbeef",
+      manual_adjudications: [{ code: "prerequisite_not_met", field: "acquisitions[0]" }],
       confirm: true,
+      operation_id: "11111111-1111-4111-8111-111111111111",
     };
     expect(commit.confirm).toBe(true);
+    expect(commit.content_pack_id).toBe("ptu-core-1.05");
+  });
+
+  it("T13D3 creation intent/resolution/response/error types accept real shapes", () => {
+    const background: BackgroundIntent = {
+      name: "Rookie",
+      adept_skill: "acrobatics",
+      novice_skill: "command",
+      pathetic_skills: ["stealth", "intimidate", "survival"],
+    };
+    const acquisition: AcquisitionIntent = {
+      kind: "edge",
+      definition_version_id: "edges:basic-skills@core",
+      parameters: { skill: "guile" },
+    };
+    const intent: TrainerBuildCreationIntent = {
+      name: "Ash",
+      background,
+      acquisitions: [acquisition],
+      stat_desired_points: [{ stat: "hp", points: 2 }],
+      elemental_connection_mode: "core",
+    };
+    const resolution: CreationResolution = {
+      skills: {},
+      check_bonuses: { guile: 2 },
+      edges: [],
+      features: [],
+      stat_allocation_creation_entries: [],
+      elemental_connection_mode: null,
+      paid_edges_used: 1,
+      paid_features_used: 0,
+      free_training_feature_used: false,
+      issues: [],
+    };
+    const preview: TrainerBuildPreviewResponse = {
+      base_revision: "abc",
+      rules_fingerprint: "def",
+      resolution,
+      core_result: { combat_stats: {} as never } as never,
+    };
+    const commit: TrainerBuildCommitResponse = { trainer_id: "t1", base_revision: "abc", resolution, core_result: preview.core_result };
+    const error: TrainerBuildError = { kind: "ValidationFailed", issues: [] };
+    expect(intent.acquisitions?.[0].definition_version_id).toBe("edges:basic-skills@core");
+    expect(commit.trainer_id).toBe("t1");
+    expect(error.kind).toBe("ValidationFailed");
   });
 
   it("BuildContext shape matches get_trainer_build_context's real output (spot-check, not the full nested payload)", () => {

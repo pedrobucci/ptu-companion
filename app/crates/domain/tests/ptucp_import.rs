@@ -326,6 +326,92 @@ fn rejects_record_count_mismatch_without_partial_writes() {
     let _ = std::fs::remove_dir_all(&dir);
 }
 
+/// T13E02: a pack update that keeps a `definition_version_id` but changes
+/// its content must reject the whole import ("preserving immutable
+/// definition versions... if a shipped definition changes under an
+/// existing ID, create a new version identity"), never silently drift.
+#[test]
+fn rejects_a_definition_content_change_under_an_unchanged_id_without_partial_writes() {
+    let dir = temp_dir("definition-conflict");
+    let mut conn = open_and_migrate_definitions(&dir.join("definitions.sqlite")).unwrap();
+
+    let pack = minimal_valid_pack();
+    let bytes = pack_zip(&pack);
+    import_pack(&mut conn, &bytes).unwrap();
+    let original = repository::get_definition_by_version_id(&conn, ContentKind::Move, "moves:test-move@test").unwrap().unwrap();
+
+    // Same definition_version_id, same pack id/version, DIFFERENT payload
+    // (raw_text changed) — this is the disallowed silent-drift case.
+    let mut conflicting = minimal_valid_pack();
+    let record = serde_json::json!({
+        "id": "test-move",
+        "name": "Test Move",
+        "source_id": "test",
+        "source_kind": "test_kind",
+        "source_priority": 100,
+        "raw_text": "DIFFERENT raw text — a content change under the same id",
+        "needs_review": false,
+        "logical_id": "test-move",
+        "definition_version_id": "moves:test-move@test",
+        "content_pack_id": "test-pack"
+    });
+    conflicting.moves_ndjson = format!("{}\n", serde_json::to_string(&record).unwrap()).into_bytes();
+    let hash = sha256_hex(&conflicting.moves_ndjson);
+    conflicting.manifest["files"]["content/moves.ndjson"]["sha256"] = serde_json::Value::String(hash);
+    conflicting.manifest["files"]["content/moves.ndjson"]["bytes"] = serde_json::Value::from(conflicting.moves_ndjson.len());
+    let conflicting_bytes = pack_zip(&conflicting);
+
+    let result = import_pack(&mut conn, &conflicting_bytes);
+    assert!(matches!(
+        result.unwrap_err(),
+        ptu_domain::error::ImportError::DefinitionVersionConflict { ref definition_version_id, .. }
+            if definition_version_id == "moves:test-move@test"
+    ));
+
+    // Nothing changed: the original row is exactly what it was before the
+    // rejected import, not a partial mix of old/new fields.
+    let after = repository::get_definition_by_version_id(&conn, ContentKind::Move, "moves:test-move@test").unwrap().unwrap();
+    assert_eq!(after.data_json, original.data_json, "a rejected conflicting import must not partially write the new content");
+
+    let _ = std::fs::remove_dir_all(&dir);
+}
+
+/// A pack update that adds a brand-new `definition_version_id` (a genuine
+/// new version, not a mutation of an existing one) must succeed normally —
+/// the conflict guard only fires on a changed EXISTING id.
+#[test]
+fn a_new_definition_version_id_in_an_updated_pack_imports_normally() {
+    let dir = temp_dir("definition-upgrade");
+    let mut conn = open_and_migrate_definitions(&dir.join("definitions.sqlite")).unwrap();
+
+    let pack = minimal_valid_pack();
+    import_pack(&mut conn, &pack_zip(&pack)).unwrap();
+
+    let mut upgraded = minimal_valid_pack();
+    upgraded.manifest["version"] = serde_json::Value::String("1.1.0".to_string());
+    let record = serde_json::json!({
+        "id": "test-move-v2",
+        "name": "Test Move V2",
+        "needs_review": false,
+        "logical_id": "test-move-v2",
+        "definition_version_id": "moves:test-move-v2@test",
+        "content_pack_id": "test-pack"
+    });
+    upgraded.moves_ndjson = format!("{}\n", serde_json::to_string(&record).unwrap()).into_bytes();
+    let hash = sha256_hex(&upgraded.moves_ndjson);
+    upgraded.manifest["files"]["content/moves.ndjson"]["sha256"] = serde_json::Value::String(hash);
+    upgraded.manifest["files"]["content/moves.ndjson"]["bytes"] = serde_json::Value::from(upgraded.moves_ndjson.len());
+
+    let outcome = import_pack(&mut conn, &pack_zip(&upgraded)).unwrap();
+    assert_eq!(outcome.definitions_imported, 1);
+    // Both the original and the new definition_version_id are readable —
+    // the old record is preserved, not replaced.
+    assert!(repository::get_definition_by_version_id(&conn, ContentKind::Move, "moves:test-move@test").unwrap().is_some());
+    assert!(repository::get_definition_by_version_id(&conn, ContentKind::Move, "moves:test-move-v2@test").unwrap().is_some());
+
+    let _ = std::fs::remove_dir_all(&dir);
+}
+
 #[test]
 fn rejects_record_claiming_a_different_pack_id() {
     let dir = temp_dir("pack-id-mismatch");

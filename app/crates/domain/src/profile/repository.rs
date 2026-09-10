@@ -11,7 +11,7 @@
 //! should add their own targeted repository functions against this same
 //! schema rather than round-tripping the whole profile per action.
 
-use rusqlite::{params, Connection};
+use rusqlite::{params, Connection, Transaction};
 use serde_json::Value;
 
 use super::model::{
@@ -42,8 +42,8 @@ pub fn add_pokemon_to_trainer(conn: &mut Connection, trainer_id: &str, pokemon: 
         |row| row.get(0),
     )?;
     tx.execute(
-        "INSERT INTO pokemon_instances (id, trainer_id, species_definition_id, nickname, level, exp, capture_ball_item_id, injuries, held_item_id, storage_state, sequence, created_at, updated_at)
-         VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?12)",
+        "INSERT INTO pokemon_instances (id, trainer_id, species_definition_id, nickname, level, exp, capture_ball_item_id, injuries, held_item_id, storage_state, sequence, species_version_binding, needs_reconciliation, portrait_media_id, created_at, updated_at)
+         VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14, ?15, ?15)",
         params![
             pokemon.id,
             trainer_id,
@@ -56,6 +56,9 @@ pub fn add_pokemon_to_trainer(conn: &mut Connection, trainer_id: &str, pokemon: 
             pokemon.held_item_id,
             pokemon.storage_state.as_str(),
             next_sequence,
+            pokemon.species_version_binding,
+            pokemon.needs_reconciliation,
+            pokemon.portrait_media_id,
             now,
         ],
     )?;
@@ -408,9 +411,23 @@ fn query_definition_ref_collection(conn: &Connection, table: &str, owner_column:
 }
 
 /// Saves the whole Trainer graph, replacing any prior state for this
-/// Trainer id. Atomic: on any error nothing is written.
+/// Trainer id. Atomic: on any error nothing is written. Thin wrapper
+/// around [`save_trainer_profile_tx`] for a caller with no other write to
+/// compose into the same transaction.
 pub fn save_trainer_profile(conn: &mut Connection, profile: &TrainerProfile) -> Result<(), ProfileError> {
     let tx = conn.transaction()?;
+    save_trainer_profile_tx(&tx, profile)?;
+    tx.commit()?;
+    Ok(())
+}
+
+/// T13D3-R1A: the composable persistence boundary `commit_build` needs to
+/// make a Trainer's own save and its operation receipt (see
+/// [`record_build_operation_tx`]) atomic — the write logic itself is
+/// unchanged from [`save_trainer_profile`], only pulled out of its own
+/// transaction so a caller can open ONE transaction, run this, run
+/// whatever else must commit-or-rollback together, then commit once.
+pub fn save_trainer_profile_tx(tx: &Transaction, profile: &TrainerProfile) -> Result<(), ProfileError> {
     let now = now();
 
     tx.execute(
@@ -520,8 +537,8 @@ pub fn save_trainer_profile(conn: &mut Connection, profile: &TrainerProfile) -> 
 
     for (index, pkm) in profile.pokemon.iter().enumerate() {
         tx.execute(
-            "INSERT INTO pokemon_instances (id, trainer_id, species_definition_id, nickname, level, exp, capture_ball_item_id, injuries, held_item_id, storage_state, sequence, created_at, updated_at)
-             VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?12)",
+            "INSERT INTO pokemon_instances (id, trainer_id, species_definition_id, nickname, level, exp, capture_ball_item_id, injuries, held_item_id, storage_state, sequence, species_version_binding, needs_reconciliation, portrait_media_id, created_at, updated_at)
+             VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14, ?15, ?15)",
             params![
                 pkm.id,
                 profile.id,
@@ -534,6 +551,9 @@ pub fn save_trainer_profile(conn: &mut Connection, profile: &TrainerProfile) -> 
                 pkm.held_item_id,
                 pkm.storage_state.as_str(),
                 index as i64,
+                pkm.species_version_binding,
+                pkm.needs_reconciliation,
+                pkm.portrait_media_id,
                 now,
             ],
         )?;
@@ -646,7 +666,6 @@ pub fn save_trainer_profile(conn: &mut Connection, profile: &TrainerProfile) -> 
         )?;
     }
 
-    tx.commit()?;
     Ok(())
 }
 
@@ -725,68 +744,60 @@ pub fn load_trainer_profile(conn: &Connection, trainer_id: &str) -> Result<Optio
         .collect::<rusqlite::Result<_>>()?;
 
     let mut pkm_stmt = conn.prepare(
-        "SELECT id, species_definition_id, nickname, level, exp, capture_ball_item_id, injuries, held_item_id, storage_state
+        "SELECT id, species_definition_id, nickname, level, exp, capture_ball_item_id, injuries, held_item_id, storage_state, species_version_binding, needs_reconciliation, portrait_media_id
          FROM pokemon_instances WHERE trainer_id = ?1 ORDER BY sequence",
     )?;
-    let pokemon_rows: Vec<(String, String, Option<String>, i64, Option<i64>, Option<String>, i64, Option<String>, String)> =
-        pkm_stmt
-            .query_map(params![trainer_id], |row| {
-                Ok((
-                    row.get(0)?,
-                    row.get(1)?,
-                    row.get(2)?,
-                    row.get(3)?,
-                    row.get(4)?,
-                    row.get(5)?,
-                    row.get(6)?,
-                    row.get(7)?,
-                    row.get(8)?,
-                ))
-            })?
-            .collect::<rusqlite::Result<_>>()?;
+    #[allow(clippy::type_complexity)]
+    let pokemon_rows: Vec<(
+        String,
+        String,
+        Option<String>,
+        i64,
+        Option<i64>,
+        Option<String>,
+        i64,
+        Option<String>,
+        String,
+        Option<String>,
+        i64,
+        Option<String>,
+    )> = pkm_stmt
+        .query_map(params![trainer_id], |row| {
+            Ok((
+                row.get(0)?,
+                row.get(1)?,
+                row.get(2)?,
+                row.get(3)?,
+                row.get(4)?,
+                row.get(5)?,
+                row.get(6)?,
+                row.get(7)?,
+                row.get(8)?,
+                row.get(9)?,
+                row.get(10)?,
+                row.get(11)?,
+            ))
+        })?
+        .collect::<rusqlite::Result<_>>()?;
 
     let mut pokemon = Vec::with_capacity(pokemon_rows.len());
-    for (id, species_definition_id, nickname, level, exp, capture_ball_item_id, injuries, held_item_id, storage_state) in
-        pokemon_rows
+    for (
+        id,
+        species_definition_id,
+        nickname,
+        level,
+        exp,
+        capture_ball_item_id,
+        injuries,
+        held_item_id,
+        storage_state,
+        species_version_binding,
+        needs_reconciliation,
+        portrait_media_id,
+    ) in pokemon_rows
     {
-        let mut memberships_stmt = conn.prepare(
-            "SELECT roster_id FROM roster_memberships WHERE pokemon_id = ?1 ORDER BY sequence",
-        )?;
-        let roster_memberships: Vec<String> = memberships_stmt
-            .query_map(params![id], |row| row.get(0))?
-            .collect::<rusqlite::Result<_>>()?;
-
-        let battle_state = conn
-            .query_row(
-                "SELECT current_hp, temp_hp, combat_stages_json, statuses_json FROM combat_states WHERE owner_type = 'pokemon' AND owner_id = ?1",
-                params![id],
-                |row| {
-                    Ok(BattleState {
-                        current_hp: row.get::<_, Option<i64>>(0)?.unwrap_or_default(),
-                        temporary_hp: row.get::<_, Option<i64>>(1)?.unwrap_or_default(),
-                        combat_stages: row
-                            .get::<_, Option<String>>(2)?
-                            .and_then(|s| serde_json::from_str(&s).ok())
-                            .unwrap_or_default(),
-                        statuses: row
-                            .get::<_, Option<String>>(3)?
-                            .and_then(|s| serde_json::from_str(&s).ok())
-                            .unwrap_or_default(),
-                    })
-                },
-            )
-            .map(Some)
-            .or_else(|e| match e {
-                rusqlite::Error::QueryReturnedNoRows => Ok(None),
-                other => Err(other),
-            })?;
-
-        let pkm_moves = query_definition_ref_collection(conn, "pokemon_moves", "pokemon_id", &id)?;
-        let pkm_abilities = query_definition_ref_collection(conn, "pokemon_abilities", "pokemon_id", &id)?;
-        let pkm_poke_edges = query_definition_ref_collection(conn, "pokemon_poke_edges", "pokemon_id", &id)?;
-        let pkm_capabilities = query_definition_ref_collection(conn, "pokemon_capabilities", "pokemon_id", &id)?;
-
-        pokemon.push(PokemonInstance {
+        pokemon.push(load_pokemon_children(
+            conn,
             id,
             species_definition_id,
             nickname,
@@ -795,14 +806,11 @@ pub fn load_trainer_profile(conn: &Connection, trainer_id: &str) -> Result<Optio
             capture_ball_item_id,
             injuries,
             held_item_id,
-            storage_state: StorageState::from_str(&storage_state).unwrap_or(StorageState::Carried),
-            roster_memberships,
-            battle_state,
-            moves: pkm_moves,
-            abilities: pkm_abilities,
-            poke_edges: pkm_poke_edges,
-            capabilities: pkm_capabilities,
-        });
+            storage_state,
+            species_version_binding,
+            needs_reconciliation,
+            portrait_media_id,
+        )?);
     }
 
     let backpack = query_item_stacks(conn, trainer_id, "backpack")?;
@@ -1016,6 +1024,78 @@ pub fn list_trainer_build_drafts(conn: &Connection, trainer_id: Option<&str>) ->
     Ok(rows.into_iter().map(|(id, text)| (id, parse_json(&text))).collect())
 }
 
+// =======================================================================
+// T13D3-R1A: durable `commit_trainer_build` operation receipts —
+// `trainer_build_operations` (migration 7). See that migration's own doc
+// comment and `engine::trainer_build::commit_build`'s operation-replay
+// branch for the full semantics.
+// =======================================================================
+
+/// One stored operation outcome, as read back for a replay check.
+#[derive(Debug, Clone)]
+pub struct BuildOperationReceipt {
+    pub request_fingerprint: String,
+    pub trainer_id: String,
+    pub response_json: String,
+}
+
+/// Records one operation's outcome — MUST be called in the same
+/// transaction as the Trainer write it accompanies (`commit_build` opens
+/// one `Transaction`, calls [`save_trainer_profile_tx`] then this, then
+/// commits once), so a rollback of either undoes both. `operation_id` is
+/// the table's primary key: a caller reusing an id after a first
+/// successful insert is a logic error (this function does not itself
+/// decide replay-vs-conflict — `commit_build` checks for an existing
+/// receipt via [`load_build_operation`] BEFORE ever reaching this call),
+/// so a duplicate insert here surfaces as a plain constraint violation.
+pub fn record_build_operation_tx(tx: &Transaction, operation_id: &str, request_fingerprint: &str, trainer_id: &str, response_json: &str) -> Result<(), ProfileError> {
+    tx.execute(
+        "INSERT INTO trainer_build_operations (operation_id, request_fingerprint, trainer_id, response_json, created_at) VALUES (?1, ?2, ?3, ?4, ?5)",
+        params![operation_id, request_fingerprint, trainer_id, response_json, now()],
+    )?;
+    Ok(())
+}
+
+/// Loads one operation's stored receipt. `Ok(None)` means this
+/// `operation_id` has never successfully committed — a genuinely new
+/// operation, not a replay.
+pub fn load_build_operation(conn: &Connection, operation_id: &str) -> Result<Option<BuildOperationReceipt>, ProfileError> {
+    conn.query_row(
+        "SELECT request_fingerprint, trainer_id, response_json FROM trainer_build_operations WHERE operation_id = ?1",
+        params![operation_id],
+        |row| Ok(BuildOperationReceipt { request_fingerprint: row.get(0)?, trainer_id: row.get(1)?, response_json: row.get(2)? }),
+    )
+    .map(Some)
+    .or_else(|e| match e {
+        rusqlite::Error::QueryReturnedNoRows => Ok(None),
+        other => Err(ProfileError::from(other)),
+    })
+}
+
+/// Restores one receipt at an EXACT, caller-supplied id — used only by
+/// `portability::backup`'s full-backup restore path, mirroring
+/// [`restore_trainer_build_draft`]'s own precedent and reasoning.
+pub fn restore_build_operation(conn: &Connection, operation_id: &str, request_fingerprint: &str, trainer_id: &str, response_json: &str) -> rusqlite::Result<()> {
+    conn.execute(
+        "INSERT INTO trainer_build_operations (operation_id, request_fingerprint, trainer_id, response_json, created_at) VALUES (?1, ?2, ?3, ?4, ?5)
+         ON CONFLICT(operation_id) DO UPDATE SET request_fingerprint = excluded.request_fingerprint, trainer_id = excluded.trainer_id, response_json = excluded.response_json",
+        params![operation_id, request_fingerprint, trainer_id, response_json, now()],
+    )?;
+    Ok(())
+}
+
+/// Lists every stored operation receipt — used only by
+/// `portability::backup`'s full-backup EXPORT path (§3.3-analogous
+/// boundary to drafts: a normal PER-TRAINER `.ptutrainer` export never
+/// includes these, only the full `.ptubackup`).
+pub fn list_build_operations(conn: &Connection) -> rusqlite::Result<Vec<(String, BuildOperationReceipt)>> {
+    let mut stmt = conn.prepare("SELECT operation_id, request_fingerprint, trainer_id, response_json FROM trainer_build_operations")?;
+    let rows = stmt.query_map([], |row| {
+        Ok((row.get::<_, String>(0)?, BuildOperationReceipt { request_fingerprint: row.get(1)?, trainer_id: row.get(2)?, response_json: row.get(3)? }))
+    })?;
+    rows.collect()
+}
+
 fn query_item_stacks(conn: &Connection, trainer_id: &str, location: &str) -> rusqlite::Result<Vec<ItemStack>> {
     let mut stmt = conn.prepare(
         "SELECT item_id, quantity FROM inventory_stacks WHERE trainer_id = ?1 AND location = ?2 ORDER BY sequence",
@@ -1051,6 +1131,7 @@ mod tests {
                     level: 1,
                     points: 2,
                     note: None,
+                    source_id: None,
                 },
                 StatAllocationEntry {
                     stat: TrainerCombatStat::Attack,
@@ -1058,6 +1139,7 @@ mod tests {
                     level: 1,
                     points: 6,
                     note: Some("GM approved a bonus creation point".to_string()),
+                    source_id: None,
                 },
             ],
         };
@@ -1190,6 +1272,7 @@ mod tests {
                     level: 1,
                     points: 4,
                     note: None,
+                    source_id: None,
                 }],
             },
         )
