@@ -1,0 +1,20 @@
+import {readFileSync} from 'node:fs';
+import {DefinitionRepository} from '../definitions/repository.mjs';
+
+const root=new URL('..',import.meta.url).pathname;
+const defs=new DefinitionRepository(`${root}/seed/definitions/ptu_seed_v1.0.sqlite3`);
+const rulesetId='all-provided-material';
+const move=defs.getResolved({rulesetId,kind:'moves',id:'thunder-fang'});
+if(!move) throw new Error('Thunder Fang definition not resolved.');
+if(move.range!=='Melee, 1 Target') throw new Error(`Move Range not exposed: ${move.range}`);
+if(move.contestType!=='Smart') throw new Error(`Contest Type not exposed: ${move.contestType}`);
+if(move.contestEffect!=='Steady Performance') throw new Error(`Contest Effect not exposed: ${move.contestEffect}`);
+const tackle=defs.getResolved({rulesetId,kind:'moves',id:'tackle'});
+if(!tackle?.range) throw new Error('Tackle Range missing.');
+if(tackle.contestType!=null||tackle.contestEffect!=null) throw new Error('Move without Contest data should remain null.');
+const app=readFileSync(`${root}/static-preview/app.js`,'utf8');
+for(const token of ['move-range-metric','Contest','contestEffect','contestType']) if(!app.includes(token)) throw new Error(`Move UI token missing: ${token}`);
+const css=readFileSync(`${root}/static-preview/styles.css`,'utf8');
+for(const token of ['.move-range-metric','.move-contest-box']) if(!css.includes(token)) throw new Error(`Move UI CSS missing: ${token}`);
+console.log('PTU Companion beta.5 Move Range/Contest verification: OK');
+console.log(JSON.stringify({move:move.name,range:move.range,contestType:move.contestType,contestEffect:move.contestEffect},null,2));

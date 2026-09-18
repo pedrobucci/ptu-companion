@@ -1,0 +1,46 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
+import {importContentPack} from '../definitions/pack-importer.mjs';
+import {DefinitionRepository} from '../definitions/repository.mjs';
+import {itemUsageMetadata} from '../rules/item-metadata.mjs';
+import {resolveTrainerModel} from '../rules/trainer-engine.mjs';
+
+const root=path.resolve(path.dirname(new URL(import.meta.url).pathname),'..');
+const tmp=fs.mkdtempSync(path.join(os.tmpdir(),'ptu-imported-weapon-'));
+const db=path.join(tmp,'defs.sqlite3');
+fs.copyFileSync(path.join(root,'seed/definitions/ptu_seed_v1.0.sqlite3'),db);
+const packPath=process.env.PTU_CUSTOM_WEAPON_PACK||'/mnt/data/campaign-homebrew-custom-weapons-1.2.0.ptucp';
+assert(fs.existsSync(packPath),`Missing test pack: ${packPath}`);
+await importContentPack({buffer:fs.readFileSync(packPath),dbPath:db,backupDir:path.join(tmp,'backups'),enableRulesetId:'all-provided-material',archiveFilename:path.basename(packPath)});
+const repo=new DefinitionRepository(db);
+const getDefinition=args=>repo.getResolved(args);
+const def=getDefinition({rulesetId:'all-provided-material',kind:'items',id:'fine-large-sword'});
+assert(def,'Fine Large Sword not resolved after pack import');
+assert.equal(def.raw.mechanics.kind,'weapon');
+assert.equal(def.raw.mechanics.hands,2);
+assert.equal(def.raw.mechanics.weaponMoves.adept,'wounding-strike');
+assert.equal(def.raw.mechanics.weaponMoves.master,'slice');
+const usage=itemUsageMetadata(def);
+assert.equal(usage.mechanics.kind,'weapon','raw.mechanics was not preserved into Backpack metadata');
+assert.equal(usage.mechanics.hands,2,'two-handed flag was lost');
+assert.deepEqual(usage.equipmentSlots,['mainHand']);
+
+const trainer={id:'william-test',name:'William',level:8,stats:{hp:17,attack:9,defense:5,spAttack:10,spDefense:10,speed:5},equipment:{head:null,body:null,mainHand:{id:'fine-large-sword',name:'Fine Large Sword',definitionId:'fine-large-sword',inventoryItemId:'fine-large-sword',mechanics:usage.mechanics,config:{}},offHand:{name:'Reserved · Fine Large Sword',reservedBy:'mainHand',inventoryItemId:'fine-large-sword'},feet:null,accessory:null},gmGrants:[],details:{background:{name:'Dark/Ghost Detective',adept:'Intimidate',novice:'Stealth',pathetic:['Pokémon Education','Technology Education','Medicine Education']},skillRanks:{'Acrobatics':2,'Athletics':2,'Combat':2,'Intimidate':4,'Stealth':3,'Survival':2,'General Education':2,'Medicine Education':1,'Occult Education':3,'Pokémon Education':1,'Technology Education':1,'Guile':2,'Perception':2,'Charm':2,'Command':2,'Focus':2,'Intuition':2},features:[{id:'apparition',name:'Apparition'}],edges:[],moves:[],combatStages:{attack:0,defense:0,spAttack:0,spDefense:0,speed:0,accuracy:0,evasion:0},injuries:0}};
+let resolved=resolveTrainerModel({trainer,rulesetId:'all-provided-material',getDefinition,getDamageBase:db=>repo.getDamageBase(db)});
+assert(resolved.weapons.some(w=>w.id==='fine-large-sword'&&w.hands===2),'imported sword not resolved as 2H weapon');
+const wounding=resolved.moves.find(m=>m.id==='wounding-strike');
+assert(wounding,'Adept Wounding Strike not granted via Apparition qualification');
+assert.equal(wounding.resolvedDamage.weapon.qualification.skill,'Intimidate');
+assert.equal(wounding.resolvedDamage.weapon.qualification.source,'Apparition');
+assert(!resolved.moves.some(m=>m.id==='slice'),'Master Slice should not unlock at Adept Intimidate');
+assert(resolved.moves.some(m=>m.id==='chip-away'),'Special Chip Away not granted while equipped');
+assert(resolved.abilities.some(a=>a.id==='hustle'||a.name==='Hustle'),'Special Hustle not granted while equipped');
+
+const unequipped=structuredClone(trainer);unequipped.equipment.mainHand=null;unequipped.equipment.offHand=null;
+resolved=resolveTrainerModel({trainer:unequipped,rulesetId:'all-provided-material',getDefinition,getDamageBase:db=>repo.getDamageBase(db)});
+assert(!resolved.moves.some(m=>['wounding-strike','slice','chip-away'].includes(m.id)),'Weapon-granted Move survived unequip');
+assert(!resolved.abilities.some(a=>a.id==='hustle'||a.name==='Hustle'),'Hustle survived unequip');
+repo.close();
+console.log('PTU Companion Beta v2.1.0-beta.16 imported weapon mechanics verification: OK');

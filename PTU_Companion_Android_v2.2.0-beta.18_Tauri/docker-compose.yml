@@ -1,0 +1,85 @@
+
+x-builder: &builder
+  build:
+    context: .
+    dockerfile: docker/Dockerfile
+    args:
+      TAURI_CLI_VERSION: ${TAURI_CLI_VERSION:-2.11.4}
+      ANDROID_CMDLINE_TOOLS_VERSION: ${ANDROID_CMDLINE_TOOLS_VERSION:-15859902}
+      ANDROID_API: ${ANDROID_API:-36}
+      ANDROID_BUILD_TOOLS: ${ANDROID_BUILD_TOOLS:-36.0.0}
+      ANDROID_NDK_VERSION: ${ANDROID_NDK_VERSION:-28.2.13676358}
+  image: ptu-companion-builder:local
+  platform: linux/amd64
+  working_dir: /app
+  volumes:
+    - .:/app
+    - cargo-registry:/usr/local/cargo/registry
+    - cargo-git:/usr/local/cargo/git
+    - rust-target:/app/src-tauri/target
+    - gradle-cache:/root/.gradle
+    - android-user:/root/.android
+    - xwin-cache:/xwin-cache
+  environment:
+    CARGO_TERM_COLOR: always
+    XWIN_CACHE_DIR: /xwin-cache
+  init: true
+
+services:
+  doctor:
+    <<: *builder
+    command: ["doctor"]
+
+  android-init:
+    <<: *builder
+    command: ["android-init"]
+
+  android-installable-apk:
+    <<: *builder
+    command: ["android-installable-apk"]
+
+  android-debug-apk:
+    <<: *builder
+    command: ["android-installable-apk"]
+
+  android-arm64-apk:
+    <<: *builder
+    command: ["android-arm64-apk"]
+
+  android-arm64-release-apk:
+    <<: *builder
+    command: ["android-arm64-release-apk"]
+
+  android-apk-info:
+    <<: *builder
+    command: ["android-apk-info"]
+
+  android-apk:
+    <<: *builder
+    command: ["android-apk"]
+
+  android-aab:
+    <<: *builder
+    command: ["android-aab"]
+
+  windows-exe:
+    <<: *builder
+    command: ["windows-exe"]
+
+  all:
+    <<: *builder
+    command: ["all"]
+
+  shell:
+    <<: *builder
+    command: ["shell"]
+    stdin_open: true
+    tty: true
+
+volumes:
+  cargo-registry:
+  cargo-git:
+  rust-target:
+  gradle-cache:
+  android-user:
+  xwin-cache:

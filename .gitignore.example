@@ -1,0 +1,25 @@
+# Local/runtime data
+data/
+*.sqlite3
+*.sqlite3-*
+
+# Build output
+dist/
+target/
+node_modules/
+
+# Android signing material
+*.keystore
+*.jks
+android-signing/
+key.properties
+
+# OS/editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Private saves / exported campaigns
+*.ptu-save.json
+campaign-*.json

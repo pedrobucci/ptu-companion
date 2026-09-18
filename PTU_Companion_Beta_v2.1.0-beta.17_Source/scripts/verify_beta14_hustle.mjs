@@ -1,0 +1,40 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
+import {importContentPack} from '../definitions/pack-importer.mjs';
+import {DefinitionRepository} from '../definitions/repository.mjs';
+import {itemUsageMetadata} from '../rules/item-metadata.mjs';
+import {resolveTrainerModel} from '../rules/trainer-engine.mjs';
+
+const root=path.resolve(path.dirname(new URL(import.meta.url).pathname),'..');
+const tmp=fs.mkdtempSync(path.join(os.tmpdir(),'ptu-hustle-'));
+const db=path.join(tmp,'defs.sqlite3');
+fs.copyFileSync(path.join(root,'seed/definitions/ptu_seed_v1.0.sqlite3'),db);
+const packPath=process.env.PTU_CUSTOM_WEAPON_PACK||'/mnt/data/campaign-homebrew-custom-weapons-1.2.0.ptucp';
+assert(fs.existsSync(packPath),`Missing test pack: ${packPath}`);
+await importContentPack({buffer:fs.readFileSync(packPath),dbPath:db,backupDir:path.join(tmp,'backups'),enableRulesetId:'all-provided-material',archiveFilename:path.basename(packPath)});
+const repo=new DefinitionRepository(db);
+const getDefinition=args=>repo.getResolved(args);
+const sword=getDefinition({rulesetId:'all-provided-material',kind:'items',id:'fine-large-sword'});
+assert(sword,'Fine Large Sword missing');
+const usage=itemUsageMetadata(sword);
+const trainer={id:'william-test',name:'William',level:8,stats:{hp:17,attack:9,defense:5,spAttack:10,spDefense:10,speed:5},gmGrants:[],equipment:{head:null,body:null,mainHand:{id:'fine-large-sword',name:'Fine Large Sword',definitionId:'fine-large-sword',inventoryItemId:'fine-large-sword',mechanics:usage.mechanics,config:{}},offHand:{name:'Reserved · Fine Large Sword',reservedBy:'mainHand',inventoryItemId:'fine-large-sword'},feet:null,accessory:null},details:{background:{name:'Dark/Ghost Detective',adept:'Intimidate',novice:'Stealth',pathetic:['Pokémon Education','Technology Education','Medicine Education']},skillRanks:{'Acrobatics':2,'Athletics':2,'Combat':2,'Intimidate':4,'Stealth':3,'Survival':2,'General Education':2,'Medicine Education':1,'Occult Education':3,'Pokémon Education':1,'Technology Education':1,'Guile':2,'Perception':2,'Charm':2,'Command':2,'Focus':2,'Intuition':2},features:[{id:'apparition',name:'Apparition'}],edges:[],moves:[],combatStages:{attack:0,defense:0,spAttack:0,spDefense:0,speed:0,accuracy:0,evasion:0},injuries:0}};
+let resolved=resolveTrainerModel({trainer,rulesetId:'all-provided-material',getDefinition,getDamageBase:db=>repo.getDamageBase(db)});
+assert(resolved.abilities.some(a=>a.id==='hustle'||a.name==='Hustle'),'Hustle is not granted by equipped sword');
+assert.equal(resolved.accuracyBonus,-2,'Hustle must apply -2 to all Accuracy Rolls');
+assert.equal(resolved.derived.accuracyBonus,-2,'Derived Accuracy modifier must expose Hustle -2');
+assert.equal(resolved.damageRollBonus,10,'Hustle must apply +10 to all Damage Rolls');
+assert(resolved.modifiers.some(m=>m.target==='combat.accuracy'&&m.value===-2&&m.source?.name==='Hustle'),'Hustle Accuracy modifier missing from ledger');
+assert(resolved.modifiers.some(m=>m.target==='combat.damage_bonus'&&m.value===10&&m.source?.name==='Hustle'),'Hustle damage modifier missing from ledger');
+for(const id of ['wounding-strike','chip-away']){
+  const move=resolved.moves.find(m=>m.id===id);assert(move,`${id} missing`);
+  assert.equal(move.resolvedDamage.accuracyModifier,-2,`${id} did not inherit Hustle Accuracy penalty`);
+  assert(move.resolvedDamage.breakdown.some(x=>x.label==='Static damage bonuses'&&x.value==='+10'),`${id} did not inherit Hustle +10 damage`);
+}
+const unequipped=structuredClone(trainer);unequipped.equipment.mainHand=null;unequipped.equipment.offHand=null;
+resolved=resolveTrainerModel({trainer:unequipped,rulesetId:'all-provided-material',getDefinition,getDamageBase:db=>repo.getDamageBase(db)});
+assert.equal(resolved.accuracyBonus,0,'Hustle Accuracy penalty survived unequip');
+assert.equal(resolved.damageRollBonus,0,'Hustle damage bonus survived unequip');
+repo.close();
+console.log('PTU Companion Beta v2.1.0-beta.16 Hustle equipment mechanics verification: OK');
