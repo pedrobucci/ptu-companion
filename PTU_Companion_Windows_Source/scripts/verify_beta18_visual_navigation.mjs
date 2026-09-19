@@ -1,0 +1,15 @@
+import fs from 'node:fs';
+import path from 'node:path';
+const root=path.resolve(new URL('..',import.meta.url).pathname);
+const app=fs.readFileSync(path.join(root,'static-preview/app.js'),'utf8');
+const css=fs.readFileSync(path.join(root,'static-preview/styles.css'),'utf8');
+const repo=fs.readFileSync(path.join(root,'definitions/repository.mjs'),'utf8');
+const ok=(v,m)=>{if(!v)throw new Error(m)};
+ok(app.includes('definitionArtworkHtml(d)'), 'Rules Library artwork helper missing');
+ok(repo.includes('portraitDataUrl:raw.portrait_data_url'), 'Definition artwork summary fields missing');
+ok(app.includes('<span>Adjusted Base</span><span>Existing alloc.</span>'), 'Adjusted Base progression column missing');
+ok(app.includes('openPokemonProgressAbilityInfo'), 'Ability details modal action missing');
+ok(app.includes('openPokemonProgressMoveInfo'), 'Move details modal action missing');
+ok(app.includes('🐾 Open in Creatures'), 'Direct Creatures navigation missing');
+ok(css.includes('.ability-choice{display:grid'), 'Ability alignment styles missing');
+console.log('PTU Companion Beta v2.1.0-beta.18 visual/navigation verification: OK');
