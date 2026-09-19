@@ -147,14 +147,14 @@ class MobileDefinitions {
   getRuleset(id){ return deep((data.rulesets||[]).find(r=>r.id===id)||null); }
   getPacks(){ return deep(data.packs||[]); }
   _map(rs,kind){ return data.resolved?.[rs]?.[kind]||{}; }
-  getResolved({rulesetId,kind,id}){ const vid=this._map(rulesetId,kind)[id]; return vid?deep(data.records?.[vid]||null):null; }
+  getResolved({rulesetId,kind,id}){ const vid=this._map(rulesetId,kind)[id],record=data.records?.[vid]; return record?{...deep(record),kind}:null; }
   listResolved({rulesetId,kind,q='',limit=60,offset=0}){
     const needle=norm(q); const ids=Object.keys(this._map(rulesetId,kind)); const rows=[];
     for(const id of ids){ const row=this.getResolved({rulesetId,kind,id}); if(!row)continue; if(needle && !norm(`${id} ${row.name||''} ${row.effect||''} ${JSON.stringify(row.raw||{})}`).includes(needle))continue; rows.push(row); }
     rows.sort((a,b)=>String(a.name||a.id).localeCompare(String(b.name||b.id))); return rows.slice(Number(offset)||0,(Number(offset)||0)+(Number(limit)||60));
   }
   countResolved({rulesetId,kind,q=''}){ return this.listResolved({rulesetId,kind,q,limit:100000,offset:0}).length; }
-  getVersions({kind,id}){ const vids=data.versionGroups?.[`${kind}:${id}`]||[]; return vids.map(v=>deep(data.records[v])).filter(Boolean); }
+  getVersions({kind,id}){ const vids=data.versionGroups?.[`${kind}:${id}`]||[]; return vids.map(v=>data.records[v]?{...deep(data.records[v]),kind}:null).filter(Boolean); }
   getCounts(rulesetId){ const out={}; for(const k of ALLOWED_KINDS)out[k]=Object.keys(this._map(rulesetId,k)).length; return out; }
   getDamageBase(db){ return deep(data.damageBase?.[String(Number(db))]||null); }
   getTypeMatchups(){ return deep(data.typeMatchups||[]); }
@@ -631,7 +631,7 @@ async function handleApi(req,res,url){
     return json(res,200,{ok:true,desktopSession});
   }
   if(req.method==='GET' && url.pathname==='/api/health'){
-    return json(res,200,{ok:true,version:'2.2.0-android-beta.19',persistence:'android-local',database:'app-data/content-packs + WebView local storage',schemaVersion:5,definitions:{database:'embedded mobile bundle + installed .ptucp overlays',activeRuleset:getActiveRuleset()}});
+    return json(res,200,{ok:true,version:'2.2.0-android-beta.20',persistence:'android-local',database:'app-data/content-packs + WebView local storage',schemaVersion:5,definitions:{database:'embedded mobile bundle + installed .ptucp overlays',activeRuleset:getActiveRuleset()}});
   }
   if(req.method==='GET' && url.pathname==='/api/rulesets'){
     const activeRulesetId=getActiveRuleset();

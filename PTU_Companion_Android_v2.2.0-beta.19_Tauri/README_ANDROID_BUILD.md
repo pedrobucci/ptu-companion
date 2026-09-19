@@ -1,4 +1,4 @@
-# PTU Companion Android v2.2.0-beta.19 — Tauri 2 build
+# PTU Companion Android v2.2.0-beta.20 — Tauri 2 build
 
 Esta é a build Android canônica. Não use o APK `beta.3-compat` para diagnosticar runtime: ele usa um wrapper Android artesanal criado apenas para isolar o problema de instalação e pode falhar em execução.
 
@@ -6,6 +6,8 @@ Esta é a build Android canônica. Não use o APK `beta.3-compat` para diagnosti
 
 - Docker Desktop em execução no Windows.
 - Execute os comandos a partir da raiz deste projeto.
+
+Se a imagem Docker já existia antes desta atualização, execute `docker compose build` para incorporar o script beta.20. Para reutilizar a toolchain instalada com o script do checkout atual, use `docker compose run --rm --entrypoint bash android-arm64-release-apk /app/docker/tauri-build.sh android-arm64-release-apk`.
 
 ## 1. Validar o Compose
 
@@ -38,20 +40,20 @@ Ou:
 Saída esperada:
 
 ```text
-dist/android/PTU-Companion-v2.2.0-beta.19-arm64-release.apk
+dist/android/PTU-Companion-v2.2.0-beta.20-arm64-release.apk
 ```
 
 O pipeline executa `zipalign -P 16`, `apksigner sign` e `apksigner verify` antes de concluir.
 
 ## Assinatura beta
 
-Esta revisão mantém a chave de teste `android-signing/ptu-beta.keystore` usada pelo APK de compatibilidade. Isso é deliberado para que a primeira build Tauri possa substituir o APK beta já instalado sem conflito de assinatura. **A chave é somente para betas privadas e não deve ser publicada em um repositório público.** Para uma release pública, gere uma keystore de release própria e guarde-a fora do código-fonte.
+O pipeline reutiliza `android-signing/ptu-beta.keystore` quando ela existe; em um checkout novo, gera uma chave beta local. Uma chave nova não permite atualizar por cima de um APK assinado com outra chave. Para preservar a atualização de uma instalação anterior, configure a chave original por `PTU_ANDROID_DEBUG_KEYSTORE` no ambiente de build. **Não publique chaves no Git.** Para uma release pública, use uma keystore de release própria, guardada fora do código-fonte.
 
 ## Galaxy S25
 
 O S25 usa ARM64, portanto use o arquivo `*-arm64-release.apk`.
 
-O antigo `com.ptu.companion` compatibility APK pode permanecer instalado: esta revisão usa o mesmo certificado beta para permitir atualização. Se o Android ainda rejeitar a atualização, desinstale a compatibility build e instale o APK Tauri limpo.
+O antigo `com.ptu.companion` compatibility APK pode permanecer instalado: a atualização exige o mesmo certificado beta. Se o Android ainda rejeitar a atualização, desinstale a compatibility build e instale o APK Tauri limpo.
 
 ## Capturar crash do APK Tauri
 
@@ -63,3 +65,11 @@ adb logcat
 ```
 
 Depois de o app fechar, interrompa com Ctrl+C e salve as linhas contendo `FATAL EXCEPTION`, `AndroidRuntime`, `com.ptu.companion`, `RustStdoutStderr` ou `chromium`.
+
+## Pokédex offline (beta.20)
+
+Os sprites já estão em `www/pokemon-sprites/` e entram no APK pelo `frontendDist`. A instalação e o primeiro uso não precisam de internet para essas imagens. A ordem é retrato do pack, sprite local pelo ID exato e `creatures/default.svg`. Não há fallback de rede para espécies.
+
+Para regenerar os arquivos, execute `node scripts/prepare-pokemon-sprites.mjs` com internet. As revisões de origem são fixadas no script; confira os aliases e entradas sem sprite antes de atualizar as revisões. Não é uma etapa necessária de build. Consulte `www/pokemon-sprites/README.md` para cobertura e origem.
+
+Execute `npm run verify` para toda a suíte, incluindo `scripts/verify-beta20-pokedex-artwork-mobile.mjs`.
