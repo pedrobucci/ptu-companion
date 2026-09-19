@@ -96,9 +96,9 @@ ensure_debug_keystore() {
 
 copy_installable_apk() {
   local source_apk="$1"
-  local output="$ANDROID_OUT/PTU-Companion-v2.2.0-beta.19-installable.apk"
+  local output="$ANDROID_OUT/PTU-Companion-v2.2.0-beta.20-installable.apk"
   cp -f "$source_apk" "$output"
-  verify_apk "$output" | tee "$ANDROID_OUT/PTU-Companion-v2.2.0-beta.19-installable-info.txt"
+  verify_apk "$output" | tee "$ANDROID_OUT/PTU-Companion-v2.2.0-beta.20-installable-info.txt"
   log "APK pronto para instalar"
   echo "$output"
 }
@@ -133,7 +133,7 @@ build_android_arm64_apk() {
     echo "Erro: nenhum APK debug ARM64 foi encontrado." >&2
     exit 1
   fi
-  local output="$ANDROID_OUT/PTU-Companion-v2.2.0-beta.19-arm64.apk"
+  local output="$ANDROID_OUT/PTU-Companion-v2.2.0-beta.20-arm64.apk"
   cp -f "$apk" "$output"
   verify_apk "$output" | tee "$ANDROID_OUT/PTU-Level-Simulator-installable-arm64-info.txt"
   log "APK ARM64 pronto: $output"
@@ -161,8 +161,8 @@ build_android_arm64_release_apk() {
     exit 1
   fi
 
-  local aligned_apk="$ANDROID_OUT/.PTU-Companion-v2.2.0-beta.19-arm64-release-aligned.apk"
-  local output="$ANDROID_OUT/PTU-Companion-v2.2.0-beta.19-arm64-release.apk"
+  local aligned_apk="$ANDROID_OUT/.PTU-Companion-v2.2.0-beta.20-arm64-release-aligned.apk"
+  local output="$ANDROID_OUT/PTU-Companion-v2.2.0-beta.20-arm64-release.apk"
 
   log "Aplicando zipalign com suporte a páginas de memória de 16 KB"
   "$ZIPALIGN" -P 16 -f -v 4 "$source_apk" "$aligned_apk" >/dev/null
@@ -178,7 +178,7 @@ build_android_arm64_release_apk() {
 
   rm -f "$aligned_apk"
 
-  verify_apk "$output" | tee "$ANDROID_OUT/PTU-Companion-v2.2.0-beta.19-arm64-release-info.txt"
+  verify_apk "$output" | tee "$ANDROID_OUT/PTU-Companion-v2.2.0-beta.20-arm64-release-info.txt"
 
   if ! "$AAPT" dump badging "$output" | grep -q "native-code: 'arm64-v8a'"; then
     echo "Erro: o APK final não declarou exclusivamente a ABI arm64-v8a." >&2
@@ -218,7 +218,7 @@ build_android_aab() {
 }
 
 inspect_apk() {
-  local apk="${2:-$ANDROID_OUT/PTU-Companion-v2.2.0-beta.19-installable.apk}"
+  local apk="${2:-$ANDROID_OUT/PTU-Companion-v2.2.0-beta.20-installable.apk}"
   verify_apk "$apk"
 }
 

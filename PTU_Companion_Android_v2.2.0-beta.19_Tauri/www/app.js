@@ -1,5 +1,5 @@
 /*
- * PTU Companion — Android v2.2.0-beta.19
+ * PTU Companion — Android v2.2.0-beta.20
  * No dependencies, no build step, runs offline in a browser.
  *
  * This is deliberately a UI/domain reference implementation. The final Tauri app
@@ -377,17 +377,28 @@ function roster(id=state.selectedRosterId){ return state.rosters.find(r=>r.id===
 function rosterMembers(id){ return state.pokemon.filter(p=>p.rosterIds.includes(id)); }
 function inventoryItem(id){ return state.inventory.find(i=>i.id===id); }
 function ownedInventory(){ return (state.inventory||[]).filter(i=>Number(i.qty||0)>0); }
+function localSpeciesArtwork(speciesId){
+  const sprites=window.__PTU_LOCAL_SPECIES_SPRITES__||{};
+  return Object.hasOwn(sprites,String(speciesId||''))?sprites[speciesId]:'';
+}
+function androidSpeciesArtwork(speciesId,portrait=''){
+  return portrait||window.__PTU_SPECIES_PORTRAIT__?.(speciesId)||localSpeciesArtwork(speciesId)||'creatures/default.svg';
+}
+function pokemonArtworkFallback(img){
+  const local=img.dataset.localSrc;
+  if(local&&!img.dataset.triedLocal&&img.getAttribute('src')!==local){
+    img.dataset.triedLocal='1';img.src=local;return;
+  }
+  img.onerror=null;img.src='creatures/default.svg';
+}
 function pokemonPortraitUrl(p){
   const speciesId=String(p?.details?.speciesDefinitionId||'').trim();
-  if(window.PTU_ANDROID_BUILD&&speciesId){
-    const packed=window.__PTU_SPECIES_PORTRAIT__?.(speciesId); if(packed)return packed;
-    const slug=speciesId.toLowerCase().replace(/[^a-z0-9-]+/g,'-').replace(/^-|-$/g,'');
-    return `https://play.pokemonshowdown.com/sprites/gen5/${encodeURIComponent(slug)}.png`;
-  }
+  if(window.PTU_ANDROID_BUILD&&speciesId)return androidSpeciesArtwork(speciesId);
   return speciesId?`/api/pokemon/portrait/${encodeURIComponent(speciesId)}`:(p?.img||'creatures/default.svg');
 }
 function pokemonPortraitTag(p,extra=''){
   const src=pokemonPortraitUrl(p), fallback=esc(p?.img||'creatures/default.svg');
+  if(window.PTU_ANDROID_BUILD)return `<img ${extra} src="${esc(src)}" data-local-src="${esc(localSpeciesArtwork(p?.details?.speciesDefinitionId))}" loading="lazy" alt="${esc(p?.species||p?.name||'Pokémon')}" onerror="pokemonArtworkFallback(this)"/>`;
   return `<img ${extra} src="${esc(src)}" loading="lazy" alt="${esc(p?.species||p?.name||'Pokémon')}" onerror="this.onerror=null;this.src='${fallback}'"/>`;
 }
 function itemDescription(i){ return String(i?.description||i?.effectText||'').trim(); }
@@ -463,7 +474,7 @@ function shell(content){
   const t=trainer();
   const toastHtml=state.ui.toast?`<div class="toast ${state.ui.toast.type==='error'?'toast-error':''}">${esc(state.ui.toast.message)}</div>`:'';
   const visibleNav=window.PTU_ANDROID_BUILD?nav.filter(n=>n[0]!=='editor'):nav;
-  const platformLabel=window.PTU_ANDROID_BUILD?'ANDROID BETA v2.2.0-beta.19':'BETA v2.1.0';
+  const platformLabel=window.PTU_ANDROID_BUILD?'ANDROID BETA v2.2.0-beta.20':'BETA v2.1.0';
   return `<div class="app-backdrop ${window.PTU_ANDROID_BUILD?'android-build':''}"><div class="pokedex-shell"><aside class="hardware-rail"><div class="lens"><span></span></div><div class="hardware-dots"><i></i><i></i></div></aside><div class="app-window"><header class="topbar"><div class="brand">${window.PTU_ANDROID_BUILD?'<span class="brand-mark"><img src="app-icon.png" alt=""></span>':'<span class="brand-mark">◉</span>'}<strong>PTU Companion</strong><span class="prototype-label functional">${platformLabel}</span><span class="persistence-badge">${window.PTU_ANDROID_BUILD?'Local autosave':persistenceLabel()}</span></div><div class="top-actions"><button onclick="openGlobalActions()">⚙</button><button>🔔<b>1</b></button><button class="trainer-mini trainer-switcher-button" onclick="openTrainerSwitcher()" title="Switch Trainer">${personPortrait(t,'trainer-mini-avatar','span')}<small>${esc(t.name)}</small><b class="trainer-switch-caret">⌄</b></button></div></header><div class="app-layout"><nav class="sidebar">${visibleNav.map(n=>`<button class="${state.ui.screen===n[0]?'active':''}" onclick="route('${n[0]}')"><span>${n[1]}</span>${n[2]}</button>`).join('')}<div class="sidebar-footer"><button onclick="openSaveTools()">⇄ Save Tools</button></div></nav><main class="screen-content">${content}</main></div><footer class="shell-footer">${window.PTU_ANDROID_BUILD?'Android beta · local autosave':`Desktop beta · ${persistenceLabel()}`} <span>●</span></footer>${mobileBottomNav()}</div><div class="hardware-bottom"></div></div>${toastHtml}<div id="modal-root"></div></div>`;
 }
 
@@ -1050,19 +1061,16 @@ function definitionArtworkSrc(d){
   if(!d)return '';
   const raw=d.raw||{};
   if(d.kind==='species'){
-    if(window.PTU_ANDROID_BUILD){
-      const packed=window.__PTU_SPECIES_PORTRAIT__?.(d.id); if(packed)return packed;
-      const slug=String(d.id||d.name||'').toLowerCase().replace(/[^a-z0-9-]+/g,'-').replace(/^-|-$/g,'');
-      return slug?`https://play.pokemonshowdown.com/sprites/gen5/${encodeURIComponent(slug)}.png`:'';
-    }
+    if(window.PTU_ANDROID_BUILD)return androidSpeciesArtwork(d.id,raw.portrait_data_url||d.portraitDataUrl||'');
     return d.id?`/api/pokemon/portrait/${encodeURIComponent(d.id)}`:'';
   }
   return String(d.artwork||d.icon||d.image||d.portraitDataUrl||raw.icon_data_url||raw.icon_url||raw.image_data_url||raw.image_url||raw.artwork_url||raw.portrait_data_url||'').trim();
 }
 function definitionArtworkHtml(d,{detail=false}={}){
-  const src=definitionArtworkSrc(d); if(!src)return '';
+  if(!d)return '';
+  const src=definitionArtworkSrc(d)||'creatures/default.svg';
   const cls=detail?'definition-artwork-detail':'definition-artwork-thumb';
-  return `<span class="${cls}"><img src="${esc(src)}" loading="lazy" alt="${esc(d.name||'Definition')}" onerror="this.closest('span').hidden=true"/></span>`;
+  return `<span class="${cls}"><img src="${esc(src)}" loading="lazy" alt="${esc(d.name||'Definition')}" data-local-src="${esc(d.kind==='species'?localSpeciesArtwork(d.id):'')}" onerror="pokemonArtworkFallback(this)"/></span>`;
 }
 function definitionModalBody(d){
   const facts=[];

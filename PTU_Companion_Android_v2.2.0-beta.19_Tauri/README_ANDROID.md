@@ -1,8 +1,8 @@
-# PTU Companion Android v2.2.0-beta.19
+# PTU Companion Android v2.2.0-beta.20
 
 Gear Store + Trainer Gear + item artwork + resolved Struggle Attack.
 
-# PTU Companion v2.2.0-android-beta.19
+# PTU Companion v2.2.0-android-beta.20
 
 
 ## Beta.16 — Weapons v2 e Arcane Weapons
@@ -22,7 +22,7 @@ Primeira beta Android focada em uso de campanha. A edição Android contém as f
 
 ## Instalação
 
-1. Copie `PTU-Companion-v2.2.0-beta.19-arm64-release.apk` para o telefone.
+1. Copie `PTU-Companion-v2.2.0-beta.20-arm64-release.apk` para o telefone.
 2. Abra o arquivo pelo gerenciador de arquivos.
 3. Se o Android solicitar, autorize temporariamente a instalação de apps desconhecidos para o aplicativo usado para abrir o APK.
 4. Instale e abra **PTU Companion**.

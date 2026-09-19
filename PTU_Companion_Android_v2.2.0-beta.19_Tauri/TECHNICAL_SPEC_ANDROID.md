@@ -2,7 +2,7 @@
 
 ## Versão alvo
 
-**PTU Companion v2.2.0-android-beta.19**
+**PTU Companion v2.2.0-android-beta.20**
 
 A edição Android é a edição de uso em mesa/campanha do PTU Companion. Ela compartilha os dados e o motor mecânico da edição Windows, mas **não expõe ferramentas de autoria/edição de conteúdo**.
 
