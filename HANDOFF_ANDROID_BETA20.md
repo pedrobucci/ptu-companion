@@ -3,7 +3,7 @@
 ## Context
 
 - Repository: https://github.com/pedrobucci/ptu-companion
-- Android application: `PTU_Companion_Android_v2.2.0-beta.19_Tauri`
+- Android application: `PTU_Companion_Android_Tauri`
 - Working branch: `fix/android-pokedex-artwork-beta20`
 - Base: `main`; current commit before this handoff: `c526511`
 - Pull Request: https://github.com/pedrobucci/ptu-companion/pull/1
@@ -64,9 +64,9 @@ The validated checkout generated a local beta signing key. Updating an existing 
 
 ## Important files
 
-- `PTU_Companion_Android_v2.2.0-beta.19_Tauri/www/app.js`
-- `PTU_Companion_Android_v2.2.0-beta.19_Tauri/www/mobile-runtime.js`
-- `PTU_Companion_Android_v2.2.0-beta.19_Tauri/www/mobile-api.mjs`
-- `PTU_Companion_Android_v2.2.0-beta.19_Tauri/www/styles.css`
-- `PTU_Companion_Android_v2.2.0-beta.19_Tauri/scripts/verify-beta20-pokedex-artwork-mobile.mjs`
-- `PTU_Companion_Android_v2.2.0-beta.19_Tauri/CHANGELOG_ANDROID_BETA20.md`
+- `PTU_Companion_Android_Tauri/www/app.js`
+- `PTU_Companion_Android_Tauri/www/mobile-runtime.js`
+- `PTU_Companion_Android_Tauri/www/mobile-api.mjs`
+- `PTU_Companion_Android_Tauri/www/styles.css`
+- `PTU_Companion_Android_Tauri/scripts/verify-beta20-pokedex-artwork-mobile.mjs`
+- `PTU_Companion_Android_Tauri/CHANGELOG_ANDROID_BETA20.md`
