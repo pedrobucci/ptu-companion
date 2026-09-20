@@ -148,6 +148,14 @@ Additional `.ptucp` files can be imported without rebuilding the application.
    └─ images/               # GitHub documentation images
 ```
 
+## Seed database
+
+`seed/ptu_seed_v1.0.sqlite3` is intentionally published in this repository as the default definition database.
+
+- It contains only public, static data: rules, Pokémon, items, content-pack metadata and references to image assets.
+- It must never store personal data, credentials, tokens, keys, local file paths, user or campaign data, or binary images. Images stay as separate versioned assets (for example `PTU_Companion_Android_Tauri/www/pokemon-sprites/`) and the database only references them by id.
+- Any future change to its schema or content must preserve this policy.
+
 ## Content-pack philosophy
 
 PTU Companion favors **source-aware automation**. A bonus or granted Move/Ability should know where it came from. This allows the app to remove the effect when the source is unequipped, disabled or no longer applicable, and helps avoid permanent bonuses being accidentally applied from conditional rules.

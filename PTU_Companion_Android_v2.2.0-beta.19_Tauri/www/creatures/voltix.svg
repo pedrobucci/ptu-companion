@@ -1,9 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180">
-<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#56B7E8"/><stop offset="1" stop-color="#216E9B"/></linearGradient></defs>
-<rect width="180" height="180" rx="34" fill="#f7fbff"/>
-<circle cx="90" cy="96" r="54" fill="url(#g)" stroke="#17324d" stroke-width="5"/>
-<path d="M52 62 39 22 73 49M128 62l13-40-34 27" fill="url(#g)" stroke="#17324d" stroke-width="5" stroke-linejoin="round"/>
-<circle cx="70" cy="89" r="8" fill="#fff"/><circle cx="110" cy="89" r="8" fill="#fff"/><circle cx="70" cy="91" r="4" fill="#17324d"/><circle cx="110" cy="91" r="4" fill="#17324d"/>
-<path d="M75 117q15 14 30 0" fill="none" stroke="#17324d" stroke-width="5" stroke-linecap="round"/>
-<circle cx="137" cy="139" r="25" fill="#fff" opacity=".92"/><text x="137" y="147" font-size="24" text-anchor="middle">💧</text>
-</svg>
