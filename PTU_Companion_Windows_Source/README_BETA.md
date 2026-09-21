@@ -1,6 +1,6 @@
-# PTU Companion Beta v2.1.0-beta.18
+# PTU Companion Beta v2.1.0-beta.19
 
-Current desktop beta adds the Trainer Gear pack contract, Gear Store, real item artwork in equipment UI, configurable equipment effects, and a resolved Struggle Attack card on Trainer Combat.
+Current desktop beta includes the approved **Fakemon 1 leva v2.0.0** content as a bundled default: 13 campaign Species, 8 Moves, 3 Abilities and offline Species artwork. The beta.19 launcher uses a new runtime version while preserving the persistent campaign database under `%LOCALAPPDATA%\PTU Companion Beta\data`.
 
 # PTU Companion Beta v2.1.0-beta.15
 

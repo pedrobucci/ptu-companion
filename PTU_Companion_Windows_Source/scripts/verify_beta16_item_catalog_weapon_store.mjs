@@ -33,4 +33,4 @@ assert(app.includes("shops.includes('Weapon Store')"),'Weapon Store metadata fil
 assert(app.includes('ensureInventoryItemForPurchase'),'Weapon Store checkout must create backpack items from catalog definitions');
 const server=fs.readFileSync(path.join(root,'server.mjs'),'utf8');
 assert(server.includes('shopCategories:Array.isArray(raw.shop_categories)'),'item catalog must expose shop metadata');
-console.log(`PTU Companion Beta v2.1.0-beta.18 bundled Weapon Store verification: OK (${before} -> ${after} items after update)`);
+console.log(`PTU Companion Beta v2.1.0-beta.19 bundled Weapon Store verification: OK (${before} -> ${after} items after update)`);

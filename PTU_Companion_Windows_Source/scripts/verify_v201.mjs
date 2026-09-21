@@ -68,7 +68,7 @@ for(const token of ['backgroundSkillRankMap','syncBackgroundSkillRanks','trainer
 assert(app.includes("id==='elemental-connection'")&&app.includes("id==='type-ace'"),'Repeatable typed choices are missing from Trainer selection UI');
 assert(styles.includes('.trainer-choice-summary'),'Selected-choice card styling is missing');
 assert(seed.inventory.some(i=>i.id==='two-handed-sword'&&i.price===6000&&i.mechanics?.hands===2),'Two-Handed Sword is missing from the seed shop catalog');
-assert(pkg.version==='2.1.0-beta.18','package.json version is not the beta version');
+assert(pkg.version==='2.1.0-beta.19','package.json version is not the beta version');
 
 
 
@@ -117,7 +117,7 @@ const child=spawn(process.execPath,['server.mjs'],{cwd:root,env:{...process.env,
 let stderr='';child.stderr.on('data',d=>stderr+=d);
 async function waitServer(){for(let i=0;i<50;i++){try{const r=await fetch(`http://127.0.0.1:${port}/api/health`);if(r.ok)return r.json();}catch{}await new Promise(r=>setTimeout(r,100));}throw new Error(`Server did not start: ${stderr}`)}
 try{
-  const health=await waitServer();assert(health.version==='2.1.0-beta.18','Server health version is not the beta version');
+  const health=await waitServer();assert(health.version==='2.1.0-beta.19','Server health version is not the beta version');
   const noEquipment=trainer();delete noEquipment.equipment;
   const r=await fetch(`http://127.0.0.1:${port}/api/trainer/reference-data`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({trainer:noEquipment})});
   const body=await r.json();assert(r.ok&&body.resolvedTrainer?.skills?.Athletics?.rank===4,'Real Trainer reference endpoint failed Background/no-equipment regression case');

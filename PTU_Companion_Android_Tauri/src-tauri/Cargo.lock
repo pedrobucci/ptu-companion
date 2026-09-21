@@ -2367,7 +2367,7 @@ dependencies = [
 
 [[package]]
 name = "ptu-companion"
-version = "2.2.0-beta.20"
+version = "2.2.0-beta.21"
 dependencies = [
  "base64 0.22.1",
  "serde",

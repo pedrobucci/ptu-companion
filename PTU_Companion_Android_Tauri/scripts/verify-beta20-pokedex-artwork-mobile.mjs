@@ -61,6 +61,6 @@ for(const [id,entry] of Object.entries(manifest.species)){
 }
 const html=read('www/index.html');assert(html.indexOf('pokemon-sprites.js')<html.indexOf('mobile-runtime.js'));
 const pkg=JSON.parse(read('package.json')),tauri=JSON.parse(read('src-tauri/tauri.conf.json'));
-assert.equal(pkg.version,'2.2.0-beta.20');assert.equal(tauri.version,pkg.version);assert.equal(tauri.bundle.android.versionCode,2002020);
-assert.equal((await(await context.fetch('/api/health')).json()).version,'2.2.0-android-beta.20');
-console.log(`PTU Android beta.20 artwork/mobile: OK (${Object.keys(sprites).length} mapped IDs, pack priority, regional forms, list/detail, bounded fallback, mobile CSS, version)`);
+assert.equal(pkg.version,'2.2.0-beta.21');assert.equal(tauri.version,pkg.version);assert.equal(tauri.bundle.android.versionCode,2002021);
+assert.equal((await(await context.fetch('/api/health')).json()).version,'2.2.0-android-beta.21');
+console.log(`PTU Android beta.21 artwork/mobile: OK (${Object.keys(sprites).length} mapped IDs, pack priority, regional forms, list/detail, bounded fallback, mobile CSS, version)`);
