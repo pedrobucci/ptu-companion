@@ -8,25 +8,26 @@ import {previewTrainerProgression,applyTrainerProgression,previewTrainerXpPurcha
 
 const root=new URL('..',import.meta.url).pathname;
 const seedDb=join(root,'seed','definitions','ptu_seed_v1.0.sqlite3');
-const packPath=join(root,'bundled-packs','campaign-homebrew-fakemon-1-leva-1.1.0.ptucp');
+const packPath=join(root,'bundled-packs','campaign-homebrew-fakemon-1-leva-2.0.0.ptucp');
 const pack=inspectContentPack(readFileSync(packPath));
-assert.equal(pack.manifest.version,'1.1.0');
-assert.equal(pack.counts.species,8);
-for(const id of ['panthore','panzeus','clefable-w','clefable-k','greavard','houndstone','maschiff','mabosstiff']) assert(pack.entries.has(`assets/species/${id}.png`),`missing portrait ${id}`);
+assert.equal(pack.manifest.version,'2.0.0');
+assert.equal(pack.counts.species,13);
+const fakemonSpecies=['panthore','panzeus','clefable-w','clefable-k','greavard','houndstone','maschiff','mabosstiff','fidough','dachsbun','zorua-hisui','zoroark-hisui','urania'];
+for(const id of fakemonSpecies) assert(pack.entries.has(`assets/species/${id}.webp`),`missing portrait ${id}`);
 
 const defs=new DefinitionRepository(seedDb);
-for(const id of ['panthore','panzeus','clefable-w','clefable-k','greavard','houndstone','maschiff','mabosstiff']){
+for(const id of fakemonSpecies){
   const d=defs.getResolved({rulesetId:'all-provided-material',kind:'species',id});
   assert(d,`bundled species ${id} missing`);
-  assert.match(String(d.raw?.portrait_data_url||''),/^data:image\/png;base64,/,`bundled portrait ${id} missing`);
+  assert.match(String(d.raw?.portrait_data_url||''),/^data:image\/webp;base64,/,`bundled portrait ${id} missing`);
 }
 
 const temp=mkdtempSync(join(tmpdir(),'ptu-beta9-'));mkdirSync(join(temp,'backups'));
 const db=join(temp,'defs.sqlite3');copyFileSync(seedDb,db);
 const imported=await importContentPack({buffer:readFileSync(packPath),dbPath:db,backupDir:join(temp,'backups'),enableRulesetId:'all-provided-material',archiveFilename:'fakemon.ptucp'});
-assert.equal(imported.definitionCounts.species,8);
+assert.equal(imported.definitionCounts.species,13);
 const importedDefs=new DefinitionRepository(db);
-assert.match(String(importedDefs.getResolved({rulesetId:'all-provided-material',kind:'species',id:'panthore'}).raw?.portrait_data_url||''),/^data:image\/png;base64,/);
+assert.match(String(importedDefs.getResolved({rulesetId:'all-provided-material',kind:'species',id:'panthore'}).raw?.portrait_data_url||''),/^data:image\/webp;base64,/);
 
 const getDefinition=args=>defs.getResolved(args);
 const listDefinitions=({rulesetId,kind,q='',limit=200,offset=0})=>defs.listResolved({rulesetId,kind,q,limit,offset});
