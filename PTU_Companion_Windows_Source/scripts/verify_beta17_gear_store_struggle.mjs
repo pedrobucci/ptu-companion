@@ -73,4 +73,4 @@ for(const token of ["setShopPreset('Gear Store',0)",'function isGearStoreItem','
 const server=fs.readFileSync(path.join(root,'server.mjs'),'utf8');
 assert(server.includes('raw.icon_data_url||raw.icon_url||raw.icon'));
 assert(server.includes('equipmentConfig:raw.equipment_config||null'));
-console.log('PTU Companion Beta v2.1.0-beta.18 gear + Gear Store + Struggle Attack verification: OK');
+console.log('PTU Companion Beta v2.1.0-beta.19 gear + Gear Store + Struggle Attack verification: OK');

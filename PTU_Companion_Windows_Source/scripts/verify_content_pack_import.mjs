@@ -36,7 +36,7 @@ let stderr='';child.stderr.on('data',d=>stderr+=d);
 async function wait(){for(let i=0;i<100;i++){try{const r=await fetch(`http://127.0.0.1:${port}/api/health`);if(r.ok)return r.json()}catch{} await new Promise(r=>setTimeout(r,80));}throw new Error(`Server failed: ${stderr}`)}
 try{
  const health=await wait();
- assert(health.version==='2.1.0-beta.18','beta.6 server version mismatch');
+ assert(health.version==='2.1.0-beta.19','beta.6 server version mismatch');
  assert(health.definitions?.persistent===true,'Definitions are not using persistent desktop storage');
  const persistentDb=join(testData,'definitions','ptu_definitions.sqlite3');
  assert(existsSync(persistentDb)&&statSync(persistentDb).size>1_000_000,'Persistent definitions database was not created');
