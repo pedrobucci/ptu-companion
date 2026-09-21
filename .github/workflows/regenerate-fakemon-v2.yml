@@ -11,7 +11,7 @@ on:
       - 'PTU_Companion_Windows_Source/scripts/extract_fakemon_1_leva_art.py'
       - 'PTU_Companion_Windows_Source/scripts/build_fakemon_1_leva_pack.py'
       - 'PTU_Companion_Windows_Source/scripts/verify_fakemon_1_leva_v2.mjs'
-      - 'PTU_Companion_Windows_Source/docs/source/Fakemon_1_leva.pdf'
+      - 'PTU_Companion_Windows_Source/docs/source/Fakemon_1_leva_art/**'
 
 permissions:
   contents: write
@@ -33,10 +33,10 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Install artwork extraction dependencies
-        run: python -m pip install --disable-pip-version-check pymupdf pillow
+      - name: Install artwork dependencies
+        run: python -m pip install --disable-pip-version-check pillow
 
-      - name: Extract species artwork from source PDF
+      - name: Materialize species artwork
         run: python PTU_Companion_Windows_Source/scripts/extract_fakemon_1_leva_art.py
 
       - name: Regenerate default definition databases
@@ -60,7 +60,7 @@ jobs:
         shell: bash
         run: |
           python - <<'PY'
-          import json, sqlite3
+          import sqlite3
           from pathlib import Path
           dbs = [
               Path('PTU_Companion_Windows_Source/seed/definitions/ptu_seed_v1.0.sqlite3'),
