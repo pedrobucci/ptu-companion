@@ -1,0 +1,92 @@
+name: Sync beta release metadata
+
+on:
+  push:
+    branches:
+      - release/windows-beta19-android-beta21
+    paths:
+      - '.github/workflows/sync-beta-release.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  sync-and-verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: release/windows-beta19-android-beta21
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Sync Cargo lock package version
+        shell: python
+        run: |
+          from pathlib import Path
+          path = Path('PTU_Companion_Android_Tauri/src-tauri/Cargo.lock')
+          text = path.read_text(encoding='utf-8')
+          old = 'name = "ptu-companion"\nversion = "2.2.0-beta.20"'
+          new = 'name = "ptu-companion"\nversion = "2.2.0-beta.21"'
+          if new not in text:
+              if text.count(old) != 1:
+                  raise SystemExit('Expected exactly one beta.20 root package entry in Cargo.lock')
+              text = text.replace(old, new, 1)
+              path.write_text(text, encoding='utf-8')
+
+      - name: Verify release version consistency
+        shell: python
+        run: |
+          import json, re
+          from pathlib import Path
+
+          windows = Path('PTU_Companion_Windows_Source')
+          android = Path('PTU_Companion_Android_Tauri')
+          win_version = '2.1.0-beta.19'
+          android_version = '2.2.0-beta.21'
+
+          assert json.loads((windows/'package.json').read_text())['version'] == win_version
+          assert (windows/'VERSION.txt').read_text().strip() == win_version
+          launcher = (windows/'desktop/launcher.go').read_text()
+          assert f'const appVersion = "{win_version}"' in launcher
+
+          assert json.loads((android/'package.json').read_text())['version'] == android_version
+          tauri = json.loads((android/'src-tauri/tauri.conf.json').read_text())
+          assert tauri['version'] == android_version
+          assert tauri['bundle']['android']['versionCode'] == 2002021
+          cargo_toml = (android/'src-tauri/Cargo.toml').read_text()
+          assert f'version = "{android_version}"' in cargo_toml
+          cargo_lock = (android/'src-tauri/Cargo.lock').read_text()
+          assert f'name = "ptu-companion"\nversion = "{android_version}"' in cargo_lock
+          build = (android/'docker/tauri-build.sh').read_text()
+          assert f'PTU-Companion-v{android_version}-arm64-release.apk' in build
+          assert 'PTU-Companion-v2.2.0-beta.20-' not in build
+          print('Release metadata consistency: OK')
+
+      - name: Verify Windows regression suite
+        working-directory: PTU_Companion_Windows_Source
+        run: |
+          npm run verify
+          node scripts/verify_fakemon_1_leva_v2.mjs
+
+      - name: Verify Android regression suite
+        working-directory: PTU_Companion_Android_Tauri
+        run: |
+          npm run verify
+          node scripts/verify-fakemon-v2-runtime.mjs
+
+      - name: Commit synchronized Cargo lock
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add PTU_Companion_Android_Tauri/src-tauri/Cargo.lock
+          if git diff --cached --quiet; then
+            echo 'Cargo.lock already synchronized.'
+          else
+            git commit -m 'chore(release): sync Android beta.21 Cargo lock [skip ci]'
+            git push origin HEAD:release/windows-beta19-android-beta21
+          fi
