@@ -48,6 +48,7 @@ jobs:
           # Runtime health/version labels are embedded in the Windows server and the
           # Android source + classic generated runtime used by the actual APK.
           replace_exact('PTU_Companion_Windows_Source/server.mjs', '2.1.0-beta.18', '2.1.0-beta.19', 2)
+          replace_exact('PTU_Companion_Windows_Source/scripts/verify_beta_v210.mjs', '2.1.0-beta.18', '2.1.0-beta.19', 3)
           replace_exact('PTU_Companion_Android_Tauri/www/mobile-api.mjs', '2.2.0-android-beta.20', '2.2.0-android-beta.21', 1)
           replace_exact('PTU_Companion_Android_Tauri/www/mobile-runtime.js', '2.2.0-android-beta.20', '2.2.0-android-beta.21', 1)
 
@@ -82,6 +83,7 @@ jobs:
           server = (windows/'server.mjs').read_text()
           assert server.count(win_version) >= 2
           assert '2.1.0-beta.18' not in server
+          assert '2.1.0-beta.18' not in (windows/'scripts/verify_beta_v210.mjs').read_text()
 
           assert json.loads((android/'package.json').read_text())['version'] == android_version
           tauri = json.loads((android/'src-tauri/tauri.conf.json').read_text())
@@ -119,6 +121,7 @@ jobs:
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add \
             PTU_Companion_Windows_Source/server.mjs \
+            PTU_Companion_Windows_Source/scripts/verify_beta_v210.mjs \
             PTU_Companion_Android_Tauri/src-tauri/Cargo.lock \
             PTU_Companion_Android_Tauri/www/mobile-api.mjs \
             PTU_Companion_Android_Tauri/www/mobile-runtime.js \
