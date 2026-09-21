@@ -23,24 +23,51 @@ jobs:
         with:
           node-version: '22'
 
-      - name: Sync Cargo lock package version
+      - name: Sync release version references
         shell: python
         run: |
           from pathlib import Path
-          path = Path('PTU_Companion_Android_Tauri/src-tauri/Cargo.lock')
-          text = path.read_text(encoding='utf-8')
-          old = 'name = "ptu-companion"\nversion = "2.2.0-beta.20"'
-          new = 'name = "ptu-companion"\nversion = "2.2.0-beta.21"'
-          if new not in text:
-              if text.count(old) != 1:
-                  raise SystemExit('Expected exactly one beta.20 root package entry in Cargo.lock')
-              text = text.replace(old, new, 1)
-              path.write_text(text, encoding='utf-8')
+
+          def replace_exact(path, old, new, expected=None):
+              path = Path(path)
+              text = path.read_text(encoding='utf-8')
+              count = text.count(old)
+              if expected is not None and count != expected:
+                  raise SystemExit(f'{path}: expected {expected} occurrences of {old!r}, found {count}')
+              if count:
+                  path.write_text(text.replace(old, new), encoding='utf-8')
+
+          # Cargo.lock is generated metadata but must match Cargo.toml for release packaging.
+          replace_exact(
+              'PTU_Companion_Android_Tauri/src-tauri/Cargo.lock',
+              'name = "ptu-companion"\nversion = "2.2.0-beta.20"',
+              'name = "ptu-companion"\nversion = "2.2.0-beta.21"',
+              1,
+          )
+
+          # Runtime health/version labels are embedded in the Windows server and the
+          # Android source + classic generated runtime used by the actual APK.
+          replace_exact('PTU_Companion_Windows_Source/server.mjs', '2.1.0-beta.18', '2.1.0-beta.19', 2)
+          replace_exact('PTU_Companion_Android_Tauri/www/mobile-api.mjs', '2.2.0-android-beta.20', '2.2.0-android-beta.21', 1)
+          replace_exact('PTU_Companion_Android_Tauri/www/mobile-runtime.js', '2.2.0-android-beta.20', '2.2.0-android-beta.21', 1)
+
+          # beta.20 remains the feature name, but its release/version assertions must
+          # follow the beta.21 package that contains the same artwork fix plus Fakemon v2.
+          verifier = Path('PTU_Companion_Android_Tauri/scripts/verify-beta20-pokedex-artwork-mobile.mjs')
+          text = verifier.read_text(encoding='utf-8')
+          for old, new in [
+              ('2.2.0-beta.20', '2.2.0-beta.21'),
+              ('2002020', '2002021'),
+              ('2.2.0-android-beta.20', '2.2.0-android-beta.21'),
+              ('PTU Android beta.20 artwork/mobile', 'PTU Android beta.21 artwork/mobile'),
+          ]:
+              text = text.replace(old, new)
+          verifier.write_text(text, encoding='utf-8')
 
       - name: Verify release version consistency
         shell: python
         run: |
-          import json, re
+          import json
           from pathlib import Path
 
           windows = Path('PTU_Companion_Windows_Source')
@@ -52,6 +79,9 @@ jobs:
           assert (windows/'VERSION.txt').read_text().strip() == win_version
           launcher = (windows/'desktop/launcher.go').read_text()
           assert f'const appVersion = "{win_version}"' in launcher
+          server = (windows/'server.mjs').read_text()
+          assert server.count(win_version) >= 2
+          assert '2.1.0-beta.18' not in server
 
           assert json.loads((android/'package.json').read_text())['version'] == android_version
           tauri = json.loads((android/'src-tauri/tauri.conf.json').read_text())
@@ -64,6 +94,10 @@ jobs:
           build = (android/'docker/tauri-build.sh').read_text()
           assert f'PTU-Companion-v{android_version}-arm64-release.apk' in build
           assert 'PTU-Companion-v2.2.0-beta.20-' not in build
+          for runtime in ['www/mobile-api.mjs','www/mobile-runtime.js']:
+              text=(android/runtime).read_text()
+              assert '2.2.0-android-beta.21' in text
+              assert '2.2.0-android-beta.20' not in text
           print('Release metadata consistency: OK')
 
       - name: Verify Windows regression suite
@@ -78,15 +112,20 @@ jobs:
           npm run verify
           node scripts/verify-fakemon-v2-runtime.mjs
 
-      - name: Commit synchronized Cargo lock
+      - name: Commit synchronized release metadata
         shell: bash
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add PTU_Companion_Android_Tauri/src-tauri/Cargo.lock
+          git add \
+            PTU_Companion_Windows_Source/server.mjs \
+            PTU_Companion_Android_Tauri/src-tauri/Cargo.lock \
+            PTU_Companion_Android_Tauri/www/mobile-api.mjs \
+            PTU_Companion_Android_Tauri/www/mobile-runtime.js \
+            PTU_Companion_Android_Tauri/scripts/verify-beta20-pokedex-artwork-mobile.mjs
           if git diff --cached --quiet; then
-            echo 'Cargo.lock already synchronized.'
+            echo 'Release metadata already synchronized.'
           else
-            git commit -m 'chore(release): sync Android beta.21 Cargo lock [skip ci]'
+            git commit -m 'chore(release): sync beta.19 and beta.21 runtime metadata [skip ci]'
             git push origin HEAD:release/windows-beta19-android-beta21
           fi
