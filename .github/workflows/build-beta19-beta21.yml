@@ -1,0 +1,237 @@
+name: Build Windows beta.19 and Android beta.21
+
+on:
+  push:
+    branches:
+      - release/build-beta19-beta21
+    paths:
+      - '.github/workflows/build-beta19-beta21.yml'
+
+permissions:
+  contents: write
+
+env:
+  TARGET_SHA: a3e4ad92fbf2c8712c7f036304348808e24839f4
+  RELEASE_TAG: release-2.1.0-beta.19-2.2.0-beta.21
+
+jobs:
+  windows:
+    name: Windows 2.1.0-beta.19
+    runs-on: windows-latest
+    timeout-minutes: 45
+    steps:
+      - name: Checkout merged source
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.TARGET_SHA }}
+
+      - name: Set up Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.24.x'
+
+      - name: Verify Windows regression suite
+        working-directory: PTU_Companion_Windows_Source
+        shell: pwsh
+        run: |
+          npm run verify
+          node scripts/verify_fakemon_1_leva_v2.mjs
+
+      - name: Rebuild embedded Windows runtime bundle
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $root = (Resolve-Path 'PTU_Companion_Windows_Source').Path
+          $stage = Join-Path $env:RUNNER_TEMP 'ptu-windows-runtime'
+          $zip = Join-Path $root 'desktop/runtime_bundle.zip'
+          if (Test-Path $stage) { Remove-Item -Recurse -Force $stage }
+          New-Item -ItemType Directory -Path $stage | Out-Null
+
+          # Runtime-only files used by server.mjs. This deliberately excludes saves,
+          # authoring docs/tests and the previous executable.
+          $runtimeEntries = @(
+            'server.mjs',
+            'package.json',
+            'VERSION.txt',
+            'static-preview',
+            'seed',
+            'definitions',
+            'persistence',
+            'rules',
+            'bundled-packs'
+          )
+          foreach ($entry in $runtimeEntries) {
+            $source = Join-Path $root $entry
+            if (-not (Test-Path $source)) { throw "Missing runtime entry: $entry" }
+            Copy-Item -Path $source -Destination $stage -Recurse -Force
+          }
+
+          if (Test-Path $zip) { Remove-Item -Force $zip }
+          Compress-Archive -Path (Join-Path $stage '*') -DestinationPath $zip -CompressionLevel Optimal
+
+          $check = Join-Path $env:RUNNER_TEMP 'ptu-windows-runtime-check'
+          if (Test-Path $check) { Remove-Item -Recurse -Force $check }
+          Expand-Archive -Path $zip -DestinationPath $check
+          $server = Get-Content -Raw (Join-Path $check 'server.mjs')
+          if ($server -notmatch '2\.1\.0-beta\.19') { throw 'Embedded server is not beta.19' }
+          if (-not (Test-Path (Join-Path $check 'seed/definitions/ptu_seed_v1.0.sqlite3'))) { throw 'Embedded definitions seed is missing' }
+          if (-not (Test-Path (Join-Path $check 'bundled-packs/campaign-homebrew-fakemon-1-leva-2.0.0.ptucp'))) { throw 'Embedded Fakemon v2 pack is missing' }
+          Write-Host "Runtime bundle size: $((Get-Item $zip).Length) bytes"
+
+      - name: Build standalone Windows executable
+        working-directory: PTU_Companion_Windows_Source/desktop
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $out = '../PTU-Companion-Windows-v2.1.0-beta.19.exe'
+          go build -trimpath -ldflags '-H windowsgui -s -w' -o $out launcher.go
+          if (-not (Test-Path $out)) { throw 'Windows executable was not produced' }
+          $exe = Get-Item $out
+          if ($exe.Length -lt 5MB) { throw "Windows executable is unexpectedly small: $($exe.Length)" }
+          Get-FileHash $out -Algorithm SHA256 | Format-List
+
+      - name: Prepare Windows release assets
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          New-Item -ItemType Directory -Force release-assets | Out-Null
+          $src = 'PTU_Companion_Windows_Source/PTU-Companion-Windows-v2.1.0-beta.19.exe'
+          Copy-Item $src 'release-assets/PTU-Companion-Windows-v2.1.0-beta.19.exe'
+          $hash = (Get-FileHash $src -Algorithm SHA256).Hash.ToLower()
+          "$hash  PTU-Companion-Windows-v2.1.0-beta.19.exe" | Set-Content -NoNewline 'release-assets/PTU-Companion-Windows-v2.1.0-beta.19.exe.sha256'
+
+      - name: Upload Windows artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-beta19
+          path: release-assets/*
+          if-no-files-found: error
+          retention-days: 30
+
+  android:
+    name: Android 2.2.0-beta.21 ARM64
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    env:
+      PTU_KEYSTORE_B64: ${{ secrets.PTU_ANDROID_KEYSTORE_BASE64 }}
+      PTU_ANDROID_DEBUG_KEYSTORE_PASSWORD: ${{ secrets.PTU_ANDROID_KEYSTORE_PASSWORD }}
+      PTU_ANDROID_DEBUG_KEY_PASSWORD: ${{ secrets.PTU_ANDROID_KEY_PASSWORD }}
+      PTU_ANDROID_DEBUG_KEY_ALIAS: ${{ secrets.PTU_ANDROID_KEY_ALIAS }}
+    steps:
+      - name: Checkout merged source
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.TARGET_SHA }}
+
+      - name: Set up Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Verify Android regression suite
+        working-directory: PTU_Companion_Android_Tauri
+        run: |
+          npm run verify
+          node scripts/verify-fakemon-v2-runtime.mjs
+
+      - name: Restore configured Android signing key when available
+        working-directory: PTU_Companion_Android_Tauri
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p android-signing
+          if [ -n "${PTU_KEYSTORE_B64:-}" ]; then
+            printf '%s' "$PTU_KEYSTORE_B64" | base64 --decode > android-signing/ptu-beta.keystore
+            chmod 600 android-signing/ptu-beta.keystore
+            echo 'Using repository-configured Android signing key.'
+          else
+            echo 'No PTU_ANDROID_KEYSTORE_BASE64 secret is configured; the build will create a fresh CI signing key.'
+            echo 'That APK is installable, but it will only update an existing beta if the signing certificate happens to match.'
+          fi
+
+      - name: Build signed Android ARM64 release APK
+        working-directory: PTU_Companion_Android_Tauri
+        shell: bash
+        run: |
+          set -euo pipefail
+          docker compose build android-arm64-release-apk
+          docker compose run --rm \
+            -e PTU_ANDROID_DEBUG_KEYSTORE_PASSWORD \
+            -e PTU_ANDROID_DEBUG_KEY_PASSWORD \
+            -e PTU_ANDROID_DEBUG_KEY_ALIAS \
+            android-arm64-release-apk
+          test -s dist/android/PTU-Companion-v2.2.0-beta.21-arm64-release.apk
+
+      - name: Prepare Android release assets
+        working-directory: PTU_Companion_Android_Tauri
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p ../release-assets
+          apk='dist/android/PTU-Companion-v2.2.0-beta.21-arm64-release.apk'
+          cp "$apk" ../release-assets/
+          cp "$apk.sha256" ../release-assets/
+          if [ -f 'dist/android/PTU-Companion-v2.2.0-beta.21-arm64-release-info.txt' ]; then
+            cp 'dist/android/PTU-Companion-v2.2.0-beta.21-arm64-release-info.txt' ../release-assets/
+          fi
+          cert_line=$(grep -m1 -E 'Signer #1 certificate SHA-256 digest:' 'dist/android/PTU-Companion-v2.2.0-beta.21-arm64-release-info.txt' 2>/dev/null || true)
+          printf '%s\n' "${cert_line:-Certificate digest is recorded in the APK info file.}" > ../release-assets/ANDROID_SIGNING_CERT.txt
+
+      - name: Upload Android artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-beta21
+          path: release-assets/*
+          if-no-files-found: error
+          retention-days: 30
+
+  release:
+    name: Publish GitHub Release
+    needs: [windows, android]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download release artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: release-assets
+          merge-multiple: true
+
+      - name: Create combined checksums
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd release-assets
+          sha256sum PTU-Companion-Windows-v2.1.0-beta.19.exe PTU-Companion-v2.2.0-beta.21-arm64-release.apk > SHA256SUMS.txt
+          ls -lh
+
+      - name: Publish release assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat > release-notes.md <<'EOF'
+          PTU Companion beta release generated from the merged `main` commit `a3e4ad92fbf2c8712c7f036304348808e24839f4`.
+
+          Windows: `2.1.0-beta.19`
+          Android ARM64: `2.2.0-beta.21` (`versionCode 2002021`)
+
+          Both builds contain the merged Fakemon 1 leva v2.0.0 defaults. The Android build contains the bundled Fakemon v2 runtime overlay and offline species artwork.
+
+          **Android signing:** an in-place update over beta.20 requires the same signing certificate as the APK already installed. Check `ANDROID_SIGNING_CERT.txt` / the APK info asset. If the certificates differ, Android will require uninstalling the old APK before installing this one; export your campaign JSON first if needed.
+          EOF
+
+          if gh release view "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            gh release upload "$RELEASE_TAG" release-assets/* --clobber --repo "$GITHUB_REPOSITORY"
+          else
+            gh release create "$RELEASE_TAG" release-assets/* \
+              --repo "$GITHUB_REPOSITORY" \
+              --target "$TARGET_SHA" \
+              --title 'PTU Companion — Windows 2.1.0-beta.19 / Android 2.2.0-beta.21' \
+              --notes-file release-notes.md
+          fi
