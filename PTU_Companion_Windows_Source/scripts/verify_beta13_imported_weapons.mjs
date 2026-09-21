@@ -11,7 +11,7 @@ const root=path.resolve(path.dirname(new URL(import.meta.url).pathname),'..');
 const tmp=fs.mkdtempSync(path.join(os.tmpdir(),'ptu-imported-weapon-'));
 const db=path.join(tmp,'defs.sqlite3');
 fs.copyFileSync(path.join(root,'seed/definitions/ptu_seed_v1.0.sqlite3'),db);
-const packPath=process.env.PTU_CUSTOM_WEAPON_PACK||'/mnt/data/campaign-homebrew-custom-weapons-1.2.0.ptucp';
+const packPath=process.env.PTU_CUSTOM_WEAPON_PACK||path.join(root,'..','Packs','campaign-homebrew-custom-weapons-1.2.0.ptucp');
 assert(fs.existsSync(packPath),`Missing test pack: ${packPath}`);
 await importContentPack({buffer:fs.readFileSync(packPath),dbPath:db,backupDir:path.join(tmp,'backups'),enableRulesetId:'all-provided-material',archiveFilename:path.basename(packPath)});
 const repo=new DefinitionRepository(db);

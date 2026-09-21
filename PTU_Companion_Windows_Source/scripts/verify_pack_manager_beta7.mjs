@@ -12,7 +12,9 @@ const dbPath=join(work,'definitions','ptu_definitions.sqlite3');
 const backupDir=join(work,'definitions','backups');
 await mkdir(join(work,'definitions'),{recursive:true});
 await copyFile(join(root,'seed','definitions','ptu_seed_v1.0.sqlite3'),dbPath);
-const archivePath='/mnt/data/campaign-homebrew-training-professions-1.0.0.ptucp';
+// Keep this verification self-contained. The previous version depended on a
+// conversation/runtime-only /mnt/data fixture, which made a clean checkout fail.
+const archivePath=join(root,'..','Packs','campaign-homebrew-training-professions-1.0.0.ptucp');
 const buffer=await readFile(archivePath);
 const packId='campaign-homebrew-training-professions';
 const rulesetId='all-provided-material';
