@@ -37,6 +37,20 @@ jobs:
               if count:
                   path.write_text(text.replace(old, new), encoding='utf-8')
 
+          def replace_in_glob(root, pattern, replacements):
+              changed=[]
+              for path in Path(root).glob(pattern):
+                  if not path.is_file():
+                      continue
+                  text=path.read_text(encoding='utf-8')
+                  next_text=text
+                  for old,new in replacements:
+                      next_text=next_text.replace(old,new)
+                  if next_text!=text:
+                      path.write_text(next_text,encoding='utf-8')
+                      changed.append(str(path))
+              print('Updated version references:', *changed, sep='\n  ')
+
           # Cargo.lock is generated metadata but must match Cargo.toml for release packaging.
           replace_exact(
               'PTU_Companion_Android_Tauri/src-tauri/Cargo.lock',
@@ -48,22 +62,24 @@ jobs:
           # Runtime health/version labels are embedded in the Windows server and the
           # Android source + classic generated runtime used by the actual APK.
           replace_exact('PTU_Companion_Windows_Source/server.mjs', '2.1.0-beta.18', '2.1.0-beta.19', 2)
-          replace_exact('PTU_Companion_Windows_Source/scripts/verify_beta_v210.mjs', '2.1.0-beta.18', '2.1.0-beta.19', 3)
           replace_exact('PTU_Companion_Android_Tauri/www/mobile-api.mjs', '2.2.0-android-beta.20', '2.2.0-android-beta.21', 1)
           replace_exact('PTU_Companion_Android_Tauri/www/mobile-runtime.js', '2.2.0-android-beta.20', '2.2.0-android-beta.21', 1)
 
-          # beta.20 remains the feature name, but its release/version assertions must
-          # follow the beta.21 package that contains the same artwork fix plus Fakemon v2.
-          verifier = Path('PTU_Companion_Android_Tauri/scripts/verify-beta20-pokedex-artwork-mobile.mjs')
-          text = verifier.read_text(encoding='utf-8')
-          for old, new in [
-              ('2.2.0-beta.20', '2.2.0-beta.21'),
-              ('2002020', '2002021'),
-              ('2.2.0-android-beta.20', '2.2.0-android-beta.21'),
-              ('PTU Android beta.20 artwork/mobile', 'PTU Android beta.21 artwork/mobile'),
-          ]:
-              text = text.replace(old, new)
-          verifier.write_text(text, encoding='utf-8')
+          # Regression scripts assert the currently packaged version. Keep their feature
+          # names/history, but move exact runtime/package expectations to this release.
+          replace_in_glob(
+              'PTU_Companion_Windows_Source/scripts', '*.mjs',
+              [('2.1.0-beta.18','2.1.0-beta.19')],
+          )
+          replace_in_glob(
+              'PTU_Companion_Android_Tauri/scripts', '*.mjs',
+              [
+                  ('2.2.0-beta.20','2.2.0-beta.21'),
+                  ('2002020','2002021'),
+                  ('2.2.0-android-beta.20','2.2.0-android-beta.21'),
+                  ('PTU Android beta.20 artwork/mobile','PTU Android beta.21 artwork/mobile'),
+              ],
+          )
 
       - name: Verify release version consistency
         shell: python
@@ -83,7 +99,8 @@ jobs:
           server = (windows/'server.mjs').read_text()
           assert server.count(win_version) >= 2
           assert '2.1.0-beta.18' not in server
-          assert '2.1.0-beta.18' not in (windows/'scripts/verify_beta_v210.mjs').read_text()
+          for path in (windows/'scripts').glob('*.mjs'):
+              assert '2.1.0-beta.18' not in path.read_text(), path
 
           assert json.loads((android/'package.json').read_text())['version'] == android_version
           tauri = json.loads((android/'src-tauri/tauri.conf.json').read_text())
@@ -121,11 +138,11 @@ jobs:
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add \
             PTU_Companion_Windows_Source/server.mjs \
-            PTU_Companion_Windows_Source/scripts/verify_beta_v210.mjs \
+            PTU_Companion_Windows_Source/scripts \
             PTU_Companion_Android_Tauri/src-tauri/Cargo.lock \
             PTU_Companion_Android_Tauri/www/mobile-api.mjs \
             PTU_Companion_Android_Tauri/www/mobile-runtime.js \
-            PTU_Companion_Android_Tauri/scripts/verify-beta20-pokedex-artwork-mobile.mjs
+            PTU_Companion_Android_Tauri/scripts
           if git diff --cached --quiet; then
             echo 'Release metadata already synchronized.'
           else
