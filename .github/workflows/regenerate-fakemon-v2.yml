@@ -42,6 +42,14 @@ jobs:
       - name: Regenerate default definition databases
         run: node PTU_Companion_Windows_Source/scripts/add_fakemon_1_leva.mjs
 
+      - name: Audit Android data-bundle generation hooks
+        shell: bash
+        run: |
+          echo '--- files containing mobile-data references (generated bundles excluded) ---'
+          grep -RIl --exclude='mobile-data.json' --exclude='mobile-data.js' 'mobile-data' PTU_Companion_Android_Tauri PTU_Companion_Windows_Source || true
+          echo '--- scripts/files with android/mobile/export names ---'
+          find PTU_Companion_Android_Tauri PTU_Companion_Windows_Source -type f \( -iname '*android*' -o -iname '*mobile*' -o -iname '*export*' \) | sort | head -n 200
+
       - name: Build v2 PTU content packs
         run: python PTU_Companion_Windows_Source/scripts/build_fakemon_1_leva_pack.py
 
@@ -78,6 +86,14 @@ jobs:
               assert version and version[0] == '2.0.0', (path, version)
               print(path, rows, version[0])
           PY
+
+      - name: Verify Windows application regressions
+        working-directory: PTU_Companion_Windows_Source
+        run: npm run verify
+
+      - name: Verify Android application regressions
+        working-directory: PTU_Companion_Android_Tauri
+        run: npm run verify
 
       - name: Commit generated defaults, artwork and packs
         shell: bash
