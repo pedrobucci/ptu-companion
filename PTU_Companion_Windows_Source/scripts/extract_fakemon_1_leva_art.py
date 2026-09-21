@@ -14,9 +14,10 @@ from PIL import Image
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "seed" / "content-packs" / "campaign-homebrew-fakemon-1-leva" / "assets" / "species"
 OLD_PACK = ROOT / "bundled-packs" / "campaign-homebrew-fakemon-1-leva-1.1.0.ptucp"
+V2_PACK = ROOT / "bundled-packs" / "campaign-homebrew-fakemon-1-leva-2.0.0.ptucp"
 ART_SOURCE = ROOT / "docs" / "source" / "Fakemon_1_leva_art"
 
-# These four already have the exact campaign artwork in the previous bundled pack.
+# These four already have the exact campaign artwork in the bundled campaign pack.
 LEGACY_CAMPAIGN_ART = (
     "panthore",
     "panzeus",
@@ -69,9 +70,18 @@ def write_webp(raw: bytes, logical_id: str) -> Path:
 
 
 def materialize_legacy_campaign_art() -> None:
-    if not OLD_PACK.exists():
-        raise RuntimeError(f"Missing previous pack used as artwork source: {OLD_PACK}")
-    with zipfile.ZipFile(OLD_PACK) as archive:
+    source_pack = OLD_PACK if OLD_PACK.exists() else V2_PACK if V2_PACK.exists() else None
+    if source_pack is None:
+        missing = [logical_id for logical_id in LEGACY_CAMPAIGN_ART if not (OUT / f"{logical_id}.webp").exists()]
+        if missing:
+            raise RuntimeError(
+                "No bundled campaign pack is available as an artwork source and these generated files are missing: "
+                + ", ".join(missing)
+            )
+        print("campaign artwork: reusing already materialized WebP files")
+        return
+
+    with zipfile.ZipFile(source_pack) as archive:
         names = archive.namelist()
         for logical_id in LEGACY_CAMPAIGN_ART:
             prefix = f"assets/species/{logical_id}."
@@ -80,7 +90,11 @@ def materialize_legacy_campaign_art() -> None:
                 if name.lower().startswith(prefix) and name.lower().endswith((".png", ".jpg", ".jpeg", ".webp"))
             ]
             if not candidates:
-                raise RuntimeError(f"Previous pack has no artwork for {logical_id}")
+                target = OUT / f"{logical_id}.webp"
+                if target.exists():
+                    print(f"campaign artwork: reusing {target.relative_to(ROOT)}")
+                    continue
+                raise RuntimeError(f"Bundled pack has no artwork for {logical_id}: {source_pack}")
             write_webp(archive.read(candidates[0]), logical_id)
 
 
