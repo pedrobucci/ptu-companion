@@ -10,7 +10,11 @@ on:
       - 'PTU_Companion_Windows_Source/scripts/add_fakemon_1_leva.mjs'
       - 'PTU_Companion_Windows_Source/scripts/extract_fakemon_1_leva_art.py'
       - 'PTU_Companion_Windows_Source/scripts/build_fakemon_1_leva_pack.py'
+      - 'PTU_Companion_Windows_Source/scripts/build_fakemon_1_leva_mobile_bundle.py'
       - 'PTU_Companion_Windows_Source/scripts/verify_fakemon_1_leva_v2.mjs'
+      - 'PTU_Companion_Windows_Source/scripts/verify_pack_manager_beta7.mjs'
+      - 'PTU_Companion_Android_Tauri/scripts/verify-fakemon-v2-runtime.mjs'
+      - 'PTU_Companion_Android_Tauri/www/index.html'
       - 'PTU_Companion_Windows_Source/docs/source/Fakemon_1_leva_art/**'
 
 permissions:
@@ -42,16 +46,11 @@ jobs:
       - name: Regenerate default definition databases
         run: node PTU_Companion_Windows_Source/scripts/add_fakemon_1_leva.mjs
 
-      - name: Audit Android data-bundle generation hooks
-        shell: bash
-        run: |
-          echo '--- files containing mobile-data references (generated bundles excluded) ---'
-          grep -RIl --exclude='mobile-data.json' --exclude='mobile-data.js' 'mobile-data' PTU_Companion_Android_Tauri PTU_Companion_Windows_Source || true
-          echo '--- scripts/files with android/mobile/export names ---'
-          find PTU_Companion_Android_Tauri PTU_Companion_Windows_Source -type f \( -iname '*android*' -o -iname '*mobile*' -o -iname '*export*' \) | sort | head -n 200
-
       - name: Build v2 PTU content packs
         run: python PTU_Companion_Windows_Source/scripts/build_fakemon_1_leva_pack.py
+
+      - name: Build Android Fakemon v2 runtime overlay
+        run: python PTU_Companion_Windows_Source/scripts/build_fakemon_1_leva_mobile_bundle.py
 
       - name: Remove superseded v1.1 bundled packs
         shell: bash
@@ -90,6 +89,10 @@ jobs:
       - name: Verify Windows application regressions
         working-directory: PTU_Companion_Windows_Source
         run: npm run verify
+
+      - name: Verify Android Fakemon v2 runtime overlay
+        working-directory: PTU_Companion_Android_Tauri
+        run: node scripts/verify-fakemon-v2-runtime.mjs
 
       - name: Verify Android application regressions
         working-directory: PTU_Companion_Android_Tauri
