@@ -14,6 +14,8 @@ on:
       - 'PTU_Companion_Windows_Source/scripts/verify_fakemon_1_leva_v2.mjs'
       - 'PTU_Companion_Windows_Source/scripts/verify_pack_manager_beta7.mjs'
       - 'PTU_Companion_Windows_Source/scripts/verify_beta9_pack_images_trainer_xp.mjs'
+      - 'PTU_Companion_Windows_Source/scripts/verify_beta13_imported_weapons.mjs'
+      - 'PTU_Companion_Windows_Source/scripts/verify_beta14_hustle.mjs'
       - 'PTU_Companion_Android_Tauri/scripts/verify-fakemon-v2-runtime.mjs'
       - 'PTU_Companion_Android_Tauri/www/index.html'
       - 'PTU_Companion_Windows_Source/docs/source/Fakemon_1_leva_art/**'
