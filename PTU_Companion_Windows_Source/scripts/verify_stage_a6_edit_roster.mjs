@@ -49,6 +49,6 @@ assert.match(appSource,/name:'color',label:'Roster color',type:'color'/,'Roster 
 assert.match(appSource,/r\.name=name; r\.role=role; r\.maxMembers=max; r\.active=.*r\.color=color;/,'editing must update only Roster metadata in place');
 assert.match(appSource,/✎ Edit Roster/,'Roster screen must expose an Edit Roster action');
 assert.match(appSource,/chip\('HIDDEN','chip-neutral'\)/,'hidden Rosters must remain visible and identifiable in the Roster manager');
-assert.match(appSource,/createRoster,editRoster,storePokemon/,'Roster editor must be exposed to inline UI actions');
+assert.match(appSource,/createRoster,editRoster[^}]*storePokemon/s,'Roster editor must remain exposed to inline UI actions even when later Roster handlers are added');
 
 console.log('Stage A.6 Windows Roster edit regression OK');
