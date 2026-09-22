@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
+import {fileURLToPath} from 'node:url';
 import {normalizeCapability, normalizeNaturewalkTerrains, formatCapabilityLabel} from '../rules/capability-normalization.mjs';
 import {DefinitionRepository} from '../definitions/repository.mjs';
 
@@ -20,7 +21,7 @@ const textLegacy=normalizeCapability('Naturewalk (Ocean, Urban)');
 assert.deepEqual(textLegacy.terrain,['Ocean','Urban']);
 assert.equal(formatCapabilityLabel(textLegacy),'Naturewalk [Ocean, Urban]');
 
-const db=new DefinitionRepository(new URL('../seed/definitions/ptu_seed_v1.0.sqlite3',import.meta.url).pathname);
+const db=new DefinitionRepository(fileURLToPath(new URL('../seed/definitions/ptu_seed_v1.0.sqlite3',import.meta.url)));
 try {
   const species=db.getResolved({rulesetId:'all-provided-material',kind:'species',id:'clefable-k'});
   assert.ok(species,'Expected Clefable K. in the default all-provided-material ruleset');

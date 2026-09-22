@@ -771,7 +771,13 @@ function moveSourceInfo(move={}){
   return {src,label,tone,longLabel};
 }
 function statDisplayName(key){return ({hp:'HP',attack:'Attack',defense:'Defense',special_attack:'Sp. Attack',special_defense:'Sp. Defense',speed:'Speed'})[key]||key;}
-function formatCapability(c){if(!c)return '—'; if(typeof c==='string')return c; if(c.kind==='jump')return `${c.name||'Jump'} ${c.high??'?'}/${c.long??'?'}`; return `${c.name||c.capability_id||'Capability'}${c.value!=null?` ${c.value}`:''}`;}
+function normalizeNaturewalkTerrains(c){
+  if(!c)return []; const source=typeof c==='string'?c:(c.terrains??c.terrain??'');
+  const fromName=typeof c==='string'?c:String(c.name||''); const nameMatch=fromName.match(/^naturewalk\s*(?:\[([^\]]+)\]|\(([^)]+)\))$/i);
+  const raw=(source===''&&nameMatch)?(nameMatch[1]||nameMatch[2]):source; const values=(Array.isArray(raw)?raw:[raw]).flatMap(v=>String(v??'').split(/[,;|/]/)).map(v=>v.trim()).filter(Boolean);
+  const seen=new Set(); return values.filter(v=>{const k=v.toLocaleLowerCase();if(seen.has(k))return false;seen.add(k);return true;});
+}
+function formatCapability(c){if(!c)return '—'; if(typeof c==='string'&&!/^naturewalk(?:\s|\[|\(|$)/i.test(c.trim()))return c; if(c?.kind==='jump')return `${c.name||'Jump'} ${c.high??'?'}/${c.long??'?'}`; const id=String(c?.capability_id||c?.id||c?.name||c||'').trim().toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,''); if(id==='naturewalk'||/^naturewalk(?:\s|\[|\(|$)/i.test(String(c?.name||c||'').trim())){const terrains=normalizeNaturewalkTerrains(c);return terrains.length?`Naturewalk [${terrains.join(', ')}]`:'Naturewalk';} return `${c.name||c.capability_id||'Capability'}${c.value!=null?` ${c.value}`:''}`;}
 function abilitySlotLabel(index){return index===0?'Starting Ability':index===1?'Level 20 Ability':index===2?'Level 40 Ability':`Ability ${index+1}`;}
 async function setCreatureTab(tab){
   const valid=['sheet','moves','abilities','species','type','pokedex']; state.ui.creatureTab=valid.includes(tab)?tab:'sheet'; persist(); render();

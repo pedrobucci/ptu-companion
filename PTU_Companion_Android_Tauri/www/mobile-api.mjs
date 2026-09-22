@@ -4,6 +4,7 @@ import {resolveHeldItemEffect, applyHeldItemToTypeProfile, applyHeldItemToEffect
 import {resolveTrainerModel} from './rules/trainer-engine.mjs';
 import {previewTrainerProgression,applyTrainerProgression,previewTrainerXpPurchase,applyTrainerXpPurchase} from './rules/trainer-progression-engine.mjs';
 import {itemUsageMetadata} from './rules/item-metadata.mjs';
+import {normalizeCapabilities} from './rules/capability-normalization.mjs';
 
 const MOBILE_KEY='ptu-companion-android-store-v1';
 const data=window.__PTU_MOBILE_DATA__;
@@ -38,7 +39,7 @@ function importedDefinitionRecord(kind,row,pack){
     frequency:raw.frequency_text||raw.frequency_action_text||raw.frequency?.raw||null,effect:raw.effect_text||null,prerequisites:raw.prerequisites_text||null,
     price:raw.price??null,damageBase:raw.damage_base??null,ac:raw.ac??null,range:raw.range_text||null,contestType:raw.contest_type||null,contestEffect:raw.contest_effect||null,
     dexNumber:raw.dex_number??raw.national_dex_number??null,enabledForCreation:raw.enabled_for_character_creation??null,completeness:raw.mechanical_completeness||null,
-    types:Array.isArray(raw.types)?raw.types:[],baseStats:raw.base_stats||null,abilities:raw.ability_slots||[],capabilities:raw.capabilities||[],levelUpMoves:raw.level_up_moves||[],
+    types:Array.isArray(raw.types)?raw.types:[],baseStats:raw.base_stats||null,abilities:raw.ability_slots||[],capabilities:normalizeCapabilities(raw.capabilities),levelUpMoves:raw.level_up_moves||[],
     raw,rawText:raw.raw_text||null,semanticAutomation:raw.semantic_automation||null,compiledEffects:raw.compiled_effects||[],prerequisiteSemantics:raw.prerequisite_semantics||null,
     defenseProfile:raw.type_defense_profile||null,evolution:raw.evolution||null,evolutionText:raw.evolution_text||null,skills:raw.skills||null,skillsText:raw.skills_text||null,
     capabilitiesText:raw.capabilities_text||null,tmMoves:raw.tm_moves||[],tutorMoves:raw.tutor_moves||[],eggMoves:raw.egg_moves||[],androidImported:true
@@ -147,14 +148,14 @@ class MobileDefinitions {
   getRuleset(id){ return deep((data.rulesets||[]).find(r=>r.id===id)||null); }
   getPacks(){ return deep(data.packs||[]); }
   _map(rs,kind){ return data.resolved?.[rs]?.[kind]||{}; }
-  getResolved({rulesetId,kind,id}){ const vid=this._map(rulesetId,kind)[id],record=data.records?.[vid]; return record?{...deep(record),kind}:null; }
+  getResolved({rulesetId,kind,id}){ const vid=this._map(rulesetId,kind)[id],record=data.records?.[vid]; if(!record)return null; const out={...deep(record),kind}; if(kind==='species')out.capabilities=normalizeCapabilities(out.capabilities||out.raw?.capabilities); return out; }
   listResolved({rulesetId,kind,q='',limit=60,offset=0}){
     const needle=norm(q); const ids=Object.keys(this._map(rulesetId,kind)); const rows=[];
     for(const id of ids){ const row=this.getResolved({rulesetId,kind,id}); if(!row)continue; if(needle && !norm(`${id} ${row.name||''} ${row.effect||''} ${JSON.stringify(row.raw||{})}`).includes(needle))continue; rows.push(row); }
     rows.sort((a,b)=>String(a.name||a.id).localeCompare(String(b.name||b.id))); return rows.slice(Number(offset)||0,(Number(offset)||0)+(Number(limit)||60));
   }
   countResolved({rulesetId,kind,q=''}){ return this.listResolved({rulesetId,kind,q,limit:100000,offset:0}).length; }
-  getVersions({kind,id}){ const vids=data.versionGroups?.[`${kind}:${id}`]||[]; return vids.map(v=>data.records[v]?{...deep(data.records[v]),kind}:null).filter(Boolean); }
+  getVersions({kind,id}){ const vids=data.versionGroups?.[`${kind}:${id}`]||[]; return vids.map(v=>{const record=data.records[v];if(!record)return null;const out={...deep(record),kind};if(kind==='species')out.capabilities=normalizeCapabilities(out.capabilities||out.raw?.capabilities);return out;}).filter(Boolean); }
   getCounts(rulesetId){ const out={}; for(const k of ALLOWED_KINDS)out[k]=Object.keys(this._map(rulesetId,k)).length; return out; }
   getDamageBase(db){ return deep(data.damageBase?.[String(Number(db))]||null); }
   getTypeMatchups(){ return deep(data.typeMatchups||[]); }

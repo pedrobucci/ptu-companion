@@ -1,4 +1,5 @@
 import { DatabaseSync } from 'node:sqlite';
+import {normalizeCapabilities} from '../rules/capability-normalization.mjs';
 
 const safeJson = (value, fallback={}) => {
   try { return value == null ? fallback : JSON.parse(value); }
@@ -299,7 +300,7 @@ export class DefinitionRepository {
       types:Array.isArray(raw.types)?raw.types:[],
       baseStats:raw.base_stats || null,
       abilities:raw.ability_slots || [],
-      capabilities:raw.capabilities || [],
+      capabilities:normalizeCapabilities(raw.capabilities),
       levelUpMoves:raw.level_up_moves || [],
       icon:raw.icon_data_url || raw.icon_url || raw.icon || null,
       image:raw.image_data_url || raw.image_url || raw.artwork_url || null,
