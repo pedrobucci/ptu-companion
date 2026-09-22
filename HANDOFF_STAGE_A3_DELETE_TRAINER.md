@@ -47,7 +47,7 @@ O fluxo agora:
 2. usa o modal estilizado padrão da aplicação, sem `window.confirm`;
 3. explica que os dados pertencentes ao Trainer selecionado serão removidos, enquanto Content Packs/configurações globais permanecem;
 4. no Windows, chama `DELETE /api/profiles/:id` e carrega o perfil retornado;
-5. em runtime local/Android, remove o perfil atual e deixa um Trainer vazio funcional quando necessário;
+5. em runtime local/Android, deixa um Trainer vazio funcional quando o Trainer corrente é removido e não há outro perfil persistido disponível;
 6. invalida dados de referência/progressão ligados ao Trainer anterior antes de renderizar o substituto.
 
 ## Compatibilidade
