@@ -35,14 +35,22 @@ export class CampaignRepository {
 
   deleteProfile(profileId) {
     const profiles=this.listProfiles();
-    if(profiles.length<=1) throw new Error('At least one Trainer profile must remain');
     const exists=profiles.some(p=>p.id===profileId);
     if(!exists) throw new Error('Trainer profile not found');
-    this.db.prepare('DELETE FROM profiles WHERE id=?').run(profileId);
-    const active=this.getActiveProfileId();
-    if(active===profileId || !this.db.prepare('SELECT id FROM profiles WHERE id=?').get(active)){
-      const next=this.db.prepare('SELECT id FROM profiles ORDER BY updated_at DESC LIMIT 1').get()?.id;
-      if(next) this.setActiveProfileId(next);
+    this.db.exec('BEGIN IMMEDIATE;');
+    try {
+      this.db.prepare('DELETE FROM profiles WHERE id=?').run(profileId);
+      const configured=this.db.prepare("SELECT value FROM app_meta WHERE key='active_profile_id'").get()?.value || null;
+      const configuredExists=configured && this.db.prepare('SELECT id FROM profiles WHERE id=?').get(configured);
+      if(!configuredExists){
+        const next=this.db.prepare('SELECT id FROM profiles ORDER BY updated_at DESC, display_name LIMIT 1').get()?.id || null;
+        if(next) this.setActiveProfileId(next);
+        else this.db.prepare("DELETE FROM app_meta WHERE key='active_profile_id'").run();
+      }
+      this.db.exec('COMMIT;');
+    } catch (error) {
+      this.db.exec('ROLLBACK;');
+      throw error;
     }
     return this.getActiveProfileId();
   }
