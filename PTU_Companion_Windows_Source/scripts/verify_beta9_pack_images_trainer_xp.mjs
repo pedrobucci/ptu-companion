@@ -8,9 +8,9 @@ import {previewTrainerProgression,applyTrainerProgression,previewTrainerXpPurcha
 
 const root=new URL('..',import.meta.url).pathname;
 const seedDb=join(root,'seed','definitions','ptu_seed_v1.0.sqlite3');
-const packPath=join(root,'bundled-packs','campaign-homebrew-fakemon-1-leva-2.0.0.ptucp');
+const packPath=join(root,'bundled-packs','campaign-homebrew-fakemon-1-leva-2.0.1.ptucp');
 const pack=inspectContentPack(readFileSync(packPath));
-assert.equal(pack.manifest.version,'2.0.0');
+assert.equal(pack.manifest.version,'2.0.1');
 assert.equal(pack.counts.species,13);
 const fakemonSpecies=['panthore','panzeus','clefable-w','clefable-k','greavard','houndstone','maschiff','mabosstiff','fidough','dachsbun','zorua-hisui','zoroark-hisui','urania'];
 for(const id of fakemonSpecies) assert(pack.entries.has(`assets/species/${id}.webp`),`missing portrait ${id}`);
