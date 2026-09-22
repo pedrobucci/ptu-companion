@@ -123,6 +123,14 @@ npm run verify
 
 `npm run verify` runs the project regression suite for the supported rules and content-pack behaviors.
 
+## Release workflow
+
+`main` is the source of truth for published application versions. Release changes should be prepared on a dedicated branch, reviewed through a Pull Request and merged only after version metadata and verification are complete. A release tag then points to the exact merged `main` commit used to build the distributable files.
+
+Generated Windows `.exe` and Android `.apk` files are published as **GitHub Release assets**, together with checksums and non-secret build/signing metadata, rather than being committed to the source tree. Release tags are treated as immutable so every published binary remains traceable and reproducible from a specific source commit.
+
+For the complete versioning, tagging, Android signing and publishing procedure, see [`GITHUB_PUBLISHING_CHECKLIST.md`](GITHUB_PUBLISHING_CHECKLIST.md).
+
 ## Content packs included by default
 
 The documented beta bundles and enables the following packs in the `All Supplied Material` ruleset:
