@@ -5,18 +5,24 @@ on:
   push:
     branches:
       - content/fakemon-1-leva-v2
+      - feature/pokemon-forms-roster-qol
     paths:
       - '.github/workflows/regenerate-fakemon-v2.yml'
+      - 'PTU_Companion_Windows_Source/package.json'
+      - 'PTU_Companion_Android_Tauri/package.json'
+      - 'PTU_Companion_Windows_Source/scripts/fix_hisuian_zorua_types.py'
       - 'PTU_Companion_Windows_Source/scripts/add_fakemon_1_leva.mjs'
       - 'PTU_Companion_Windows_Source/scripts/extract_fakemon_1_leva_art.py'
       - 'PTU_Companion_Windows_Source/scripts/build_fakemon_1_leva_pack.py'
       - 'PTU_Companion_Windows_Source/scripts/build_fakemon_1_leva_mobile_bundle.py'
       - 'PTU_Companion_Windows_Source/scripts/verify_fakemon_1_leva_v2.mjs'
+      - 'PTU_Companion_Windows_Source/scripts/verify_hisuian_zorua_types.mjs'
       - 'PTU_Companion_Windows_Source/scripts/verify_pack_manager_beta7.mjs'
       - 'PTU_Companion_Windows_Source/scripts/verify_beta9_pack_images_trainer_xp.mjs'
       - 'PTU_Companion_Windows_Source/scripts/verify_beta13_imported_weapons.mjs'
       - 'PTU_Companion_Windows_Source/scripts/verify_beta14_hustle.mjs'
       - 'PTU_Companion_Android_Tauri/scripts/verify-fakemon-v2-runtime.mjs'
+      - 'PTU_Companion_Android_Tauri/scripts/verify-hisuian-zorua-types.mjs'
       - 'PTU_Companion_Android_Tauri/www/index.html'
       - 'PTU_Companion_Windows_Source/docs/source/Fakemon_1_leva_art/**'
 
@@ -27,9 +33,15 @@ jobs:
   regenerate:
     runs-on: ubuntu-latest
     steps:
+      - name: Refuse regeneration directly on main
+        if: github.ref_name == 'main'
+        run: |
+          echo 'Run Fakemon regeneration from a dedicated content/feature branch, never directly from main.'
+          exit 1
+
       - uses: actions/checkout@v4
         with:
-          ref: content/fakemon-1-leva-v2
+          ref: ${{ github.ref_name }}
           fetch-depth: 0
 
       - uses: actions/setup-node@v4
@@ -43,35 +55,44 @@ jobs:
       - name: Install artwork dependencies
         run: python -m pip install --disable-pip-version-check pillow
 
+      - name: Apply owner-approved Hisuian typing correction
+        run: python PTU_Companion_Windows_Source/scripts/fix_hisuian_zorua_types.py
+
       - name: Materialize species artwork
         run: python PTU_Companion_Windows_Source/scripts/extract_fakemon_1_leva_art.py
 
       - name: Regenerate default definition databases
         run: node PTU_Companion_Windows_Source/scripts/add_fakemon_1_leva.mjs
 
-      - name: Build v2 PTU content packs
+      - name: Build corrected PTU content packs
         run: python PTU_Companion_Windows_Source/scripts/build_fakemon_1_leva_pack.py
 
       - name: Build Android Fakemon v2 runtime overlay
         run: python PTU_Companion_Windows_Source/scripts/build_fakemon_1_leva_mobile_bundle.py
 
-      - name: Remove superseded v1.1 bundled packs
+      - name: Remove superseded bundled Fakemon archives
         shell: bash
         run: |
-          rm -f PTU_Companion_Windows_Source/bundled-packs/campaign-homebrew-fakemon-1-leva-1.1.0.ptucp
-          rm -f PTU_Companion_Windows_Source/bundled-packs/campaign-homebrew-fakemon-1-leva-1.1.0_SHA256.txt
-          rm -f PTU_Companion_Android_Tauri/bundled-packs/campaign-homebrew-fakemon-1-leva-1.1.0.ptucp
-          rm -f PTU_Companion_Android_Tauri/bundled-packs/campaign-homebrew-fakemon-1-leva-1.1.0_SHA256.txt
+          for version in 1.1.0 2.0.0; do
+            rm -f "PTU_Companion_Windows_Source/bundled-packs/campaign-homebrew-fakemon-1-leva-${version}.ptucp"
+            rm -f "PTU_Companion_Windows_Source/bundled-packs/campaign-homebrew-fakemon-1-leva-${version}_SHA256.txt"
+            rm -f "PTU_Companion_Android_Tauri/bundled-packs/campaign-homebrew-fakemon-1-leva-${version}.ptucp"
+            rm -f "PTU_Companion_Android_Tauri/bundled-packs/campaign-homebrew-fakemon-1-leva-${version}_SHA256.txt"
+          done
 
-      - name: Verify v2 content
+      - name: Verify Fakemon content
         run: node PTU_Companion_Windows_Source/scripts/verify_fakemon_1_leva_v2.mjs
 
-      - name: Cross-check all default databases
+      - name: Cross-check all default databases and regional typing
         shell: bash
         run: |
           python - <<'PY'
+          import json
           import sqlite3
           from pathlib import Path
+
+          pack_id = 'campaign-homebrew-fakemon-1-leva'
+          expected = ['Normal', 'Ghost']
           dbs = [
               Path('PTU_Companion_Windows_Source/seed/definitions/ptu_seed_v1.0.sqlite3'),
               Path('PTU_Companion_Windows_Source/data/definitions/ptu_definitions.sqlite3'),
@@ -79,29 +100,34 @@ jobs:
           ]
           for path in dbs:
               con = sqlite3.connect(path)
-              rows = dict(con.execute("select definition_kind,count(*) from definition_versions where content_pack_id='campaign-homebrew-fakemon-1-leva' group by definition_kind"))
-              version = con.execute("select version from content_packs where id='campaign-homebrew-fakemon-1-leva'").fetchone()
-              con.close()
+              rows = dict(con.execute("select definition_kind,count(*) from definition_versions where content_pack_id=? group by definition_kind", (pack_id,)))
+              version = con.execute("select version from content_packs where id=?", (pack_id,)).fetchone()
               assert rows.get('species') == 13, (path, rows)
               assert rows.get('moves') == 8, (path, rows)
               assert rows.get('abilities') == 3, (path, rows)
-              assert version and version[0] == '2.0.0', (path, version)
-              print(path, rows, version[0])
+              assert version and version[0] == '2.0.1', (path, version)
+              for species_id in ('zorua-hisui', 'zoroark-hisui'):
+                  row = con.execute("select raw_json from definition_versions where definition_kind='species' and logical_id=? and content_pack_id=?", (species_id, pack_id)).fetchone()
+                  assert row, (path, species_id, 'missing')
+                  raw = json.loads(row[0])
+                  assert raw.get('types') == expected, (path, species_id, raw.get('types'))
+                  assert 'Fairy' not in raw.get('types', []), (path, species_id, 'Fairy regression')
+              for species_id in ('zorua', 'zoroark'):
+                  count = con.execute("select count(*) from definition_versions where definition_kind='species' and logical_id=? and content_pack_id=?", (species_id, pack_id)).fetchone()[0]
+                  assert count == 0, (path, species_id, 'regional pack overwrote canonical species')
+              con.close()
+              print(path, rows, version[0], 'Hisuian types OK')
           PY
 
       - name: Verify Windows application regressions
         working-directory: PTU_Companion_Windows_Source
         run: npm run verify
 
-      - name: Verify Android Fakemon v2 runtime overlay
-        working-directory: PTU_Companion_Android_Tauri
-        run: node scripts/verify-fakemon-v2-runtime.mjs
-
       - name: Verify Android application regressions
         working-directory: PTU_Companion_Android_Tauri
         run: npm run verify
 
-      - name: Commit generated defaults, artwork and packs
+      - name: Commit generated defaults, source corrections, artwork and packs
         shell: bash
         run: |
           git config user.name 'github-actions[bot]'
@@ -110,6 +136,6 @@ jobs:
           if git diff --cached --quiet; then
             echo 'No generated changes to commit.'
           else
-            git commit -m 'chore(content): regenerate Fakemon v2 defaults [skip ci]'
-            git push origin HEAD:content/fakemon-1-leva-v2
+            git commit -m 'chore(content): regenerate corrected Fakemon defaults [skip ci]'
+            git push origin HEAD:"${GITHUB_REF_NAME}"
           fi
