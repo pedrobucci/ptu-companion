@@ -35,7 +35,7 @@ try {
     assert.deepEqual([...(p.rosterIds||[])].sort(),preservedMemberships.get(p.id),`Pokémon ${p.id} must preserve memberships in other Rosters`);
   }
   assert.equal(db.prepare("SELECT COUNT(*) AS n FROM rosters WHERE id=? AND trainer_id=?").get(targetId,'roster-delete-test').n,0,'deleted Roster row must be removed');
-  assert.equal(db.prepare("SELECT COUNT(*) AS n FROM pokemon_rosters WHERE roster_id=?").get(targetId).n,0,'deleted Roster membership rows must be removed');
+  assert.equal(db.prepare("SELECT COUNT(*) AS n FROM roster_memberships WHERE roster_id=?").get(targetId).n,0,'deleted Roster membership rows must be removed');
   assert.equal(db.prepare("SELECT COUNT(*) AS n FROM pokemon WHERE trainer_id=?").get('roster-delete-test').n,pokemonIdsBefore.length,'Pokémon rows must remain after Roster deletion');
 } finally {
   db.close();
