@@ -70,6 +70,20 @@ def main() -> None:
         "inspected.manifest.version!=='2.0.1'",
     )
 
+    # Older regression coverage also opens the bundled Fakemon archive directly;
+    # keep its version pin synchronized with the corrected content-pack revision.
+    windows_beta9 = ROOT / "scripts" / "verify_beta9_pack_images_trainer_xp.mjs"
+    replace_or_verify(
+        windows_beta9,
+        "campaign-homebrew-fakemon-1-leva-2.0.0.ptucp",
+        "campaign-homebrew-fakemon-1-leva-2.0.1.ptucp",
+    )
+    replace_or_verify(
+        windows_beta9,
+        "assert.equal(pack.manifest.version,'2.0.0');",
+        "assert.equal(pack.manifest.version,'2.0.1');",
+    )
+
     android_verify = REPO_ROOT / "PTU_Companion_Android_Tauri" / "scripts" / "verify-fakemon-v2-runtime.mjs"
     replace_or_verify(android_verify, "assert.equal(pack.version,'2.0.0');", "assert.equal(pack.version,'2.0.1');")
     replace_or_verify(
