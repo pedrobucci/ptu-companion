@@ -50,10 +50,10 @@ const GM_RESOURCE_TARGETS=[
 """
     must_replace(path, editor_old, editor_new, marker='async function editTrainerNotes(){')
 
-    profile_old = """<button class=\"btn btn-ghost full\" onclick=\"openTrainerBackgroundEditor()\">Edit Background</button>`)}`)}
+    profile_old = r"""<button class="btn btn-ghost full" onclick="openTrainerBackgroundEditor()">Edit Background</button>`)}
       ${section('GM GRANTS'"""
-    profile_new = r"""<button class=\"btn btn-ghost full\" onclick=\"openTrainerBackgroundEditor()\">Edit Background</button>`)}`)}
-      ${section('TRAINER NOTES',td.notes.trim()?`<div class=\"flow-note trainer-notes-block\">${esc(td.notes).replace(/\n/g,'<br>')}</div>`:'<p class=\"muted\">No Trainer notes yet.</p>',`<button class=\"btn btn-ghost btn-small\" onclick=\"editTrainerNotes()\">${td.notes.trim()?'Edit Notes':'Add Notes'}</button>`)}
+    profile_new = r"""<button class="btn btn-ghost full" onclick="openTrainerBackgroundEditor()">Edit Background</button>`)}
+      ${section('TRAINER NOTES',td.notes.trim()?`<div class="flow-note trainer-notes-block">${esc(td.notes).replace(/\n/g,'<br>')}</div>`:'<p class="muted">No Trainer notes yet.</p>',`<button class="btn btn-ghost btn-small" onclick="editTrainerNotes()">${td.notes.trim()?'Edit Notes':'Add Notes'}</button>`)}
       ${section('GM GRANTS'"""
     must_replace(path, profile_old, profile_new, marker="section('TRAINER NOTES'")
 
