@@ -12,6 +12,6 @@ assert.match(appSource,/name:'color',label:'Roster color',type:'color'/,'Android
 assert.match(appSource,/r\.name=name; r\.role=role; r\.maxMembers=max; r\.active=.*r\.color=color;/,'Android must update Roster metadata in place without rebuilding memberships');
 assert.match(appSource,/✎ Edit Roster/,'Android Roster screen must expose Edit Roster');
 assert.match(appSource,/chip\('HIDDEN','chip-neutral'\)/,'Android must identify hidden Rosters while keeping them manageable');
-assert.match(appSource,/createRoster,editRoster,storePokemon/,'Android Roster editor must be exposed to inline UI actions');
+assert.match(appSource,/createRoster,editRoster[^}]*storePokemon/s,'Android Roster editor must remain exposed to inline UI actions even when later Roster handlers are added');
 
 console.log('Stage A.6 Android Roster edit regression OK');
