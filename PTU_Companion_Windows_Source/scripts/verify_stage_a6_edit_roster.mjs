@@ -33,7 +33,7 @@ try {
   const membersAfter=loaded.pokemon.filter(p=>(p.rosterIds||[]).includes('personal')).map(p=>p.id).sort();
   assert.deepEqual(membersAfter,membersBefore,'editing Roster metadata must not remove or rewrite Pokémon memberships');
   const row=db.prepare("SELECT name,role,max_members,active,color FROM rosters WHERE id='personal' AND trainer_id='roster-edit-test'").get();
-  assert.deepEqual(row,{name:'Investigation Team',role:'INVESTIGATION',max_members:Math.max(8,membersBefore.length),active:0,color:'#704170'},'Roster edit values must be stored in normalized roster columns');
+  assert.deepEqual({...row},{name:'Investigation Team',role:'INVESTIGATION',max_members:Math.max(8,membersBefore.length),active:0,color:'#704170'},'Roster edit values must be stored in normalized roster columns');
 } finally {
   db.close();
   await rm(temp,{recursive:true,force:true});
