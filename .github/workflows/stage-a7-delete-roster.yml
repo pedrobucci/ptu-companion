@@ -10,6 +10,8 @@ on:
       - 'PTU_Companion_Windows_Source/scripts/apply_stage_a7_delete_roster.py'
       - 'PTU_Companion_Windows_Source/scripts/verify_stage_a7_delete_roster.mjs'
       - 'PTU_Companion_Android_Tauri/scripts/verify-stage-a7-delete-roster.mjs'
+      - 'PTU_Companion_Windows_Source/scripts/verify_stage_a6_edit_roster.mjs'
+      - 'PTU_Companion_Android_Tauri/scripts/verify-stage-a6-edit-roster.mjs'
       - 'PTU_Companion_Windows_Source/static-preview/app.js'
       - 'PTU_Companion_Android_Tauri/www/app.js'
       - 'PTU_Companion_Windows_Source/package.json'
