@@ -12,7 +12,7 @@ vm.runInThisContext(fs.readFileSync(path.join(root,'www/mobile-data.js'),'utf8')
 vm.runInThisContext(fs.readFileSync(path.join(root,'www/mobile-runtime.js'),'utf8'));
 await new Promise(r=>setTimeout(r,30));
 const health=await (await fetch('/api/health')).json();
-if(health.version!=='2.2.0-android-beta.21') throw new Error('Wrong runtime version');
+if(health.version!=='2.2.0-android-beta.22') throw new Error('Wrong runtime version');
 const item=await (await fetch('/api/definitions/items/verify-item')).json();
 if(item.definition?.name!=='Verify Item') throw new Error('Imported definition overlay failed');
 const app=fs.readFileSync(path.join(root,'www/app.js'),'utf8');

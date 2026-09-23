@@ -1,6 +1,6 @@
 [package]
 name = "ptu-companion"
-version = "2.2.0-beta.21"
+version = "2.2.0-beta.22"
 description = "PTU Companion - offline companion for Pokemon Tabletop United"
 authors = ["PTU Companion contributors"]
 edition = "2021"
