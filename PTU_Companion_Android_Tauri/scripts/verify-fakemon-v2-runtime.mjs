@@ -24,7 +24,7 @@ assert.ok(data,'Android mobile data bundle did not initialize');
 const packId='campaign-homebrew-fakemon-1-leva';
 const pack=(data.packs||[]).find(p=>String(p?.id||'')===packId);
 assert.ok(pack,'Fakemon v2 bundled pack metadata missing from Android runtime');
-assert.equal(pack.version,'2.0.0');
+assert.equal(pack.version,'2.0.1');
 assert.equal(pack.bundledRuntimeOverlay,true);
 
 const records=Object.values(data.records||{}).filter(r=>String(r?.contentPackId||'')===packId);
@@ -63,5 +63,5 @@ for(const row of records){
   assert.equal(data.resolved?.['all-provided-material']?.[row.kind]?.[row.id],row.versionId,`Resolved Android definition is stale for ${row.kind}:${row.id}`);
 }
 
-assert.equal(context.window.__PTU_FAKEMON_V2_BUNDLED_PACK__?.manifest?.version,'2.0.0');
+assert.equal(context.window.__PTU_FAKEMON_V2_BUNDLED_PACK__?.manifest?.version,'2.0.1');
 console.log('PTU Companion Android Fakemon v2 runtime overlay verification: OK',counts);

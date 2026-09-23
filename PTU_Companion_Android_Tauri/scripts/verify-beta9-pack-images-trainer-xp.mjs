@@ -10,7 +10,7 @@ globalThis.__TAURI__={core:{invoke:async cmd=>cmd==='load_content_packs'?[]:Prom
 vm.runInThisContext(fs.readFileSync(path.join(root,'www/mobile-data.js'),'utf8'));
 vm.runInThisContext(fs.readFileSync(path.join(root,'www/mobile-runtime.js'),'utf8'));
 await new Promise(r=>setTimeout(r,40));
-const health=await (await fetch('/api/health')).json();if(health.version!=='2.2.0-android-beta.21')throw new Error('Wrong beta.9 health version');
+const health=await (await fetch('/api/health')).json();if(health.version!=='2.2.0-android-beta.22')throw new Error('Wrong beta.9 health version');
 const portrait=window.__PTU_SPECIES_PORTRAIT__('panthore');if(!String(portrait||'').startsWith('data:image/png;base64,'))throw new Error('Bundled Panthore portrait was not resolved');
 for(const id of ['panthore','panzeus','clefable-w','clefable-k','greavard','houndstone','maschiff','mabosstiff']){
   const r=await fetch(`/api/definitions/species/${id}`);if(!r.ok)throw new Error(`Species ${id} missing`);const d=(await r.json()).definition;if(!String(d?.raw?.portrait_data_url||'').startsWith('data:image/'))throw new Error(`Portrait ${id} missing from mobile bundle`);
@@ -25,4 +25,4 @@ trainer.exp=10;
 r=await fetch('/api/trainer/xp-purchase',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({trainer,kind:'edges',id:edgeRows[0].id,selections:{},manualConfirm:true,gmOverride:true})});let buy=await r.json();if(!r.ok)throw new Error('Edge XP purchase failed: '+JSON.stringify(buy));if(buy.preview.cost!==1||buy.updatedTrainer.exp!==9)throw new Error('Edge XP purchase cost mismatch');
 trainer=buy.updatedTrainer;
 r=await fetch('/api/trainer/xp-purchase',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({trainer,kind:'features',id:featureRows[0].id,selections:{},manualConfirm:true,gmOverride:true})});buy=await r.json();if(!r.ok)throw new Error('Feature XP purchase failed: '+JSON.stringify(buy));if(buy.preview.cost!==2||buy.updatedTrainer.exp!==7)throw new Error('Feature XP purchase cost mismatch');
-console.log('PTU Companion Android v2.2.0-beta.21 pack images + Trainer XP verification: OK');
+console.log('PTU Companion Android v2.2.0-beta.22 pack images + Trainer XP verification: OK');

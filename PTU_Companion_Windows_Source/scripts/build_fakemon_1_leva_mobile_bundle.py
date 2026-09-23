@@ -10,7 +10,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 REPO_ROOT = ROOT.parent
 PACK_ID = "campaign-homebrew-fakemon-1-leva"
-VERSION = "2.0.0"
+VERSION = "2.0.1"
 SOURCE_ID = "fakemon-1-leva"
 PACK = ROOT / "bundled-packs" / f"{PACK_ID}-{VERSION}.ptucp"
 OUT = REPO_ROOT / "PTU_Companion_Android_Tauri" / "www" / "fakemon-v2-data.js"

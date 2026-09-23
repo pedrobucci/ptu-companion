@@ -6,7 +6,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 REPO_ROOT = ROOT.parent
 PACK_ID = "campaign-homebrew-fakemon-1-leva"
-VERSION = "2.0.0"
+VERSION = "2.0.1"
 SOURCE_ID = "fakemon-1-leva"
 DB = ROOT / "seed" / "definitions" / "ptu_seed_v1.0.sqlite3"
 ASSETS = ROOT / "seed" / "content-packs" / PACK_ID / "assets" / "species"

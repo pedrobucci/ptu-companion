@@ -1,0 +1,71 @@
+name: Stage A.3 Trainer deletion
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - feature/pokemon-forms-roster-qol
+    paths:
+      - '.github/workflows/stage-a3-delete-trainer.yml'
+      - 'PTU_Companion_Windows_Source/scripts/apply_stage_a3_delete_trainer.py'
+      - 'PTU_Companion_Windows_Source/scripts/verify_stage_a3_delete_trainer.mjs'
+      - 'PTU_Companion_Android_Tauri/scripts/verify-stage-a3-delete-trainer.mjs'
+      - 'PTU_Companion_Windows_Source/persistence/repository.mjs'
+      - 'PTU_Companion_Windows_Source/server.mjs'
+      - 'PTU_Companion_Windows_Source/static-preview/app.js'
+      - 'PTU_Companion_Android_Tauri/www/app.js'
+      - 'PTU_Companion_Windows_Source/package.json'
+      - 'PTU_Companion_Android_Tauri/package.json'
+
+permissions:
+  contents: write
+
+jobs:
+  apply-and-verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Apply Stage A.3 Trainer deletion
+        run: python PTU_Companion_Windows_Source/scripts/apply_stage_a3_delete_trainer.py
+
+      - name: Check patch formatting
+        run: git diff --check
+
+      - name: Verify Windows regressions
+        working-directory: PTU_Companion_Windows_Source
+        run: npm run verify
+
+      - name: Verify Android regressions
+        working-directory: PTU_Companion_Android_Tauri
+        run: npm run verify
+
+      - name: Commit Stage A.3 runtime changes
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add \
+            PTU_Companion_Windows_Source/persistence/repository.mjs \
+            PTU_Companion_Windows_Source/server.mjs \
+            PTU_Companion_Windows_Source/static-preview/app.js \
+            PTU_Companion_Windows_Source/package.json \
+            PTU_Companion_Android_Tauri/www/app.js \
+            PTU_Companion_Android_Tauri/package.json
+          if git diff --cached --quiet; then
+            echo 'Stage A.3 runtime patch already applied.'
+          else
+            git commit -m 'feat(stage-a3): support deleting Trainer profiles [skip ci]'
+            git push origin HEAD:"${GITHUB_REF_NAME}"
+          fi

@@ -15,7 +15,7 @@ const definitions=new DefinitionRepository(join(root,'seed','definitions','ptu_s
 const rulesetId='all-provided-material';
 const assert=(ok,msg)=>{if(!ok)throw new Error(msg)};
 
-assert(pkg.version==='2.1.0-beta.19','package.json version mismatch');
+assert(pkg.version==='2.1.0-beta.20','package.json version mismatch');
 assert(app.includes('BETA v2.1.0'),'Beta label missing from UI');
 assert(app.includes('function ownedInventory()')&&app.includes('Number(i.qty||0)>0'),'Backpack does not filter zero-quantity items');
 for(const token of ['openBackpackItemPicker','addCatalogItemToBackpack','createCustomItem','Custom Item','pokemonPortraitUrl','/api/pokemon/portrait/'])assert(app.includes(token),`Missing beta UI token: ${token}`);
@@ -81,7 +81,7 @@ let stderr=''; child.stderr.on('data',d=>stderr+=d);
 async function waitServer(){for(let i=0;i<80;i++){try{const r=await fetch(`http://127.0.0.1:${port}/api/health`);if(r.ok)return r.json();}catch{} await new Promise(r=>setTimeout(r,100));}throw new Error(`Server did not start: ${stderr}`)}
 try{
   const health=await waitServer();
-  assert(health.version==='2.1.0-beta.19','Server health version mismatch');
+  assert(health.version==='2.1.0-beta.20','Server health version mismatch');
   assert(health.schemaVersion===5,'Trainer/NPC portrait migration is not schema v5');
   const catalogRes=await fetch(`http://127.0.0.1:${port}/api/items/catalog`);
   const catalog=await catalogRes.json();
@@ -139,7 +139,7 @@ try{
 }
 
 definitions.close();
-console.log('PTU Companion Beta v2.1.0-beta.19 verification: OK');
+console.log('PTU Companion Beta v2.1.0-beta.20 verification: OK');
 console.log('Campaign classes/features/edges + profession Training Features: passed');
 console.log('Sunglasses resolved Trainer skill bonuses: passed');
 console.log('508 default item definitions (base + bundled Weapon/Gear packs) -> catalog API: passed');

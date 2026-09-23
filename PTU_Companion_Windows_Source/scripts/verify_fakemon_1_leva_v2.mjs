@@ -31,9 +31,9 @@ if(map.get('species:panthore').egg_moves.some(x=>x.move==='Eeire Impulse')) fail
 if(!rows.filter(r=>r.definition_kind==='species').every(r=>JSON.parse(r.raw_json).portrait_data_url?.startsWith('data:image/webp;base64,'))) fail('One or more species portraits are missing from default seed');
 db.close();
 
-const archive=readFileSync(join(root,'bundled-packs',`${packId}-2.0.0.ptucp`));
+const archive=readFileSync(join(root,'bundled-packs',`${packId}-2.0.1.ptucp`));
 const inspected=inspectContentPack(archive);
-if(inspected.manifest.id!==packId||inspected.manifest.version!=='2.0.0') fail('Pack manifest id/version mismatch');
+if(inspected.manifest.id!==packId||inspected.manifest.version!=='2.0.1') fail('Pack manifest id/version mismatch');
 if(inspected.counts.species!==13||inspected.counts.moves!==8||inspected.counts.abilities!==3) fail(`Pack definition counts mismatch: ${JSON.stringify(inspected.counts)}`);
 const art=[...inspected.entries.keys()].filter(x=>x.startsWith('assets/species/')&&x.endsWith('.webp'));
 if(art.length!==13) fail(`Expected 13 species artwork files, got ${art.length}`);
