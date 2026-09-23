@@ -1,0 +1,329 @@
+name: Build Windows beta.20 and Android beta.22
+
+on:
+  push:
+    branches:
+      - release/build-beta20-beta22
+    paths:
+      - '.github/workflows/build-beta20-beta22.yml'
+
+permissions:
+  contents: write
+
+env:
+  TARGET_SHA: 7f5afff3eeda1ed307186065df536d8ea14a398a
+  RELEASE_TAG: release-2.1.0-beta.20-2.2.0-beta.22
+  PREVIOUS_RELEASE_TAG: release-2.1.0-beta.19-2.2.0-beta.21
+  WINDOWS_VERSION: 2.1.0-beta.20
+  ANDROID_VERSION: 2.2.0-beta.22
+  ANDROID_VERSION_CODE: '2002022'
+
+jobs:
+  windows:
+    name: Windows 2.1.0-beta.20
+    runs-on: windows-latest
+    timeout-minutes: 45
+    steps:
+      - name: Checkout merged main source
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.TARGET_SHA }}
+
+      - name: Set up Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.24.x'
+
+      - name: Verify exact source and Windows version
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          if ((git rev-parse HEAD).Trim() -ne $env:TARGET_SHA) { throw 'Checkout does not match TARGET_SHA' }
+          $pkg = Get-Content -Raw 'PTU_Companion_Windows_Source/package.json' | ConvertFrom-Json
+          if ($pkg.version -ne $env:WINDOWS_VERSION) { throw "Unexpected Windows version: $($pkg.version)" }
+          if ((Get-Content -Raw 'PTU_Companion_Windows_Source/VERSION.txt').Trim() -ne $env:WINDOWS_VERSION) { throw 'VERSION.txt mismatch' }
+
+      - name: Verify Windows regression suite
+        working-directory: PTU_Companion_Windows_Source
+        shell: pwsh
+        run: npm run verify
+
+      - name: Rebuild embedded Windows runtime bundle
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $root = (Resolve-Path 'PTU_Companion_Windows_Source').Path
+          $stage = Join-Path $env:RUNNER_TEMP 'ptu-windows-runtime'
+          $zip = Join-Path $root 'desktop/runtime_bundle.zip'
+          if (Test-Path $stage) { Remove-Item -Recurse -Force $stage }
+          New-Item -ItemType Directory -Path $stage | Out-Null
+
+          $runtimeEntries = @(
+            'server.mjs',
+            'package.json',
+            'VERSION.txt',
+            'static-preview',
+            'seed',
+            'definitions',
+            'persistence',
+            'rules',
+            'bundled-packs'
+          )
+          foreach ($entry in $runtimeEntries) {
+            $source = Join-Path $root $entry
+            if (-not (Test-Path $source)) { throw "Missing runtime entry: $entry" }
+            Copy-Item -Path $source -Destination $stage -Recurse -Force
+          }
+
+          if (Test-Path $zip) { Remove-Item -Force $zip }
+          Compress-Archive -Path (Join-Path $stage '*') -DestinationPath $zip -CompressionLevel Optimal
+
+          $check = Join-Path $env:RUNNER_TEMP 'ptu-windows-runtime-check'
+          if (Test-Path $check) { Remove-Item -Recurse -Force $check }
+          Expand-Archive -Path $zip -DestinationPath $check
+          $server = Get-Content -Raw (Join-Path $check 'server.mjs')
+          if ($server -notmatch '2\.1\.0-beta\.20') { throw 'Embedded server is not beta.20' }
+          if (-not (Test-Path (Join-Path $check 'seed/definitions/ptu_seed_v1.0.sqlite3'))) { throw 'Embedded definitions seed is missing' }
+          if (-not (Test-Path (Join-Path $check 'bundled-packs/campaign-homebrew-fakemon-1-leva-2.0.1.ptucp'))) { throw 'Corrected Fakemon v2.0.1 pack is missing' }
+          Write-Host "Runtime bundle size: $((Get-Item $zip).Length) bytes"
+
+      - name: Build standalone Windows executable
+        working-directory: PTU_Companion_Windows_Source/desktop
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $out = '../PTU-Companion-Windows-v2.1.0-beta.20.exe'
+          go build -trimpath -ldflags '-H windowsgui -s -w' -o $out launcher.go
+          if (-not (Test-Path $out)) { throw 'Windows executable was not produced' }
+          $exe = Get-Item $out
+          if ($exe.Length -lt 5MB) { throw "Windows executable is unexpectedly small: $($exe.Length)" }
+          Get-FileHash $out -Algorithm SHA256 | Format-List
+
+      - name: Prepare Windows release assets
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          New-Item -ItemType Directory -Force release-assets | Out-Null
+          $src = 'PTU_Companion_Windows_Source/PTU-Companion-Windows-v2.1.0-beta.20.exe'
+          $dst = 'release-assets/PTU-Companion-Windows-v2.1.0-beta.20.exe'
+          Copy-Item $src $dst
+          $hash = (Get-FileHash $src -Algorithm SHA256).Hash.ToLower()
+          "$hash  PTU-Companion-Windows-v2.1.0-beta.20.exe" | Set-Content -NoNewline 'release-assets/PTU-Companion-Windows-v2.1.0-beta.20.exe.sha256'
+          @"
+          PTU Companion Windows build
+          version=$env:WINDOWS_VERSION
+          source_commit=$env:TARGET_SHA
+          go=$((go version))
+          node=$((node --version))
+          "@ | Set-Content 'release-assets/PTU-Companion-Windows-v2.1.0-beta.20-build-info.txt'
+
+      - name: Upload Windows artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-beta20
+          path: release-assets/*
+          if-no-files-found: error
+          retention-days: 30
+
+  android:
+    name: Android 2.2.0-beta.22 ARM64
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    env:
+      PTU_KEYSTORE_B64: ${{ secrets.PTU_ANDROID_KEYSTORE_BASE64 }}
+      PTU_ANDROID_DEBUG_KEYSTORE_PASSWORD: ${{ secrets.PTU_ANDROID_KEYSTORE_PASSWORD }}
+      PTU_ANDROID_DEBUG_KEY_PASSWORD: ${{ secrets.PTU_ANDROID_KEY_PASSWORD }}
+      PTU_ANDROID_DEBUG_KEY_ALIAS: ${{ secrets.PTU_ANDROID_KEY_ALIAS }}
+    steps:
+      - name: Checkout merged main source
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.TARGET_SHA }}
+
+      - name: Set up Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Verify exact source and Android version
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$TARGET_SHA"
+          node - <<'NODE'
+          const fs=require('fs');
+          const pkg=JSON.parse(fs.readFileSync('PTU_Companion_Android_Tauri/package.json','utf8'));
+          const tauri=JSON.parse(fs.readFileSync('PTU_Companion_Android_Tauri/src-tauri/tauri.conf.json','utf8'));
+          if(pkg.version!==process.env.ANDROID_VERSION) throw new Error(`package version ${pkg.version}`);
+          if(tauri.version!==process.env.ANDROID_VERSION) throw new Error(`tauri version ${tauri.version}`);
+          if(String(tauri.bundle.android.versionCode)!==process.env.ANDROID_VERSION_CODE) throw new Error(`versionCode ${tauri.bundle.android.versionCode}`);
+          NODE
+
+      - name: Verify Android regression suite
+        working-directory: PTU_Companion_Android_Tauri
+        run: npm run verify
+
+      - name: Restore configured Android signing key when available
+        working-directory: PTU_Companion_Android_Tauri
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p android-signing
+          if [ -n "${PTU_KEYSTORE_B64:-}" ]; then
+            printf '%s' "$PTU_KEYSTORE_B64" | base64 --decode > android-signing/ptu-beta.keystore
+            chmod 600 android-signing/ptu-beta.keystore
+            echo 'Using repository-configured Android signing key.'
+          else
+            echo 'No configured Android release key secret was found.'
+            echo 'The Docker build will create a fresh CI signing key; the APK will be installable but may not update the previous beta in place.'
+          fi
+
+      - name: Build signed Android ARM64 release APK
+        working-directory: PTU_Companion_Android_Tauri
+        shell: bash
+        run: |
+          set -euo pipefail
+          docker compose build android-arm64-release-apk
+          docker compose run --rm \
+            -e PTU_ANDROID_DEBUG_KEYSTORE_PASSWORD \
+            -e PTU_ANDROID_DEBUG_KEY_PASSWORD \
+            -e PTU_ANDROID_DEBUG_KEY_ALIAS \
+            android-arm64-release-apk
+          test -s dist/android/PTU-Companion-v2.2.0-beta.22-arm64-release.apk
+          test -s dist/android/PTU-Companion-v2.2.0-beta.22-arm64-release.apk.sha256
+          test -s dist/android/PTU-Companion-v2.2.0-beta.22-arm64-release-info.txt
+
+      - name: Prepare Android release assets
+        working-directory: PTU_Companion_Android_Tauri
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p ../release-assets
+          apk='dist/android/PTU-Companion-v2.2.0-beta.22-arm64-release.apk'
+          cp "$apk" ../release-assets/
+          cp "$apk.sha256" ../release-assets/
+          cp 'dist/android/PTU-Companion-v2.2.0-beta.22-arm64-release-info.txt' ../release-assets/
+          cert_line=$(grep -m1 -E 'Signer #1 certificate SHA-256 digest:' 'dist/android/PTU-Companion-v2.2.0-beta.22-arm64-release-info.txt' || true)
+          printf '%s\n' "${cert_line:-Certificate digest is recorded in the APK info file.}" > ../release-assets/ANDROID_SIGNING_CERT.txt
+          cat > ../release-assets/PTU-Companion-v2.2.0-beta.22-build-info.txt <<EOF
+          PTU Companion Android ARM64 build
+          version=$ANDROID_VERSION
+          versionCode=$ANDROID_VERSION_CODE
+          source_commit=$TARGET_SHA
+          node=$(node --version)
+          EOF
+
+      - name: Upload Android artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-beta22
+          path: release-assets/*
+          if-no-files-found: error
+          retention-days: 30
+
+  release:
+    name: Publish test GitHub Release
+    needs: [windows, android]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download release artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: release-assets
+          merge-multiple: true
+
+      - name: Verify assets and create combined metadata
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd release-assets
+          test -s PTU-Companion-Windows-v2.1.0-beta.20.exe
+          test -s PTU-Companion-v2.2.0-beta.22-arm64-release.apk
+          sha256sum -c PTU-Companion-Windows-v2.1.0-beta.20.exe.sha256
+          sha256sum -c PTU-Companion-v2.2.0-beta.22-arm64-release.apk.sha256
+          sha256sum PTU-Companion-Windows-v2.1.0-beta.20.exe PTU-Companion-v2.2.0-beta.22-arm64-release.apk > SHA256SUMS.txt
+          printf 'source_commit=%s\nrelease_tag=%s\nwindows=%s\nandroid=%s\nandroid_version_code=%s\n' \
+            "$TARGET_SHA" "$RELEASE_TAG" "$WINDOWS_VERSION" "$ANDROID_VERSION" "$ANDROID_VERSION_CODE" > BUILD_SOURCE.txt
+
+          mkdir -p ../previous-release
+          continuity='unknown'
+          if gh release download "$PREVIOUS_RELEASE_TAG" --repo "$GITHUB_REPOSITORY" --pattern 'ANDROID_SIGNING_CERT.txt' --dir ../previous-release >/dev/null 2>&1; then
+            if cmp -s ANDROID_SIGNING_CERT.txt ../previous-release/ANDROID_SIGNING_CERT.txt; then
+              continuity='same certificate as previous release; in-place Android update should be permitted when package identity/data are otherwise compatible'
+            else
+              continuity='different certificate from previous release; Android will require uninstalling the previous APK before installing this one'
+            fi
+          else
+            continuity='previous certificate metadata could not be downloaded; signing continuity was not verified'
+          fi
+          printf '%s\n' "$continuity" > ANDROID_SIGNING_CONTINUITY.txt
+          ls -lh
+
+      - name: Publish immutable test release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if gh release view "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "Release/tag $RELEASE_TAG already exists; refusing to overwrite an immutable test release." >&2
+            exit 1
+          fi
+
+          continuity=$(cat release-assets/ANDROID_SIGNING_CONTINUITY.txt)
+          cat > release-notes.md <<EOF
+          Test release generated from the merged \`main\` commit \`$TARGET_SHA\` after the staged implementation through **Stage A.7**.
+
+          **Windows:** \`$WINDOWS_VERSION\`  
+          **Android ARM64:** \`$ANDROID_VERSION\` (\`versionCode $ANDROID_VERSION_CODE\`)
+
+          Included in this checkpoint:
+          - corrected Hisuian Zorua/Zoroark campaign typing and regenerated Fakemon defaults;
+          - multi-terrain Naturewalk normalization;
+          - removal of the legacy Notifications control;
+          - Trainer deletion flow;
+          - Trainer Notes;
+          - Pokémon Notes;
+          - Roster editing;
+          - Roster deletion without deleting Pokémon.
+
+          Both full Windows and Android regression suites passed before merge and are executed again in the build jobs. Stage A.8 is not included in this release.
+
+          **Android signing continuity:** $continuity
+
+          See \`SHA256SUMS.txt\`, per-file SHA-256 assets, build-info files, \`ANDROID_SIGNING_CERT.txt\`, and \`ANDROID_SIGNING_CONTINUITY.txt\` for verification metadata.
+          EOF
+
+          gh release create "$RELEASE_TAG" release-assets/* \
+            --repo "$GITHUB_REPOSITORY" \
+            --target "$TARGET_SHA" \
+            --title 'PTU Companion Test — Windows 2.1.0-beta.20 / Android 2.2.0-beta.22' \
+            --notes-file release-notes.md \
+            --prerelease
+
+      - name: Verify published tag and release assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          tag_sha=$(gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/$RELEASE_TAG" --jq '.object.sha')
+          test "$tag_sha" = "$TARGET_SHA"
+          gh release view "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" --json tagName,name,isPrerelease,url
+          assets=$(gh release view "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" --json assets --jq '.assets[].name')
+          for required in \
+            'PTU-Companion-Windows-v2.1.0-beta.20.exe' \
+            'PTU-Companion-v2.2.0-beta.22-arm64-release.apk' \
+            'SHA256SUMS.txt' \
+            'BUILD_SOURCE.txt' \
+            'ANDROID_SIGNING_CERT.txt' \
+            'ANDROID_SIGNING_CONTINUITY.txt'; do
+            grep -Fxq "$required" <<<"$assets" || { echo "Missing release asset: $required" >&2; exit 1; }
+          done
