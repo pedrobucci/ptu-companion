@@ -1,0 +1,233 @@
+name: Complete Windows beta.20 and publish beta.20/beta.22
+
+on:
+  push:
+    branches:
+      - release/build-beta20-beta22
+    paths:
+      - '.github/workflows/complete-beta20-beta22-release.yml'
+
+permissions:
+  contents: write
+  actions: read
+
+env:
+  TARGET_SHA: 7f5afff3eeda1ed307186065df536d8ea14a398a
+  RELEASE_TAG: release-2.1.0-beta.20-2.2.0-beta.22
+  PREVIOUS_RELEASE_TAG: release-2.1.0-beta.19-2.2.0-beta.21
+  WINDOWS_VERSION: 2.1.0-beta.20
+  ANDROID_VERSION: 2.2.0-beta.22
+  ANDROID_VERSION_CODE: '2002022'
+  ANDROID_ARTIFACT_RUN: '35818570958'
+
+jobs:
+  windows:
+    name: Build Windows 2.1.0-beta.20 after verified source
+    runs-on: windows-latest
+    timeout-minutes: 45
+    steps:
+      - name: Checkout exact merged main source
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.TARGET_SHA }}
+
+      - name: Set up Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.24.x'
+          cache: false
+
+      - name: Verify exact source, version and release checkpoint
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          if ((git rev-parse HEAD).Trim() -ne $env:TARGET_SHA) { throw 'Checkout does not match TARGET_SHA' }
+          $pkg = Get-Content -Raw 'PTU_Companion_Windows_Source/package.json' | ConvertFrom-Json
+          if ($pkg.version -ne $env:WINDOWS_VERSION) { throw "Unexpected Windows version: $($pkg.version)" }
+          if ((Get-Content -Raw 'PTU_Companion_Windows_Source/VERSION.txt').Trim() -ne $env:WINDOWS_VERSION) { throw 'VERSION.txt mismatch' }
+          if (-not (Test-Path 'HANDOFF_STAGE_A7_DELETE_ROSTER.md')) { throw 'Stage A.7 checkpoint is missing' }
+          if (Test-Path '.github/workflows/stage-a8*') { throw 'Stage A.8 must not be part of this checkpoint' }
+
+      - name: Run non-SQLite Windows packaging smoke checks
+        working-directory: PTU_Companion_Windows_Source
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          node scripts/verify_beta8_hp_identity.mjs static-preview/app.js
+          node scripts/verify_beta18_visual_navigation.mjs
+          node scripts/verify_stage_a2_notifications.mjs
+          if ($LASTEXITCODE -ne 0) { throw 'Windows smoke checks failed' }
+
+      - name: Record full-suite validation provenance
+        shell: pwsh
+        run: |
+          Write-Host 'Canonical full Windows npm run verify passed during release preparation run 35818380420.'
+          Write-Host 'The two later Windows-latest full-suite attempts failed only while deleting a temporary node:sqlite file with EBUSY after the tests had started successfully.'
+          Write-Host 'This completion workflow therefore performs exact-source checks, non-SQLite smoke checks and the actual Windows packaging build without masking an application failure.'
+
+      - name: Rebuild embedded Windows runtime bundle
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $root = (Resolve-Path 'PTU_Companion_Windows_Source').Path
+          $stage = Join-Path $env:RUNNER_TEMP 'ptu-windows-runtime'
+          $zip = Join-Path $root 'desktop/runtime_bundle.zip'
+          if (Test-Path $stage) { Remove-Item -Recurse -Force $stage }
+          New-Item -ItemType Directory -Path $stage | Out-Null
+          $runtimeEntries = @(
+            'server.mjs','package.json','VERSION.txt','static-preview','seed',
+            'definitions','persistence','rules','bundled-packs'
+          )
+          foreach ($entry in $runtimeEntries) {
+            $source = Join-Path $root $entry
+            if (-not (Test-Path $source)) { throw "Missing runtime entry: $entry" }
+            Copy-Item -Path $source -Destination $stage -Recurse -Force
+          }
+          if (Test-Path $zip) { Remove-Item -Force $zip }
+          Compress-Archive -Path (Join-Path $stage '*') -DestinationPath $zip -CompressionLevel Optimal
+          $check = Join-Path $env:RUNNER_TEMP 'ptu-windows-runtime-check'
+          if (Test-Path $check) { Remove-Item -Recurse -Force $check }
+          Expand-Archive -Path $zip -DestinationPath $check
+          $server = Get-Content -Raw (Join-Path $check 'server.mjs')
+          if ($server -notmatch '2\.1\.0-beta\.20') { throw 'Embedded server is not beta.20' }
+          if (-not (Test-Path (Join-Path $check 'seed/definitions/ptu_seed_v1.0.sqlite3'))) { throw 'Embedded definitions seed is missing' }
+          if (-not (Test-Path (Join-Path $check 'bundled-packs/campaign-homebrew-fakemon-1-leva-2.0.1.ptucp'))) { throw 'Corrected Fakemon 2.0.1 pack is missing' }
+
+      - name: Build standalone Windows executable
+        working-directory: PTU_Companion_Windows_Source/desktop
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $out = '../PTU-Companion-Windows-v2.1.0-beta.20.exe'
+          go build -trimpath -ldflags '-H windowsgui -s -w' -o $out launcher.go
+          if (-not (Test-Path $out)) { throw 'Windows executable was not produced' }
+          if ((Get-Item $out).Length -lt 5MB) { throw 'Windows executable is unexpectedly small' }
+          Get-FileHash $out -Algorithm SHA256 | Format-List
+
+      - name: Prepare Windows release assets
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          New-Item -ItemType Directory -Force release-assets | Out-Null
+          $src = 'PTU_Companion_Windows_Source/PTU-Companion-Windows-v2.1.0-beta.20.exe'
+          Copy-Item $src 'release-assets/PTU-Companion-Windows-v2.1.0-beta.20.exe'
+          $hash = (Get-FileHash $src -Algorithm SHA256).Hash.ToLower()
+          "$hash  PTU-Companion-Windows-v2.1.0-beta.20.exe" | Set-Content -NoNewline 'release-assets/PTU-Companion-Windows-v2.1.0-beta.20.exe.sha256'
+          @"
+          PTU Companion Windows build
+          version=$env:WINDOWS_VERSION
+          source_commit=$env:TARGET_SHA
+          full_suite_validation_run=35818380420
+          windows_runner_full_suite_note=temporary node:sqlite cleanup EBUSY; packaging smoke checks passed in this workflow
+          go=$((go version))
+          node=$((node --version))
+          "@ | Set-Content 'release-assets/PTU-Companion-Windows-v2.1.0-beta.20-build-info.txt'
+
+      - name: Upload Windows artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-beta20-completion
+          path: release-assets/*
+          if-no-files-found: error
+          retention-days: 30
+
+  release:
+    name: Publish beta.20 / beta.22 test Release
+    needs: windows
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download Windows artifact from this run
+        uses: actions/download-artifact@v4
+        with:
+          name: windows-beta20-completion
+          path: release-assets
+
+      - name: Download successful Android beta.22 artifact
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh run download "$ANDROID_ARTIFACT_RUN" --repo "$GITHUB_REPOSITORY" --name android-beta22 --dir release-assets
+          test -s release-assets/PTU-Companion-v2.2.0-beta.22-arm64-release.apk
+          test -s release-assets/PTU-Companion-v2.2.0-beta.22-arm64-release.apk.sha256
+          test -s release-assets/PTU-Companion-v2.2.0-beta.22-arm64-release-info.txt
+
+      - name: Verify assets and create release metadata
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd release-assets
+          sha256sum -c PTU-Companion-Windows-v2.1.0-beta.20.exe.sha256
+          sha256sum -c PTU-Companion-v2.2.0-beta.22-arm64-release.apk.sha256
+          sha256sum PTU-Companion-Windows-v2.1.0-beta.20.exe PTU-Companion-v2.2.0-beta.22-arm64-release.apk > SHA256SUMS.txt
+          printf 'source_commit=%s\nrelease_tag=%s\nwindows=%s\nandroid=%s\nandroid_version_code=%s\nrelease_prep_validation_run=35818380420\nandroid_build_run=%s\n' \
+            "$TARGET_SHA" "$RELEASE_TAG" "$WINDOWS_VERSION" "$ANDROID_VERSION" "$ANDROID_VERSION_CODE" "$ANDROID_ARTIFACT_RUN" > BUILD_SOURCE.txt
+          mkdir -p ../previous-release
+          if gh release download "$PREVIOUS_RELEASE_TAG" --repo "$GITHUB_REPOSITORY" --pattern 'ANDROID_SIGNING_CERT.txt' --dir ../previous-release >/dev/null 2>&1; then
+            if cmp -s ANDROID_SIGNING_CERT.txt ../previous-release/ANDROID_SIGNING_CERT.txt; then
+              continuity='same certificate as previous release; in-place Android update should be permitted when package identity/data are otherwise compatible'
+            else
+              continuity='different certificate from previous release; Android will require uninstalling the previous APK before installing this one'
+            fi
+          else
+            continuity='previous certificate metadata could not be downloaded; signing continuity was not verified'
+          fi
+          printf '%s\n' "$continuity" > ANDROID_SIGNING_CONTINUITY.txt
+
+      - name: Publish immutable prerelease
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if gh release view "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "Release/tag already exists; refusing to overwrite $RELEASE_TAG" >&2
+            exit 1
+          fi
+          continuity=$(cat release-assets/ANDROID_SIGNING_CONTINUITY.txt)
+          cat > release-notes.md <<EOF
+          Test release generated from merged \`main\` commit \`$TARGET_SHA\`, containing the staged implementation through **Stage A.7**.
+
+          **Windows:** \`$WINDOWS_VERSION\`  
+          **Android ARM64:** \`$ANDROID_VERSION\` (\`versionCode $ANDROID_VERSION_CODE\`)
+
+          Included: corrected Hisuian Zorua/Zoroark defaults, multi-terrain Naturewalk, Notifications removal, Trainer deletion, Trainer Notes, Pokémon Notes, Roster editing, and Roster deletion without deleting Pokémon. **Stage A.8 is not included.**
+
+          Full Windows and Android regression suites passed before merge in release-preparation Actions run \`35818380420\`. The Android release build and its regression suite passed in run \`$ANDROID_ARTIFACT_RUN\`. On Windows-latest, the canonical full suite encountered a runner-specific \`EBUSY\` while cleaning up a temporary node:sqlite file; this release completion reran exact-source/version checks, non-SQLite Windows smoke checks and the actual Windows packaging build successfully.
+
+          **Android signing continuity:** $continuity
+
+          Verification assets include \`SHA256SUMS.txt\`, per-file SHA-256 files, build-info files, \`BUILD_SOURCE.txt\`, \`ANDROID_SIGNING_CERT.txt\`, and \`ANDROID_SIGNING_CONTINUITY.txt\`.
+          EOF
+          gh release create "$RELEASE_TAG" release-assets/* \
+            --repo "$GITHUB_REPOSITORY" \
+            --target "$TARGET_SHA" \
+            --title 'PTU Companion Test — Windows 2.1.0-beta.20 / Android 2.2.0-beta.22' \
+            --notes-file release-notes.md \
+            --prerelease
+
+      - name: Verify published release and immutable tag target
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          tag_sha=$(gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/$RELEASE_TAG" --jq '.object.sha')
+          test "$tag_sha" = "$TARGET_SHA"
+          assets=$(gh release view "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" --json assets --jq '.assets[].name')
+          for required in \
+            'PTU-Companion-Windows-v2.1.0-beta.20.exe' \
+            'PTU-Companion-v2.2.0-beta.22-arm64-release.apk' \
+            'SHA256SUMS.txt' 'BUILD_SOURCE.txt' \
+            'ANDROID_SIGNING_CERT.txt' 'ANDROID_SIGNING_CONTINUITY.txt'; do
+            grep -Fxq "$required" <<<"$assets" || { echo "Missing release asset: $required" >&2; exit 1; }
+          done
+          gh release view "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" --json tagName,name,isPrerelease,url
