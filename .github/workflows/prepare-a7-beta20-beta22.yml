@@ -1,0 +1,179 @@
+name: Prepare A.7 beta.20 / beta.22 release metadata
+
+on:
+  push:
+    branches:
+      - release/prepare-a7-beta20-beta22
+    paths:
+      - '.github/workflows/prepare-a7-beta20-beta22.yml'
+
+permissions:
+  contents: write
+
+env:
+  TARGET_BRANCH: feature/pokemon-forms-roster-qol
+  EXPECTED_HEAD: b94d68e977b33fb2af2e68787735970df8d4d6ae
+  WINDOWS_VERSION: 2.1.0-beta.20
+  ANDROID_VERSION: 2.2.0-beta.22
+  ANDROID_VERSION_CODE: '2002022'
+
+jobs:
+  prepare-and-verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.TARGET_BRANCH }}
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Guard expected feature head
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXPECTED_HEAD"
+
+      - name: Bump Windows and Android release metadata
+        shell: python
+        run: |
+          import json
+          from pathlib import Path
+
+          old_win = '2.1.0-beta.19'
+          new_win = '${{ env.WINDOWS_VERSION }}'
+          old_android = '2.2.0-beta.21'
+          new_android = '${{ env.ANDROID_VERSION }}'
+          old_android_runtime = '2.2.0-android-beta.21'
+          new_android_runtime = '2.2.0-android-beta.22'
+          old_code = '2002021'
+          new_code = '${{ env.ANDROID_VERSION_CODE }}'
+
+          def replace_exact(path, old, new, expected=None):
+              path = Path(path)
+              text = path.read_text(encoding='utf-8')
+              count = text.count(old)
+              if expected is not None and count != expected:
+                  raise SystemExit(f'{path}: expected {expected} occurrences of {old!r}, found {count}')
+              if count == 0:
+                  raise SystemExit(f'{path}: missing expected text {old!r}')
+              path.write_text(text.replace(old, new), encoding='utf-8')
+
+          def replace_if_present(path, replacements):
+              path = Path(path)
+              text = path.read_text(encoding='utf-8')
+              next_text = text
+              for old, new in replacements:
+                  next_text = next_text.replace(old, new)
+              if next_text != text:
+                  path.write_text(next_text, encoding='utf-8')
+
+          win = Path('PTU_Companion_Windows_Source')
+          android = Path('PTU_Companion_Android_Tauri')
+
+          win_pkg = json.loads((win/'package.json').read_text(encoding='utf-8'))
+          if win_pkg.get('version') != old_win:
+              raise SystemExit(f"Unexpected Windows version: {win_pkg.get('version')}")
+          win_pkg['version'] = new_win
+          (win/'package.json').write_text(json.dumps(win_pkg, indent=2, ensure_ascii=False) + '\n', encoding='utf-8')
+          (win/'VERSION.txt').write_text(new_win + '\n', encoding='utf-8')
+          replace_exact(win/'desktop/launcher.go', f'const appVersion = "{old_win}"', f'const appVersion = "{new_win}"', 1)
+          replace_exact(win/'server.mjs', old_win, new_win)
+          for path in (win/'scripts').glob('*.mjs'):
+              replace_if_present(path, [(old_win, new_win)])
+
+          android_pkg = json.loads((android/'package.json').read_text(encoding='utf-8'))
+          if android_pkg.get('version') != old_android:
+              raise SystemExit(f"Unexpected Android package version: {android_pkg.get('version')}")
+          android_pkg['version'] = new_android
+          (android/'package.json').write_text(json.dumps(android_pkg, indent=2, ensure_ascii=False) + '\n', encoding='utf-8')
+
+          tauri_path = android/'src-tauri/tauri.conf.json'
+          tauri = json.loads(tauri_path.read_text(encoding='utf-8'))
+          if tauri.get('version') != old_android or str(tauri.get('bundle',{}).get('android',{}).get('versionCode')) != old_code:
+              raise SystemExit('Unexpected Tauri Android release metadata')
+          tauri['version'] = new_android
+          tauri['bundle']['android']['versionCode'] = int(new_code)
+          tauri_path.write_text(json.dumps(tauri, indent=2, ensure_ascii=False) + '\n', encoding='utf-8')
+
+          replace_exact(android/'src-tauri/Cargo.toml', f'version = "{old_android}"', f'version = "{new_android}"', 1)
+          replace_exact(android/'src-tauri/Cargo.lock', f'name = "ptu-companion"\nversion = "{old_android}"', f'name = "ptu-companion"\nversion = "{new_android}"', 1)
+          replace_exact(android/'docker/tauri-build.sh', old_android, new_android)
+          replace_exact(android/'www/mobile-api.mjs', old_android_runtime, new_android_runtime)
+          replace_exact(android/'www/mobile-runtime.js', old_android_runtime, new_android_runtime)
+          for path in (android/'scripts').glob('*.mjs'):
+              replace_if_present(path, [
+                  (old_android, new_android),
+                  (old_android_runtime, new_android_runtime),
+                  (old_code, new_code),
+              ])
+
+      - name: Verify release metadata consistency
+        shell: python
+        run: |
+          import json
+          from pathlib import Path
+          win = Path('PTU_Companion_Windows_Source')
+          android = Path('PTU_Companion_Android_Tauri')
+          w = '${{ env.WINDOWS_VERSION }}'
+          a = '${{ env.ANDROID_VERSION }}'
+          code = int('${{ env.ANDROID_VERSION_CODE }}')
+
+          assert json.loads((win/'package.json').read_text())['version'] == w
+          assert (win/'VERSION.txt').read_text().strip() == w
+          assert f'const appVersion = "{w}"' in (win/'desktop/launcher.go').read_text()
+          assert w in (win/'server.mjs').read_text()
+
+          assert json.loads((android/'package.json').read_text())['version'] == a
+          tauri = json.loads((android/'src-tauri/tauri.conf.json').read_text())
+          assert tauri['version'] == a
+          assert tauri['bundle']['android']['versionCode'] == code
+          assert f'version = "{a}"' in (android/'src-tauri/Cargo.toml').read_text()
+          lock = (android/'src-tauri/Cargo.lock').read_text()
+          assert f'name = "ptu-companion"\nversion = "{a}"' in lock
+          build = (android/'docker/tauri-build.sh').read_text()
+          assert f'PTU-Companion-v{a}-arm64-release.apk' in build
+          for runtime in ['www/mobile-api.mjs', 'www/mobile-runtime.js']:
+              assert '2.2.0-android-beta.22' in (android/runtime).read_text()
+          print('Release metadata consistency: OK')
+
+      - name: Check formatting
+        run: git diff --check
+
+      - name: Verify Windows regression suite
+        working-directory: PTU_Companion_Windows_Source
+        run: npm run verify
+
+      - name: Verify Android regression suite
+        working-directory: PTU_Companion_Android_Tauri
+        run: npm run verify
+
+      - name: Commit release metadata to feature branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add \
+            PTU_Companion_Windows_Source/package.json \
+            PTU_Companion_Windows_Source/VERSION.txt \
+            PTU_Companion_Windows_Source/desktop/launcher.go \
+            PTU_Companion_Windows_Source/server.mjs \
+            PTU_Companion_Windows_Source/scripts \
+            PTU_Companion_Android_Tauri/package.json \
+            PTU_Companion_Android_Tauri/src-tauri/tauri.conf.json \
+            PTU_Companion_Android_Tauri/src-tauri/Cargo.toml \
+            PTU_Companion_Android_Tauri/src-tauri/Cargo.lock \
+            PTU_Companion_Android_Tauri/docker/tauri-build.sh \
+            PTU_Companion_Android_Tauri/www/mobile-api.mjs \
+            PTU_Companion_Android_Tauri/www/mobile-runtime.js \
+            PTU_Companion_Android_Tauri/scripts
+          git commit -m 'chore(release): bump Windows beta.20 and Android beta.22 [skip ci]'
+          git push origin HEAD:"$TARGET_BRANCH"
