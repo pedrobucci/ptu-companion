@@ -1,0 +1,155 @@
+name: Publish beta.20 / beta.22 release from verified artifacts
+
+on:
+  push:
+    branches:
+      - release/build-beta20-beta22
+    paths:
+      - '.github/workflows/publish-beta20-beta22-release.yml'
+
+permissions:
+  contents: write
+  actions: read
+
+env:
+  TARGET_SHA: 7f5afff3eeda1ed307186065df536d8ea14a398a
+  RELEASE_TAG: release-2.1.0-beta.20-2.2.0-beta.22
+  PREVIOUS_RELEASE_TAG: release-2.1.0-beta.19-2.2.0-beta.21
+  WINDOWS_VERSION: 2.1.0-beta.20
+  ANDROID_VERSION: 2.2.0-beta.22
+  ANDROID_VERSION_CODE: '2002022'
+  WINDOWS_ARTIFACT_RUN: '35819822543'
+  ANDROID_ARTIFACT_RUN: '35818570958'
+
+jobs:
+  publish:
+    name: Verify artifacts and publish prerelease
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download successful Windows artifact
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p release-assets
+          gh run download "$WINDOWS_ARTIFACT_RUN" --repo "$GITHUB_REPOSITORY" --name windows-beta20-completion --dir release-assets
+          test -s release-assets/PTU-Companion-Windows-v2.1.0-beta.20.exe
+          test -s release-assets/PTU-Companion-Windows-v2.1.0-beta.20.exe.sha256
+
+      - name: Download successful Android artifact
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh run download "$ANDROID_ARTIFACT_RUN" --repo "$GITHUB_REPOSITORY" --name android-beta22 --dir release-assets
+          test -s release-assets/PTU-Companion-v2.2.0-beta.22-arm64-release.apk
+          test -s release-assets/PTU-Companion-v2.2.0-beta.22-arm64-release.apk.sha256
+          test -s release-assets/PTU-Companion-v2.2.0-beta.22-arm64-release-info.txt
+          test -s release-assets/ANDROID_SIGNING_CERT.txt
+
+      - name: Verify binary SHA-256 values
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd release-assets
+          win_expected=$(awk 'NR==1 {print $1}' PTU-Companion-Windows-v2.1.0-beta.20.exe.sha256 | tr '[:upper:]' '[:lower:]')
+          win_actual=$(sha256sum PTU-Companion-Windows-v2.1.0-beta.20.exe | awk '{print $1}')
+          test "$win_actual" = "$win_expected"
+
+          # The Android Docker build records its container-absolute APK path in the
+          # .sha256 file. Compare the digest token directly instead of asking
+          # sha256sum -c to resolve that container-only path on this runner.
+          android_expected=$(awk 'NR==1 {print $1}' PTU-Companion-v2.2.0-beta.22-arm64-release.apk.sha256 | tr '[:upper:]' '[:lower:]')
+          android_actual=$(sha256sum PTU-Companion-v2.2.0-beta.22-arm64-release.apk | awk '{print $1}')
+          test "$android_actual" = "$android_expected"
+
+          printf '%s  %s\n%s  %s\n' \
+            "$win_actual" 'PTU-Companion-Windows-v2.1.0-beta.20.exe' \
+            "$android_actual" 'PTU-Companion-v2.2.0-beta.22-arm64-release.apk' > SHA256SUMS.txt
+          echo "Windows SHA-256: $win_actual"
+          echo "Android SHA-256: $android_actual"
+
+      - name: Create build and signing continuity metadata
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd release-assets
+          printf 'source_commit=%s\nrelease_tag=%s\nwindows=%s\nandroid=%s\nandroid_version_code=%s\nrelease_prep_validation_run=35818380420\nwindows_build_run=%s\nandroid_build_run=%s\n' \
+            "$TARGET_SHA" "$RELEASE_TAG" "$WINDOWS_VERSION" "$ANDROID_VERSION" "$ANDROID_VERSION_CODE" "$WINDOWS_ARTIFACT_RUN" "$ANDROID_ARTIFACT_RUN" > BUILD_SOURCE.txt
+
+          mkdir -p ../previous-release
+          if gh release download "$PREVIOUS_RELEASE_TAG" --repo "$GITHUB_REPOSITORY" --pattern 'ANDROID_SIGNING_CERT.txt' --dir ../previous-release >/dev/null 2>&1; then
+            if cmp -s ANDROID_SIGNING_CERT.txt ../previous-release/ANDROID_SIGNING_CERT.txt; then
+              continuity='same certificate as previous release; in-place Android update should be permitted when package identity/data are otherwise compatible'
+            else
+              continuity='different certificate from previous release; Android will require uninstalling the previous APK before installing this one'
+            fi
+          else
+            continuity='previous certificate metadata could not be downloaded; signing continuity was not verified'
+          fi
+          printf '%s\n' "$continuity" > ANDROID_SIGNING_CONTINUITY.txt
+          echo "Android signing continuity: $continuity"
+
+      - name: Publish immutable prerelease
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if gh release view "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "Release/tag already exists; refusing to overwrite $RELEASE_TAG" >&2
+            exit 1
+          fi
+          continuity=$(cat release-assets/ANDROID_SIGNING_CONTINUITY.txt)
+          cat > release-notes.md <<EOF
+          Test release generated from merged \`main\` commit \`$TARGET_SHA\`, containing the staged implementation through **Stage A.7**.
+
+          **Windows:** \`$WINDOWS_VERSION\`  
+          **Android ARM64:** \`$ANDROID_VERSION\` (\`versionCode $ANDROID_VERSION_CODE\`)
+
+          Included in this checkpoint:
+          - corrected Hisuian Zorua/Zoroark campaign defaults;
+          - multi-terrain Naturewalk;
+          - removal of the legacy Notifications control;
+          - Trainer deletion;
+          - Trainer Notes;
+          - Pokémon Notes;
+          - Roster editing;
+          - Roster deletion without deleting Pokémon.
+
+          **Stage A.8 is not included.**
+
+          Full Windows and Android regression suites passed before merge in release-preparation run \`35818380420\`. The Android release artifact and Android regression suite passed in run \`$ANDROID_ARTIFACT_RUN\`. Windows packaging and non-SQLite smoke checks passed in run \`$WINDOWS_ARTIFACT_RUN\`. Two Windows-latest attempts to execute the full suite hit a runner-specific \`EBUSY\` while deleting a temporary node:sqlite database; this did not occur in the canonical pre-merge full-suite validation and was documented rather than hidden.
+
+          **Android signing continuity:** $continuity
+
+          Verification assets include \`SHA256SUMS.txt\`, per-file SHA-256 files, build-info files, \`BUILD_SOURCE.txt\`, \`ANDROID_SIGNING_CERT.txt\`, and \`ANDROID_SIGNING_CONTINUITY.txt\`.
+          EOF
+          gh release create "$RELEASE_TAG" release-assets/* \
+            --repo "$GITHUB_REPOSITORY" \
+            --target "$TARGET_SHA" \
+            --title 'PTU Companion Test — Windows 2.1.0-beta.20 / Android 2.2.0-beta.22' \
+            --notes-file release-notes.md \
+            --prerelease
+
+      - name: Verify published release and tag
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          tag_sha=$(gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/$RELEASE_TAG" --jq '.object.sha')
+          test "$tag_sha" = "$TARGET_SHA"
+          assets=$(gh release view "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" --json assets --jq '.assets[].name')
+          for required in \
+            'PTU-Companion-Windows-v2.1.0-beta.20.exe' \
+            'PTU-Companion-v2.2.0-beta.22-arm64-release.apk' \
+            'SHA256SUMS.txt' 'BUILD_SOURCE.txt' \
+            'ANDROID_SIGNING_CERT.txt' 'ANDROID_SIGNING_CONTINUITY.txt'; do
+            grep -Fxq "$required" <<<"$assets" || { echo "Missing release asset: $required" >&2; exit 1; }
+          done
+          gh release view "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" --json tagName,name,isPrerelease,url
