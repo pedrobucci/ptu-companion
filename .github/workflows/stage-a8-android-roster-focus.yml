@@ -1,0 +1,62 @@
+name: Stage A.8 Android Roster Focus
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - feature/android-roster-focus-a8
+    paths:
+      - '.github/workflows/stage-a8-android-roster-focus.yml'
+      - 'PTU_Companion_Android_Tauri/scripts/apply-stage-a8-roster-focus.py'
+      - 'PTU_Companion_Android_Tauri/scripts/verify-stage-a8-roster-focus.mjs'
+      - 'PTU_Companion_Android_Tauri/www/app.js'
+      - 'PTU_Companion_Android_Tauri/package.json'
+
+permissions:
+  contents: write
+
+jobs:
+  apply-and-verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Apply Stage A.8 Android Roster focus
+        run: python PTU_Companion_Android_Tauri/scripts/apply-stage-a8-roster-focus.py
+
+      - name: Check patch formatting
+        run: git diff --check
+
+      - name: Verify Windows regressions
+        working-directory: PTU_Companion_Windows_Source
+        run: npm run verify
+
+      - name: Verify Android regressions
+        working-directory: PTU_Companion_Android_Tauri
+        run: npm run verify
+
+      - name: Commit Stage A.8 Android runtime changes
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add \
+            PTU_Companion_Android_Tauri/www/app.js \
+            PTU_Companion_Android_Tauri/package.json
+          if git diff --cached --quiet; then
+            echo 'Stage A.8 runtime patch already applied.'
+          else
+            git commit -m 'feat(stage-a8): focus Roster Pokémon details on Android [skip ci]'
+            git push origin HEAD:"${GITHUB_REF_NAME}"
+          fi
