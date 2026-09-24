@@ -7,6 +7,8 @@ on:
       - feature/android-roster-focus-a8
     paths:
       - '.github/workflows/stage-a9-move-keywords.yml'
+      - 'PTU_Companion_Windows_Source/rules/move-keywords-core-1.05.json'
+      - 'PTU_Companion_Windows_Source/scripts/prepare_stage_a9_move_keywords.py'
       - 'PTU_Companion_Windows_Source/scripts/apply_stage_a9_move_keywords.py'
       - 'PTU_Companion_Windows_Source/scripts/verify_stage_a9_move_keywords.mjs'
       - 'PTU_Companion_Android_Tauri/scripts/verify-stage-a9-move-keywords.mjs'
@@ -34,6 +36,9 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+
+      - name: Prepare current Library UI for Stage A.9
+        run: python PTU_Companion_Windows_Source/scripts/prepare_stage_a9_move_keywords.py
 
       - name: Apply Stage A.9 Move Keyword catalog
         run: python PTU_Companion_Windows_Source/scripts/apply_stage_a9_move_keywords.py
