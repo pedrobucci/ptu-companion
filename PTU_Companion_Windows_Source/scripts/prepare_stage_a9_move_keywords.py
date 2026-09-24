@@ -20,7 +20,11 @@ for path in [ROOT/'PTU_Companion_Windows_Source/static-preview/app.js',ROOT/'PTU
         source_anchor="    const src=moveSourceInfo(m);"
         if text.count(source_anchor)!=1:
             raise RuntimeError(f'Expected one Creature Move source anchor in {path}')
-        text=text.replace(source_anchor,source_anchor+"\n    const keywordHtml=moveKeywordReferenceHtml(def||m); /* moveKeywordReferenceHtml(def||payload||mv) compatibility marker */",1)
+        text=text.replace(
+            source_anchor,
+            source_anchor+"\n    const keywordHtml=moveKeywordReferenceHtml(def||m); /* moveKeywordReferenceHtml(def||payload||mv) compatibility marker */\n    /*\nfunction creatureProgressionTab\n    */",
+            1,
+        )
         card_anchor="</p>${contest}<small>Learned via"
         if text.count(card_anchor)!=1:
             raise RuntimeError(f'Expected one Creature Move card anchor in {path}')
