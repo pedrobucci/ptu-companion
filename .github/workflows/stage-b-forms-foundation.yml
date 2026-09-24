@@ -10,6 +10,7 @@ on:
       - 'PTU_Companion_Windows_Source/rules/pokemon-forms.mjs'
       - 'PTU_Companion_Android_Tauri/www/rules/pokemon-forms.mjs'
       - 'PTU_Companion_Windows_Source/scripts/apply_stage_b_forms_foundation.py'
+      - 'PTU_Companion_Windows_Source/scripts/prepare_stage_b_forms_patcher.py'
       - 'PTU_Companion_Windows_Source/scripts/verify_stage_b_forms_foundation.mjs'
       - 'PTU_Companion_Android_Tauri/scripts/verify-stage-b-forms-foundation.mjs'
       - 'PTU_Companion_Windows_Source/definitions/repository.mjs'
@@ -39,6 +40,9 @@ jobs:
         with:
           python-version: '3.12'
 
+      - name: Prepare Stage B patcher
+        run: python PTU_Companion_Windows_Source/scripts/prepare_stage_b_forms_patcher.py
+
       - name: Apply Stage B Forms foundation
         run: python PTU_Companion_Windows_Source/scripts/apply_stage_b_forms_foundation.py
 
@@ -59,6 +63,7 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add \
+            PTU_Companion_Windows_Source/scripts/apply_stage_b_forms_foundation.py \
             PTU_Companion_Windows_Source/definitions/repository.mjs \
             PTU_Companion_Windows_Source/definitions/pack-importer.mjs \
             PTU_Companion_Windows_Source/server.mjs \
