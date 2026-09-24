@@ -104,7 +104,9 @@ function resolveSpeciesFormState({species,pokemon={},payload={},includeActive=tr
         new="    const baseSpecies=definitions.getResolved({rulesetId,kind:'species',id:speciesId});\n    if(!baseSpecies) return json(res,404,{error:'Species definition not found in active ruleset'});\n    const buildFormResolution=resolveSpeciesFormState({species:baseSpecies,pokemon:{level:payload.level,details:{}},payload});\n    if(!buildFormResolution.valid)return json(res,400,{error:'Selected Pokémon Form is not valid.',formResolution:buildFormResolution});\n    const species=buildFormResolution.species;"
         pos=text.index("if(req.method==='POST' && url.pathname==='/api/pokemon/build-preview')")
         before=text[:pos]; after=text[pos:]
-        after=replace_once(after,old,new,path)
+        if old not in after:
+            raise RuntimeError(f'Could not find endpoint-local species anchor in {path}: {old[:120]!r}')
+        after=after.replace(old,new,1)
         text=before+after; changed=True
     marker="const referenceFormResolution=resolveSpeciesFormState"
     if marker not in text:
@@ -112,7 +114,9 @@ function resolveSpeciesFormState({species,pokemon={},payload={},includeActive=tr
         before=text[:pos]; after=text[pos:]
         old="    const species=definitions.getResolved({rulesetId,kind:'species',id:speciesId});\n    if(!species) return json(res,404,{error:'Current Species definition not found in active ruleset'});"
         new="    const baseSpecies=definitions.getResolved({rulesetId,kind:'species',id:speciesId});\n    if(!baseSpecies) return json(res,404,{error:'Current Species definition not found in active ruleset'});\n    const referenceFormResolution=resolveSpeciesFormState({species:baseSpecies,pokemon,payload});\n    if(!referenceFormResolution.valid)return json(res,400,{error:'Stored Pokémon Form state is not valid.',formResolution:referenceFormResolution});\n    const species=referenceFormResolution.species;"
-        after=replace_once(after,old,new,path)
+        if old not in after:
+            raise RuntimeError(f'Could not find endpoint-local species anchor in {path}: {old[:120]!r}')
+        after=after.replace(old,new,1)
         text=before+after; changed=True
     if changed:path.write_text(text,encoding='utf-8')
     print(('Patched' if changed else 'Already patched'),path.relative_to(ROOT))
@@ -165,13 +169,17 @@ function resolveSpeciesFormState({species,pokemon={},payload={},includeActive=tr
         before=text[:pos]; after=text[pos:]
         old="    const species=definitions.getResolved({rulesetId,kind:'species',id:speciesId});\n    if(!species) return json(res,404,{error:'Species definition not found in active ruleset'});"
         new="    const baseSpecies=definitions.getResolved({rulesetId,kind:'species',id:speciesId});\n    if(!baseSpecies) return json(res,404,{error:'Species definition not found in active ruleset'});\n    const buildFormResolution=resolveSpeciesFormState({species:baseSpecies,pokemon:{level:payload.level,details:{}},payload});\n    if(!buildFormResolution.valid)return json(res,400,{error:'Selected Pokémon Form is not valid.',formResolution:buildFormResolution});\n    const species=buildFormResolution.species;"
-        after=replace_once(after,old,new,path); text=before+after; changed=True
+        if old not in after:
+            raise RuntimeError(f'Could not find endpoint-local species anchor in {path}: {old[:120]!r}')
+        after=after.replace(old,new,1); text=before+after; changed=True
     if "const referenceFormResolution=resolveSpeciesFormState" not in text:
         pos=text.index("if(req.method==='POST' && url.pathname==='/api/pokemon/reference-data')")
         before=text[:pos]; after=text[pos:]
         old="    const species=definitions.getResolved({rulesetId,kind:'species',id:speciesId});\n    if(!species) return json(res,404,{error:'Current Species definition not found in active ruleset'});"
         new="    const baseSpecies=definitions.getResolved({rulesetId,kind:'species',id:speciesId});\n    if(!baseSpecies) return json(res,404,{error:'Current Species definition not found in active ruleset'});\n    const referenceFormResolution=resolveSpeciesFormState({species:baseSpecies,pokemon,payload});\n    if(!referenceFormResolution.valid)return json(res,400,{error:'Stored Pokémon Form state is not valid.',formResolution:referenceFormResolution});\n    const species=referenceFormResolution.species;"
-        after=replace_once(after,old,new,path); text=before+after; changed=True
+        if old not in after:
+            raise RuntimeError(f'Could not find endpoint-local species anchor in {path}: {old[:120]!r}')
+        after=after.replace(old,new,1); text=before+after; changed=True
     if changed:path.write_text(text,encoding='utf-8')
     print(('Patched' if changed else 'Already patched'),path.relative_to(ROOT))
 
