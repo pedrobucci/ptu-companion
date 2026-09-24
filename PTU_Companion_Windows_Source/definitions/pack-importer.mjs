@@ -3,6 +3,7 @@ import {createHash} from 'node:crypto';
 import {mkdir, copyFile, writeFile} from 'node:fs/promises';
 import {basename, join} from 'node:path';
 import {inflateRawSync} from 'node:zlib';
+import {normalizeSpeciesForms} from '../rules/pokemon-forms.mjs';
 
 const DEF_FILES={
   'content/moves.ndjson':'moves',
@@ -153,7 +154,12 @@ function insertDefinitions(db,entries,manifest){
       const versionId=String(row.definition_version_id||`${kind}:${logical}@${manifest.id}`).trim();
       const sourceId=String(row.source_id||manifest.source_ids?.[0]||manifest.id);
       let raw={...row,logical_id:logical,definition_version_id:versionId,content_pack_id:manifest.id};
-      if(kind==='species')raw=embedSpeciesPortrait(raw,entries);
+      if(kind==='species'){
+        raw=embedSpeciesPortrait(raw,entries);
+        // Stage B: .ptucp Species may carry Form definitions without a format-version bump.
+        // Normalize here to validate IDs/modes/override schema, but preserve the author-provided JSON as stored content.
+        normalizeSpeciesForms(raw.forms||raw.form_definitions||[]);
+      }
       if(kind==='items')raw=embedItemIcon(raw,entries);
       insert.run(versionId,kind,logical,manifest.id,sourceId,Number(row.source_priority??manifest.priority??100),row.source_page==null?null:Number(row.source_page),row.needs_review?1:0,JSON.stringify(raw));
     }

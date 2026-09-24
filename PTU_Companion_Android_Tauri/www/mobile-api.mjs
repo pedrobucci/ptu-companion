@@ -5,6 +5,7 @@ import {resolveTrainerModel} from './rules/trainer-engine.mjs';
 import {previewTrainerProgression,applyTrainerProgression,previewTrainerXpPurchase,applyTrainerXpPurchase} from './rules/trainer-progression-engine.mjs';
 import {itemUsageMetadata} from './rules/item-metadata.mjs';
 import {normalizeCapabilities} from './rules/capability-normalization.mjs';
+import {normalizeSpeciesForms,normalizePokemonFormState,resolvePokemonForms} from './rules/pokemon-forms.mjs';
 
 const MOBILE_KEY='ptu-companion-android-store-v1';
 const data=window.__PTU_MOBILE_DATA__;
@@ -39,7 +40,7 @@ function importedDefinitionRecord(kind,row,pack){
     frequency:raw.frequency_text||raw.frequency_action_text||raw.frequency?.raw||null,effect:raw.effect_text||null,prerequisites:raw.prerequisites_text||null,
     price:raw.price??null,damageBase:raw.damage_base??null,ac:raw.ac??null,range:raw.range_text||null,contestType:raw.contest_type||null,contestEffect:raw.contest_effect||null,
     dexNumber:raw.dex_number??raw.national_dex_number??null,enabledForCreation:raw.enabled_for_character_creation??null,completeness:raw.mechanical_completeness||null,
-    types:Array.isArray(raw.types)?raw.types:[],baseStats:raw.base_stats||null,abilities:raw.ability_slots||[],capabilities:normalizeCapabilities(raw.capabilities),levelUpMoves:raw.level_up_moves||[],
+    types:Array.isArray(raw.types)?raw.types:[],baseStats:raw.base_stats||null,abilities:raw.ability_slots||[],capabilities:normalizeCapabilities(raw.capabilities),levelUpMoves:raw.level_up_moves||[],forms:normalizeSpeciesForms(raw.forms||raw.form_definitions||[]),
     raw,rawText:raw.raw_text||null,semanticAutomation:raw.semantic_automation||null,compiledEffects:raw.compiled_effects||[],prerequisiteSemantics:raw.prerequisite_semantics||null,
     defenseProfile:raw.type_defense_profile||null,evolution:raw.evolution||null,evolutionText:raw.evolution_text||null,skills:raw.skills||null,skillsText:raw.skills_text||null,
     capabilitiesText:raw.capabilities_text||null,tmMoves:raw.tm_moves||[],tutorMoves:raw.tutor_moves||[],eggMoves:raw.egg_moves||[],androidImported:true
@@ -148,14 +149,14 @@ class MobileDefinitions {
   getRuleset(id){ return deep((data.rulesets||[]).find(r=>r.id===id)||null); }
   getPacks(){ return deep(data.packs||[]); }
   _map(rs,kind){ return data.resolved?.[rs]?.[kind]||{}; }
-  getResolved({rulesetId,kind,id}){ const vid=this._map(rulesetId,kind)[id],record=data.records?.[vid]; if(!record)return null; const out={...deep(record),kind}; if(kind==='species')out.capabilities=normalizeCapabilities(out.capabilities||out.raw?.capabilities); return out; }
+  getResolved({rulesetId,kind,id}){ const vid=this._map(rulesetId,kind)[id],record=data.records?.[vid]; if(!record)return null; const out={...deep(record),kind}; if(kind==='species'){out.capabilities=normalizeCapabilities(out.capabilities||out.raw?.capabilities);out.forms=normalizeSpeciesForms(out.forms||out.raw?.forms||out.raw?.form_definitions||[]);} return out; }
   listResolved({rulesetId,kind,q='',limit=60,offset=0}){
     const needle=norm(q); const ids=Object.keys(this._map(rulesetId,kind)); const rows=[];
     for(const id of ids){ const row=this.getResolved({rulesetId,kind,id}); if(!row)continue; if(needle && !norm(`${id} ${row.name||''} ${row.effect||''} ${JSON.stringify(row.raw||{})}`).includes(needle))continue; rows.push(row); }
     rows.sort((a,b)=>String(a.name||a.id).localeCompare(String(b.name||b.id))); return rows.slice(Number(offset)||0,(Number(offset)||0)+(Number(limit)||60));
   }
   countResolved({rulesetId,kind,q=''}){ return this.listResolved({rulesetId,kind,q,limit:100000,offset:0}).length; }
-  getVersions({kind,id}){ const vids=data.versionGroups?.[`${kind}:${id}`]||[]; return vids.map(v=>{const record=data.records[v];if(!record)return null;const out={...deep(record),kind};if(kind==='species')out.capabilities=normalizeCapabilities(out.capabilities||out.raw?.capabilities);return out;}).filter(Boolean); }
+  getVersions({kind,id}){ const vids=data.versionGroups?.[`${kind}:${id}`]||[]; return vids.map(v=>{const record=data.records[v];if(!record)return null;const out={...deep(record),kind};if(kind==='species'){out.capabilities=normalizeCapabilities(out.capabilities||out.raw?.capabilities);out.forms=normalizeSpeciesForms(out.forms||out.raw?.forms||out.raw?.form_definitions||[]);}return out;}).filter(Boolean); }
   getCounts(rulesetId){ const out={}; for(const k of ALLOWED_KINDS)out[k]=Object.keys(this._map(rulesetId,k)).length; return out; }
   getDamageBase(db){ return deep(data.damageBase?.[String(Number(db))]||null); }
   getTypeMatchups(){ return deep(data.typeMatchups||[]); }
@@ -210,6 +211,24 @@ const repo={
 const db={prepare(sql){return {get(){return {value:store.activeRulesetId||'all-provided-material'};},run(v){if(String(sql).includes('active_ruleset_id')){store.activeRulesetId=String(v);persist();}return {changes:1};}};}};
 const getActiveRuleset=()=>store.activeRulesetId||'all-provided-material';
 const defaultRuleset='all-provided-material';
+
+function pokemonFormContext({pokemon={},payload={}}={}){
+  const details=pokemon?.details||{};
+  return {
+    level:Number(payload.level??pokemon.level??1),gender:payload.gender??details.gender??pokemon.gender??null,
+    heldItemId:details.heldItemDefinitionId||null,heldItemName:pokemon.heldItem||null,heldItem:pokemon.heldItem||null,
+    abilities:details.abilities||[],capabilities:details.capabilities||[],tags:details.formTags||[],flags:details.formFlags||{},
+    manualApprovals:payload.manualFormApprovals||details.manualFormApprovals||[]
+  };
+}
+function resolveSpeciesFormState({species,pokemon={},payload={},includeActive=true}={}){
+  const details=pokemon?.details||{};
+  const requested=payload.formState||details.formState||{baseFormId:payload.baseFormId,activeFormId:payload.activeFormId};
+  const state=normalizePokemonFormState(requested);
+  if(!includeActive)state.activeFormId=null;
+  return resolvePokemonForms({species,formState:state,context:pokemonFormContext({pokemon,payload}),allowUnmet:!!payload.gmOverride});
+}
+
 function slugId(value){
   return String(value||'trainer').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'') || 'trainer';
 }
@@ -748,13 +767,27 @@ async function handleApi(req,res,url){
   if(req.method==='GET' && url.pathname==='/api/pokemon/evolution-guidance'){
     return json(res,200,definitions.getEvolutionGuidance());
   }
+  if(req.method==='POST' && url.pathname==='/api/pokemon/forms/resolve'){
+    const payload=await bodyJson(req);
+    const rulesetId=String(payload.rulesetId||getActiveRuleset());
+    if(!definitions.getRuleset(rulesetId)) throw Object.assign(new Error('Unknown ruleset'),{status:400});
+    const pokemon=payload.pokemon||{}; const details=pokemon.details||{};
+    const speciesId=String(payload.speciesId||details.speciesDefinitionId||'');
+    const baseSpecies=definitions.getResolved({rulesetId,kind:'species',id:speciesId});
+    if(!baseSpecies)return json(res,404,{error:'Species definition not found in active ruleset'});
+    const resolution=resolveSpeciesFormState({species:baseSpecies,pokemon,payload,includeActive:payload.includeActive!==false});
+    return json(res,resolution.valid?200:400,{rulesetId,baseSpecies:{id:baseSpecies.id,name:baseSpecies.name,forms:baseSpecies.forms||[]},...resolution});
+  }
   if(req.method==='POST' && url.pathname==='/api/pokemon/build-preview'){
     const payload=await bodyJson(req);
     const rulesetId=String(payload.rulesetId||getActiveRuleset());
     if(!definitions.getRuleset(rulesetId)) throw Object.assign(new Error('Unknown ruleset'),{status:400});
     const speciesId=String(payload.speciesId||'');
-    const species=definitions.getResolved({rulesetId,kind:'species',id:speciesId});
-    if(!species) return json(res,404,{error:'Species definition not found in active ruleset'});
+    const baseSpecies=definitions.getResolved({rulesetId,kind:'species',id:speciesId});
+    if(!baseSpecies) return json(res,404,{error:'Species definition not found in active ruleset'});
+    const buildFormResolution=resolveSpeciesFormState({species:baseSpecies,pokemon:{level:payload.level,details:{}},payload});
+    if(!buildFormResolution.valid)return json(res,400,{error:'Selected Pokémon Form is not valid.',formResolution:buildFormResolution});
+    const species=buildFormResolution.species;
     const incomingEvolution=definitions.getIncomingEvolution({speciesName:species.name,sourceId:species.sourceId});
     const preEvolutionSpecies=definitions.getEvolutionAncestry({rulesetId,speciesName:species.name,sourceId:species.sourceId});
     const allocations=payload.autoAllocate
@@ -893,8 +926,11 @@ async function handleApi(req,res,url){
     if(!definitions.getRuleset(rulesetId)) throw Object.assign(new Error('Unknown ruleset'),{status:400});
     const pokemon=payload.pokemon||{}; const details=pokemon.details||{};
     const speciesId=String(details.speciesDefinitionId||payload.speciesId||'');
-    const species=definitions.getResolved({rulesetId,kind:'species',id:speciesId});
-    if(!species) return json(res,404,{error:'Current Species definition not found in active ruleset'});
+    const baseSpecies=definitions.getResolved({rulesetId,kind:'species',id:speciesId});
+    if(!baseSpecies) return json(res,404,{error:'Current Species definition not found in active ruleset'});
+    const referenceFormResolution=resolveSpeciesFormState({species:baseSpecies,pokemon,payload});
+    if(!referenceFormResolution.valid)return json(res,400,{error:'Stored Pokémon Form state is not valid.',formResolution:referenceFormResolution});
+    const species=referenceFormResolution.species;
     const slug=v=>String(v||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
     const speciesTypes=species.types||pokemon.types||[];
     const held=resolvePokemonHeldItem({rulesetId,pokemon,species});
