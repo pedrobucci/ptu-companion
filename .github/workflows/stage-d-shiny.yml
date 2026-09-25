@@ -7,6 +7,7 @@ on:
       - feature/pokemon-shiny-d
     paths:
       - '.github/workflows/stage-d-shiny.yml'
+      - 'PTU_Companion_Windows_Source/scripts/apply_stage_d_android_preflight.py'
       - 'PTU_Companion_Windows_Source/scripts/apply_stage_d_shiny.py'
       - 'PTU_Companion_Windows_Source/scripts/verify_stage_d_shiny.mjs'
       - 'PTU_Companion_Android_Tauri/scripts/verify-stage-d-shiny.mjs'
@@ -38,6 +39,9 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+
+      - name: Normalize inherited Android source shape
+        run: python PTU_Companion_Windows_Source/scripts/apply_stage_d_android_preflight.py
 
       - name: Apply Stage D Shiny
         run: python PTU_Companion_Windows_Source/scripts/apply_stage_d_shiny.py
