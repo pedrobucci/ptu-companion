@@ -1632,6 +1632,7 @@ function applyPokemonProgression(){
   if(pv.evolved){d.formState={schemaVersion:1,baseFormId:'base',activeFormId:null};d.manualFormApprovals=[];}
   if(pv.evolved){d.formState={schemaVersion:1,baseFormId:'base',activeFormId:null};d.manualFormApprovals=[];}
   if(pv.evolved){d.formState={schemaVersion:1,baseFormId:'base',activeFormId:null};d.manualFormApprovals=[];}
+  if(pv.evolved){d.formState={schemaVersion:1,baseFormId:'base',activeFormId:null};d.manualFormApprovals=[];}
   d.baseStats=pv.baseStats; d.natureAdjustedBaseStats=pv.natureAdjustedBaseStats; d.statAllocations=pv.statAllocations; d.finalStats=pv.finalStats;
   d.abilities=[...(f.selectedAbilities||[])].filter(Boolean); d.ability=d.abilities[0]||'';
   d.abilityRecords=d.abilities.map((name,index)=>({name,sourceKind:index===0?'species_starting':'level_choice',sourceLabel:index===0?'Starting Ability':index===1?'Level 20 Ability':index===2?'Level 40 Ability':`Native Ability ${index+1}`,unlockLevel:index===0?1:index===1?20:index===2?40:null,selectedAtLevel:p.level,sourceId:pv.targetSpecies.id,sourceVersionId:pv.targetSpecies.versionId}));
