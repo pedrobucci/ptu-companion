@@ -30,7 +30,6 @@ const app=await readFile(new URL('../www/app.js',import.meta.url),'utf8');
 const api=await readFile(new URL('../www/mobile-api.mjs',import.meta.url),'utf8');
 for(const token of [
   "formState:{baseFormId:f.baseFormId||'base',activeFormId:null}",
-  "section('POKÉMON FORM'",
   'openPokemonFormsManager()',
   'setPokemonPermanentForm(formId)',
   'togglePokemonTransformation(formId)',
@@ -44,6 +43,7 @@ for(const token of [
   'You can use the choices below to recover to a valid Form state.',
   "if(pv.evolved){d.formState={schemaVersion:1,baseFormId:'base',activeFormId:null};d.manualFormApprovals=[];}"
 ]) assert.ok(app.includes(token),`Android Stage C UI contract missing: ${token}`);
+assert.match(app,/section\('POKÉMON FORM(?: & APPEARANCE)?'/,'Android Stage C Form section must remain present even when later stages extend its title');
 assert.equal((app.match(/Current Form needs attention/g)||[]).length,1,'Android Forms manager must render its invalid-state recovery message exactly once');
 
 assert.match(api,/species:\{id:species\.id,name:species\.name,types:species\.types\|\|\[\],versionId:species\.versionId,contentPackId:species\.contentPackId,sourceId:species\.sourceId\},formResolution:buildFormResolution,experience:/,'Android successful build preview must expose Form resolution metadata');

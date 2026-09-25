@@ -5,7 +5,8 @@ import {resolveTrainerModel} from './rules/trainer-engine.mjs';
 import {previewTrainerProgression,applyTrainerProgression,previewTrainerXpPurchase,applyTrainerXpPurchase} from './rules/trainer-progression-engine.mjs';
 import {itemUsageMetadata} from './rules/item-metadata.mjs';
 import {normalizeCapabilities} from './rules/capability-normalization.mjs';
-import {normalizeSpeciesForms,normalizePokemonFormState,resolvePokemonForms} from './rules/pokemon-forms.mjs';
+import {normalizePokemonFormState,resolvePokemonForms,resolvePokemonPresentation} from './rules/pokemon-forms.mjs';
+import {normalizeSpeciesForms} from './rules/pokemon-forms.mjs';
 
 const MOBILE_KEY='ptu-companion-android-store-v1';
 const data=window.__PTU_MOBILE_DATA__;
@@ -208,6 +209,14 @@ const repo={
   listRevisions:(id=store.activeProfileId,limit=10)=>(store.revisions?.[id]||[]).slice(0,limit).map(r=>({id:r.id,created_at:r.created_at})),
   restoreRevision:id=>{const arr=store.revisions?.[store.activeProfileId]||[];const r=arr.find(x=>Number(x.id)===Number(id));if(!r)throw Object.assign(new Error('Revision not found'),{status:404});store.states[store.activeProfileId]=deep(r.state);persist();return deep(r.state);}
 };
+window.__PTU_RESOLVED_POKEMON_ARTWORK__=(speciesId,formState,isShiny=false,context={})=>{
+  try{
+    const species=definitions.getResolved({rulesetId:getActiveRuleset(),kind:'species',id:String(speciesId||'')});
+    if(!species)return null;
+    const resolved=resolvePokemonPresentation({species,formState:formState||{},context:context||{},allowUnmet:true,isShiny:!!isShiny});
+    return resolved.presentation?.artworkUrl||species.raw?.portrait_data_url||null;
+  }catch{return null;}
+};
 const db={prepare(sql){return {get(){return {value:store.activeRulesetId||'all-provided-material'};},run(v){if(String(sql).includes('active_ruleset_id')){store.activeRulesetId=String(v);persist();}return {changes:1};}};}};
 const getActiveRuleset=()=>store.activeRulesetId||'all-provided-material';
 const defaultRuleset='all-provided-material';
@@ -226,7 +235,8 @@ function resolveSpeciesFormState({species,pokemon={},payload={},includeActive=tr
   const requested=payload.formState||details.formState||{baseFormId:payload.baseFormId,activeFormId:payload.activeFormId};
   const state=normalizePokemonFormState(requested);
   if(!includeActive)state.activeFormId=null;
-  return resolvePokemonForms({species,formState:state,context:pokemonFormContext({pokemon,payload}),allowUnmet:!!payload.gmOverride});
+  const isShiny=!!(payload.isShiny??details.isShiny??details.is_shiny??false);
+  return resolvePokemonPresentation({species,formState:state,context:pokemonFormContext({pokemon,payload}),allowUnmet:!!payload.gmOverride,isShiny});
 }
 
 function slugId(value){

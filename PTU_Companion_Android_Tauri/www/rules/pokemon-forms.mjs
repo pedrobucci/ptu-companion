@@ -182,6 +182,76 @@ export function normalizePokemonFormState(value={}){
   return {schemaVersion:POKEMON_FORM_SCHEMA_VERSION,baseFormId,activeFormId};
 }
 
+
+export function normalizePokemonArtwork(value){
+  if(value==null)return {normal:null,shiny:null};
+  if(typeof value==='string')return {normal:value.trim()||null,shiny:null};
+  if(typeof value!=='object'||Array.isArray(value))return {normal:null,shiny:null};
+  const unwrap=input=>{
+    if(input&&typeof input==='object'&&!Array.isArray(input)&&(Object.prototype.hasOwnProperty.call(input,'replace')||Object.prototype.hasOwnProperty.call(input,'remove')||Object.prototype.hasOwnProperty.call(input,'add')))return applyFormOperation(null,input);
+    return input;
+  };
+  const source=unwrap(value);
+  if(typeof source==='string')return {normal:source.trim()||null,shiny:null};
+  if(!source||typeof source!=='object'||Array.isArray(source))return {normal:null,shiny:null};
+  const clean=v=>typeof v==='string'&&v.trim()?v.trim():null;
+  return {
+    normal:clean(source.normal??source.default??source.url??source.normal_url??source.artwork_url??source.portrait_data_url??source.image_url),
+    shiny:clean(source.shiny??source.shiny_url??source.artwork_shiny_url??source.shiny_artwork_url??source.shinyArtwork)
+  };
+}
+function mergeArtworkCandidates(...candidates){
+  const out={normal:null,shiny:null};
+  for(const candidate of candidates){
+    const art=normalizePokemonArtwork(candidate);
+    if(!out.normal&&art.normal)out.normal=art.normal;
+    if(!out.shiny&&art.shiny)out.shiny=art.shiny;
+  }
+  return out;
+}
+function speciesArtwork(species){
+  const raw=species?.raw||{};
+  return mergeArtworkCandidates(
+    species?.artwork,
+    raw.artwork,
+    {normal:species?.portraitDataUrl||species?.image||raw.artwork_url||raw.portrait_data_url||raw.image_url||null,
+      shiny:species?.shinyArtwork||raw.artwork_shiny_url||raw.shiny_artwork_url||raw.shiny_portrait_data_url||raw.shiny_image_url||null}
+  );
+}
+function formArtwork(form){
+  const raw=form?.raw||{}; const overrides=form?.overrides||{};
+  return mergeArtworkCandidates(
+    overrides.artwork,
+    {normal:overrides.portraitDataUrl||overrides.image||null,shiny:overrides.shinyArtwork||null},
+    raw.artwork,
+    {normal:raw.artwork_url||raw.portrait_data_url||raw.image_url||null,
+      shiny:raw.artwork_shiny_url||raw.shiny_artwork_url||raw.shiny_portrait_data_url||raw.shiny_image_url||null}
+  );
+}
+export function resolvePokemonArtwork({species,formResolution,isShiny=false}={}){
+  const original=species||{};
+  const forms=formResolution?.forms||normalizeSpeciesForms(original.forms||original.raw?.forms||original.raw?.form_definitions||[]);
+  const state=formResolution?.formState||normalizePokemonFormState({});
+  const appliedIds=new Set((formResolution?.applied||[]).map(form=>form.id));
+  const active=state.activeFormId&&appliedIds.has(state.activeFormId)?forms.find(form=>form.id===state.activeFormId)||null:null;
+  const permanent=state.baseFormId!==BASE_FORM_ID&&appliedIds.has(state.baseFormId)?forms.find(form=>form.id===state.baseFormId)||null:null;
+  const layers=[
+    active?{kind:'active_form',id:active.id,name:active.name,artwork:formArtwork(active)}:null,
+    permanent?{kind:'base_form',id:permanent.id,name:permanent.name,artwork:formArtwork(permanent)}:null,
+    {kind:'species',id:original.id||null,name:original.name||null,artwork:speciesArtwork(original)}
+  ].filter(Boolean);
+  for(const layer of layers){
+    if(isShiny&&layer.artwork.shiny)return {url:layer.artwork.shiny,variant:'shiny',sourceLayer:layer.kind,sourceId:layer.id,sourceName:layer.name,isShiny:true,hasDedicatedShinyArtwork:true};
+    if(layer.artwork.normal)return {url:layer.artwork.normal,variant:'normal',sourceLayer:layer.kind,sourceId:layer.id,sourceName:layer.name,isShiny:!!isShiny,hasDedicatedShinyArtwork:false};
+  }
+  return {url:null,variant:'fallback',sourceLayer:null,sourceId:null,sourceName:null,isShiny:!!isShiny,hasDedicatedShinyArtwork:false};
+}
+export function resolvePokemonPresentation({species,formState={},context={},allowUnmet=false,isShiny=false}={}){
+  const formResolution=resolvePokemonForms({species,formState,context,allowUnmet});
+  const artwork=resolvePokemonArtwork({species,formResolution,isShiny:!!isShiny});
+  return {...formResolution,presentation:{isShiny:!!isShiny,artworkUrl:artwork.url,artwork}};
+}
+
 export function resolvePokemonForms({species,formState={},context={},allowUnmet=false}={}){
   const original=deepClone(species||{});
   const forms=normalizeSpeciesForms(original.forms||original.raw?.forms||original.raw?.form_definitions||[]);

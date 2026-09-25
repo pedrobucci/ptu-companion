@@ -15,7 +15,7 @@ import {resolveHeldItemEffect, applyHeldItemToTypeProfile, applyHeldItemToEffect
 import {resolveTrainerModel} from './rules/trainer-engine.mjs';
 import {previewTrainerProgression,applyTrainerProgression,previewTrainerXpPurchase,applyTrainerXpPurchase} from './rules/trainer-progression-engine.mjs';
 import {itemUsageMetadata} from './rules/item-metadata.mjs';
-import {normalizePokemonFormState,resolvePokemonForms} from './rules/pokemon-forms.mjs';
+import {normalizePokemonFormState,resolvePokemonForms,resolvePokemonPresentation} from './rules/pokemon-forms.mjs';
 
 const projectRoot=fileURLToPath(new URL('.',import.meta.url));
 const staticRoot=join(projectRoot,'static-preview');
@@ -66,7 +66,8 @@ function resolveSpeciesFormState({species,pokemon={},payload={},includeActive=tr
   const requested=payload.formState||details.formState||{baseFormId:payload.baseFormId,activeFormId:payload.activeFormId};
   const state=normalizePokemonFormState(requested);
   if(!includeActive)state.activeFormId=null;
-  return resolvePokemonForms({species,formState:state,context:pokemonFormContext({pokemon,payload}),allowUnmet:!!payload.gmOverride});
+  const isShiny=!!(payload.isShiny??details.isShiny??details.is_shiny??false);
+  return resolvePokemonPresentation({species,formState:state,context:pokemonFormContext({pokemon,payload}),allowUnmet:!!payload.gmOverride,isShiny});
 }
 
 const seed=JSON.parse(await readFile(seedPath,'utf8'));
@@ -609,6 +610,30 @@ async function handleApi(req,res,url){
     const rulesetId=String(url.searchParams.get('ruleset')||getActiveRuleset());
     const species=definitions.getResolved({rulesetId,kind:'species',id:speciesId});
     if(!species)return json(res,404,{error:'Species not found'});
+    const requestedFormState={baseFormId:url.searchParams.get('base')||'base',activeFormId:url.searchParams.get('active')||null};
+    const requestedShiny=url.searchParams.get('shiny')==='1';
+    const requestedPresentation=resolvePokemonPresentation({species,formState:requestedFormState,context:{},allowUnmet:true,isShiny:requestedShiny}).presentation;
+    const explicitArtwork=String(requestedPresentation?.artworkUrl||'').trim();
+    const explicitPacked=explicitArtwork.match(/^data:(image\/(?:png|jpeg|webp));base64,([A-Za-z0-9+/=]+)$/);
+    if(explicitPacked){
+      const bytes=Buffer.from(explicitPacked[2],'base64');
+      res.writeHead(200,{'Content-Type':explicitPacked[1],'Cache-Control':'public, max-age=2592000','Content-Length':bytes.length});
+      return res.end(bytes);
+    }
+    if(/^https?:\/\//i.test(explicitArtwork)){
+      try{
+        const remote=await fetch(explicitArtwork,{headers:{'User-Agent':'PTU-Companion-Beta/2.1'},signal:AbortSignal.timeout(1800)});
+        const type=remote.headers.get('content-type')||'';
+        if(remote.ok&&type.startsWith('image/')){
+          const bytes=Buffer.from(await remote.arrayBuffer());
+          if(bytes.length>0&&bytes.length<2000000){res.writeHead(200,{'Content-Type':type.split(';')[0],'Cache-Control':'public, max-age=2592000','Content-Length':bytes.length});return res.end(bytes);}
+        }
+      }catch{}
+    }else if(explicitArtwork&&!explicitArtwork.includes('..')&&!/^data:/i.test(explicitArtwork)){
+      const localRel=explicitArtwork.replace(/^\.?\/+/, '');
+      const localFile=join(staticRoot,localRel); const bytes=await readFile(localFile).catch(()=>null);
+      if(bytes){const contentType=mime[extname(localFile).toLowerCase()]||'application/octet-stream';res.writeHead(200,{'Content-Type':contentType,'Cache-Control':'public, max-age=2592000','Content-Length':bytes.length});return res.end(bytes);}
+    }
     const packedPortrait=String(species.raw?.portrait_data_url||'');
     const packedMatch=packedPortrait.match(/^data:(image\/(?:png|jpeg|webp));base64,([A-Za-z0-9+/=]+)$/);
     if(packedMatch){

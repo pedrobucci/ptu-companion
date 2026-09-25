@@ -1,0 +1,81 @@
+name: Stage D Pokemon Shiny
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - feature/pokemon-shiny-d
+    paths:
+      - '.github/workflows/stage-d-shiny.yml'
+      - 'PTU_Companion_Windows_Source/scripts/apply_stage_d_android_preflight.py'
+      - 'PTU_Companion_Windows_Source/scripts/apply_stage_d_shiny.py'
+      - 'PTU_Companion_Windows_Source/scripts/verify_stage_c_forms_ui.mjs'
+      - 'PTU_Companion_Android_Tauri/scripts/verify-stage-c-forms-ui.mjs'
+      - 'PTU_Companion_Windows_Source/scripts/verify_stage_d_shiny.mjs'
+      - 'PTU_Companion_Android_Tauri/scripts/verify-stage-d-shiny.mjs'
+      - 'PTU_Companion_Windows_Source/rules/pokemon-forms.mjs'
+      - 'PTU_Companion_Android_Tauri/www/rules/pokemon-forms.mjs'
+      - 'PTU_Companion_Windows_Source/static-preview/app.js'
+      - 'PTU_Companion_Android_Tauri/www/app.js'
+      - 'PTU_Companion_Windows_Source/server.mjs'
+      - 'PTU_Companion_Android_Tauri/www/mobile-api.mjs'
+      - 'PTU_Companion_Windows_Source/package.json'
+      - 'PTU_Companion_Android_Tauri/package.json'
+
+permissions:
+  contents: write
+
+jobs:
+  apply-and-verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Normalize inherited Android source shape
+        run: python PTU_Companion_Windows_Source/scripts/apply_stage_d_android_preflight.py
+
+      - name: Apply Stage D Shiny
+        run: python PTU_Companion_Windows_Source/scripts/apply_stage_d_shiny.py
+
+      - name: Check patch formatting
+        run: git diff --check
+
+      - name: Verify Windows regressions
+        working-directory: PTU_Companion_Windows_Source
+        run: npm run verify
+
+      - name: Verify Android regressions
+        working-directory: PTU_Companion_Android_Tauri
+        run: npm run verify
+
+      - name: Commit Stage D runtime integration
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add \
+            PTU_Companion_Windows_Source/rules/pokemon-forms.mjs \
+            PTU_Companion_Android_Tauri/www/rules/pokemon-forms.mjs \
+            PTU_Companion_Windows_Source/static-preview/app.js \
+            PTU_Companion_Android_Tauri/www/app.js \
+            PTU_Companion_Windows_Source/server.mjs \
+            PTU_Companion_Android_Tauri/www/mobile-api.mjs \
+            PTU_Companion_Windows_Source/package.json \
+            PTU_Companion_Android_Tauri/package.json
+          if git diff --cached --quiet; then
+            echo 'Stage D runtime integration already applied.'
+          else
+            git commit -m 'feat(stage-d): add Pokemon Shiny presentation [skip ci]'
+            git push origin HEAD:"${GITHUB_REF_NAME}"
+          fi
