@@ -36,7 +36,6 @@ def make_permanent_form_aware(text:str,path:Path,route:str,var_name:str,missing_
 def patch_api(path:Path)->None:
     text=path.read_text(encoding='utf-8'); changed=False
 
-    # Successful preview/reference responses must expose the resolution metadata used by Stage C.
     route='/api/pokemon/build-preview'
     old="    return json(res,200,{rulesetId,species:{id:species.id,name:species.name,types:species.types||[],versionId:species.versionId,contentPackId:species.contentPackId,sourceId:species.sourceId},experience:definitions.getPokemonExperience(preview.level),preview});"
     new="    return json(res,200,{rulesetId,species:{id:species.id,name:species.name,types:species.types||[],versionId:species.versionId,contentPackId:species.contentPackId,sourceId:species.sourceId},formResolution:buildFormResolution,experience:definitions.getPokemonExperience(preview.level),preview});"
@@ -47,7 +46,6 @@ def patch_api(path:Path)->None:
     new="    return json(res,200,{rulesetId,species,formResolution:referenceFormResolution,moves,abilities,abilitySlots,abilitySlotStatus,resolvedCreature:resolvedCreatureModel({pokemon,species,rulesetId,heldItemEffect:held.effect,heldItemDefinition:held.definition}),modifierSummary:getPokemonModifierSummary(resolvedPokemonForCombat,{heldItemEffect:held.effect}),heldItem:{definition:held.definition,effect:held.effect},typeProfile,incomingEvolution:incoming||null,outgoingEvolutions:outgoing});"
     text,did=replace_in_route(text,route,old,new,path); changed|=did
 
-    # Permanent progression/configuration uses the permanent Form, never an ephemeral transformation.
     for route,var_name in [
         ('/api/pokemon/progression-preview','progressionFormResolution'),
         ('/api/pokemon/ability-correction-preview','abilityFormResolution'),
@@ -57,7 +55,6 @@ def patch_api(path:Path)->None:
     ]:
         text,did=make_permanent_form_aware(text,path,route,var_name,'Current Species definition not found in active ruleset'); changed|=did
 
-    # Evolution identity belongs to the canonical Species, even when its permanent Form overrides display fields.
     route='/api/pokemon/progression-preview'
     old="    const evolutions=definitions.getOutgoingEvolutions({rulesetId,speciesName:species.name,sourceId:species.sourceId});"
     new="    const evolutions=definitions.getOutgoingEvolutions({rulesetId,speciesName:baseSpecies.name,sourceId:baseSpecies.sourceId});"
@@ -66,7 +63,6 @@ def patch_api(path:Path)->None:
     new="    return json(res,200,{rulesetId,currentSpecies:{id:species.id,name:species.name,types:species.types||[],versionId:species.versionId,contentPackId:species.contentPackId,sourceId:species.sourceId},formResolution:progressionFormResolution,evolutionCandidates:candidates,preview});"
     text,did=replace_in_route(text,route,old,new,path); changed|=did
 
-    # Reference combat data uses resolved Form mechanics, but evolution lineage remains anchored to canonical Species identity.
     route='/api/pokemon/reference-data'
     for old,new in [
         ("    const held=resolvePokemonHeldItem({rulesetId,pokemon,species});","    const held=resolvePokemonHeldItem({rulesetId,pokemon,species:baseSpecies});"),
@@ -82,7 +78,6 @@ def patch_api(path:Path)->None:
 def patch_app(path:Path)->None:
     text=path.read_text(encoding='utf-8'); changed=False
 
-    # Let the manager recover even when an already-stored Form has become invalid after a pack/rule/state change.
     old="""async function openPokemonFormsManager(){
   const p=pokemon(); if(!p?.details?.speciesDefinitionId)return toast('This Pokémon is not linked to a Species definition.','error');
   if(creatureReferenceState.pokemonId!==p.id||!creatureReferenceState.data)await loadCreatureReferenceData(true);
@@ -119,11 +114,12 @@ async function openPokemonFormsManager(){
         text=text.replace(old,new,1); changed=True
     elif new not in text: raise RuntimeError(f'Forms manager resolution anchor missing in {path}')
 
-    old="${warnings.length?`<div class=\"builder-validation bad\"><strong>Form warnings</strong><ul>${warnings.map(w=>`<li>${esc(w)}</li>`).join('')}</ul></div>`:''}<h3>Permanent / Base Form</h3>"
-    new="${errors.length?`<div class=\"builder-validation bad\"><strong>Current Form needs attention</strong><ul>${errors.map(e=>`<li>${esc(e)}</li>`).join('')}</ul><small>You can use the choices below to recover to a valid Form state.</small></div>`:''}${warnings.length?`<div class=\"builder-validation bad\"><strong>Form warnings</strong><ul>${warnings.map(w=>`<li>${esc(w)}</li>`).join('')}</ul></div>`:''}<h3>Permanent / Base Form</h3>"
-    if old in text:
-        text=text.replace(old,new,1); changed=True
-    elif new not in text: raise RuntimeError(f'Forms manager error display anchor missing in {path}')
+    error_block="${errors.length?`<div class=\"builder-validation bad\"><strong>Current Form needs attention</strong><ul>${errors.map(e=>`<li>${esc(e)}</li>`).join('')}</ul><small>You can use the choices below to recover to a valid Form state.</small></div>`:''}"
+    while error_block+error_block in text:
+        text=text.replace(error_block+error_block,error_block,1); changed=True
+    warnings_anchor="${warnings.length?`<div class=\"builder-validation bad\"><strong>Form warnings</strong><ul>${warnings.map(w=>`<li>${esc(w)}</li>`).join('')}</ul></div>`:''}<h3>Permanent / Base Form</h3>"
+    if error_block not in text:
+        text=replace_once(text,warnings_anchor,error_block+warnings_anchor,path); changed=True
 
     old="  const form=formId==='base'?null:(data?.species?.forms||[]).find(x=>x.id===formId&&x.mode==='permanent');"
     new="  const forms=pokemonFormsUiCache.pokemonId===p.id?pokemonFormsUiCache.forms:(data?.species?.forms||[]); const form=formId==='base'?null:forms.find(x=>x.id===formId&&x.mode==='permanent');"
@@ -137,7 +133,6 @@ async function openPokemonFormsManager(){
         text=text.replace(old,new,1); changed=True
     elif new not in text: raise RuntimeError(f'Transformation Form cache anchor missing in {path}')
 
-    # Evolving to a different Species cannot retain a Form ID owned by the pre-evolution Species.
     old="  d.experience=pv.totalExperience; d.speciesDefinitionId=pv.targetSpecies.id; d.speciesVersionId=pv.targetSpecies.versionId; d.speciesContentPackId=pv.targetSpecies.contentPackId;"
     new="  d.experience=pv.totalExperience; d.speciesDefinitionId=pv.targetSpecies.id; d.speciesVersionId=pv.targetSpecies.versionId; d.speciesContentPackId=pv.targetSpecies.contentPackId;\n  if(pv.evolved){d.formState={schemaVersion:1,baseFormId:'base',activeFormId:null};d.manualFormApprovals=[];}"
     if old in text:
