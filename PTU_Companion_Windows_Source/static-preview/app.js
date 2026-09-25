@@ -997,18 +997,24 @@ function pokemonFormOptionCard(form,{current=false,action='',actionLabel='Apply'
   const requirements=pokemonFormRequirementText(form?.requirements);
   return `<article class="ability-card"><div class="row-between"><div><h3>${esc(form?.name||'Canonical Base')}</h3>${form?.mode?chip(form.mode==='permanent'?'PERMANENT':'TRANSFORMATION',form.mode==='permanent'?'chip-purple':'chip-gold'):chip('CANONICAL BASE','chip-blue')}${current?chip('CURRENT','chip-green'):''}</div></div><p><strong>Requirements:</strong> ${esc(requirements)}</p>${form?.notes?`<p class="muted">${esc(form.notes)}</p>`:''}${action?`<button class="btn ${tone} btn-small" onclick="${action}">${esc(actionLabel)}</button>`:''}</article>`;
 }
+let pokemonFormsUiCache={pokemonId:null,forms:[]};
 async function openPokemonFormsManager(){
   const p=pokemon(); if(!p?.details?.speciesDefinitionId)return toast('This Pokémon is not linked to a Species definition.','error');
   if(creatureReferenceState.pokemonId!==p.id||!creatureReferenceState.data)await loadCreatureReferenceData(true);
   const data=creatureReferenceState.pokemonId===p.id?creatureReferenceState.data:null;
-  if(!data)return toast(creatureReferenceState.error||'Could not resolve Pokémon Forms.','error');
-  const forms=Array.isArray(data.species?.forms)?data.species.forms:[];
-  if(!forms.length)return toast('This Species has no alternate Forms in the active Ruleset.','error');
+  let formPayload=null;
+  try{
+    const response=await fetch('/api/pokemon/forms/resolve',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({pokemon:p,gmOverride:!!state.ui.gmOverride,rulesetId:catalogState.status?.activeRulesetId})});
+    formPayload=await response.json().catch(()=>null);
+  }catch{}
+  const forms=Array.isArray(formPayload?.baseSpecies?.forms)?formPayload.baseSpecies.forms:(Array.isArray(data?.species?.forms)?data.species.forms:[]);
+  if(!forms.length)return toast(creatureReferenceState.error||formPayload?.error||'This Species has no alternate Forms in the active Ruleset.','error');
+  pokemonFormsUiCache={pokemonId:p.id,forms};
   const stateForm=pokemonFormCurrentState(p); const permanent=forms.filter(form=>form.mode==='permanent'); const transformations=forms.filter(form=>form.mode==='transformation');
   const permanentCards=[pokemonFormOptionCard(null,{current:stateForm.baseFormId==='base',action:stateForm.baseFormId==='base'?'':"setPokemonPermanentForm('base')",actionLabel:'Use Canonical Base'})].concat(permanent.map(form=>pokemonFormOptionCard(form,{current:stateForm.baseFormId===form.id,action:stateForm.baseFormId===form.id?'':`setPokemonPermanentForm('${esc(form.id)}')`,actionLabel:'Use as Permanent Form'}))).join('');
   const transformationCards=transformations.map(form=>pokemonFormOptionCard(form,{current:stateForm.activeFormId===form.id,action:`togglePokemonTransformation('${esc(form.id)}')`,actionLabel:stateForm.activeFormId===form.id?'Deactivate Transformation':'Activate Transformation',tone:stateForm.activeFormId===form.id?'btn-ghost':'btn-gold'})).join('')||'<p class="muted">No temporary transformation Forms are defined.</p>';
-  const applied=data.formResolution?.applied||[]; const warnings=data.formResolution?.warnings||[];
-  modal(`<div class="flow-note"><strong>Current resolution:</strong> ${applied.length?applied.map(form=>esc(form.name)).join(' → '):'Canonical Base'}.</div>${warnings.length?`<div class="builder-validation bad"><strong>Form warnings</strong><ul>${warnings.map(w=>`<li>${esc(w)}</li>`).join('')}</ul></div>`:''}<h3>Permanent / Base Form</h3><div class="ability-card-grid">${permanentCards}</div><h3>Temporary Transformation</h3><div class="ability-card-grid">${transformationCards}</div><div class="flow-note"><strong>Persistence:</strong> the permanent Form and active transformation are stored on this individual Pokémon. Transformation state can be cleared without changing the permanent Form.</div>`,{title:`Pokémon Forms · ${p.name}`,subtitle:'Resolved from the active Campaign Ruleset'});
+  const resolution=formPayload?.formState?formPayload:data?.formResolution; const applied=resolution?.applied||[]; const warnings=resolution?.warnings||[]; const errors=resolution?.errors||[];
+  modal(`<div class="flow-note"><strong>Current resolution:</strong> ${applied.length?applied.map(form=>esc(form.name)).join(' → '):'Canonical Base'}.</div>${errors.length?`<div class="builder-validation bad"><strong>Current Form needs attention</strong><ul>${errors.map(e=>`<li>${esc(e)}</li>`).join('')}</ul><small>You can use the choices below to recover to a valid Form state.</small></div>`:''}${warnings.length?`<div class="builder-validation bad"><strong>Form warnings</strong><ul>${warnings.map(w=>`<li>${esc(w)}</li>`).join('')}</ul></div>`:''}<h3>Permanent / Base Form</h3><div class="ability-card-grid">${permanentCards}</div><h3>Temporary Transformation</h3><div class="ability-card-grid">${transformationCards}</div><div class="flow-note"><strong>Persistence:</strong> the permanent Form and active transformation are stored on this individual Pokémon. Transformation state can be cleared without changing the permanent Form.</div>`,{title:`Pokémon Forms · ${p.name}`,subtitle:'Resolved from the active Campaign Ruleset'});
 }
 async function applyPokemonFormState(nextState,form=null){
   const p=pokemon(); if(!p)return;
@@ -1033,14 +1039,14 @@ async function applyPokemonFormState(nextState,form=null){
 }
 async function setPokemonPermanentForm(formId){
   const p=pokemon(); if(!p)return; const data=creatureReferenceState.pokemonId===p.id?creatureReferenceState.data:null;
-  const form=formId==='base'?null:(data?.species?.forms||[]).find(x=>x.id===formId&&x.mode==='permanent');
+  const forms=pokemonFormsUiCache.pokemonId===p.id?pokemonFormsUiCache.forms:(data?.species?.forms||[]); const form=formId==='base'?null:forms.find(x=>x.id===formId&&x.mode==='permanent');
   if(formId!=='base'&&!form)return toast('Permanent Form is not available in the active Ruleset.','error');
   const current=pokemonFormCurrentState(p); await applyPokemonFormState({baseFormId:formId||'base',activeFormId:current.activeFormId},form);
 }
 async function togglePokemonTransformation(formId){
   const p=pokemon(); if(!p)return; const data=creatureReferenceState.pokemonId===p.id?creatureReferenceState.data:null; const current=pokemonFormCurrentState(p);
   if(current.activeFormId===formId)return applyPokemonFormState({baseFormId:current.baseFormId,activeFormId:null},null);
-  const form=(data?.species?.forms||[]).find(x=>x.id===formId&&x.mode==='transformation');
+  const forms=pokemonFormsUiCache.pokemonId===p.id?pokemonFormsUiCache.forms:(data?.species?.forms||[]); const form=forms.find(x=>x.id===formId&&x.mode==='transformation');
   if(!form)return toast('Transformation Form is not available in the active Ruleset.','error');
   await applyPokemonFormState({baseFormId:current.baseFormId,activeFormId:formId},form);
 }
@@ -1647,6 +1653,7 @@ function applyPokemonProgression(){
   }));
   p.level=pv.targetLevel; p.species=pv.targetSpecies.name; p.types=(pv.targetSpecies.types||p.types).map(t=>String(t).toLowerCase()); p.maxHp=Number(pv.resolvedMaxHp??pv.maxHp); p.hp=Math.min(p.hp,p.maxHp);
   d.experience=pv.totalExperience; d.speciesDefinitionId=pv.targetSpecies.id; d.speciesVersionId=pv.targetSpecies.versionId; d.speciesContentPackId=pv.targetSpecies.contentPackId;
+  if(pv.evolved){d.formState={schemaVersion:1,baseFormId:'base',activeFormId:null};d.manualFormApprovals=[];}
   d.baseStats=pv.baseStats; d.natureAdjustedBaseStats=pv.natureAdjustedBaseStats; d.statAllocations=pv.statAllocations; d.finalStats=pv.finalStats;
   d.abilities=[...(f.selectedAbilities||[])].filter(Boolean); d.ability=d.abilities[0]||'';
   d.abilityRecords=d.abilities.map((name,index)=>({name,sourceKind:index===0?'species_starting':'level_choice',sourceLabel:index===0?'Starting Ability':index===1?'Level 20 Ability':index===2?'Level 40 Ability':`Native Ability ${index+1}`,unlockLevel:index===0?1:index===1?20:index===2?40:null,selectedAtLevel:p.level,sourceId:pv.targetSpecies.id,sourceVersionId:pv.targetSpecies.versionId}));

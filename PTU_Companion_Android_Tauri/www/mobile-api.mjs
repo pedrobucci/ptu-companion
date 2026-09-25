@@ -807,7 +807,7 @@ async function handleApi(req,res,url){
         moveLimitModifier:payload.moveLimitModifier,gmOverride:payload.gmOverride
       });
     }
-    return json(res,200,{rulesetId,species:{id:species.id,name:species.name,types:species.types||[],versionId:species.versionId,contentPackId:species.contentPackId,sourceId:species.sourceId},experience:definitions.getPokemonExperience(preview.level),preview});
+    return json(res,200,{rulesetId,species:{id:species.id,name:species.name,types:species.types||[],versionId:species.versionId,contentPackId:species.contentPackId,sourceId:species.sourceId},formResolution:buildFormResolution,experience:definitions.getPokemonExperience(preview.level),preview});
   }
   if(req.method==='GET' && url.pathname==='/api/pokemon/experience'){
     const level=Math.max(1,Math.min(100,Number(url.searchParams.get('level')||1)));
@@ -821,9 +821,12 @@ async function handleApi(req,res,url){
     if(!definitions.getRuleset(rulesetId)) throw Object.assign(new Error('Unknown ruleset'),{status:400});
     const pokemon=payload.pokemon||{}; const details=pokemon.details||{};
     const speciesId=String(details.speciesDefinitionId||payload.speciesId||'');
-    const species=definitions.getResolved({rulesetId,kind:'species',id:speciesId});
-    if(!species) return json(res,404,{error:'Current Species definition not found in active ruleset'});
-    const evolutions=definitions.getOutgoingEvolutions({rulesetId,speciesName:species.name,sourceId:species.sourceId});
+    const baseSpecies=definitions.getResolved({rulesetId,kind:'species',id:speciesId});
+    if(!baseSpecies) return json(res,404,{error:'Current Species definition not found in active ruleset'});
+    const progressionFormResolution=resolveSpeciesFormState({species:baseSpecies,pokemon,payload,includeActive:false});
+    if(!progressionFormResolution.valid)return json(res,400,{error:'Stored permanent Pokémon Form state is not valid.',formResolution:progressionFormResolution});
+    const species=progressionFormResolution.species;
+    const evolutions=definitions.getOutgoingEvolutions({rulesetId,speciesName:baseSpecies.name,sourceId:baseSpecies.sourceId});
     let selectedEvolution=null;
     if(payload.evolutionSpeciesId){
       selectedEvolution=evolutions.find(e=>e.target.id===String(payload.evolutionSpeciesId));
@@ -857,7 +860,7 @@ async function handleApi(req,res,url){
       manualConditionRequired:!!(e.conditionText && !/^minimum\s+\d+$/i.test(String(e.conditionText).trim())),
       blockedByPokeEdge:strengthOwned?"Underdog's Strength":null
     }));
-    return json(res,200,{rulesetId,currentSpecies:{id:species.id,name:species.name,types:species.types||[],versionId:species.versionId,contentPackId:species.contentPackId,sourceId:species.sourceId},evolutionCandidates:candidates,preview});
+    return json(res,200,{rulesetId,currentSpecies:{id:species.id,name:species.name,types:species.types||[],versionId:species.versionId,contentPackId:species.contentPackId,sourceId:species.sourceId},formResolution:progressionFormResolution,evolutionCandidates:candidates,preview});
   }
 
   if(req.method==='POST' && url.pathname==='/api/trainer/reference-data'){
@@ -933,7 +936,7 @@ async function handleApi(req,res,url){
     const species=referenceFormResolution.species;
     const slug=v=>String(v||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
     const speciesTypes=species.types||pokemon.types||[];
-    const held=resolvePokemonHeldItem({rulesetId,pokemon,species});
+    const held=resolvePokemonHeldItem({rulesetId,pokemon,species:baseSpecies});
     const edgeStats=resolvePokemonPokeEdgeStats({pokemon,species});
     const resolvedPokemonForCombat={...pokemon,details:{...details,finalStats:{...edgeStats.permanentFinal}}};
     const accuracyMap=accuracyTrainingMap(details);
@@ -950,10 +953,10 @@ async function handleApi(req,res,url){
     const nativeSelected=[...(Array.isArray(details.abilities)?details.abilities.filter(Boolean):[])];
     for(const rec of (Array.isArray(details.abilityRecords)?details.abilityRecords:[])) if(['species_starting','level_choice','native_extra'].includes(String(rec?.sourceKind||'')) && rec?.name && !nativeSelected.some(x=>abilitySlug(x)===abilitySlug(rec.name))) nativeSelected.push(rec.name);
     const abilitySlotStatus={expected:abilitySlots.length,selected:nativeSelected.length,unresolved:abilitySlots.slice(nativeSelected.length).map(s=>({label:s.label,unlockLevel:s.unlockLevel}))};
-    const outgoing=definitions.getOutgoingEvolutions({rulesetId,speciesName:species.name,sourceId:species.sourceId});
-    const incoming=definitions.getIncomingEvolution({speciesName:species.name,sourceId:species.sourceId});
+    const outgoing=definitions.getOutgoingEvolutions({rulesetId,speciesName:baseSpecies.name,sourceId:baseSpecies.sourceId});
+    const incoming=definitions.getIncomingEvolution({speciesName:baseSpecies.name,sourceId:baseSpecies.sourceId});
     const typeProfile=applyHeldItemToTypeProfile(definitions.getDefensiveTypeProfile(speciesTypes),held.effect);
-    return json(res,200,{rulesetId,species,moves,abilities,abilitySlots,abilitySlotStatus,resolvedCreature:resolvedCreatureModel({pokemon,species,rulesetId,heldItemEffect:held.effect,heldItemDefinition:held.definition}),modifierSummary:getPokemonModifierSummary(resolvedPokemonForCombat,{heldItemEffect:held.effect}),heldItem:{definition:held.definition,effect:held.effect},typeProfile,incomingEvolution:incoming||null,outgoingEvolutions:outgoing});
+    return json(res,200,{rulesetId,species,formResolution:referenceFormResolution,moves,abilities,abilitySlots,abilitySlotStatus,resolvedCreature:resolvedCreatureModel({pokemon,species,rulesetId,heldItemEffect:held.effect,heldItemDefinition:held.definition}),modifierSummary:getPokemonModifierSummary(resolvedPokemonForCombat,{heldItemEffect:held.effect}),heldItem:{definition:held.definition,effect:held.effect},typeProfile,incomingEvolution:incoming||null,outgoingEvolutions:outgoing});
   }
 
   if(req.method==='POST' && url.pathname==='/api/pokemon/ability-correction-preview'){
@@ -962,8 +965,11 @@ async function handleApi(req,res,url){
     if(!definitions.getRuleset(rulesetId)) throw Object.assign(new Error('Unknown ruleset'),{status:400});
     const pokemon=payload.pokemon||{}; const details=structuredClone(pokemon.details||{});
     const speciesId=String(details.speciesDefinitionId||payload.speciesId||'');
-    const species=definitions.getResolved({rulesetId,kind:'species',id:speciesId});
-    if(!species) return json(res,404,{error:'Current Species definition not found in active ruleset'});
+    const baseSpecies=definitions.getResolved({rulesetId,kind:'species',id:speciesId});
+    if(!baseSpecies) return json(res,404,{error:'Current Species definition not found in active ruleset'});
+    const abilityFormResolution=resolveSpeciesFormState({species:baseSpecies,pokemon,payload,includeActive:false});
+    if(!abilityFormResolution.valid)return json(res,400,{error:'Stored permanent Pokémon Form state is not valid.',formResolution:abilityFormResolution});
+    const species=abilityFormResolution.species;
     const slots=nativeAbilitySlotsForSpecies(species,pokemon.level);
     const selected=Array.isArray(payload.selectedAbilities)?payload.selectedAbilities.map(String):[];
     const errors=[];
@@ -1027,8 +1033,11 @@ async function handleApi(req,res,url){
     if(!definitions.getRuleset(rulesetId)) throw Object.assign(new Error('Unknown ruleset'),{status:400});
     const pokemon=payload.pokemon||{}; const details=pokemon.details||{};
     const speciesId=String(details.speciesDefinitionId||payload.speciesId||'');
-    const species=definitions.getResolved({rulesetId,kind:'species',id:speciesId});
-    if(!species) return json(res,404,{error:'Current Species definition not found in active ruleset'});
+    const baseSpecies=definitions.getResolved({rulesetId,kind:'species',id:speciesId});
+    if(!baseSpecies) return json(res,404,{error:'Current Species definition not found in active ruleset'});
+    const restatFormResolution=resolveSpeciesFormState({species:baseSpecies,pokemon,payload,includeActive:false});
+    if(!restatFormResolution.valid)return json(res,400,{error:'Stored permanent Pokémon Form state is not valid.',formResolution:restatFormResolution});
+    const species=restatFormResolution.species;
     const preview=buildPokemonRestatPreview({pokemon,species,allocations:payload.allocations,gmOverride:!!payload.gmOverride,baseRelationExemptStats:relationExemptionsFromPokeEdges(details.pokeEdges||[])});
     applyPokeEdgeStatsToPreview({preview,pokemon,species,gmOverride:!!payload.gmOverride});
     return json(res,200,{rulesetId,species:{id:species.id,name:species.name,types:species.types||[]},preview});
@@ -1040,8 +1049,11 @@ async function handleApi(req,res,url){
     if(!definitions.getRuleset(rulesetId)) throw Object.assign(new Error('Unknown ruleset'),{status:400});
     const pokemon=payload.pokemon||{}; const details=pokemon.details||{};
     const speciesId=String(details.speciesDefinitionId||payload.speciesId||'');
-    const species=definitions.getResolved({rulesetId,kind:'species',id:speciesId});
-    if(!species) return json(res,404,{error:'Current Species definition not found in active ruleset'});
+    const baseSpecies=definitions.getResolved({rulesetId,kind:'species',id:speciesId});
+    if(!baseSpecies) return json(res,404,{error:'Current Species definition not found in active ruleset'});
+    const trainingFormResolution=resolveSpeciesFormState({species:baseSpecies,pokemon,payload,includeActive:false});
+    if(!trainingFormResolution.valid)return json(res,400,{error:'Stored permanent Pokémon Form state is not valid.',formResolution:trainingFormResolution});
+    const species=trainingFormResolution.species;
     const ruleset=definitions.getRuleset(rulesetId);
     const september2015Enabled=!!ruleset?.packs?.some(p=>p.enabled && p.pack_id==='ptu-september-2015-playtest');
     const earned=Number(details.tutorPointsEarned??0); const spent=Number(details.tutorPointsSpent??0); const remaining=Math.max(0,earned-spent);
@@ -1107,8 +1119,11 @@ async function handleApi(req,res,url){
     if(!definitions.getRuleset(rulesetId)) throw Object.assign(new Error('Unknown ruleset'),{status:400});
     const pokemon=payload.pokemon||{}; const details=JSON.parse(JSON.stringify(pokemon.details||{}));
     const speciesId=String(details.speciesDefinitionId||payload.speciesId||'');
-    const species=definitions.getResolved({rulesetId,kind:'species',id:speciesId});
-    if(!species) return json(res,404,{error:'Current Species definition not found in active ruleset'});
+    const baseSpecies=definitions.getResolved({rulesetId,kind:'species',id:speciesId});
+    if(!baseSpecies) return json(res,404,{error:'Current Species definition not found in active ruleset'});
+    const trainingActionFormResolution=resolveSpeciesFormState({species:baseSpecies,pokemon,payload,includeActive:false});
+    if(!trainingActionFormResolution.valid)return json(res,400,{error:'Stored permanent Pokémon Form state is not valid.',formResolution:trainingActionFormResolution});
+    const species=trainingActionFormResolution.species;
     details.moves=Array.isArray(details.moves)?details.moves:[]; details.pokeEdges=Array.isArray(details.pokeEdges)?details.pokeEdges:[];
     details.grantedAbilities=Array.isArray(details.grantedAbilities)?details.grantedAbilities:[];
     details.trainingHistory=Array.isArray(details.trainingHistory)?details.trainingHistory:[];
