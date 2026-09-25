@@ -39,10 +39,19 @@ for(const token of [
   'p.types=payload.species.types.map',
   'resolvedTypes.map(typeBadge)',
   'pokemonFormRequirementText',
-  'pokemonFormManualRequirements'
+  'pokemonFormManualRequirements',
+  'pokemonFormsUiCache',
+  'You can use the choices below to recover to a valid Form state.',
+  "if(pv.evolved){d.formState={schemaVersion:1,baseFormId:'base',activeFormId:null};d.manualFormApprovals=[];}"
 ]) assert.ok(app.includes(token),`Android Stage C UI contract missing: ${token}`);
-assert.ok(api.includes('formResolution:buildFormResolution'),'Android build preview must expose Form resolution metadata');
-assert.ok(api.includes('formResolution:referenceFormResolution'),'Android Creature reference data must expose current Form resolution metadata');
+
+assert.match(api,/species:\{id:species\.id,name:species\.name,types:species\.types\|\|\[\],versionId:species\.versionId,contentPackId:species\.contentPackId,sourceId:species\.sourceId\},formResolution:buildFormResolution,experience:/,'Android successful build preview must expose Form resolution metadata');
+assert.match(api,/rulesetId,species,formResolution:referenceFormResolution,moves,abilities/,'Android successful Creature reference data must expose current Form resolution metadata');
+for(const marker of ['progressionFormResolution','abilityFormResolution','restatFormResolution','trainingFormResolution','trainingActionFormResolution']){
+  assert.ok(api.includes(`const ${marker}=resolveSpeciesFormState({species:baseSpecies,pokemon,payload,includeActive:false})`),`Android ${marker} must resolve permanent Form mechanics while ignoring temporary transformations`);
+}
+assert.ok(api.includes('formResolution:progressionFormResolution,evolutionCandidates'),'Android progression preview must report the permanent Form resolution it used');
+assert.ok(api.includes('speciesName:baseSpecies.name,sourceId:baseSpecies.sourceId'),'Android evolution lineage must remain anchored to canonical Species identity');
 assert.match(app,/setPokemonBuilderBaseForm,togglePokemonBuilderFormManualApproval/,'Android builder Form handlers must be exposed');
 assert.match(app,/openPokemonFormsManager,setPokemonPermanentForm,togglePokemonTransformation/,'Android Creature Form handlers must be exposed');
 assert.ok(app.includes("activeFormId:null"),'Android UI must support explicitly deactivating a temporary transformation');
