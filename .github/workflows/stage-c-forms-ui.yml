@@ -10,6 +10,8 @@ on:
       - 'PTU_Companion_Windows_Source/scripts/apply_stage_c_forms_ui.py'
       - 'PTU_Companion_Windows_Source/scripts/verify_stage_c_forms_ui.mjs'
       - 'PTU_Companion_Android_Tauri/scripts/verify-stage-c-forms-ui.mjs'
+      - 'PTU_Companion_Windows_Source/scripts/verify_stage_a9_move_keywords.mjs'
+      - 'PTU_Companion_Android_Tauri/scripts/verify-stage-a9-move-keywords.mjs'
       - 'PTU_Companion_Windows_Source/static-preview/app.js'
       - 'PTU_Companion_Android_Tauri/www/app.js'
       - 'PTU_Companion_Windows_Source/server.mjs'
