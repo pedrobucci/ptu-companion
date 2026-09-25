@@ -36,6 +36,6 @@ assert.match(windowsSource,/catalogState\.kind==='move_keywords'/,'Library must 
 assert.match(windowsSource,/kind==='move_keywords'\?MOVE_KEYWORD_CATALOG\.length/,'Library count must report built-in keyword count');
 assert.match(windowsSource,/moveKeywordReferenceHtml\(def\|\|m\)/,'Creature Move cards must expose detected keyword references');
 assert.match(windowsSource,/function openMoveKeywordInfo\(id\)/,'Keyword descriptions must open in the standard modal flow');
-assert.match(windowsSource,/Object\.assign\(window,\{openMoveKeywordInfo,route/,'Inline keyword buttons must have an exposed handler');
+assert.match(windowsSource,/Object\.assign\(window,\{[^}]*openMoveKeywordInfo[^}]*route/s,'Inline keyword buttons must keep an exposed handler when later stages add more handlers');
 
 console.log('Stage A.9 Windows Move Keyword regression OK');
