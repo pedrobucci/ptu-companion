@@ -44,6 +44,7 @@ for(const token of [
   'You can use the choices below to recover to a valid Form state.',
   "if(pv.evolved){d.formState={schemaVersion:1,baseFormId:'base',activeFormId:null};d.manualFormApprovals=[];}"
 ]) assert.ok(app.includes(token),`Android Stage C UI contract missing: ${token}`);
+assert.equal((app.match(/Current Form needs attention/g)||[]).length,1,'Android Forms manager must render its invalid-state recovery message exactly once');
 
 assert.match(api,/species:\{id:species\.id,name:species\.name,types:species\.types\|\|\[\],versionId:species\.versionId,contentPackId:species\.contentPackId,sourceId:species\.sourceId\},formResolution:buildFormResolution,experience:/,'Android successful build preview must expose Form resolution metadata');
 assert.match(api,/rulesetId,species,formResolution:referenceFormResolution,moves,abilities/,'Android successful Creature reference data must expose current Form resolution metadata');
