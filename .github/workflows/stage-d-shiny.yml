@@ -9,6 +9,8 @@ on:
       - '.github/workflows/stage-d-shiny.yml'
       - 'PTU_Companion_Windows_Source/scripts/apply_stage_d_android_preflight.py'
       - 'PTU_Companion_Windows_Source/scripts/apply_stage_d_shiny.py'
+      - 'PTU_Companion_Windows_Source/scripts/verify_stage_c_forms_ui.mjs'
+      - 'PTU_Companion_Android_Tauri/scripts/verify-stage-c-forms-ui.mjs'
       - 'PTU_Companion_Windows_Source/scripts/verify_stage_d_shiny.mjs'
       - 'PTU_Companion_Android_Tauri/scripts/verify-stage-d-shiny.mjs'
       - 'PTU_Companion_Windows_Source/rules/pokemon-forms.mjs'
