@@ -10,7 +10,7 @@ const species={
   id:'form-ui-test',name:'Form UI Test',types:['Normal'],baseStats:{hp:5,attack:5,defense:5,special_attack:5,special_defense:5,speed:5},
   abilities:[{name:'Run Away',slot_category:'Basic'}],capabilities:[{name:'Overland',kind:'movement',value:5}],levelUpMoves:[{move:'Tackle',level:1}],
   forms:[
-    {id:'night',name:'Night Form',mode:'permanent',requirements:{min_level:10},overrides:{types:{replace:['Dark']},baseStats:{replace:{hp:5,attack:8,defense:5,special_attack:4,special_defense:5,speed:8}},abilities:{add:[{name:'Frisk',slot_category:'Basic'}]}}},
+    {id:'night',name:'Night Form',mode:'permanent',requirements:{min_level:10},overrides:{types:{replace:['Dark']},baseStats:{replace:{hp:5,attack:8,defense:5,special_attack:4,special_defense:5,speed:8}},abilities:{add:[{name:'Frisk',slot_category:'Basic'}]} }},
     {id:'charged',name:'Charged Form',mode:'transformation',requirements:{all:[{held_item:'Form Stone'},{manual:{id:'charged-ready',label:'Charged state is active'}}]},overrides:{types:{replace:['Dark','Electric']},capabilities:{add:[{name:'Glow',kind:'boolean'}]},levelUpMoves:{add:[{move:'Thunder Shock',level:1}]}}}
   ]
 };
@@ -60,10 +60,19 @@ for(const token of [
   'p.types=payload.species.types.map',
   'resolvedTypes.map(typeBadge)',
   'pokemonFormRequirementText',
-  'pokemonFormManualRequirements'
+  'pokemonFormManualRequirements',
+  'pokemonFormsUiCache',
+  'You can use the choices below to recover to a valid Form state.',
+  "if(pv.evolved){d.formState={schemaVersion:1,baseFormId:'base',activeFormId:null};d.manualFormApprovals=[];}"
 ]) assert.ok(app.includes(token),`Windows Stage C UI contract missing: ${token}`);
-assert.ok(server.includes('formResolution:buildFormResolution'),'Build preview must expose Form resolution metadata to the Stage C UI');
-assert.ok(server.includes('formResolution:referenceFormResolution'),'Creature reference data must expose current Form resolution metadata');
+
+assert.match(server,/species:\{id:species\.id,name:species\.name,types:species\.types\|\|\[\],versionId:species\.versionId,contentPackId:species\.contentPackId,sourceId:species\.sourceId\},formResolution:buildFormResolution,experience:/,'Successful build preview must expose Form resolution metadata, not only validation failures');
+assert.match(server,/rulesetId,species,formResolution:referenceFormResolution,moves,abilities/,'Successful Creature reference data must expose current Form resolution metadata');
+for(const marker of ['progressionFormResolution','abilityFormResolution','restatFormResolution','trainingFormResolution','trainingActionFormResolution']){
+  assert.ok(server.includes(`const ${marker}=resolveSpeciesFormState({species:baseSpecies,pokemon,payload,includeActive:false})`),`${marker} must resolve the permanent Form while ignoring temporary transformations`);
+}
+assert.ok(server.includes('formResolution:progressionFormResolution,evolutionCandidates'),'Progression preview must report the permanent Form resolution it used');
+assert.ok(server.includes('speciesName:baseSpecies.name,sourceId:baseSpecies.sourceId'),'Evolution lineage must remain anchored to canonical Species identity');
 assert.match(app,/setPokemonBuilderBaseForm,togglePokemonBuilderFormManualApproval/,'Builder Form handlers must be exposed to the Windows UI');
 assert.match(app,/openPokemonFormsManager,setPokemonPermanentForm,togglePokemonTransformation/,'Creature Form handlers must be exposed to the Windows UI');
 
