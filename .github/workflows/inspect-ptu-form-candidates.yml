@@ -1,0 +1,23 @@
+name: Inspect PTU Form Candidates
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - content/ptu-parametrized-forms-catalog
+    paths:
+      - '.github/workflows/inspect-ptu-form-candidates.yml'
+      - 'PTU_Companion_Windows_Source/scripts/inspect_ptu_form_candidates.py'
+
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Inspect source pack
+        run: python PTU_Companion_Windows_Source/scripts/inspect_ptu_form_candidates.py
