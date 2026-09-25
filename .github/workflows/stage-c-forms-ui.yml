@@ -8,6 +8,7 @@ on:
     paths:
       - '.github/workflows/stage-c-forms-ui.yml'
       - 'PTU_Companion_Windows_Source/scripts/apply_stage_c_forms_ui.py'
+      - 'PTU_Companion_Windows_Source/scripts/apply_stage_c_forms_followup.py'
       - 'PTU_Companion_Windows_Source/scripts/verify_stage_c_forms_ui.mjs'
       - 'PTU_Companion_Android_Tauri/scripts/verify-stage-c-forms-ui.mjs'
       - 'PTU_Companion_Windows_Source/scripts/verify_stage_a9_move_keywords.mjs'
@@ -41,6 +42,9 @@ jobs:
 
       - name: Apply Stage C Forms UI
         run: python PTU_Companion_Windows_Source/scripts/apply_stage_c_forms_ui.py
+
+      - name: Apply Stage C Forms runtime follow-up
+        run: python PTU_Companion_Windows_Source/scripts/apply_stage_c_forms_followup.py
 
       - name: Check patch formatting
         run: git diff --check
