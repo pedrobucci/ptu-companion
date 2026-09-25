@@ -51,7 +51,6 @@ const app=await readFile(new URL('../static-preview/app.js',import.meta.url),'ut
 const server=await readFile(new URL('../server.mjs',import.meta.url),'utf8');
 for(const token of [
   "formState:{baseFormId:f.baseFormId||'base',activeFormId:null}",
-  "section('POKÉMON FORM'",
   'openPokemonFormsManager()',
   'setPokemonPermanentForm(formId)',
   'togglePokemonTransformation(formId)',
@@ -65,6 +64,7 @@ for(const token of [
   'You can use the choices below to recover to a valid Form state.',
   "if(pv.evolved){d.formState={schemaVersion:1,baseFormId:'base',activeFormId:null};d.manualFormApprovals=[];}"
 ]) assert.ok(app.includes(token),`Windows Stage C UI contract missing: ${token}`);
+assert.match(app,/section\('POKÉMON FORM(?: & APPEARANCE)?'/,'Stage C Form section must remain present even when later stages extend its title');
 assert.equal((app.match(/Current Form needs attention/g)||[]).length,1,'Forms manager must render its invalid-state recovery message exactly once');
 
 assert.match(server,/species:\{id:species\.id,name:species\.name,types:species\.types\|\|\[\],versionId:species\.versionId,contentPackId:species\.contentPackId,sourceId:species\.sourceId\},formResolution:buildFormResolution,experience:/,'Successful build preview must expose Form resolution metadata, not only validation failures');
