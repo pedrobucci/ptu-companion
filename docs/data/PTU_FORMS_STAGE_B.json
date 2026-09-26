@@ -1,5 +1,5 @@
 {
-  "schema_version": 2,
+  "schema_version": 3,
   "stage_b_form_schema_version": 1,
   "applied_to_default_packs": false,
   "policy": {
@@ -12,11 +12,11 @@
   },
   "summary": {
     "candidate_family_entries": 41,
-    "record_backed_family_entries": 37,
-    "rule_defined_family_entries": 4,
-    "candidate_forms": 63,
-    "record_backed_forms": 48,
-    "rule_defined_forms": 15,
+    "record_backed_family_entries": 33,
+    "rule_defined_family_entries": 8,
+    "candidate_forms": 59,
+    "record_backed_forms": 40,
+    "rule_defined_forms": 19,
     "omitted_or_deferred_family_entries": 26,
     "synthetic_species_entries": 50,
     "synthetic_forms": 52,
@@ -481,49 +481,21 @@
       "family": "eiscue",
       "classification": "transformation",
       "target_layer": "activeFormId",
-      "builder": "parameterized_species_record",
+      "builder": "rule_defined_ice_face",
       "forms": [
         {
-          "id": "eiscue-ice-face",
-          "name": "EISCUE Ice Face",
+          "id": "noice-face",
+          "name": "Noice Face",
           "mode": "transformation",
-          "overrides": {
-            "types": {
-              "replace": [
-                "Ice"
-              ]
-            },
-            "baseStats": {
-              "replace": {
-                "hp": 8,
-                "attack": 8,
-                "defense": 11,
-                "special_attack": 7,
-                "special_defense": 9,
-                "speed": 5
-              }
-            }
-          },
-          "sortOrder": 10,
           "requirements": {
             "all": [
               {
                 "kind": "manual",
-                "value": "eiscue-eiscue-ice-face"
+                "value": "eiscue-noice-face"
               }
             ]
-          }
-        },
-        {
-          "id": "eiscue-noice-face",
-          "name": "EISCUE Noice Face",
-          "mode": "transformation",
+          },
           "overrides": {
-            "types": {
-              "replace": [
-                "Ice"
-              ]
-            },
             "baseStats": {
               "replace": {
                 "hp": 8,
@@ -533,62 +505,85 @@
                 "special_defense": 5,
                 "speed": 13
               }
+            },
+            "capabilities": {
+              "replace": [
+                {
+                  "name": "Overland",
+                  "value": 8,
+                  "kind": "movement",
+                  "capability_id": "overland",
+                  "reference_status": "resolved_exact_normalized"
+                },
+                {
+                  "name": "Swim",
+                  "value": 8,
+                  "kind": "movement",
+                  "capability_id": "swim",
+                  "reference_status": "resolved_exact_normalized"
+                },
+                {
+                  "name": "Jump",
+                  "high": 2,
+                  "long": 3,
+                  "kind": "jump",
+                  "component_capability_ids": [
+                    "high-jump",
+                    "long-jump"
+                  ],
+                  "reference_status": "resolved_composite"
+                },
+                {
+                  "name": "Power",
+                  "value": 4,
+                  "kind": "power",
+                  "capability_id": "power",
+                  "reference_status": "resolved_exact_normalized"
+                },
+                {
+                  "name": "Chilled",
+                  "kind": "special",
+                  "capability_id": "chilled",
+                  "reference_status": "resolved_exact_normalized"
+                },
+                {
+                  "name": "Forme Change",
+                  "kind": "special",
+                  "capability_id": "forme-change",
+                  "reference_status": "resolved_exact_normalized"
+                },
+                {
+                  "name": "Naturewalk",
+                  "terrains": [
+                    "Tundra"
+                  ],
+                  "kind": "special",
+                  "capability_id": "naturewalk",
+                  "reference_status": "resolved_exact_normalized"
+                }
+              ]
             }
           },
-          "sortOrder": 20,
-          "requirements": {
-            "all": [
-              {
-                "kind": "manual",
-                "value": "eiscue-eiscue-noice-face"
-              }
-            ]
-          }
+          "sortOrder": 10
         }
       ],
-      "source_snapshots": [
-        {
-          "id": "eiscue-ice-face",
-          "abilities": [
-            "dry-skin",
-            "ice-body",
-            "ice-face",
-            "snow-cloak",
-            "snow-warning"
-          ],
-          "capabilities": [
-            "chilled",
-            "forme-change",
-            "jump",
-            "naturewalk",
-            "overland",
-            "power",
-            "swim"
-          ],
-          "source_page": 723
-        },
-        {
-          "id": "eiscue-noice-face",
-          "abilities": [
-            "dry-skin",
-            "ice-body",
-            "ice-face",
-            "snow-cloak",
-            "snow-warning"
-          ],
-          "capabilities": [
-            "chilled",
-            "forme-change",
-            "jump",
-            "naturewalk",
-            "overland",
-            "power",
-            "swim"
-          ],
-          "source_page": 724
-        }
-      ],
-      "note": "forms[] contains Stage B-compatible type/base-stat overrides from separately parameterized Species rows. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
+      "source_mechanics": {
+        "rule_source": "New Abilities and Moves p.1",
+        "record_sources": [
+          "Gen 8ish PokeDex p.723",
+          "Gen 8ish PokeDex p.724"
+        ],
+        "base_state": "Ice Face",
+        "battle_start": "Begins battle with two ticks of Temporary Hit Points from Ice Face.",
+        "enter": "When no Temporary Hit Points from Ice Face remain, the user is in Noice Face.",
+        "exit": "While Ice Face Temporary Hit Points exist, the user is in Ice Face; in Hail it may regain two ticks as a Standard Action.",
+        "additional_effect": "Immune to damage from Hail.",
+        "derived_override_fields": [
+          "baseStats",
+          "capabilities"
+        ]
+      },
+      "note": "Ice Face is the implicit base state and Noice Face is the active transformation. The manual requirement is only a review gate because Stage B cannot yet bind Form state to Temporary HP provenance."
     },
     {
       "family": "exeggutor",
@@ -1775,44 +1770,20 @@
       "family": "meloetta",
       "classification": "transformation",
       "target_layer": "activeFormId",
-      "builder": "parameterized_species_record",
+      "builder": "rule_defined_relic_song",
       "forms": [
         {
-          "id": "meloetta-aria-forme",
-          "name": "MELOETTA Aria Forme",
+          "id": "step-forme",
+          "name": "Step Forme",
           "mode": "transformation",
-          "overrides": {
-            "types": {
-              "replace": [
-                "Normal",
-                "Psychic"
-              ]
-            },
-            "baseStats": {
-              "replace": {
-                "hp": 10,
-                "attack": 8,
-                "defense": 8,
-                "special_attack": 13,
-                "special_defense": 13,
-                "speed": 9
-              }
-            }
-          },
-          "sortOrder": 10,
           "requirements": {
             "all": [
               {
                 "kind": "manual",
-                "value": "meloetta-meloetta-aria-forme"
+                "value": "meloetta-step-forme"
               }
             ]
-          }
-        },
-        {
-          "id": "meloetta-step-forme",
-          "name": "MELOETTA Step Forme",
-          "mode": "transformation",
+          },
           "overrides": {
             "types": {
               "replace": [
@@ -1829,58 +1800,203 @@
                 "special_defense": 8,
                 "speed": 13
               }
+            },
+            "abilities": {
+              "replace": [
+                {
+                  "slot": "Basic Ability 1",
+                  "name": "Serene Grace",
+                  "ability_id": "serene-grace",
+                  "slot_category": "basic",
+                  "slot_index": 1,
+                  "reference_status": "resolved"
+                },
+                {
+                  "slot": "Adv Ability 1",
+                  "name": "Soundproof",
+                  "ability_id": "soundproof",
+                  "slot_category": "advanced",
+                  "slot_index": 1,
+                  "reference_status": "resolved"
+                },
+                {
+                  "slot": "Adv Ability 2",
+                  "name": "Spinning Dance",
+                  "ability_id": "spinning-dance",
+                  "slot_category": "advanced",
+                  "slot_index": 2,
+                  "reference_status": "resolved"
+                },
+                {
+                  "slot": "Adv Ability 3",
+                  "name": "Own Tempo",
+                  "ability_id": "own-tempo",
+                  "slot_category": "advanced",
+                  "slot_index": 3,
+                  "reference_status": "resolved"
+                },
+                {
+                  "slot": "High Ability",
+                  "name": "Lullaby",
+                  "ability_id": "lullaby",
+                  "slot_category": "high",
+                  "slot_index": 1,
+                  "reference_status": "resolved"
+                }
+              ]
+            },
+            "skills": {
+              "replace": [
+                {
+                  "skill": "Athletics",
+                  "dice": 4,
+                  "modifier": 0
+                },
+                {
+                  "skill": "Acrobatics",
+                  "dice": 5,
+                  "modifier": 2
+                },
+                {
+                  "skill": "Combat",
+                  "dice": 4,
+                  "modifier": 0
+                },
+                {
+                  "skill": "Stealth",
+                  "dice": 2,
+                  "modifier": 0
+                },
+                {
+                  "skill": "Perception",
+                  "dice": 4,
+                  "modifier": 0
+                },
+                {
+                  "skill": "Focus",
+                  "dice": 4,
+                  "modifier": 2
+                }
+              ]
+            },
+            "levelUpMoves": {
+              "replace": [
+                {
+                  "level": "1",
+                  "move": "Round",
+                  "type_hint": "Normal",
+                  "move_id": "round",
+                  "reference_status": "resolved"
+                },
+                {
+                  "level": "3",
+                  "move": "Quick Attack",
+                  "type_hint": "Normal",
+                  "move_id": "quick-attack",
+                  "reference_status": "resolved"
+                },
+                {
+                  "level": "6",
+                  "move": "Confusion",
+                  "type_hint": "Psychic",
+                  "move_id": "confusion",
+                  "reference_status": "resolved"
+                },
+                {
+                  "level": "8",
+                  "move": "Sing",
+                  "type_hint": "Normal",
+                  "move_id": "sing",
+                  "reference_status": "resolved"
+                },
+                {
+                  "level": "11",
+                  "move": "Teeter Dance",
+                  "type_hint": "Normal",
+                  "move_id": "teeter-dance",
+                  "reference_status": "resolved"
+                },
+                {
+                  "level": "16",
+                  "move": "Psybeam",
+                  "type_hint": "Psychic",
+                  "move_id": "psybeam",
+                  "reference_status": "resolved"
+                },
+                {
+                  "level": "18",
+                  "move": "Echoed Voice",
+                  "type_hint": "Normal",
+                  "move_id": "echoed-voice",
+                  "reference_status": "resolved"
+                },
+                {
+                  "level": "22",
+                  "move": "U-Turn",
+                  "type_hint": "Bug",
+                  "move_id": "u-turn",
+                  "reference_status": "resolved"
+                },
+                {
+                  "level": "25",
+                  "move": "Wake-Up Slap",
+                  "type_hint": "Fighting",
+                  "move_id": "wake-up-slap",
+                  "reference_status": "resolved"
+                },
+                {
+                  "level": "29",
+                  "move": "Psychic",
+                  "type_hint": "Psychic",
+                  "move_id": "psychic",
+                  "reference_status": "resolved"
+                },
+                {
+                  "level": "32",
+                  "move": "Hyper Voice",
+                  "type_hint": "Normal",
+                  "move_id": "hyper-voice",
+                  "reference_status": "resolved"
+                },
+                {
+                  "level": "36",
+                  "move": "Role Play",
+                  "type_hint": "Psychic",
+                  "move_id": "role-play",
+                  "reference_status": "resolved"
+                },
+                {
+                  "level": "43",
+                  "move": "Perish Song",
+                  "type_hint": "Normal",
+                  "move_id": "perish-song",
+                  "reference_status": "resolved"
+                }
+              ]
             }
           },
-          "sortOrder": 20,
-          "requirements": {
-            "all": [
-              {
-                "kind": "manual",
-                "value": "meloetta-meloetta-step-forme"
-              }
-            ]
-          }
+          "sortOrder": 10
         }
       ],
-      "source_snapshots": [
-        {
-          "id": "meloetta-aria-forme",
-          "abilities": [
-            "drown-out",
-            "lullaby",
-            "own-tempo",
-            "serene-grace",
-            "soundproof"
-          ],
-          "capabilities": [
-            "forme-change",
-            "jump",
-            "overland",
-            "power",
-            "swim"
-          ],
-          "source_page": 922
-        },
-        {
-          "id": "meloetta-step-forme",
-          "abilities": [
-            "lullaby",
-            "own-tempo",
-            "serene-grace",
-            "soundproof",
-            "spinning-dance"
-          ],
-          "capabilities": [
-            "forme-change",
-            "jump",
-            "overland",
-            "power",
-            "swim"
-          ],
-          "source_page": 923
-        }
-      ],
-      "note": "forms[] contains Stage B-compatible type/base-stat overrides from separately parameterized Species rows. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
+      "source_mechanics": {
+        "rule_source": "Pokemon Tabletop United 1.05 Core p.405",
+        "record_sources": [
+          "Gen 8ish PokeDex p.922",
+          "Gen 8ish PokeDex p.923"
+        ],
+        "base_state": "Aria Forme",
+        "requirement": "Meloetta must know Relic Song.",
+        "switch": "May change between Aria Form and Step Form as a Swift Action when using Relic Song, or as a Standard Action otherwise.",
+        "hp_invariant": "Aria and Step must be statted with the same HP Stat.",
+        "derived_override_fields": [
+          "abilities",
+          "baseStats",
+          "levelUpMoves",
+          "skills",
+          "types"
+        ]
+      },
+      "note": "Aria is the conversion base layer and Step is the active transformation layer. Clearing activeFormId returns to Aria. The manual requirement is only a review gate because Stage B cannot yet express known-Move plus action-trigger requirements."
     },
     {
       "family": "meowstic",
@@ -2083,51 +2199,21 @@
       "family": "minior",
       "classification": "transformation",
       "target_layer": "activeFormId",
-      "builder": "parameterized_species_record",
+      "builder": "rule_defined_shields_down",
       "forms": [
         {
-          "id": "minior-meteor",
-          "name": "MINIOR Meteor",
+          "id": "core",
+          "name": "Core Forme",
           "mode": "transformation",
-          "overrides": {
-            "types": {
-              "replace": [
-                "Rock",
-                "Flying"
-              ]
-            },
-            "baseStats": {
-              "replace": {
-                "hp": 6,
-                "attack": 6,
-                "defense": 10,
-                "special_attack": 6,
-                "special_defense": 10,
-                "speed": 6
-              }
-            }
-          },
-          "sortOrder": 10,
           "requirements": {
             "all": [
               {
                 "kind": "manual",
-                "value": "minior-minior-meteor"
+                "value": "minior-core"
               }
             ]
-          }
-        },
-        {
-          "id": "minior-core",
-          "name": "MINIOR Core",
-          "mode": "transformation",
+          },
           "overrides": {
-            "types": {
-              "replace": [
-                "Rock",
-                "Flying"
-              ]
-            },
             "baseStats": {
               "replace": {
                 "hp": 6,
@@ -2137,64 +2223,122 @@
                 "special_defense": 6,
                 "speed": 12
               }
+            },
+            "capabilities": {
+              "replace": [
+                {
+                  "name": "Overland",
+                  "value": 1,
+                  "kind": "movement",
+                  "capability_id": "overland",
+                  "reference_status": "resolved_exact_normalized"
+                },
+                {
+                  "name": "Swim",
+                  "value": 2,
+                  "kind": "movement",
+                  "capability_id": "swim",
+                  "reference_status": "resolved_exact_normalized"
+                },
+                {
+                  "name": "Sky",
+                  "value": 7,
+                  "kind": "movement",
+                  "capability_id": "sky",
+                  "reference_status": "resolved_exact_normalized"
+                },
+                {
+                  "name": "Jump",
+                  "high": 0,
+                  "long": 0,
+                  "kind": "jump",
+                  "component_capability_ids": [
+                    "high-jump",
+                    "long-jump"
+                  ],
+                  "reference_status": "resolved_composite"
+                },
+                {
+                  "name": "Power",
+                  "value": 2,
+                  "kind": "power",
+                  "capability_id": "power",
+                  "reference_status": "resolved_exact_normalized"
+                },
+                {
+                  "name": "Breathless",
+                  "kind": "special",
+                  "reference_status": "unresolved"
+                },
+                {
+                  "name": "Forme Change",
+                  "kind": "special",
+                  "capability_id": "forme-change",
+                  "reference_status": "resolved_exact_normalized"
+                },
+                {
+                  "name": "Glow",
+                  "kind": "special",
+                  "capability_id": "glow",
+                  "reference_status": "resolved_exact_normalized"
+                }
+              ]
+            },
+            "skills": {
+              "replace": [
+                {
+                  "skill": "Athletics",
+                  "dice": 3,
+                  "modifier": 0
+                },
+                {
+                  "skill": "Acrobatics",
+                  "dice": 4,
+                  "modifier": 0
+                },
+                {
+                  "skill": "Combat",
+                  "dice": 2,
+                  "modifier": 0
+                },
+                {
+                  "skill": "Stealth",
+                  "dice": 3,
+                  "modifier": 0
+                },
+                {
+                  "skill": "Perception",
+                  "dice": 3,
+                  "modifier": 2
+                },
+                {
+                  "skill": "Focus",
+                  "dice": 2,
+                  "modifier": 0
+                }
+              ]
             }
           },
-          "sortOrder": 20,
-          "requirements": {
-            "all": [
-              {
-                "kind": "manual",
-                "value": "minior-minior-core"
-              }
-            ]
-          }
+          "sortOrder": 10
         }
       ],
-      "source_snapshots": [
-        {
-          "id": "minior-meteor",
-          "abilities": [
-            "illuminate",
-            "rock-head",
-            "shields-down",
-            "sturdy",
-            "weak-armor"
-          ],
-          "capabilities": [
-            "breathless",
-            "forme-change",
-            "glow",
-            "jump",
-            "overland",
-            "power",
-            "sky",
-            "swim"
-          ],
-          "source_page": 752
-        },
-        {
-          "id": "minior-core",
-          "abilities": [
-            "illuminate",
-            "rock-head",
-            "shields-down",
-            "sturdy",
-            "weak-armor"
-          ],
-          "capabilities": [
-            "breathless",
-            "forme-change",
-            "glow",
-            "jump",
-            "overland",
-            "power",
-            "sky",
-            "swim"
-          ],
-          "source_page": 753
-        }
-      ],
-      "note": "forms[] contains Stage B-compatible type/base-stat overrides from separately parameterized Species rows. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
+      "source_mechanics": {
+        "rule_source": "SuMo References p.4",
+        "record_sources": [
+          "Gen 8ish PokeDex p.752",
+          "Gen 8ish PokeDex p.753"
+        ],
+        "base_state": "Meteor Forme",
+        "enter": "While in Meteor Forme, at half Maximum HP or lower, change to Core Forme.",
+        "exit": "Outside combat, if above half Maximum HP, return to Meteor Forme.",
+        "hp_invariant": "Meteor and Core must use the same HP Base Stat.",
+        "derived_override_fields": [
+          "baseStats",
+          "capabilities",
+          "skills"
+        ]
+      },
+      "note": "Meteor is the implicit base state. Core is emitted as the active transformation. The manual requirement is only a review gate because Stage B does not yet have an HP-threshold/out-of-combat requirement primitive."
     },
     {
       "family": "mr-mime",
@@ -2979,49 +3123,21 @@
       "family": "wishiwashi",
       "classification": "transformation",
       "target_layer": "activeFormId",
-      "builder": "parameterized_species_record",
+      "builder": "rule_defined_schooling",
       "forms": [
         {
-          "id": "wishiwashi-solo",
-          "name": "WISHIWASHI Solo",
+          "id": "schooling",
+          "name": "Schooling Forme",
           "mode": "transformation",
-          "overrides": {
-            "types": {
-              "replace": [
-                "Water"
-              ]
-            },
-            "baseStats": {
-              "replace": {
-                "hp": 5,
-                "attack": 2,
-                "defense": 2,
-                "special_attack": 3,
-                "special_defense": 4,
-                "speed": 4
-              }
-            }
-          },
-          "sortOrder": 10,
           "requirements": {
             "all": [
               {
                 "kind": "manual",
-                "value": "wishiwashi-wishiwashi-solo"
+                "value": "wishiwashi-schooling"
               }
             ]
-          }
-        },
-        {
-          "id": "wishiwashi-schooling",
-          "name": "WISHIWASHI Schooling",
-          "mode": "transformation",
+          },
           "overrides": {
-            "types": {
-              "replace": [
-                "Water"
-              ]
-            },
             "baseStats": {
               "replace": {
                 "hp": 5,
@@ -3031,65 +3147,132 @@
                 "special_defense": 14,
                 "speed": 3
               }
+            },
+            "capabilities": {
+              "replace": [
+                {
+                  "name": "Overland",
+                  "value": 1,
+                  "kind": "movement",
+                  "capability_id": "overland",
+                  "reference_status": "resolved_exact_normalized"
+                },
+                {
+                  "name": "Swim",
+                  "value": 4,
+                  "kind": "movement",
+                  "capability_id": "swim",
+                  "reference_status": "resolved_exact_normalized"
+                },
+                {
+                  "name": "Jump",
+                  "high": 3,
+                  "long": 3,
+                  "kind": "jump",
+                  "component_capability_ids": [
+                    "high-jump",
+                    "long-jump"
+                  ],
+                  "reference_status": "resolved_composite"
+                },
+                {
+                  "name": "Power",
+                  "value": 8,
+                  "kind": "power",
+                  "capability_id": "power",
+                  "reference_status": "resolved_exact_normalized"
+                },
+                {
+                  "name": "Forme Change",
+                  "kind": "special",
+                  "capability_id": "forme-change",
+                  "reference_status": "resolved_exact_normalized"
+                },
+                {
+                  "name": "Gilled",
+                  "kind": "special",
+                  "capability_id": "gilled",
+                  "reference_status": "resolved_exact_normalized"
+                },
+                {
+                  "name": "Glow",
+                  "kind": "special",
+                  "capability_id": "glow",
+                  "reference_status": "resolved_exact_normalized"
+                },
+                {
+                  "name": "Mindlock",
+                  "kind": "special",
+                  "capability_id": "mindlock",
+                  "reference_status": "resolved_exact_normalized"
+                },
+                {
+                  "name": "Naturewalk",
+                  "terrains": [
+                    "Ocean"
+                  ],
+                  "kind": "special",
+                  "capability_id": "naturewalk",
+                  "reference_status": "resolved_exact_normalized"
+                }
+              ]
+            },
+            "skills": {
+              "replace": [
+                {
+                  "skill": "Athletics",
+                  "dice": 5,
+                  "modifier": 3
+                },
+                {
+                  "skill": "Acrobatics",
+                  "dice": 1,
+                  "modifier": 0
+                },
+                {
+                  "skill": "Combat",
+                  "dice": 4,
+                  "modifier": 0
+                },
+                {
+                  "skill": "Stealth",
+                  "dice": 1,
+                  "modifier": 0
+                },
+                {
+                  "skill": "Perception",
+                  "dice": 5,
+                  "modifier": 3
+                },
+                {
+                  "skill": "Focus",
+                  "dice": 4,
+                  "modifier": 0
+                }
+              ]
             }
           },
-          "sortOrder": 20,
-          "requirements": {
-            "all": [
-              {
-                "kind": "manual",
-                "value": "wishiwashi-wishiwashi-schooling"
-              }
-            ]
-          }
+          "sortOrder": 10
         }
       ],
-      "source_snapshots": [
-        {
-          "id": "wishiwashi-solo",
-          "abilities": [
-            "defeatist",
-            "horde-break",
-            "multiscale",
-            "schooling",
-            "water-veil"
-          ],
-          "capabilities": [
-            "forme-change",
-            "gilled",
-            "glow",
-            "jump",
-            "naturewalk",
-            "overland",
-            "power",
-            "swim"
-          ],
-          "source_page": 766
-        },
-        {
-          "id": "wishiwashi-schooling",
-          "abilities": [
-            "defeatist",
-            "horde-break",
-            "multiscale",
-            "schooling",
-            "water-veil"
-          ],
-          "capabilities": [
-            "forme-change",
-            "gilled",
-            "glow",
-            "jump",
-            "mindlock",
-            "naturewalk",
-            "overland",
-            "power",
-            "swim"
-          ],
-          "source_page": 767
-        }
-      ],
-      "note": "forms[] contains Stage B-compatible type/base-stat overrides from separately parameterized Species rows. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
+      "source_mechanics": {
+        "rule_source": "SuMo References p.4",
+        "record_sources": [
+          "Gen 8ish PokeDex p.766",
+          "Gen 8ish PokeDex p.767"
+        ],
+        "base_state": "Solo Forme",
+        "enter": "Daily – Free Action: change to Schooling Forme and gain Temporary Hit Points equal to half of maximum Hit Points.",
+        "while_active": "Cannot gain Temporary Hit Points from other sources while in Schooling Forme.",
+        "exit": "When below half Maximum HP and no Temporary Hit Points remain, return to Solo Forme.",
+        "hp_invariant": "Solo and Schooling must use the same HP Base Stat.",
+        "derived_override_fields": [
+          "baseStats",
+          "capabilities",
+          "skills"
+        ]
+      },
+      "note": "Solo is the implicit base state. Schooling is emitted as the active transformation. The manual requirement is only a review gate because Stage B cannot yet encode the Ability action plus HP/Temporary-HP return condition."
     },
     {
       "family": "wormadam",

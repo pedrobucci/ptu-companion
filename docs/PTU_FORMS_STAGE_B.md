@@ -5,11 +5,11 @@ Generated deterministically from the versioned PTU classification/inventory. Thi
 ## Summary
 
 - Candidate-family form entries: **41**
-- Record-backed family entries: **37**
-- Rule-defined family entries: **4**
-- Candidate-record/derived Stage B forms emitted: **63**
-- Record-backed forms: **48**
-- Rule-defined forms: **15**
+- Record-backed family entries: **33**
+- Rule-defined family entries: **8**
+- Candidate-record/derived Stage B forms emitted: **59**
+- Record-backed forms: **40**
+- Rule-defined forms: **19**
 - Synthetic Stage B transforms emitted: **52**
 - Mega transforms: **48**
 - Primal transforms: **2**
@@ -22,6 +22,7 @@ Generated deterministically from the versioned PTU classification/inventory. Thi
 - Source-insufficient/event-driven requirements use Stage B `manual` review gates instead of guessed items/conditions.
 - No artwork URL is generated. Artwork remains governed by the separate asset audit and the existing Stage B fallback.
 - Rule-defined Ability builders clone the source Species Ability-slot array and replace only the explicitly dynamic slot.
+- Record-pair transformation builders copy every differing structured Stage B mechanical field from the supplied Species records.
 - No `.ptucp` file is written by this generator.
 
 ## Rule-defined builders
@@ -29,7 +30,11 @@ Generated deterministically from the versioned PTU classification/inventory. Thi
 - `aegislash` / `rule_defined_stance_change` — Sword Stance
 - `basculin` / `embedded_color_ability_variant` — Red, Blue
 - `burmy` / `rule_defined_quick_cloak` — Plant Cloak, Sandy Cloak, Trash Cloak
+- `eiscue` / `rule_defined_ice_face` — Noice Face
 - `furfrou` / `rule_defined_fabulous_trim` — Star Trim, Diamond Trim, Heart Trim, Pharaoh Trim, Kabuki Trim, La Reine Trim, Matron Trim, Dandy Trim, Debutante Trim
+- `meloetta` / `rule_defined_relic_song` — Step Forme
+- `minior` / `rule_defined_shields_down` — Core Forme
+- `wishiwashi` / `rule_defined_schooling` — Schooling Forme
 
 ## Synthetic transformations
 
