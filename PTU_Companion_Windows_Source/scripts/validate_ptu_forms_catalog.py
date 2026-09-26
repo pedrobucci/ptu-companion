@@ -49,6 +49,11 @@ def form_ability_ids(form: dict) -> set[str]:
     return {value for value in result if value}
 
 
+def has_manual_gate(form: dict) -> bool:
+    reqs = form.get('requirements', {}).get('all', [])
+    return any(req.get('kind') == 'manual' for req in reqs)
+
+
 def main() -> None:
     classification = json.loads(CLASSIFICATION.read_text(encoding='utf-8'))
     inventory = json.loads(INVENTORY.read_text(encoding='utf-8'))
@@ -81,14 +86,14 @@ def main() -> None:
 
     assert stage_b['applied_to_default_packs'] is False
     assert stage_b['stage_b_form_schema_version'] == 1
-    assert stage_b['schema_version'] == 2
+    assert stage_b['schema_version'] == 3
     stage_summary = stage_b['summary']
     assert stage_summary['candidate_family_entries'] == 41, stage_summary
-    assert stage_summary['record_backed_family_entries'] == 37, stage_summary
-    assert stage_summary['rule_defined_family_entries'] == 4, stage_summary
-    assert stage_summary['candidate_forms'] == 63, stage_summary
-    assert stage_summary['record_backed_forms'] == 48, stage_summary
-    assert stage_summary['rule_defined_forms'] == 15, stage_summary
+    assert stage_summary['record_backed_family_entries'] == 33, stage_summary
+    assert stage_summary['rule_defined_family_entries'] == 8, stage_summary
+    assert stage_summary['candidate_forms'] == 59, stage_summary
+    assert stage_summary['record_backed_forms'] == 40, stage_summary
+    assert stage_summary['rule_defined_forms'] == 19, stage_summary
     assert stage_summary['omitted_or_deferred_family_entries'] == 26, stage_summary
     assert stage_summary['mega_forms'] == 48
     assert stage_summary['primal_forms'] == 2
@@ -110,10 +115,9 @@ def main() -> None:
         assert isinstance(form.get('overrides'), dict), (source, owner, form)
         if source in {'mega-evolution', 'primal-reversion', 'ultra-burst'}:
             assert form['mode'] == 'transformation'
-            reqs = form.get('requirements', {}).get('all', [])
-            assert any(req.get('kind') == 'manual' for req in reqs), (source, owner, form)
+            assert has_manual_gate(form), (source, owner, form)
 
-    # Lossless source-defined builders.
+    # First source-defined builder pass.
     aegislash = candidate_entries['aegislash']
     assert aegislash['builder'] == 'rule_defined_stance_change'
     assert len(aegislash['forms']) == 1
@@ -123,7 +127,7 @@ def main() -> None:
         'hp': 6, 'attack': 15, 'defense': 5,
         'special_attack': 15, 'special_defense': 5, 'speed': 6,
     }
-    assert any(req.get('kind') == 'manual' for req in sword['requirements']['all'])
+    assert has_manual_gate(sword)
 
     burmy = candidate_entries['burmy']
     assert burmy['builder'] == 'rule_defined_quick_cloak'
@@ -160,6 +164,55 @@ def main() -> None:
     assert set(basculin_forms) == {'red', 'blue'}
     assert 'reckless' in form_ability_ids(basculin_forms['red'])
     assert 'rock-head' in form_ability_ids(basculin_forms['blue'])
+
+    # Second source-defined transformation pass. Each pair has one implicit source base
+    # state and one explicit activeFormId overlay, rather than two competing transformations.
+    wishiwashi = candidate_entries['wishiwashi']
+    assert wishiwashi['builder'] == 'rule_defined_schooling'
+    schooling = wishiwashi['forms'][0]
+    assert schooling['id'] == 'schooling' and schooling['mode'] == 'transformation'
+    assert schooling['overrides']['baseStats']['replace'] == {
+        'hp': 5, 'attack': 14, 'defense': 13,
+        'special_attack': 14, 'special_defense': 14, 'speed': 3,
+    }
+    assert {'baseStats', 'capabilities', 'skills'} <= set(schooling['overrides'])
+    assert has_manual_gate(schooling)
+
+    minior = candidate_entries['minior']
+    assert minior['builder'] == 'rule_defined_shields_down'
+    core = minior['forms'][0]
+    assert core['id'] == 'core' and core['mode'] == 'transformation'
+    assert core['overrides']['baseStats']['replace'] == {
+        'hp': 6, 'attack': 10, 'defense': 6,
+        'special_attack': 10, 'special_defense': 6, 'speed': 12,
+    }
+    assert {'baseStats', 'capabilities', 'skills'} <= set(core['overrides'])
+    assert has_manual_gate(core)
+
+    eiscue = candidate_entries['eiscue']
+    assert eiscue['builder'] == 'rule_defined_ice_face'
+    noice = eiscue['forms'][0]
+    assert noice['id'] == 'noice-face' and noice['mode'] == 'transformation'
+    assert noice['overrides']['baseStats']['replace'] == {
+        'hp': 8, 'attack': 8, 'defense': 7,
+        'special_attack': 7, 'special_defense': 5, 'speed': 13,
+    }
+    assert 'capabilities' in noice['overrides']
+    assert has_manual_gate(noice)
+
+    meloetta = candidate_entries['meloetta']
+    assert meloetta['builder'] == 'rule_defined_relic_song'
+    step = meloetta['forms'][0]
+    assert step['id'] == 'step-forme' and step['mode'] == 'transformation'
+    assert step['overrides']['types']['replace'] == ['Normal', 'Fighting']
+    assert step['overrides']['baseStats']['replace'] == {
+        'hp': 10, 'attack': 13, 'defense': 9,
+        'special_attack': 8, 'special_defense': 8, 'speed': 13,
+    }
+    step_abilities = form_ability_ids(step)
+    assert 'spinning-dance' in step_abilities and 'drown-out' not in step_abilities, step_abilities
+    assert 'skills' in step['overrides']
+    assert has_manual_gate(step)
 
     synthetic = stage_b.get('synthetic_transform_species', [])
     mega_entries = {row['species_id']: row for row in synthetic if row['source_family'] == 'mega-evolution'}
