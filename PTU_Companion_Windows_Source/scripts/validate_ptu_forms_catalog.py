@@ -15,7 +15,7 @@ STAGE_B = DATA / 'PTU_FORMS_STAGE_B.json'
 EXPECTED_DEFERRED = {'deoxys', 'giratina', 'hoopa', 'kyurem', 'landorus', 'oricorio', 'rotom', 'shaymin', 'thundurus', 'tornadus'}
 EXPECTED_FALSE_POSITIVES = {'cramorant', 'mimikyu', 'nidoran-f', 'nidoran-m', 'solosis'}
 EXPECTED_CLASS_COUNTS = {
-    'permanent': 34,
+    'permanent': 36,
     'persistent_form': 2,
     'transformation': 5,
     'runtime_state': 6,
@@ -23,6 +23,7 @@ EXPECTED_CLASS_COUNTS = {
     'defer': 10,
     'false_positive': 5,
 }
+SIZE_SIGNAL = 'embedded_size_forms:small,average,large,super'
 
 
 def slug(value: str) -> str:
@@ -54,6 +55,10 @@ def has_manual_gate(form: dict) -> bool:
     return any(req.get('kind') == 'manual' for req in reqs)
 
 
+def assert_stats(form: dict, expected: dict) -> None:
+    assert form['overrides']['baseStats']['replace'] == expected, form
+
+
 def main() -> None:
     classification = json.loads(CLASSIFICATION.read_text(encoding='utf-8'))
     inventory = json.loads(INVENTORY.read_text(encoding='utf-8'))
@@ -61,8 +66,8 @@ def main() -> None:
     stage_b = json.loads(STAGE_B.read_text(encoding='utf-8'))
 
     summary = classification['summary']
-    assert summary['candidate_records'] == 104, summary
-    assert summary['candidate_families'] == 67, summary
+    assert summary['candidate_records'] == 106, summary
+    assert summary['candidate_families'] == 69, summary
     assert summary['classification_counts'] == EXPECTED_CLASS_COUNTS, summary['classification_counts']
     assert set(summary['deferred_families']) == EXPECTED_DEFERRED, summary['deferred_families']
     assert set(summary['false_positive_families']) == EXPECTED_FALSE_POSITIVES, summary['false_positive_families']
@@ -74,6 +79,11 @@ def main() -> None:
     for family in ('deerling', 'sawsbuck'):
         assert families[family]['classification'] == 'runtime_state', families[family]
         assert families[family]['target_layer'] == 'runtime_resolver', families[family]
+    for family in ('pumpkaboo', 'gourgeist'):
+        assert families[family]['classification'] == 'permanent', families[family]
+        assert families[family]['target_layer'] == 'baseFormId', families[family]
+        assert SIZE_SIGNAL in families[family]['signals'], families[family]
+        assert families[family]['evidence_status'] == 'source_explicit_variant', families[family]
 
     mega = inventory.get('mega_forms', [])
     primal = inventory.get('primal_forms', [])
@@ -86,14 +96,14 @@ def main() -> None:
 
     assert stage_b['applied_to_default_packs'] is False
     assert stage_b['stage_b_form_schema_version'] == 1
-    assert stage_b['schema_version'] == 3
+    assert stage_b['schema_version'] == 4
     stage_summary = stage_b['summary']
-    assert stage_summary['candidate_family_entries'] == 41, stage_summary
-    assert stage_summary['record_backed_family_entries'] == 33, stage_summary
-    assert stage_summary['rule_defined_family_entries'] == 8, stage_summary
-    assert stage_summary['candidate_forms'] == 59, stage_summary
-    assert stage_summary['record_backed_forms'] == 40, stage_summary
-    assert stage_summary['rule_defined_forms'] == 19, stage_summary
+    assert stage_summary['candidate_family_entries'] == 43, stage_summary
+    assert stage_summary['record_backed_family_entries'] == 32, stage_summary
+    assert stage_summary['rule_defined_family_entries'] == 11, stage_summary
+    assert stage_summary['candidate_forms'] == 67, stage_summary
+    assert stage_summary['record_backed_forms'] == 37, stage_summary
+    assert stage_summary['rule_defined_forms'] == 30, stage_summary
     assert stage_summary['omitted_or_deferred_family_entries'] == 26, stage_summary
     assert stage_summary['mega_forms'] == 48
     assert stage_summary['primal_forms'] == 2
@@ -123,10 +133,10 @@ def main() -> None:
     assert len(aegislash['forms']) == 1
     sword = aegislash['forms'][0]
     assert sword['id'] == 'sword-stance' and sword['mode'] == 'transformation'
-    assert sword['overrides']['baseStats']['replace'] == {
+    assert_stats(sword, {
         'hp': 6, 'attack': 15, 'defense': 5,
         'special_attack': 15, 'special_defense': 5, 'speed': 6,
-    }
+    })
     assert has_manual_gate(sword)
 
     burmy = candidate_entries['burmy']
@@ -165,16 +175,15 @@ def main() -> None:
     assert 'reckless' in form_ability_ids(basculin_forms['red'])
     assert 'rock-head' in form_ability_ids(basculin_forms['blue'])
 
-    # Second source-defined transformation pass. Each pair has one implicit source base
-    # state and one explicit activeFormId overlay, rather than two competing transformations.
+    # Second source-defined transformation pass.
     wishiwashi = candidate_entries['wishiwashi']
     assert wishiwashi['builder'] == 'rule_defined_schooling'
     schooling = wishiwashi['forms'][0]
     assert schooling['id'] == 'schooling' and schooling['mode'] == 'transformation'
-    assert schooling['overrides']['baseStats']['replace'] == {
+    assert_stats(schooling, {
         'hp': 5, 'attack': 14, 'defense': 13,
         'special_attack': 14, 'special_defense': 14, 'speed': 3,
-    }
+    })
     assert {'baseStats', 'capabilities', 'skills'} <= set(schooling['overrides'])
     assert has_manual_gate(schooling)
 
@@ -182,10 +191,10 @@ def main() -> None:
     assert minior['builder'] == 'rule_defined_shields_down'
     core = minior['forms'][0]
     assert core['id'] == 'core' and core['mode'] == 'transformation'
-    assert core['overrides']['baseStats']['replace'] == {
+    assert_stats(core, {
         'hp': 6, 'attack': 10, 'defense': 6,
         'special_attack': 10, 'special_defense': 6, 'speed': 12,
-    }
+    })
     assert {'baseStats', 'capabilities', 'skills'} <= set(core['overrides'])
     assert has_manual_gate(core)
 
@@ -193,10 +202,10 @@ def main() -> None:
     assert eiscue['builder'] == 'rule_defined_ice_face'
     noice = eiscue['forms'][0]
     assert noice['id'] == 'noice-face' and noice['mode'] == 'transformation'
-    assert noice['overrides']['baseStats']['replace'] == {
+    assert_stats(noice, {
         'hp': 8, 'attack': 8, 'defense': 7,
         'special_attack': 7, 'special_defense': 5, 'speed': 13,
-    }
+    })
     assert 'capabilities' in noice['overrides']
     assert has_manual_gate(noice)
 
@@ -205,14 +214,61 @@ def main() -> None:
     step = meloetta['forms'][0]
     assert step['id'] == 'step-forme' and step['mode'] == 'transformation'
     assert step['overrides']['types']['replace'] == ['Normal', 'Fighting']
-    assert step['overrides']['baseStats']['replace'] == {
+    assert_stats(step, {
         'hp': 10, 'attack': 13, 'defense': 9,
         'special_attack': 8, 'special_defense': 8, 'speed': 13,
-    }
+    })
     step_abilities = form_ability_ids(step)
     assert 'spinning-dance' in step_abilities and 'drown-out' not in step_abilities, step_abilities
     assert 'skills' in step['overrides']
     assert has_manual_gate(step)
+
+    # Permanent embedded/source-record pass.
+    wormadam = candidate_entries['wormadam']
+    assert wormadam['builder'] == 'source_record_cloak_forms'
+    wormadam_forms = {form['id']: form for form in wormadam['forms']}
+    assert set(wormadam_forms) == {'plant-cloak', 'sandy-cloak', 'trash-cloak'}
+    wormadam_expected = {
+        'plant-cloak': (['Bug', 'Grass'], {'hp': 6, 'attack': 6, 'defense': 9, 'special_attack': 8, 'special_defense': 11, 'speed': 4}, 'grass-pelt'),
+        'sandy-cloak': (['Bug', 'Ground'], {'hp': 6, 'attack': 8, 'defense': 11, 'special_attack': 6, 'special_defense': 9, 'speed': 4}, 'sand-veil'),
+        'trash-cloak': (['Bug', 'Steel'], {'hp': 6, 'attack': 7, 'defense': 10, 'special_attack': 7, 'special_defense': 10, 'speed': 4}, 'clear-body'),
+    }
+    for ident, (types, stats, high_ability) in wormadam_expected.items():
+        form = wormadam_forms[ident]
+        assert form['mode'] == 'permanent'
+        assert form['overrides']['types']['replace'] == types
+        assert_stats(form, stats)
+        assert high_ability in form_ability_ids(form), (ident, form_ability_ids(form))
+        assert {'capabilities', 'skills', 'levelUpMoves', 'tmMoves', 'tutorMoves'} <= set(form['overrides']), (ident, form['overrides'].keys())
+
+    pumpkaboo = candidate_entries['pumpkaboo']
+    gourgeist = candidate_entries['gourgeist']
+    assert pumpkaboo['builder'] == 'embedded_size_base_stats'
+    assert gourgeist['builder'] == 'embedded_size_base_stats'
+    pump_forms = {form['id']: form for form in pumpkaboo['forms']}
+    gour_forms = {form['id']: form for form in gourgeist['forms']}
+    assert set(pump_forms) == {'small', 'average', 'large', 'super'}
+    assert set(gour_forms) == {'small', 'average', 'large', 'super'}
+    pump_expected = {
+        'small': {'hp': 4, 'attack': 7, 'defense': 7, 'special_attack': 4, 'special_defense': 6, 'speed': 6},
+        'average': {'hp': 5, 'attack': 7, 'defense': 7, 'special_attack': 4, 'special_defense': 6, 'speed': 5},
+        'large': {'hp': 5, 'attack': 7, 'defense': 7, 'special_attack': 4, 'special_defense': 6, 'speed': 5},
+        'super': {'hp': 6, 'attack': 7, 'defense': 7, 'special_attack': 4, 'special_defense': 6, 'speed': 4},
+    }
+    gour_expected = {
+        'small': {'hp': 6, 'attack': 9, 'defense': 12, 'special_attack': 6, 'special_defense': 8, 'speed': 10},
+        'average': {'hp': 7, 'attack': 9, 'defense': 12, 'special_attack': 6, 'special_defense': 8, 'speed': 8},
+        'large': {'hp': 8, 'attack': 10, 'defense': 12, 'special_attack': 6, 'special_defense': 8, 'speed': 7},
+        'super': {'hp': 9, 'attack': 10, 'defense': 12, 'special_attack': 6, 'special_defense': 8, 'speed': 5},
+    }
+    for ident, stats in pump_expected.items():
+        assert_stats(pump_forms[ident], stats)
+        assert set(pump_forms[ident]['overrides']) == {'baseStats'}, pump_forms[ident]
+    for ident, stats in gour_expected.items():
+        assert_stats(gour_forms[ident], stats)
+        assert set(gour_forms[ident]['overrides']) == {'baseStats'}, gour_forms[ident]
+    assert pumpkaboo['source_mechanics']['size_measurement_status'] == 'aggregate_range_only'
+    assert gourgeist['source_mechanics']['size_measurement_status'] == 'aggregate_range_only'
 
     synthetic = stage_b.get('synthetic_transform_species', [])
     mega_entries = {row['species_id']: row for row in synthetic if row['source_family'] == 'mega-evolution'}
@@ -236,6 +292,7 @@ def main() -> None:
         'candidate_families': summary['candidate_families'],
         'deferred': len(EXPECTED_DEFERRED),
         'false_positive': len(EXPECTED_FALSE_POSITIVES),
+        'permanent': EXPECTED_CLASS_COUNTS['permanent'],
         'runtime_states': EXPECTED_CLASS_COUNTS['runtime_state'],
         'rule_defined_forms': stage_summary['rule_defined_forms'],
         'candidate_forms': stage_summary['candidate_forms'],
