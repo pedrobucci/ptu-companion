@@ -1,5 +1,5 @@
 {
-  "schema_version": 2,
+  "schema_version": 3,
   "sources": {
     "ptu_core": {
       "reference": "Pokemon Tabletop United 1.05 Core",
@@ -613,7 +613,8 @@
         "egg_moves": [],
         "source_id": "gen8",
         "source_page": 457
-      }
+      },
+      "extra_effects": []
     },
     {
       "kind": "mega",
@@ -1412,7 +1413,8 @@
         ],
         "source_id": "gen8",
         "source_page": 692
-      }
+      },
+      "extra_effects": []
     },
     {
       "kind": "mega",
@@ -2058,7 +2060,8 @@
         ],
         "source_id": "gen8",
         "source_page": 833
-      }
+      },
+      "extra_effects": []
     },
     {
       "kind": "mega",
@@ -2812,7 +2815,8 @@
         "egg_moves": [],
         "source_id": "gen8",
         "source_page": 279
-      }
+      },
+      "extra_effects": []
     },
     {
       "kind": "mega",
@@ -3482,7 +3486,8 @@
         "egg_moves": [],
         "source_id": "gen8",
         "source_page": 250
-      }
+      },
+      "extra_effects": []
     },
     {
       "kind": "mega",
@@ -4073,7 +4078,8 @@
         "egg_moves": [],
         "source_id": "gen8",
         "source_page": 540
-      }
+      },
+      "extra_effects": []
     },
     {
       "kind": "mega",
@@ -4659,7 +4665,8 @@
         "egg_moves": [],
         "source_id": "gen8",
         "source_page": 132
-      }
+      },
+      "extra_effects": []
     },
     {
       "kind": "mega",
@@ -5411,7 +5418,8 @@
         ],
         "source_id": "gen8",
         "source_page": 738
-      }
+      },
+      "extra_effects": []
     },
     {
       "kind": "mega",
@@ -6043,7 +6051,8 @@
         "egg_moves": [],
         "source_id": "gen8",
         "source_page": 430
-      }
+      },
+      "extra_effects": []
     },
     {
       "kind": "mega",
@@ -6582,7 +6591,8 @@
         "egg_moves": [],
         "source_id": "gen8",
         "source_page": 93
-      }
+      },
+      "extra_effects": []
     },
     {
       "kind": "mega",
@@ -7208,7 +7218,8 @@
         "egg_moves": [],
         "source_id": "gen8",
         "source_page": 66
-      }
+      },
+      "extra_effects": []
     },
     {
       "kind": "mega",
@@ -7876,7 +7887,8 @@
         "egg_moves": [],
         "source_id": "gen8",
         "source_page": 48
-      }
+      },
+      "extra_effects": []
     },
     {
       "kind": "mega",
@@ -8416,7 +8428,8 @@
         "egg_moves": [],
         "source_id": "gen8",
         "source_page": 415
-      }
+      },
+      "extra_effects": []
     },
     {
       "kind": "mega",
@@ -9116,7 +9129,8 @@
         "egg_moves": [],
         "source_id": "gen8",
         "source_page": 42
-      }
+      },
+      "extra_effects": []
     },
     {
       "kind": "mega",
@@ -9816,7 +9830,8 @@
         "egg_moves": [],
         "source_id": "gen8",
         "source_page": 42
-      }
+      },
+      "extra_effects": []
     },
     {
       "kind": "mega",
@@ -10387,7 +10402,8 @@
         "egg_moves": [],
         "source_id": "gen8",
         "source_page": 930
-      }
+      },
+      "extra_effects": []
     },
     {
       "kind": "mega",
@@ -11209,7 +11225,8 @@
         "egg_moves": [],
         "source_id": "gen8",
         "source_page": 258
-      }
+      },
+      "extra_effects": []
     },
     {
       "kind": "mega",
@@ -11782,7 +11799,8 @@
         "egg_moves": [],
         "source_id": "gen8",
         "source_page": 852
-      }
+      },
+      "extra_effects": []
     },
     {
       "kind": "mega",
@@ -12485,7 +12503,8 @@
         "egg_moves": [],
         "source_id": "gen8",
         "source_page": 257
-      }
+      },
+      "extra_effects": []
     },
     {
       "kind": "mega",
@@ -13175,7 +13194,8 @@
         "egg_moves": [],
         "source_id": "gen8",
         "source_page": 165
-      }
+      },
+      "extra_effects": []
     },
     {
       "kind": "mega",
@@ -13683,7 +13703,8 @@
         "egg_moves": [],
         "source_id": "gen8",
         "source_page": 505
-      }
+      },
+      "extra_effects": []
     },
     {
       "kind": "mega",
@@ -14261,7 +14282,8 @@
         "egg_moves": [],
         "source_id": "gen8",
         "source_page": 641
-      }
+      },
+      "extra_effects": []
     },
     {
       "kind": "mega",
@@ -14858,7 +14880,8 @@
         ],
         "source_id": "gen8",
         "source_page": 687
-      }
+      },
+      "extra_effects": []
     },
     {
       "kind": "mega",
@@ -15425,7 +15448,8 @@
         "egg_moves": [],
         "source_id": "gen8",
         "source_page": 349
-      }
+      },
+      "extra_effects": []
     },
     {
       "kind": "mega",
@@ -16165,7 +16189,8 @@
         ],
         "source_id": "gen8",
         "source_page": 726
-      }
+      },
+      "extra_effects": []
     },
     {
       "kind": "mega",
@@ -16908,7 +16933,8 @@
         "egg_moves": [],
         "source_id": "gen8",
         "source_page": 881
-      }
+      },
+      "extra_effects": []
     },
     {
       "kind": "mega",
@@ -17651,7 +17677,8 @@
         "egg_moves": [],
         "source_id": "gen8",
         "source_page": 882
-      }
+      },
+      "extra_effects": []
     },
     {
       "kind": "mega",
@@ -18234,7 +18261,8 @@
         "egg_moves": [],
         "source_id": "gen8",
         "source_page": 544
-      }
+      },
+      "extra_effects": []
     },
     {
       "kind": "mega",
@@ -18829,7 +18857,8 @@
         "egg_moves": [],
         "source_id": "gen8",
         "source_page": 397
-      }
+      },
+      "extra_effects": []
     },
     {
       "kind": "mega",
@@ -19310,7 +19339,8 @@
         "egg_moves": [],
         "source_id": "gen8",
         "source_page": 369
-      }
+      },
+      "extra_effects": []
     },
     {
       "kind": "mega",
@@ -20066,7 +20096,8 @@
         ],
         "source_id": "gen8",
         "source_page": 756
-      }
+      },
+      "extra_effects": []
     },
     {
       "kind": "mega",
@@ -20693,7 +20724,8 @@
         "egg_moves": [],
         "source_id": "gen8",
         "source_page": 395
-      }
+      },
+      "extra_effects": []
     },
     {
       "kind": "mega",
@@ -21304,7 +21336,8 @@
         "egg_moves": [],
         "source_id": "gen8",
         "source_page": 849
-      }
+      },
+      "extra_effects": []
     },
     {
       "kind": "mega",
@@ -22133,7 +22166,8 @@
         "egg_moves": [],
         "source_id": "gen8",
         "source_page": 869
-      }
+      },
+      "extra_effects": []
     },
     {
       "kind": "mega",
@@ -22964,7 +22998,8 @@
         "egg_moves": [],
         "source_id": "gen8",
         "source_page": 869
-      }
+      },
+      "extra_effects": []
     },
     {
       "kind": "mega",
@@ -23432,14 +23467,15 @@
         "egg_moves": [],
         "source_id": "gen8",
         "source_page": 211
-      }
+      },
+      "extra_effects": []
     },
     {
       "kind": "mega",
       "label": "Mega Evolution",
       "form_suffix": null,
       "type_change": "Bug / Flying",
-      "ability_added": "Aerilate Gains Sky 6.",
+      "ability_added": "Aerilate",
       "stat_changes": {
         "attack": 3,
         "defense": 2,
@@ -23997,7 +24033,10 @@
         ],
         "source_id": "gen8",
         "source_page": 685
-      }
+      },
+      "extra_effects": [
+        "Gains Sky 6."
+      ]
     },
     {
       "kind": "mega",
@@ -24705,7 +24744,8 @@
         "egg_moves": [],
         "source_id": "gen8",
         "source_page": 885
-      }
+      },
+      "extra_effects": []
     },
     {
       "kind": "mega",
@@ -25506,7 +25546,8 @@
         ],
         "source_id": "gen8",
         "source_page": 691
-      }
+      },
+      "extra_effects": []
     },
     {
       "kind": "mega",
@@ -26096,7 +26137,8 @@
         "egg_moves": [],
         "source_id": "gen8",
         "source_page": 846
-      }
+      },
+      "extra_effects": []
     },
     {
       "kind": "mega",
@@ -26736,7 +26778,8 @@
         "egg_moves": [],
         "source_id": "gen8",
         "source_page": 24
-      }
+      },
+      "extra_effects": []
     },
     {
       "kind": "mega",
@@ -27283,7 +27326,8 @@
         "egg_moves": [],
         "source_id": "gen8",
         "source_page": 307
-      }
+      },
+      "extra_effects": []
     },
     {
       "kind": "mega",
@@ -27865,7 +27909,8 @@
         "egg_moves": [],
         "source_id": "gen8",
         "source_page": 653
-      }
+      },
+      "extra_effects": []
     },
     {
       "kind": "mega",
@@ -28562,7 +28607,8 @@
         "egg_moves": [],
         "source_id": "gen8",
         "source_page": 628
-      }
+      },
+      "extra_effects": []
     },
     {
       "kind": "mega",
@@ -29191,7 +29237,8 @@
         "egg_moves": [],
         "source_id": "gen8",
         "source_page": 608
-      }
+      },
+      "extra_effects": []
     },
     {
       "kind": "mega",
@@ -29849,7 +29896,8 @@
         "egg_moves": [],
         "source_id": "gen8",
         "source_page": 72
-      }
+      },
+      "extra_effects": []
     },
     {
       "kind": "mega",
@@ -30577,7 +30625,8 @@
         "egg_moves": [],
         "source_id": "gen8",
         "source_page": 843
-      }
+      },
+      "extra_effects": []
     },
     {
       "kind": "mega",
@@ -31121,7 +31170,8 @@
         "egg_moves": [],
         "source_id": "gen8",
         "source_page": 18
-      }
+      },
+      "extra_effects": []
     }
   ],
   "primal_forms": [
@@ -31791,7 +31841,8 @@
         "egg_moves": [],
         "source_id": "gen8",
         "source_page": 884
-      }
+      },
+      "extra_effects": []
     },
     {
       "kind": "primal",
@@ -32349,7 +32400,8 @@
         "egg_moves": [],
         "source_id": "gen8",
         "source_page": 883
-      }
+      },
+      "extra_effects": []
     }
   ],
   "alternate_form_candidates": [
@@ -75640,6 +75692,7 @@
     "PTU Core requires a species/form-specific Mega Stone and a Trainer Mega Ring; exact item IDs are not inferred when the supplied item data does not provide them.",
     "Shiny is an individual presentation state. Missing dedicated Shiny artwork must not disable Shiny state.",
     "Alternate-form candidates are inventory data only; conversion to permanent vs transformation form requires family-by-family review.",
-    "Swampert, Beedrill, and Metagross Mega stat blocks are restored from their supplied PDF pages because packed raw_text loses those lines at page boundaries."
+    "Swampert, Beedrill, and Metagross Mega stat blocks are restored from their supplied PDF pages because packed raw_text loses those lines at page boundaries.",
+    "Mega Pinsir source grants Sky 6 as a separate extra effect; it is not part of the Aerilate Ability name."
   ]
 }
