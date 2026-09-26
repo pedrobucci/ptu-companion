@@ -11,6 +11,7 @@ on:
       - 'PTU_Companion_Windows_Source/scripts/build_ptu_forms_inventory.py'
       - 'PTU_Companion_Windows_Source/scripts/repair_ptu_forms_inventory.py'
       - 'PTU_Companion_Windows_Source/scripts/audit_ptu_form_discovery.py'
+      - 'PTU_Companion_Windows_Source/scripts/audit_ptu_form_mechanics.py'
       - 'PTU_Companion_Windows_Source/seed/content-packs/ptu-gen8ish-pokedex.ptucp'
       - 'PTU_Companion_Windows_Source/seed/content-packs/ptu-core-1.05.ptucp'
 
@@ -36,12 +37,16 @@ jobs:
         run: python PTU_Companion_Windows_Source/scripts/repair_ptu_forms_inventory.py
       - name: Expand form discovery audit
         run: python PTU_Companion_Windows_Source/scripts/audit_ptu_form_discovery.py
+      - name: Audit form-driving mechanics
+        run: python PTU_Companion_Windows_Source/scripts/audit_ptu_form_mechanics.py
       - name: Check generated inventory
         run: |
           test -s docs/PTU_FORMS_INVENTORY.md
           test -s docs/data/PTU_FORMS_INVENTORY.json
           test -s docs/PTU_FORMS_DISCOVERY.md
           test -s docs/data/PTU_FORMS_DISCOVERY.json
+          test -s docs/PTU_FORM_MECHANICS_AUDIT.md
+          test -s docs/data/PTU_FORM_MECHANICS_AUDIT.json
           grep -q '48 Mega forms across 46 Species' docs/PTU_FORMS_INVENTORY.md
           grep -q 'Groudon' docs/PTU_FORMS_INVENTORY.md
           grep -q 'Kyogre' docs/PTU_FORMS_INVENTORY.md
@@ -49,13 +54,14 @@ jobs:
           grep -q 'Beedrill.*Adaptability.*Atk +6' docs/PTU_FORMS_INVENTORY.md
           grep -q 'Metagross.*Tough Claws.*Atk +1' docs/PTU_FORMS_INVENTORY.md
           grep -q 'New candidates beyond the first inventory' docs/PTU_FORMS_DISCOVERY.md
+          grep -q 'Form-driving Mechanics Audit' docs/PTU_FORM_MECHANICS_AUDIT.md
           git diff --check
       - name: Commit generated inventory
         shell: bash
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add docs/PTU_FORMS_INVENTORY.md docs/data/PTU_FORMS_INVENTORY.json docs/PTU_FORMS_DISCOVERY.md docs/data/PTU_FORMS_DISCOVERY.json
+          git add docs/PTU_FORMS_INVENTORY.md docs/data/PTU_FORMS_INVENTORY.json docs/PTU_FORMS_DISCOVERY.md docs/data/PTU_FORMS_DISCOVERY.json docs/PTU_FORM_MECHANICS_AUDIT.md docs/data/PTU_FORM_MECHANICS_AUDIT.json
           if git diff --cached --quiet; then
             echo 'Inventory already current.'
           else
