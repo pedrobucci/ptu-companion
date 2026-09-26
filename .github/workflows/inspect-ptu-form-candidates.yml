@@ -8,6 +8,12 @@ on:
     paths:
       - '.github/workflows/inspect-ptu-form-candidates.yml'
       - 'PTU_Companion_Windows_Source/scripts/inspect_ptu_form_candidates.py'
+      - 'PTU_Companion_Windows_Source/scripts/build_ptu_forms_inventory.py'
+      - 'PTU_Companion_Windows_Source/seed/content-packs/ptu-gen8ish-pokedex.ptucp'
+      - 'PTU_Companion_Windows_Source/seed/content-packs/ptu-core-1.05.ptucp'
+
+permissions:
+  contents: write
 
 jobs:
   inspect:
@@ -16,8 +22,28 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.ref_name }}
+          fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
       - name: Inspect source pack
         run: python PTU_Companion_Windows_Source/scripts/inspect_ptu_form_candidates.py
+      - name: Build audited forms inventory
+        run: python PTU_Companion_Windows_Source/scripts/build_ptu_forms_inventory.py
+      - name: Check generated inventory
+        run: |
+          test -s docs/PTU_FORMS_INVENTORY.md
+          test -s docs/data/PTU_FORMS_INVENTORY.json
+          git diff --check
+      - name: Commit generated inventory
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add docs/PTU_FORMS_INVENTORY.md docs/data/PTU_FORMS_INVENTORY.json
+          if git diff --cached --quiet; then
+            echo 'Inventory already current.'
+          else
+            git commit -m 'docs(content): generate PTU forms inventory [skip ci]'
+            git push origin HEAD:"${GITHUB_REF_NAME}"
+          fi
