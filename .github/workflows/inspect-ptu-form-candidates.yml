@@ -8,7 +8,7 @@ on:
     paths:
       - '.github/workflows/inspect-ptu-form-candidates.yml'
       - 'PTU_Companion_Windows_Source/scripts/inspect_ptu_form_candidates.py'
-      - 'PTU_Companion_Windows_Source/scripts/build_ptu_forms_inventory.py'
+      - 'PTU_Companion_Windows_Source/scripts/build_ptu_forms_inventory_v2.py'
       - 'PTU_Companion_Windows_Source/seed/content-packs/ptu-gen8ish-pokedex.ptucp'
       - 'PTU_Companion_Windows_Source/seed/content-packs/ptu-core-1.05.ptucp'
 
@@ -29,11 +29,14 @@ jobs:
       - name: Inspect source pack
         run: python PTU_Companion_Windows_Source/scripts/inspect_ptu_form_candidates.py
       - name: Build audited forms inventory
-        run: python PTU_Companion_Windows_Source/scripts/build_ptu_forms_inventory.py
+        run: python PTU_Companion_Windows_Source/scripts/build_ptu_forms_inventory_v2.py
       - name: Check generated inventory
         run: |
           test -s docs/PTU_FORMS_INVENTORY.md
           test -s docs/data/PTU_FORMS_INVENTORY.json
+          grep -q '48 Mega forms across 46 Species' docs/PTU_FORMS_INVENTORY.md
+          grep -q 'Groudon' docs/PTU_FORMS_INVENTORY.md
+          grep -q 'Kyogre' docs/PTU_FORMS_INVENTORY.md
           git diff --check
       - name: Commit generated inventory
         shell: bash
@@ -44,6 +47,6 @@ jobs:
           if git diff --cached --quiet; then
             echo 'Inventory already current.'
           else
-            git commit -m 'docs(content): generate PTU forms inventory [skip ci]'
+            git commit -m 'docs(content): refresh PTU forms inventory [skip ci]'
             git push origin HEAD:"${GITHUB_REF_NAME}"
           fi
