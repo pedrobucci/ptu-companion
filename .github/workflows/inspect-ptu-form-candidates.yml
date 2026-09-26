@@ -13,6 +13,9 @@ on:
       - 'PTU_Companion_Windows_Source/scripts/audit_ptu_form_discovery.py'
       - 'PTU_Companion_Windows_Source/scripts/audit_ptu_form_mechanics.py'
       - 'PTU_Companion_Windows_Source/scripts/classify_ptu_form_families.py'
+      - 'PTU_Companion_Windows_Source/scripts/audit_ptu_form_assets.py'
+      - 'PTU_Companion_Windows_Source/scripts/generate_ptu_stage_b_forms.py'
+      - 'PTU_Companion_Windows_Source/scripts/validate_ptu_forms_catalog.py'
       - 'PTU_Companion_Windows_Source/scripts/resolve_meloetta_form_rule.py'
       - 'PTU_Companion_Windows_Source/seed/content-packs/ptu-gen8ish-pokedex.ptucp'
       - 'PTU_Companion_Windows_Source/seed/content-packs/ptu-core-1.05.ptucp'
@@ -47,6 +50,12 @@ jobs:
         run: python PTU_Companion_Windows_Source/scripts/audit_ptu_form_mechanics.py
       - name: Classify form families
         run: python PTU_Companion_Windows_Source/scripts/classify_ptu_form_families.py
+      - name: Audit local form artwork
+        run: python PTU_Companion_Windows_Source/scripts/audit_ptu_form_assets.py
+      - name: Generate Stage B forms catalog
+        run: python PTU_Companion_Windows_Source/scripts/generate_ptu_stage_b_forms.py
+      - name: Validate catalog completeness
+        run: python PTU_Companion_Windows_Source/scripts/validate_ptu_forms_catalog.py
       - name: Check generated inventory
         run: |
           test -s docs/PTU_FORMS_INVENTORY.md
@@ -59,6 +68,10 @@ jobs:
           test -s docs/data/PTU_FORMS_CLASSIFICATION.json
           test -s docs/PTU_FORM_SUPPLEMENTAL_RULES.md
           test -s docs/data/PTU_FORM_SUPPLEMENTAL_RULES.json
+          test -s docs/PTU_FORM_ASSET_AUDIT.md
+          test -s docs/data/PTU_FORM_ASSET_AUDIT.json
+          test -s docs/PTU_FORMS_STAGE_B.md
+          test -s docs/data/PTU_FORMS_STAGE_B.json
           grep -q '48 Mega forms across 46 Species' docs/PTU_FORMS_INVENTORY.md
           grep -q '2 Ultra Burst source blocks' docs/PTU_FORMS_INVENTORY.md
           grep -q 'NECROZMA Dusk Mane.*Neuroforce.*Illuminate.*Glow' docs/PTU_FORMS_INVENTORY.md
@@ -73,22 +86,29 @@ jobs:
           grep -q 'Form-driving Mechanics Audit' docs/PTU_FORM_MECHANICS_AUDIT.md
           grep -q 'Synthetic transform inventory:.*48 Mega.*2 Primal.*2 Ultra Burst' docs/PTU_FORMS_CLASSIFICATION.md
           grep -q 'Transformation families:.*5' docs/PTU_FORMS_CLASSIFICATION.md
-          grep -q 'Deferred/source-insufficient families:.*11' docs/PTU_FORMS_CLASSIFICATION.md
+          grep -q 'Deferred/source-insufficient families:.*10' docs/PTU_FORMS_CLASSIFICATION.md
+          grep -q 'False-positive families:.*5' docs/PTU_FORMS_CLASSIFICATION.md
           grep -q 'meloetta.*transformation.*activeFormId.*source_explicit' docs/PTU_FORMS_CLASSIFICATION.md
           grep -q 'Meloetta.*Relic Song.*PTU Core 1.05 p.405.*transformation' docs/PTU_FORM_SUPPLEMENTAL_RULES.md
           grep -q 'cramorant.*false_positive' docs/PTU_FORMS_CLASSIFICATION.md
+          grep -q 'mimikyu.*false_positive.*source_explicit_non_form' docs/PTU_FORMS_CLASSIFICATION.md
           grep -q 'wishiwashi.*transformation' docs/PTU_FORMS_CLASSIFICATION.md
           grep -q 'silvally.*runtime_state' docs/PTU_FORMS_CLASSIFICATION.md
+          grep -q 'Mega transforms:.*48' docs/PTU_FORMS_STAGE_B.md
+          grep -q 'Primal transforms:.*2' docs/PTU_FORMS_STAGE_B.md
+          grep -q 'Ultra Burst transforms:.*2' docs/PTU_FORMS_STAGE_B.md
+          grep -q 'No artwork URL is generated' docs/PTU_FORMS_STAGE_B.md
+          git diff --exit-code -- '*.ptucp'
           git diff --check
       - name: Commit generated inventory
         shell: bash
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add PTU_Companion_Windows_Source/scripts/classify_ptu_form_families.py docs/PTU_FORMS_INVENTORY.md docs/data/PTU_FORMS_INVENTORY.json docs/PTU_FORMS_DISCOVERY.md docs/data/PTU_FORMS_DISCOVERY.json docs/PTU_FORM_MECHANICS_AUDIT.md docs/data/PTU_FORM_MECHANICS_AUDIT.json docs/PTU_FORMS_CLASSIFICATION.md docs/data/PTU_FORMS_CLASSIFICATION.json
+          git add docs/PTU_FORMS_INVENTORY.md docs/data/PTU_FORMS_INVENTORY.json docs/PTU_FORMS_DISCOVERY.md docs/data/PTU_FORMS_DISCOVERY.json docs/PTU_FORM_MECHANICS_AUDIT.md docs/data/PTU_FORM_MECHANICS_AUDIT.json docs/PTU_FORMS_CLASSIFICATION.md docs/data/PTU_FORMS_CLASSIFICATION.json docs/PTU_FORM_ASSET_AUDIT.md docs/data/PTU_FORM_ASSET_AUDIT.json docs/PTU_FORMS_STAGE_B.md docs/data/PTU_FORMS_STAGE_B.json
           if git diff --cached --quiet; then
-            echo 'Inventory already current.'
+            echo 'Forms audit artifacts already current.'
           else
-            git commit -m 'docs(content): refresh PTU forms classification [skip ci]'
+            git commit -m 'docs(content): refresh PTU forms catalog [skip ci]'
             git push origin HEAD:"${GITHUB_REF_NAME}"
           fi
