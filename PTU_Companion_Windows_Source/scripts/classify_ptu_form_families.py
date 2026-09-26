@@ -32,7 +32,7 @@ KNOWN = {
     'lycanroc': ('permanent', 'baseFormId', 'source_explicit_variant', 'Midday, Midnight, and Dusk are separately parameterized evolution forms.'),
     'meowstic': ('permanent', 'baseFormId', 'source_explicit_variant', 'Male and Female are separately parameterized Species records in the supplied Pokédex.'),
     'meloetta': ('transformation', 'activeFormId', 'source_explicit', 'Relic Song lets Meloetta switch between Aria Form and Step Form as a Swift Action when using the Move, or as a Standard Action otherwise; both forms use the same HP Stat.'),
-    'mimikyu': ('defer', 'none', 'source_insufficient', 'The supplied Species has Disguise, but the audited project sources do not yet define a separate PTU Form mechanic.'),
+    'mimikyu': ('false_positive', 'none', 'source_explicit_non_form', 'The supplied PTU Species has Disguise as an Ability effect: a triggering damaging attack misses and the user gains +1 CS. The supplied PTU sources do not define Disguised/Busted as separate Form states.'),
     'minior': ('transformation', 'activeFormId', 'source_explicit', 'Shields Down defines Meteor/Core switching by HP state.'),
     'morpeko': ('runtime_state', 'runtime_resolver', 'source_explicit', 'Hunger Switch defines per-turn Full Belly/Hangry bonuses but no separate stat block.'),
     'necrozma': ('mixed', 'baseFormId+activeFormId', 'source_explicit_effects', 'Base/Dusk Mane/Dawn Wings are persistent Viral Fusion states; Ultra Burst is a separate active transformation whose activation requirement is still source-insufficient.'),
@@ -139,15 +139,19 @@ def main() -> None:
     expected_ids = {record['id'] for entry in discovery.get('families', []) for record in entry['records']}
     if candidate_ids != expected_ids:
         raise SystemExit('Classification lost candidate records')
+    if len(expected_ids) != 104 or len(families) != 67:
+        raise SystemExit(f'Expanded classification scope changed unexpectedly: {len(expected_ids)} records / {len(families)} families')
     if len(inventory.get('mega_forms', [])) != 48:
         raise SystemExit('Mega inventory must contain 48 forms')
+    if len({row['species']['name'] for row in inventory.get('mega_forms', [])}) != 46:
+        raise SystemExit('Mega inventory must cover 46 species')
     if len(inventory.get('primal_forms', [])) != 2:
         raise SystemExit('Primal inventory must contain 2 forms')
     if len(inventory.get('ultra_burst_forms', [])) != 2:
         raise SystemExit('Ultra Burst inventory must contain 2 source blocks')
 
     family_lookup = {row['family']: row for row in families}
-    for family in ('cramorant', 'nidoran-f', 'nidoran-m', 'solosis'):
+    for family in ('cramorant', 'mimikyu', 'nidoran-f', 'nidoran-m', 'solosis'):
         if family in family_lookup and family_lookup[family]['classification'] != 'false_positive':
             raise SystemExit(f'{family} must remain a false positive until new supplied-source evidence exists')
     for family in ('wishiwashi', 'minior', 'eiscue', 'meloetta'):
@@ -156,6 +160,11 @@ def main() -> None:
     for family in ('silvally', 'morpeko', 'arceus', 'castform'):
         if family in family_lookup and family_lookup[family]['classification'] != 'runtime_state':
             raise SystemExit(f'{family} must be a source-backed runtime state')
+    expected_deferred = {'deoxys', 'giratina', 'hoopa', 'kyurem', 'landorus', 'oricorio', 'rotom', 'shaymin', 'thundurus', 'tornadus'}
+    if set(deferred) != expected_deferred:
+        raise SystemExit(f'Deferred family set changed unexpectedly: {sorted(deferred)}')
+    if counts.get('defer', 0) != 10 or counts.get('false_positive', 0) != 5:
+        raise SystemExit(f'Expected 10 deferred and 5 false-positive families, got {counts.get("defer", 0)} / {counts.get("false_positive", 0)}')
 
     payload = {
         'schema_version': 1,
