@@ -5,8 +5,8 @@
     "candidate_records": 104,
     "candidate_families": 67,
     "classification_counts": {
-      "defer": 11,
-      "false_positive": 4,
+      "defer": 10,
+      "false_positive": 5,
       "mixed": 5,
       "permanent": 34,
       "persistent_form": 4,
@@ -19,7 +19,6 @@
       "hoopa",
       "kyurem",
       "landorus",
-      "mimikyu",
       "oricorio",
       "rotom",
       "shaymin",
@@ -28,6 +27,7 @@
     ],
     "false_positive_families": [
       "cramorant",
+      "mimikyu",
       "nidoran-f",
       "nidoran-m",
       "solosis"
@@ -2539,9 +2539,9 @@
     },
     {
       "family": "mimikyu",
-      "classification": "defer",
+      "classification": "false_positive",
       "target_layer": "none",
-      "evidence_status": "source_insufficient",
+      "evidence_status": "source_explicit_non_form",
       "records": [
         {
           "id": "mimikyu",
@@ -2586,7 +2586,7 @@
       "signals": [
         "form_ability:disguise"
       ],
-      "reason": "The supplied Species has Disguise, but the audited project sources do not yet define a separate PTU Form mechanic.",
+      "reason": "The supplied PTU Species has Disguise as an Ability effect: a triggering damaging attack misses and the user gains +1 CS. The supplied PTU sources do not define Disguised/Busted as separate Form states.",
       "preserve_legacy_ids": false
     },
     {

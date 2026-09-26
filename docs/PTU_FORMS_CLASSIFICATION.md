@@ -11,8 +11,8 @@ This is the conversion gate between source discovery and default `.ptucp` mutati
 - Transformation families: **5**
 - Runtime-state families: **4**
 - Mixed base + transformation families: **5**
-- Deferred/source-insufficient families: **11**
-- False-positive families: **4**
+- Deferred/source-insufficient families: **10**
+- False-positive families: **5**
 - Synthetic transform inventory: **48 Mega + 2 Primal + 2 Ultra Burst source blocks**.
 
 ## Family decisions
@@ -51,7 +51,7 @@ This is the conversion gate between source discovery and default `.ptucp` mutati
 | meloetta | transformation | `activeFormId` | source_explicit | 2 | Relic Song lets Meloetta switch between Aria Form and Step Form as a Swift Action when using the Move, or as a Standard Action otherwise; both forms use the same HP Stat. |
 | meowstic | permanent | `baseFormId` | source_explicit_variant | 2 | Male and Female are separately parameterized Species records in the supplied Pokédex. |
 | meowth | permanent | `baseFormId` | source_explicit_variant | 2 | The supplied Pokédex contains a separately parameterized regional variant. Preserve legacy Species IDs as aliases/import compatibility while moving selection to the generic base Form layer. |
-| mimikyu | defer | `none` | source_insufficient | 1 | The supplied Species has Disguise, but the audited project sources do not yet define a separate PTU Form mechanic. |
+| mimikyu | false_positive | `none` | source_explicit_non_form | 1 | The supplied PTU Species has Disguise as an Ability effect: a triggering damaging attack misses and the user gains +1 CS. The supplied PTU sources do not define Disguised/Busted as separate Form states. |
 | minior | transformation | `activeFormId` | source_explicit | 2 | Shields Down defines Meteor/Core switching by HP state. |
 | morpeko | runtime_state | `runtime_resolver` | source_explicit | 1 | Hunger Switch defines per-turn Full Belly/Hangry bonuses but no separate stat block. |
 | mr-mime | permanent | `baseFormId` | source_explicit_variant | 1 | The supplied Pokédex contains a separately parameterized regional variant. Preserve legacy Species IDs as aliases/import compatibility while moving selection to the generic base Form layer. |
@@ -100,7 +100,6 @@ This is the conversion gate between source discovery and default `.ptucp` mutati
 - `hoopa` — requires additional supplied-source evidence before automatic conversion/runtime switching.
 - `kyurem` — requires additional supplied-source evidence before automatic conversion/runtime switching.
 - `landorus` — requires additional supplied-source evidence before automatic conversion/runtime switching.
-- `mimikyu` — requires additional supplied-source evidence before automatic conversion/runtime switching.
 - `oricorio` — requires additional supplied-source evidence before automatic conversion/runtime switching.
 - `rotom` — requires additional supplied-source evidence before automatic conversion/runtime switching.
 - `shaymin` — requires additional supplied-source evidence before automatic conversion/runtime switching.
@@ -110,6 +109,7 @@ This is the conversion gate between source discovery and default `.ptucp` mutati
 ## False positives
 
 - `cramorant` — not promoted to the generic Forms layer by the current supplied-source evidence.
+- `mimikyu` — not promoted to the generic Forms layer by the current supplied-source evidence.
 - `nidoran-f` — not promoted to the generic Forms layer by the current supplied-source evidence.
 - `nidoran-m` — not promoted to the generic Forms layer by the current supplied-source evidence.
 - `solosis` — not promoted to the generic Forms layer by the current supplied-source evidence.

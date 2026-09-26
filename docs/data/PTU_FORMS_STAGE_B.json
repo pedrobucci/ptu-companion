@@ -1,0 +1,4791 @@
+{
+  "schema_version": 1,
+  "stage_b_form_schema_version": 1,
+  "applied_to_default_packs": false,
+  "policy": {
+    "deterministic": true,
+    "no_default_pack_mutation": true,
+    "no_invented_requirements": true,
+    "no_invented_artwork_urls": true,
+    "manual_requirement_is_a_review_gate": true,
+    "note": "This is a generated conversion catalog. It intentionally does not mutate bundled .ptucp files while deferred families remain."
+  },
+  "summary": {
+    "candidate_family_entries": 37,
+    "candidate_forms": 48,
+    "omitted_or_deferred_family_entries": 30,
+    "synthetic_species_entries": 50,
+    "synthetic_forms": 52,
+    "mega_forms": 48,
+    "primal_forms": 2,
+    "ultra_burst_forms": 2,
+    "local_artwork_matches_available_for_review": 0
+  },
+  "candidate_families": [
+    {
+      "family": "corsola",
+      "classification": "permanent",
+      "target_layer": "baseFormId",
+      "forms": [
+        {
+          "id": "corsola-galar",
+          "name": "CORSOLA Galar",
+          "mode": "permanent",
+          "overrides": {
+            "types": {
+              "replace": [
+                "Ghost"
+              ]
+            },
+            "baseStats": {
+              "replace": {
+                "hp": 6,
+                "attack": 6,
+                "defense": 10,
+                "special_attack": 7,
+                "special_defense": 10,
+                "speed": 3
+              }
+            }
+          },
+          "sortOrder": 10
+        }
+      ],
+      "source_snapshots": [
+        {
+          "id": "corsola-galar",
+          "abilities": [
+            "cursed-body",
+            "omen",
+            "perish-body",
+            "spiteful-intervention",
+            "weak-armor"
+          ],
+          "capabilities": [
+            "darkvision",
+            "dead-silent",
+            "gilled",
+            "invisibility",
+            "jump",
+            "levitate",
+            "naturewalk",
+            "overland",
+            "phasing",
+            "power",
+            "swim",
+            "underdog"
+          ],
+          "source_page": 802
+        }
+      ],
+      "note": "forms[] contains only Stage B-compatible type/base-stat overrides. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
+    },
+    {
+      "family": "darumaka",
+      "classification": "permanent",
+      "target_layer": "baseFormId",
+      "forms": [
+        {
+          "id": "darumaka-galar",
+          "name": "DARUMAKA Galar",
+          "mode": "permanent",
+          "overrides": {
+            "types": {
+              "replace": [
+                "Ice"
+              ]
+            },
+            "baseStats": {
+              "replace": {
+                "hp": 7,
+                "attack": 9,
+                "defense": 5,
+                "special_attack": 2,
+                "special_defense": 5,
+                "speed": 5
+              }
+            }
+          },
+          "sortOrder": 10
+        }
+      ],
+      "source_snapshots": [
+        {
+          "id": "darumaka-galar",
+          "abilities": [
+            "celebrate",
+            "hustle",
+            "ice-body",
+            "inner-focus",
+            "winter-s-kiss"
+          ],
+          "capabilities": [
+            "chilled",
+            "freezer",
+            "jump",
+            "naturewalk",
+            "overland",
+            "power",
+            "swim",
+            "underdog"
+          ],
+          "source_page": 807
+        }
+      ],
+      "note": "forms[] contains only Stage B-compatible type/base-stat overrides. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
+    },
+    {
+      "family": "diglett",
+      "classification": "permanent",
+      "target_layer": "baseFormId",
+      "forms": [
+        {
+          "id": "diglett-alola",
+          "name": "DIGLETT Alola",
+          "mode": "permanent",
+          "overrides": {
+            "types": {
+              "replace": [
+                "Ground",
+                "Steel"
+              ]
+            },
+            "baseStats": {
+              "replace": {
+                "hp": 1,
+                "attack": 6,
+                "defense": 3,
+                "special_attack": 4,
+                "special_defense": 5,
+                "speed": 9
+              }
+            }
+          },
+          "sortOrder": 10
+        }
+      ],
+      "source_snapshots": [
+        {
+          "id": "diglett-alola",
+          "abilities": [
+            "celebrate",
+            "dig-away",
+            "sand-force",
+            "sand-veil",
+            "tangling-hair"
+          ],
+          "capabilities": [
+            "burrow",
+            "jump",
+            "overland",
+            "power",
+            "swim",
+            "tremorsense",
+            "underdog"
+          ],
+          "source_page": 787
+        }
+      ],
+      "note": "forms[] contains only Stage B-compatible type/base-stat overrides. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
+    },
+    {
+      "family": "dugtrio",
+      "classification": "permanent",
+      "target_layer": "baseFormId",
+      "forms": [
+        {
+          "id": "dugtrio-alola",
+          "name": "DUGTRIO Alola",
+          "mode": "permanent",
+          "overrides": {
+            "types": {
+              "replace": [
+                "Ground",
+                "Steel"
+              ]
+            },
+            "baseStats": {
+              "replace": {
+                "hp": 4,
+                "attack": 10,
+                "defense": 6,
+                "special_attack": 5,
+                "special_defense": 7,
+                "speed": 11
+              }
+            }
+          },
+          "sortOrder": 10
+        }
+      ],
+      "source_snapshots": [
+        {
+          "id": "dugtrio-alola",
+          "abilities": [
+            "dig-away",
+            "polycephaly",
+            "sand-force",
+            "sand-veil",
+            "tangling-hair"
+          ],
+          "capabilities": [
+            "burrow",
+            "groundshaper",
+            "jump",
+            "overland",
+            "power",
+            "swim",
+            "tremorsense",
+            "underdog"
+          ],
+          "source_page": 788
+        }
+      ],
+      "note": "forms[] contains only Stage B-compatible type/base-stat overrides. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
+    },
+    {
+      "family": "eiscue",
+      "classification": "transformation",
+      "target_layer": "activeFormId",
+      "forms": [
+        {
+          "id": "eiscue-ice-face",
+          "name": "EISCUE Ice Face",
+          "mode": "transformation",
+          "overrides": {
+            "types": {
+              "replace": [
+                "Ice"
+              ]
+            },
+            "baseStats": {
+              "replace": {
+                "hp": 8,
+                "attack": 8,
+                "defense": 11,
+                "special_attack": 7,
+                "special_defense": 9,
+                "speed": 5
+              }
+            }
+          },
+          "sortOrder": 10,
+          "requirements": {
+            "all": [
+              {
+                "kind": "manual",
+                "value": "eiscue-eiscue-ice-face"
+              }
+            ]
+          }
+        },
+        {
+          "id": "eiscue-noice-face",
+          "name": "EISCUE Noice Face",
+          "mode": "transformation",
+          "overrides": {
+            "types": {
+              "replace": [
+                "Ice"
+              ]
+            },
+            "baseStats": {
+              "replace": {
+                "hp": 8,
+                "attack": 8,
+                "defense": 7,
+                "special_attack": 7,
+                "special_defense": 5,
+                "speed": 13
+              }
+            }
+          },
+          "sortOrder": 20,
+          "requirements": {
+            "all": [
+              {
+                "kind": "manual",
+                "value": "eiscue-eiscue-noice-face"
+              }
+            ]
+          }
+        }
+      ],
+      "source_snapshots": [
+        {
+          "id": "eiscue-ice-face",
+          "abilities": [
+            "dry-skin",
+            "ice-body",
+            "ice-face",
+            "snow-cloak",
+            "snow-warning"
+          ],
+          "capabilities": [
+            "chilled",
+            "forme-change",
+            "jump",
+            "naturewalk",
+            "overland",
+            "power",
+            "swim"
+          ],
+          "source_page": 723
+        },
+        {
+          "id": "eiscue-noice-face",
+          "abilities": [
+            "dry-skin",
+            "ice-body",
+            "ice-face",
+            "snow-cloak",
+            "snow-warning"
+          ],
+          "capabilities": [
+            "chilled",
+            "forme-change",
+            "jump",
+            "naturewalk",
+            "overland",
+            "power",
+            "swim"
+          ],
+          "source_page": 724
+        }
+      ],
+      "note": "forms[] contains only Stage B-compatible type/base-stat overrides. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
+    },
+    {
+      "family": "exeggutor",
+      "classification": "permanent",
+      "target_layer": "baseFormId",
+      "forms": [
+        {
+          "id": "exeggutor-alola",
+          "name": "EXEGGUTOR Alola",
+          "mode": "permanent",
+          "overrides": {
+            "types": {
+              "replace": [
+                "Grass",
+                "Dragon"
+              ]
+            },
+            "baseStats": {
+              "replace": {
+                "hp": 10,
+                "attack": 11,
+                "defense": 9,
+                "special_attack": 13,
+                "special_defense": 8,
+                "speed": 5
+              }
+            }
+          },
+          "sortOrder": 10
+        }
+      ],
+      "source_snapshots": [
+        {
+          "id": "exeggutor-alola",
+          "abilities": [
+            "cluster-mind",
+            "eggscellence",
+            "filter",
+            "frisk",
+            "harvest"
+          ],
+          "capabilities": [
+            "jump",
+            "naturewalk",
+            "overland",
+            "power",
+            "reach",
+            "swim"
+          ],
+          "source_page": 445
+        }
+      ],
+      "note": "forms[] contains only Stage B-compatible type/base-stat overrides. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
+    },
+    {
+      "family": "farfetchd",
+      "classification": "permanent",
+      "target_layer": "baseFormId",
+      "forms": [
+        {
+          "id": "farfetchd-galar",
+          "name": "FARFETCH’D Galar",
+          "mode": "permanent",
+          "overrides": {
+            "types": {
+              "replace": [
+                "Fighting"
+              ]
+            },
+            "baseStats": {
+              "replace": {
+                "hp": 5,
+                "attack": 10,
+                "defense": 6,
+                "special_attack": 6,
+                "special_defense": 6,
+                "speed": 6
+              }
+            }
+          },
+          "sortOrder": 10
+        }
+      ],
+      "source_snapshots": [
+        {
+          "id": "farfetchd-galar",
+          "abilities": [
+            "defiant",
+            "scrappy",
+            "steadfast",
+            "super-luck",
+            "thrust"
+          ],
+          "capabilities": [
+            "jump",
+            "overland",
+            "power",
+            "sky",
+            "swim",
+            "underdog",
+            "wielder"
+          ],
+          "source_page": 800
+        }
+      ],
+      "note": "forms[] contains only Stage B-compatible type/base-stat overrides. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
+    },
+    {
+      "family": "geodude",
+      "classification": "permanent",
+      "target_layer": "baseFormId",
+      "forms": [
+        {
+          "id": "geodude-alola",
+          "name": "GEODUDE Alola",
+          "mode": "permanent",
+          "overrides": {
+            "types": {
+              "replace": [
+                "Rock",
+                "Electric"
+              ]
+            },
+            "baseStats": {
+              "replace": {
+                "hp": 4,
+                "attack": 8,
+                "defense": 10,
+                "special_attack": 3,
+                "special_defense": 3,
+                "speed": 2
+              }
+            }
+          },
+          "sortOrder": 10
+        }
+      ],
+      "source_snapshots": [
+        {
+          "id": "geodude-alola",
+          "abilities": [
+            "galvanize",
+            "levitate",
+            "magnet-pull",
+            "rock-head",
+            "sturdy"
+          ],
+          "capabilities": [
+            "jump",
+            "levitate",
+            "magnetic",
+            "overland",
+            "power",
+            "swim",
+            "underdog",
+            "volatile-bomb",
+            "zapper"
+          ],
+          "source_page": 791
+        }
+      ],
+      "note": "forms[] contains only Stage B-compatible type/base-stat overrides. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
+    },
+    {
+      "family": "golem",
+      "classification": "permanent",
+      "target_layer": "baseFormId",
+      "forms": [
+        {
+          "id": "golem-alola",
+          "name": "GOLEM Alola",
+          "mode": "permanent",
+          "overrides": {
+            "types": {
+              "replace": [
+                "Rock",
+                "Electric"
+              ]
+            },
+            "baseStats": {
+              "replace": {
+                "hp": 8,
+                "attack": 12,
+                "defense": 13,
+                "special_attack": 6,
+                "special_defense": 7,
+                "speed": 5
+              }
+            }
+          },
+          "sortOrder": 10
+        }
+      ],
+      "source_snapshots": [
+        {
+          "id": "golem-alola",
+          "abilities": [
+            "full-guard",
+            "galvanize",
+            "magnet-pull",
+            "rock-head",
+            "sturdy"
+          ],
+          "capabilities": [
+            "groundshaper",
+            "jump",
+            "magnetic",
+            "naturewalk",
+            "overland",
+            "power",
+            "swim",
+            "volatile-bomb",
+            "zapper"
+          ],
+          "source_page": 793
+        }
+      ],
+      "note": "forms[] contains only Stage B-compatible type/base-stat overrides. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
+    },
+    {
+      "family": "graveler",
+      "classification": "permanent",
+      "target_layer": "baseFormId",
+      "forms": [
+        {
+          "id": "graveler-alola",
+          "name": "GRAVELER Alola",
+          "mode": "permanent",
+          "overrides": {
+            "types": {
+              "replace": [
+                "Rock",
+                "Electric"
+              ]
+            },
+            "baseStats": {
+              "replace": {
+                "hp": 6,
+                "attack": 10,
+                "defense": 12,
+                "special_attack": 5,
+                "special_defense": 5,
+                "speed": 4
+              }
+            }
+          },
+          "sortOrder": 10
+        }
+      ],
+      "source_snapshots": [
+        {
+          "id": "graveler-alola",
+          "abilities": [
+            "full-guard",
+            "galvanize",
+            "magnet-pull",
+            "rock-head",
+            "sturdy"
+          ],
+          "capabilities": [
+            "burrow",
+            "jump",
+            "magnetic",
+            "naturewalk",
+            "overland",
+            "power",
+            "swim",
+            "underdog",
+            "volatile-bomb",
+            "zapper"
+          ],
+          "source_page": 792
+        }
+      ],
+      "note": "forms[] contains only Stage B-compatible type/base-stat overrides. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
+    },
+    {
+      "family": "grimer",
+      "classification": "permanent",
+      "target_layer": "baseFormId",
+      "forms": [
+        {
+          "id": "grimer-alola",
+          "name": "GRIMER Alola",
+          "mode": "permanent",
+          "overrides": {
+            "types": {
+              "replace": [
+                "Poison",
+                "Dark"
+              ]
+            },
+            "baseStats": {
+              "replace": {
+                "hp": 8,
+                "attack": 8,
+                "defense": 5,
+                "special_attack": 4,
+                "special_defense": 3,
+                "speed": 5
+              }
+            }
+          },
+          "sortOrder": 10
+        }
+      ],
+      "source_snapshots": [
+        {
+          "id": "grimer-alola",
+          "abilities": [
+            "defy-death",
+            "gluttony",
+            "poison-touch",
+            "power-of-alchemy",
+            "weird-power"
+          ],
+          "capabilities": [
+            "amorphous",
+            "darkvision",
+            "dead-silent",
+            "jump",
+            "overland",
+            "power",
+            "sticky-hold",
+            "swim",
+            "underdog",
+            "wallclimber"
+          ],
+          "source_page": 794
+        }
+      ],
+      "note": "forms[] contains only Stage B-compatible type/base-stat overrides. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
+    },
+    {
+      "family": "indeedee",
+      "classification": "permanent",
+      "target_layer": "baseFormId",
+      "forms": [
+        {
+          "id": "indeedee-male",
+          "name": "INDEEDEE Male",
+          "mode": "permanent",
+          "overrides": {
+            "types": {
+              "replace": [
+                "Psychic",
+                "Normal"
+              ]
+            },
+            "baseStats": {
+              "replace": {
+                "hp": 6,
+                "attack": 7,
+                "defense": 6,
+                "special_attack": 11,
+                "special_defense": 10,
+                "speed": 10
+              }
+            }
+          },
+          "sortOrder": 10
+        },
+        {
+          "id": "indeedee-female",
+          "name": "INDEEDEE Female",
+          "mode": "permanent",
+          "overrides": {
+            "types": {
+              "replace": [
+                "Psychic",
+                "Normal"
+              ]
+            },
+            "baseStats": {
+              "replace": {
+                "hp": 7,
+                "attack": 6,
+                "defense": 7,
+                "special_attack": 10,
+                "special_defense": 11,
+                "speed": 9
+              }
+            }
+          },
+          "sortOrder": 20
+        }
+      ],
+      "source_snapshots": [
+        {
+          "id": "indeedee-male",
+          "abilities": [
+            "bodyguard",
+            "helper",
+            "inner-focus",
+            "psychic-surge",
+            "synchronize"
+          ],
+          "capabilities": [
+            "jump",
+            "naturewalk",
+            "overland",
+            "power",
+            "swim",
+            "telekinetic",
+            "telepath"
+          ],
+          "source_page": 747
+        },
+        {
+          "id": "indeedee-female",
+          "abilities": [
+            "friend-guard",
+            "helper",
+            "own-tempo",
+            "psychic-surge",
+            "synchronize"
+          ],
+          "capabilities": [
+            "jump",
+            "naturewalk",
+            "overland",
+            "power",
+            "swim",
+            "telekinetic",
+            "telepath"
+          ],
+          "source_page": 748
+        }
+      ],
+      "note": "forms[] contains only Stage B-compatible type/base-stat overrides. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
+    },
+    {
+      "family": "linoone",
+      "classification": "permanent",
+      "target_layer": "baseFormId",
+      "forms": [
+        {
+          "id": "linoone-galar",
+          "name": "LINOONE Galar",
+          "mode": "permanent",
+          "overrides": {
+            "types": {
+              "replace": [
+                "Dark",
+                "Normal"
+              ]
+            },
+            "baseStats": {
+              "replace": {
+                "hp": 8,
+                "attack": 7,
+                "defense": 6,
+                "special_attack": 5,
+                "special_defense": 6,
+                "speed": 10
+              }
+            }
+          },
+          "sortOrder": 10
+        }
+      ],
+      "source_snapshots": [
+        {
+          "id": "linoone-galar",
+          "abilities": [
+            "gluttony",
+            "pickup",
+            "quick-feet",
+            "sprint",
+            "tough-claws"
+          ],
+          "capabilities": [
+            "darkvision",
+            "jump",
+            "naturewalk",
+            "overland",
+            "power",
+            "swim",
+            "tracker",
+            "underdog"
+          ],
+          "source_page": 805
+        }
+      ],
+      "note": "forms[] contains only Stage B-compatible type/base-stat overrides. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
+    },
+    {
+      "family": "lycanroc",
+      "classification": "permanent",
+      "target_layer": "baseFormId",
+      "forms": [
+        {
+          "id": "lycanroc-midday",
+          "name": "LYCANROC Midday",
+          "mode": "permanent",
+          "overrides": {
+            "types": {
+              "replace": [
+                "Rock"
+              ]
+            },
+            "baseStats": {
+              "replace": {
+                "hp": 8,
+                "attack": 12,
+                "defense": 7,
+                "special_attack": 6,
+                "special_defense": 7,
+                "speed": 11
+              }
+            }
+          },
+          "sortOrder": 10
+        },
+        {
+          "id": "lycanroc-midnight",
+          "name": "LYCANROC Midnight",
+          "mode": "permanent",
+          "overrides": {
+            "types": {
+              "replace": [
+                "Rock"
+              ]
+            },
+            "baseStats": {
+              "replace": {
+                "hp": 9,
+                "attack": 12,
+                "defense": 8,
+                "special_attack": 6,
+                "special_defense": 8,
+                "speed": 8
+              }
+            }
+          },
+          "sortOrder": 20
+        },
+        {
+          "id": "lycanroc-dusk",
+          "name": "LYCANROC Dusk",
+          "mode": "permanent",
+          "overrides": {
+            "types": {
+              "replace": [
+                "Rock"
+              ]
+            },
+            "baseStats": {
+              "replace": {
+                "hp": 8,
+                "attack": 12,
+                "defense": 7,
+                "special_attack": 6,
+                "special_defense": 7,
+                "speed": 11
+              }
+            }
+          },
+          "sortOrder": 30
+        }
+      ],
+      "source_snapshots": [
+        {
+          "id": "lycanroc-midday",
+          "abilities": [
+            "accelerate",
+            "keen-eye",
+            "sand-rush",
+            "steadfast",
+            "vital-spirit"
+          ],
+          "capabilities": [
+            "jump",
+            "naturewalk",
+            "overland",
+            "power",
+            "swim",
+            "tracker"
+          ],
+          "source_page": 616
+        },
+        {
+          "id": "lycanroc-midnight",
+          "abilities": [
+            "keen-eye",
+            "no-guard",
+            "steadfast",
+            "super-luck",
+            "vital-spirit"
+          ],
+          "capabilities": [
+            "darkvision",
+            "jump",
+            "naturewalk",
+            "overland",
+            "power",
+            "swim",
+            "tracker"
+          ],
+          "source_page": 617
+        },
+        {
+          "id": "lycanroc-dusk",
+          "abilities": [
+            "keen-eye",
+            "own-tempo",
+            "steadfast",
+            "tough-claws",
+            "vital-spirit"
+          ],
+          "capabilities": [
+            "jump",
+            "naturewalk",
+            "overland",
+            "power",
+            "swim",
+            "tracker"
+          ],
+          "source_page": 618
+        }
+      ],
+      "note": "forms[] contains only Stage B-compatible type/base-stat overrides. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
+    },
+    {
+      "family": "marowak",
+      "classification": "permanent",
+      "target_layer": "baseFormId",
+      "forms": [
+        {
+          "id": "marowak-alola",
+          "name": "MAROWAK Alola",
+          "mode": "permanent",
+          "overrides": {
+            "types": {
+              "replace": [
+                "Fire",
+                "Ghost"
+              ]
+            },
+            "baseStats": {
+              "replace": {
+                "hp": 6,
+                "attack": 8,
+                "defense": 11,
+                "special_attack": 5,
+                "special_defense": 8,
+                "speed": 5
+              }
+            }
+          },
+          "sortOrder": 10
+        }
+      ],
+      "source_snapshots": [
+        {
+          "id": "marowak-alola",
+          "abilities": [
+            "bone-wielder",
+            "cursed-body",
+            "dancer",
+            "lightning-rod",
+            "rock-head"
+          ],
+          "capabilities": [
+            "darkvision",
+            "glow",
+            "jump",
+            "naturewalk",
+            "overland",
+            "power",
+            "swim",
+            "underdog",
+            "wielder"
+          ],
+          "source_page": 485
+        }
+      ],
+      "note": "forms[] contains only Stage B-compatible type/base-stat overrides. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
+    },
+    {
+      "family": "meloetta",
+      "classification": "transformation",
+      "target_layer": "activeFormId",
+      "forms": [
+        {
+          "id": "meloetta-aria-forme",
+          "name": "MELOETTA Aria Forme",
+          "mode": "transformation",
+          "overrides": {
+            "types": {
+              "replace": [
+                "Normal",
+                "Psychic"
+              ]
+            },
+            "baseStats": {
+              "replace": {
+                "hp": 10,
+                "attack": 8,
+                "defense": 8,
+                "special_attack": 13,
+                "special_defense": 13,
+                "speed": 9
+              }
+            }
+          },
+          "sortOrder": 10,
+          "requirements": {
+            "all": [
+              {
+                "kind": "manual",
+                "value": "meloetta-meloetta-aria-forme"
+              }
+            ]
+          }
+        },
+        {
+          "id": "meloetta-step-forme",
+          "name": "MELOETTA Step Forme",
+          "mode": "transformation",
+          "overrides": {
+            "types": {
+              "replace": [
+                "Normal",
+                "Fighting"
+              ]
+            },
+            "baseStats": {
+              "replace": {
+                "hp": 10,
+                "attack": 13,
+                "defense": 9,
+                "special_attack": 8,
+                "special_defense": 8,
+                "speed": 13
+              }
+            }
+          },
+          "sortOrder": 20,
+          "requirements": {
+            "all": [
+              {
+                "kind": "manual",
+                "value": "meloetta-meloetta-step-forme"
+              }
+            ]
+          }
+        }
+      ],
+      "source_snapshots": [
+        {
+          "id": "meloetta-aria-forme",
+          "abilities": [
+            "drown-out",
+            "lullaby",
+            "own-tempo",
+            "serene-grace",
+            "soundproof"
+          ],
+          "capabilities": [
+            "forme-change",
+            "jump",
+            "overland",
+            "power",
+            "swim"
+          ],
+          "source_page": 922
+        },
+        {
+          "id": "meloetta-step-forme",
+          "abilities": [
+            "lullaby",
+            "own-tempo",
+            "serene-grace",
+            "soundproof",
+            "spinning-dance"
+          ],
+          "capabilities": [
+            "forme-change",
+            "jump",
+            "overland",
+            "power",
+            "swim"
+          ],
+          "source_page": 923
+        }
+      ],
+      "note": "forms[] contains only Stage B-compatible type/base-stat overrides. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
+    },
+    {
+      "family": "meowstic",
+      "classification": "permanent",
+      "target_layer": "baseFormId",
+      "forms": [
+        {
+          "id": "meowstic-m",
+          "name": "MEOWSTIC (M)",
+          "mode": "permanent",
+          "overrides": {
+            "types": {
+              "replace": [
+                "Psychic"
+              ]
+            },
+            "baseStats": {
+              "replace": {
+                "hp": 7,
+                "attack": 5,
+                "defense": 8,
+                "special_attack": 8,
+                "special_defense": 8,
+                "speed": 10
+              }
+            }
+          },
+          "sortOrder": 10
+        },
+        {
+          "id": "meowstic-f",
+          "name": "MEOWSTIC (F)",
+          "mode": "permanent",
+          "overrides": {
+            "types": {
+              "replace": [
+                "Psychic"
+              ]
+            },
+            "baseStats": {
+              "replace": {
+                "hp": 7,
+                "attack": 5,
+                "defense": 8,
+                "special_attack": 8,
+                "special_defense": 8,
+                "speed": 10
+              }
+            }
+          },
+          "sortOrder": 20
+        }
+      ],
+      "source_snapshots": [
+        {
+          "id": "meowstic-m",
+          "abilities": [
+            "infiltrator",
+            "keen-eye",
+            "magic-guard",
+            "own-tempo",
+            "prankster"
+          ],
+          "capabilities": [
+            "jump",
+            "naturewalk",
+            "overland",
+            "power",
+            "swim",
+            "telekinetic",
+            "telepath"
+          ],
+          "source_page": 605
+        },
+        {
+          "id": "meowstic-f",
+          "abilities": [
+            "competitive",
+            "infiltrator",
+            "keen-eye",
+            "own-tempo",
+            "sorcery"
+          ],
+          "capabilities": [
+            "jump",
+            "naturewalk",
+            "overland",
+            "power",
+            "swim",
+            "telekinetic",
+            "telepath"
+          ],
+          "source_page": 606
+        }
+      ],
+      "note": "forms[] contains only Stage B-compatible type/base-stat overrides. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
+    },
+    {
+      "family": "meowth",
+      "classification": "permanent",
+      "target_layer": "baseFormId",
+      "forms": [
+        {
+          "id": "meowth-alola",
+          "name": "MEOWTH Alola",
+          "mode": "permanent",
+          "overrides": {
+            "types": {
+              "replace": [
+                "Dark"
+              ]
+            },
+            "baseStats": {
+              "replace": {
+                "hp": 4,
+                "attack": 4,
+                "defense": 4,
+                "special_attack": 5,
+                "special_defense": 4,
+                "speed": 9
+              }
+            }
+          },
+          "sortOrder": 10
+        },
+        {
+          "id": "meowth-galar",
+          "name": "MEOWTH Galar",
+          "mode": "permanent",
+          "overrides": {
+            "types": {
+              "replace": [
+                "Steel"
+              ]
+            },
+            "baseStats": {
+              "replace": {
+                "hp": 5,
+                "attack": 7,
+                "defense": 6,
+                "special_attack": 4,
+                "special_defense": 4,
+                "speed": 4
+              }
+            }
+          },
+          "sortOrder": 20
+        }
+      ],
+      "source_snapshots": [
+        {
+          "id": "meowth-alola",
+          "abilities": [
+            "defiant",
+            "limber",
+            "pickup",
+            "rattled",
+            "technician"
+          ],
+          "capabilities": [
+            "darkvision",
+            "fortune",
+            "jump",
+            "naturewalk",
+            "overland",
+            "power",
+            "stealth",
+            "swim",
+            "underdog"
+          ],
+          "source_page": 789
+        },
+        {
+          "id": "meowth-galar",
+          "abilities": [
+            "defiant",
+            "limber",
+            "pickup",
+            "tough-claws",
+            "unnerve"
+          ],
+          "capabilities": [
+            "fortune",
+            "jump",
+            "naturewalk",
+            "overland",
+            "power",
+            "swim",
+            "tracker",
+            "underdog"
+          ],
+          "source_page": 796
+        }
+      ],
+      "note": "forms[] contains only Stage B-compatible type/base-stat overrides. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
+    },
+    {
+      "family": "minior",
+      "classification": "transformation",
+      "target_layer": "activeFormId",
+      "forms": [
+        {
+          "id": "minior-meteor",
+          "name": "MINIOR Meteor",
+          "mode": "transformation",
+          "overrides": {
+            "types": {
+              "replace": [
+                "Rock",
+                "Flying"
+              ]
+            },
+            "baseStats": {
+              "replace": {
+                "hp": 6,
+                "attack": 6,
+                "defense": 10,
+                "special_attack": 6,
+                "special_defense": 10,
+                "speed": 6
+              }
+            }
+          },
+          "sortOrder": 10,
+          "requirements": {
+            "all": [
+              {
+                "kind": "manual",
+                "value": "minior-minior-meteor"
+              }
+            ]
+          }
+        },
+        {
+          "id": "minior-core",
+          "name": "MINIOR Core",
+          "mode": "transformation",
+          "overrides": {
+            "types": {
+              "replace": [
+                "Rock",
+                "Flying"
+              ]
+            },
+            "baseStats": {
+              "replace": {
+                "hp": 6,
+                "attack": 10,
+                "defense": 6,
+                "special_attack": 10,
+                "special_defense": 6,
+                "speed": 12
+              }
+            }
+          },
+          "sortOrder": 20,
+          "requirements": {
+            "all": [
+              {
+                "kind": "manual",
+                "value": "minior-minior-core"
+              }
+            ]
+          }
+        }
+      ],
+      "source_snapshots": [
+        {
+          "id": "minior-meteor",
+          "abilities": [
+            "illuminate",
+            "rock-head",
+            "shields-down",
+            "sturdy",
+            "weak-armor"
+          ],
+          "capabilities": [
+            "breathless",
+            "forme-change",
+            "glow",
+            "jump",
+            "overland",
+            "power",
+            "sky",
+            "swim"
+          ],
+          "source_page": 752
+        },
+        {
+          "id": "minior-core",
+          "abilities": [
+            "illuminate",
+            "rock-head",
+            "shields-down",
+            "sturdy",
+            "weak-armor"
+          ],
+          "capabilities": [
+            "breathless",
+            "forme-change",
+            "glow",
+            "jump",
+            "overland",
+            "power",
+            "sky",
+            "swim"
+          ],
+          "source_page": 753
+        }
+      ],
+      "note": "forms[] contains only Stage B-compatible type/base-stat overrides. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
+    },
+    {
+      "family": "mr-mime",
+      "classification": "permanent",
+      "target_layer": "baseFormId",
+      "forms": [
+        {
+          "id": "mr-mime-galar",
+          "name": "MR. MIME Galar",
+          "mode": "permanent",
+          "overrides": {
+            "types": {
+              "replace": [
+                "Ice",
+                "Psychic"
+              ]
+            },
+            "baseStats": {
+              "replace": {
+                "hp": 5,
+                "attack": 7,
+                "defense": 7,
+                "special_attack": 9,
+                "special_defense": 9,
+                "speed": 10
+              }
+            }
+          },
+          "sortOrder": 10
+        }
+      ],
+      "source_snapshots": [
+        {
+          "id": "mr-mime-galar",
+          "abilities": [
+            "filter",
+            "ice-body",
+            "ice-shield",
+            "screen-cleaner",
+            "vital-spirit"
+          ],
+          "capabilities": [
+            "chilled",
+            "freezer",
+            "jump",
+            "naturewalk",
+            "overland",
+            "power",
+            "swim",
+            "telekinetic",
+            "telepath"
+          ],
+          "source_page": 253
+        }
+      ],
+      "note": "forms[] contains only Stage B-compatible type/base-stat overrides. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
+    },
+    {
+      "family": "muk",
+      "classification": "permanent",
+      "target_layer": "baseFormId",
+      "forms": [
+        {
+          "id": "muk-alola",
+          "name": "MUK Alola",
+          "mode": "permanent",
+          "overrides": {
+            "types": {
+              "replace": [
+                "Poison",
+                "Dark"
+              ]
+            },
+            "baseStats": {
+              "replace": {
+                "hp": 11,
+                "attack": 11,
+                "defense": 8,
+                "special_attack": 7,
+                "special_defense": 10,
+                "speed": 5
+              }
+            }
+          },
+          "sortOrder": 10
+        }
+      ],
+      "source_snapshots": [
+        {
+          "id": "muk-alola",
+          "abilities": [
+            "defy-death",
+            "gluttony",
+            "poison-touch",
+            "power-of-alchemy",
+            "weird-power"
+          ],
+          "capabilities": [
+            "amorphous",
+            "darkvision",
+            "dead-silent",
+            "jump",
+            "overland",
+            "power",
+            "sticky-hold",
+            "swim",
+            "wallclimber"
+          ],
+          "source_page": 795
+        }
+      ],
+      "note": "forms[] contains only Stage B-compatible type/base-stat overrides. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
+    },
+    {
+      "family": "ninetales",
+      "classification": "permanent",
+      "target_layer": "baseFormId",
+      "forms": [
+        {
+          "id": "ninetales-alola",
+          "name": "NINETALES Alola",
+          "mode": "permanent",
+          "overrides": {
+            "types": {
+              "replace": [
+                "Ice",
+                "Fairy"
+              ]
+            },
+            "baseStats": {
+              "replace": {
+                "hp": 7,
+                "attack": 7,
+                "defense": 8,
+                "special_attack": 8,
+                "special_defense": 10,
+                "speed": 11
+              }
+            }
+          },
+          "sortOrder": 10
+        }
+      ],
+      "source_snapshots": [
+        {
+          "id": "ninetales-alola",
+          "abilities": [
+            "cute-charm",
+            "glisten",
+            "snow-cloak",
+            "snow-warning",
+            "winter-s-kiss"
+          ],
+          "capabilities": [
+            "freezer",
+            "jump",
+            "naturewalk",
+            "overland",
+            "power",
+            "swim",
+            "tracker"
+          ],
+          "source_page": 786
+        }
+      ],
+      "note": "forms[] contains only Stage B-compatible type/base-stat overrides. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
+    },
+    {
+      "family": "persian",
+      "classification": "permanent",
+      "target_layer": "baseFormId",
+      "forms": [
+        {
+          "id": "persian-alola",
+          "name": "PERSIAN Alola",
+          "mode": "permanent",
+          "overrides": {
+            "types": {
+              "replace": [
+                "Dark"
+              ]
+            },
+            "baseStats": {
+              "replace": {
+                "hp": 7,
+                "attack": 6,
+                "defense": 6,
+                "special_attack": 8,
+                "special_defense": 7,
+                "speed": 12
+              }
+            }
+          },
+          "sortOrder": 10
+        }
+      ],
+      "source_snapshots": [
+        {
+          "id": "persian-alola",
+          "abilities": [
+            "defiant",
+            "fur-coat",
+            "limber",
+            "rattled",
+            "technician"
+          ],
+          "capabilities": [
+            "darkvision",
+            "jump",
+            "naturewalk",
+            "overland",
+            "pack-mon",
+            "power",
+            "stealth",
+            "swim",
+            "tracker"
+          ],
+          "source_page": 790
+        }
+      ],
+      "note": "forms[] contains only Stage B-compatible type/base-stat overrides. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
+    },
+    {
+      "family": "ponyta",
+      "classification": "permanent",
+      "target_layer": "baseFormId",
+      "forms": [
+        {
+          "id": "ponyta-galar",
+          "name": "PONYTA Galar",
+          "mode": "permanent",
+          "overrides": {
+            "types": {
+              "replace": [
+                "Psychic"
+              ]
+            },
+            "baseStats": {
+              "replace": {
+                "hp": 5,
+                "attack": 9,
+                "defense": 6,
+                "special_attack": 7,
+                "special_defense": 7,
+                "speed": 9
+              }
+            }
+          },
+          "sortOrder": 10
+        }
+      ],
+      "source_snapshots": [
+        {
+          "id": "ponyta-galar",
+          "abilities": [
+            "anticipation",
+            "blessed-touch",
+            "healer",
+            "pastel-veil",
+            "run-away"
+          ],
+          "capabilities": [
+            "jump",
+            "naturewalk",
+            "overland",
+            "power",
+            "swim",
+            "telekinetic",
+            "telepath",
+            "underdog"
+          ],
+          "source_page": 798
+        }
+      ],
+      "note": "forms[] contains only Stage B-compatible type/base-stat overrides. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
+    },
+    {
+      "family": "raichu",
+      "classification": "permanent",
+      "target_layer": "baseFormId",
+      "forms": [
+        {
+          "id": "raichu-alola",
+          "name": "RAICHU Alola",
+          "mode": "permanent",
+          "overrides": {
+            "types": {
+              "replace": [
+                "Electric",
+                "Psychic"
+              ]
+            },
+            "baseStats": {
+              "replace": {
+                "hp": 6,
+                "attack": 9,
+                "defense": 5,
+                "special_attack": 10,
+                "special_defense": 9,
+                "speed": 11
+              }
+            }
+          },
+          "sortOrder": 10
+        }
+      ],
+      "source_snapshots": [
+        {
+          "id": "raichu-alola",
+          "abilities": [
+            "levitate",
+            "lightning-rod",
+            "motor-drive",
+            "static",
+            "surge-surfer"
+          ],
+          "capabilities": [
+            "jump",
+            "levitate",
+            "naturewalk",
+            "overland",
+            "power",
+            "swim",
+            "telekinetic"
+          ],
+          "source_page": 123
+        }
+      ],
+      "note": "forms[] contains only Stage B-compatible type/base-stat overrides. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
+    },
+    {
+      "family": "rapidash",
+      "classification": "permanent",
+      "target_layer": "baseFormId",
+      "forms": [
+        {
+          "id": "rapidash-galar",
+          "name": "RAPIDASH Galar",
+          "mode": "permanent",
+          "overrides": {
+            "types": {
+              "replace": [
+                "Psychic",
+                "Fairy"
+              ]
+            },
+            "baseStats": {
+              "replace": {
+                "hp": 7,
+                "attack": 10,
+                "defense": 7,
+                "special_attack": 8,
+                "special_defense": 8,
+                "speed": 11
+              }
+            }
+          },
+          "sortOrder": 10
+        }
+      ],
+      "source_snapshots": [
+        {
+          "id": "rapidash-galar",
+          "abilities": [
+            "anticipation",
+            "blessed-touch",
+            "healer",
+            "pastel-veil",
+            "run-away"
+          ],
+          "capabilities": [
+            "jump",
+            "mountable",
+            "naturewalk",
+            "overland",
+            "power",
+            "swim",
+            "telekinetic",
+            "telepath"
+          ],
+          "source_page": 799
+        }
+      ],
+      "note": "forms[] contains only Stage B-compatible type/base-stat overrides. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
+    },
+    {
+      "family": "raticate",
+      "classification": "permanent",
+      "target_layer": "baseFormId",
+      "forms": [
+        {
+          "id": "raticate-alola",
+          "name": "RATICATE Alola",
+          "mode": "permanent",
+          "overrides": {
+            "types": {
+              "replace": [
+                "Dark",
+                "Normal"
+              ]
+            },
+            "baseStats": {
+              "replace": {
+                "hp": 6,
+                "attack": 8,
+                "defense": 6,
+                "special_attack": 5,
+                "special_defense": 7,
+                "speed": 10
+              }
+            }
+          },
+          "sortOrder": 10
+        }
+      ],
+      "source_snapshots": [
+        {
+          "id": "raticate-alola",
+          "abilities": [
+            "gluttony",
+            "hustle",
+            "nimble-strikes",
+            "pickup",
+            "thick-fat"
+          ],
+          "capabilities": [
+            "darkvision",
+            "jump",
+            "naturewalk",
+            "overland",
+            "power",
+            "stealth",
+            "swim",
+            "tracker-underdog"
+          ],
+          "source_page": 782
+        }
+      ],
+      "note": "forms[] contains only Stage B-compatible type/base-stat overrides. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
+    },
+    {
+      "family": "rattata",
+      "classification": "permanent",
+      "target_layer": "baseFormId",
+      "forms": [
+        {
+          "id": "rattata-alola",
+          "name": "RATTATA Alola",
+          "mode": "permanent",
+          "overrides": {
+            "types": {
+              "replace": [
+                "Dark",
+                "Normal"
+              ]
+            },
+            "baseStats": {
+              "replace": {
+                "hp": 3,
+                "attack": 6,
+                "defense": 4,
+                "special_attack": 3,
+                "special_defense": 4,
+                "speed": 7
+              }
+            }
+          },
+          "sortOrder": 10
+        }
+      ],
+      "source_snapshots": [
+        {
+          "id": "rattata-alola",
+          "abilities": [
+            "gluttony",
+            "hustle",
+            "nimble-strikes",
+            "pickup",
+            "thick-fat"
+          ],
+          "capabilities": [
+            "darkvision",
+            "jump",
+            "naturewalk",
+            "overland",
+            "power",
+            "stealth",
+            "swim",
+            "underdog"
+          ],
+          "source_page": 781
+        }
+      ],
+      "note": "forms[] contains only Stage B-compatible type/base-stat overrides. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
+    },
+    {
+      "family": "sandshrew",
+      "classification": "permanent",
+      "target_layer": "baseFormId",
+      "forms": [
+        {
+          "id": "sandshrew-alola",
+          "name": "SANDSHREW Alola",
+          "mode": "permanent",
+          "overrides": {
+            "types": {
+              "replace": [
+                "Ice",
+                "Steel"
+              ]
+            },
+            "baseStats": {
+              "replace": {
+                "hp": 5,
+                "attack": 8,
+                "defense": 9,
+                "special_attack": 1,
+                "special_defense": 4,
+                "speed": 4
+              }
+            }
+          },
+          "sortOrder": 10
+        }
+      ],
+      "source_snapshots": [
+        {
+          "id": "sandshrew-alola",
+          "abilities": [
+            "dig-away",
+            "pickup",
+            "quick-curl",
+            "slush-rush",
+            "snow-cloak"
+          ],
+          "capabilities": [
+            "burrow",
+            "chilled",
+            "jump",
+            "naturewalk",
+            "overland",
+            "power",
+            "swim",
+            "tremorsense",
+            "underdog"
+          ],
+          "source_page": 783
+        }
+      ],
+      "note": "forms[] contains only Stage B-compatible type/base-stat overrides. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
+    },
+    {
+      "family": "sandslash",
+      "classification": "permanent",
+      "target_layer": "baseFormId",
+      "forms": [
+        {
+          "id": "sandslash-alola",
+          "name": "SANDSLASH Alola",
+          "mode": "permanent",
+          "overrides": {
+            "types": {
+              "replace": [
+                "Ice",
+                "Steel"
+              ]
+            },
+            "baseStats": {
+              "replace": {
+                "hp": 8,
+                "attack": 10,
+                "defense": 12,
+                "special_attack": 3,
+                "special_defense": 7,
+                "speed": 7
+              }
+            }
+          },
+          "sortOrder": 10
+        }
+      ],
+      "source_snapshots": [
+        {
+          "id": "sandslash-alola",
+          "abilities": [
+            "dig-away",
+            "pickup",
+            "quick-curl",
+            "slush-rush",
+            "snow-cloak"
+          ],
+          "capabilities": [
+            "burrow",
+            "chilled",
+            "jump",
+            "naturewalk",
+            "overland",
+            "power",
+            "swim",
+            "tremorsense"
+          ],
+          "source_page": 784
+        }
+      ],
+      "note": "forms[] contains only Stage B-compatible type/base-stat overrides. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
+    },
+    {
+      "family": "stunfisk",
+      "classification": "permanent",
+      "target_layer": "baseFormId",
+      "forms": [
+        {
+          "id": "stunfisk-galar",
+          "name": "STUNFISK Galar",
+          "mode": "permanent",
+          "overrides": {
+            "types": {
+              "replace": [
+                "Ground",
+                "Steel"
+              ]
+            },
+            "baseStats": {
+              "replace": {
+                "hp": 11,
+                "attack": 8,
+                "defense": 10,
+                "special_attack": 7,
+                "special_defense": 8,
+                "speed": 3
+              }
+            }
+          },
+          "sortOrder": 10
+        }
+      ],
+      "source_snapshots": [
+        {
+          "id": "stunfisk-galar",
+          "abilities": [
+            "arena-trap",
+            "decoy",
+            "limber",
+            "mimicry",
+            "mud-dweller"
+          ],
+          "capabilities": [
+            "burrow",
+            "jump",
+            "overland",
+            "power",
+            "swim",
+            "tremorsense"
+          ],
+          "source_page": 812
+        }
+      ],
+      "note": "forms[] contains only Stage B-compatible type/base-stat overrides. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
+    },
+    {
+      "family": "vulpix",
+      "classification": "permanent",
+      "target_layer": "baseFormId",
+      "forms": [
+        {
+          "id": "vulpix-alola",
+          "name": "VULPIX Alola",
+          "mode": "permanent",
+          "overrides": {
+            "types": {
+              "replace": [
+                "Ice"
+              ]
+            },
+            "baseStats": {
+              "replace": {
+                "hp": 4,
+                "attack": 4,
+                "defense": 4,
+                "special_attack": 5,
+                "special_defense": 7,
+                "speed": 7
+              }
+            }
+          },
+          "sortOrder": 10
+        }
+      ],
+      "source_snapshots": [
+        {
+          "id": "vulpix-alola",
+          "abilities": [
+            "cute-charm",
+            "glisten",
+            "snow-cloak",
+            "snow-warning",
+            "winter-s-kiss"
+          ],
+          "capabilities": [
+            "freezer",
+            "jump",
+            "naturewalk",
+            "overland",
+            "power",
+            "swim",
+            "tracker",
+            "underdog"
+          ],
+          "source_page": 785
+        }
+      ],
+      "note": "forms[] contains only Stage B-compatible type/base-stat overrides. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
+    },
+    {
+      "family": "weezing",
+      "classification": "permanent",
+      "target_layer": "baseFormId",
+      "forms": [
+        {
+          "id": "weezing-galar",
+          "name": "WEEZING Galar",
+          "mode": "permanent",
+          "overrides": {
+            "types": {
+              "replace": [
+                "Poison",
+                "Fairy"
+              ]
+            },
+            "baseStats": {
+              "replace": {
+                "hp": 7,
+                "attack": 9,
+                "defense": 12,
+                "special_attack": 9,
+                "special_defense": 7,
+                "speed": 6
+              }
+            }
+          },
+          "sortOrder": 10
+        }
+      ],
+      "source_snapshots": [
+        {
+          "id": "weezing-galar",
+          "abilities": [
+            "aftermath",
+            "levitate",
+            "misty-surge",
+            "neutralizing-gas",
+            "sticky-smoke"
+          ],
+          "capabilities": [
+            "jump",
+            "levitate",
+            "overland",
+            "power",
+            "swim",
+            "volatile-bomb"
+          ],
+          "source_page": 571
+        }
+      ],
+      "note": "forms[] contains only Stage B-compatible type/base-stat overrides. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
+    },
+    {
+      "family": "wishiwashi",
+      "classification": "transformation",
+      "target_layer": "activeFormId",
+      "forms": [
+        {
+          "id": "wishiwashi-solo",
+          "name": "WISHIWASHI Solo",
+          "mode": "transformation",
+          "overrides": {
+            "types": {
+              "replace": [
+                "Water"
+              ]
+            },
+            "baseStats": {
+              "replace": {
+                "hp": 5,
+                "attack": 2,
+                "defense": 2,
+                "special_attack": 3,
+                "special_defense": 4,
+                "speed": 4
+              }
+            }
+          },
+          "sortOrder": 10,
+          "requirements": {
+            "all": [
+              {
+                "kind": "manual",
+                "value": "wishiwashi-wishiwashi-solo"
+              }
+            ]
+          }
+        },
+        {
+          "id": "wishiwashi-schooling",
+          "name": "WISHIWASHI Schooling",
+          "mode": "transformation",
+          "overrides": {
+            "types": {
+              "replace": [
+                "Water"
+              ]
+            },
+            "baseStats": {
+              "replace": {
+                "hp": 5,
+                "attack": 14,
+                "defense": 13,
+                "special_attack": 14,
+                "special_defense": 14,
+                "speed": 3
+              }
+            }
+          },
+          "sortOrder": 20,
+          "requirements": {
+            "all": [
+              {
+                "kind": "manual",
+                "value": "wishiwashi-wishiwashi-schooling"
+              }
+            ]
+          }
+        }
+      ],
+      "source_snapshots": [
+        {
+          "id": "wishiwashi-solo",
+          "abilities": [
+            "defeatist",
+            "horde-break",
+            "multiscale",
+            "schooling",
+            "water-veil"
+          ],
+          "capabilities": [
+            "forme-change",
+            "gilled",
+            "glow",
+            "jump",
+            "naturewalk",
+            "overland",
+            "power",
+            "swim"
+          ],
+          "source_page": 766
+        },
+        {
+          "id": "wishiwashi-schooling",
+          "abilities": [
+            "defeatist",
+            "horde-break",
+            "multiscale",
+            "schooling",
+            "water-veil"
+          ],
+          "capabilities": [
+            "forme-change",
+            "gilled",
+            "glow",
+            "jump",
+            "mindlock",
+            "naturewalk",
+            "overland",
+            "power",
+            "swim"
+          ],
+          "source_page": 767
+        }
+      ],
+      "note": "forms[] contains only Stage B-compatible type/base-stat overrides. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
+    },
+    {
+      "family": "wormadam",
+      "classification": "permanent",
+      "target_layer": "baseFormId",
+      "forms": [
+        {
+          "id": "wormadam-plant-cloak",
+          "name": "WORMADAM Plant Cloak",
+          "mode": "permanent",
+          "overrides": {
+            "types": {
+              "replace": [
+                "Bug",
+                "Grass"
+              ]
+            },
+            "baseStats": {
+              "replace": {
+                "hp": 6,
+                "attack": 6,
+                "defense": 9,
+                "special_attack": 8,
+                "special_defense": 11,
+                "speed": 4
+              }
+            }
+          },
+          "sortOrder": 10
+        },
+        {
+          "id": "wormadam-sandy-cloak",
+          "name": "WORMADAM Sandy Cloak",
+          "mode": "permanent",
+          "overrides": {
+            "types": {
+              "replace": [
+                "Bug",
+                "Ground"
+              ]
+            },
+            "baseStats": {
+              "replace": {
+                "hp": 6,
+                "attack": 8,
+                "defense": 11,
+                "special_attack": 6,
+                "special_defense": 9,
+                "speed": 4
+              }
+            }
+          },
+          "sortOrder": 20
+        },
+        {
+          "id": "wormadam-trash-cloak",
+          "name": "WORMADAM Trash Cloak",
+          "mode": "permanent",
+          "overrides": {
+            "types": {
+              "replace": [
+                "Bug",
+                "Steel"
+              ]
+            },
+            "baseStats": {
+              "replace": {
+                "hp": 6,
+                "attack": 7,
+                "defense": 10,
+                "special_attack": 7,
+                "special_defense": 10,
+                "speed": 4
+              }
+            }
+          },
+          "sortOrder": 30
+        }
+      ],
+      "source_snapshots": [
+        {
+          "id": "wormadam-plant-cloak",
+          "abilities": [
+            "adaptability",
+            "anticipation",
+            "grass-pelt",
+            "overcoat",
+            "tolerance"
+          ],
+          "capabilities": [
+            "jump",
+            "naturewalk",
+            "overland",
+            "power",
+            "swim",
+            "threaded",
+            "underdog"
+          ],
+          "source_page": 324
+        },
+        {
+          "id": "wormadam-sandy-cloak",
+          "abilities": [
+            "adaptability",
+            "anticipation",
+            "overcoat",
+            "sand-veil",
+            "tolerance"
+          ],
+          "capabilities": [
+            "jump",
+            "naturewalk",
+            "overland",
+            "power",
+            "swim",
+            "threaded",
+            "underdog"
+          ],
+          "source_page": 325
+        },
+        {
+          "id": "wormadam-trash-cloak",
+          "abilities": [
+            "adaptability",
+            "anticipation",
+            "clear-body",
+            "overcoat",
+            "tolerance"
+          ],
+          "capabilities": [
+            "jump",
+            "naturewalk",
+            "overland",
+            "power",
+            "swim",
+            "threaded",
+            "underdog"
+          ],
+          "source_page": 326
+        }
+      ],
+      "note": "forms[] contains only Stage B-compatible type/base-stat overrides. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
+    },
+    {
+      "family": "yamask",
+      "classification": "permanent",
+      "target_layer": "baseFormId",
+      "forms": [
+        {
+          "id": "yamask-galar",
+          "name": "YAMASK Galar",
+          "mode": "permanent",
+          "overrides": {
+            "types": {
+              "replace": [
+                "Ground",
+                "Ghost"
+              ]
+            },
+            "baseStats": {
+              "replace": {
+                "hp": 4,
+                "attack": 6,
+                "defense": 9,
+                "special_attack": 3,
+                "special_defense": 7,
+                "speed": 3
+              }
+            }
+          },
+          "sortOrder": 10
+        }
+      ],
+      "source_snapshots": [
+        {
+          "id": "yamask-galar",
+          "abilities": [
+            "cursed-body",
+            "interference",
+            "sand-force",
+            "sturdy",
+            "wandering-spirit"
+          ],
+          "capabilities": [
+            "darkvision",
+            "dead-silent",
+            "invisibility",
+            "jump",
+            "levitate",
+            "overland",
+            "phasing",
+            "power",
+            "swim",
+            "underdog"
+          ],
+          "source_page": 810
+        }
+      ],
+      "note": "forms[] contains only Stage B-compatible type/base-stat overrides. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
+    },
+    {
+      "family": "zigzagoon",
+      "classification": "permanent",
+      "target_layer": "baseFormId",
+      "forms": [
+        {
+          "id": "zigzagoon-galar",
+          "name": "ZIGZAGOON Galar",
+          "mode": "permanent",
+          "overrides": {
+            "types": {
+              "replace": [
+                "Dark",
+                "Normal"
+              ]
+            },
+            "baseStats": {
+              "replace": {
+                "hp": 4,
+                "attack": 3,
+                "defense": 4,
+                "special_attack": 3,
+                "special_defense": 4,
+                "speed": 6
+              }
+            }
+          },
+          "sortOrder": 10
+        }
+      ],
+      "source_snapshots": [
+        {
+          "id": "zigzagoon-galar",
+          "abilities": [
+            "gluttony",
+            "pickup",
+            "quick-feet",
+            "sprint",
+            "tough-claws"
+          ],
+          "capabilities": [
+            "darkvision",
+            "jump",
+            "naturewalk",
+            "overland",
+            "power",
+            "swim",
+            "underdog"
+          ],
+          "source_page": 804
+        }
+      ],
+      "note": "forms[] contains only Stage B-compatible type/base-stat overrides. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
+    }
+  ],
+  "synthetic_transform_species": [
+    {
+      "species_id": "abomasnow",
+      "source_family": "mega-evolution",
+      "forms": [
+        {
+          "id": "mega",
+          "name": "Mega Abomasnow",
+          "mode": "transformation",
+          "requirements": {
+            "all": [
+              {
+                "kind": "manual",
+                "value": "mega-evolution-abomasnow-mega"
+              }
+            ]
+          },
+          "overrides": {
+            "baseStats": {
+              "add": {
+                "attack": 4,
+                "defense": 3,
+                "special_attack": 4,
+                "special_defense": 2,
+                "speed": -3
+              }
+            }
+          },
+          "sortOrder": 100
+        }
+      ],
+      "source_effects": [
+        {
+          "ability_added": "Snow Warning",
+          "extra_effects": [],
+          "source_page": 457
+        }
+      ],
+      "note": "Added Ability/extra effects are preserved as source effects but are not guessed into ability-slot structures. The generated forms[] stays valid for Stage B while the mapping remains explicit and reviewable."
+    },
+    {
+      "species_id": "absol",
+      "source_family": "mega-evolution",
+      "forms": [
+        {
+          "id": "mega",
+          "name": "Mega Absol",
+          "mode": "transformation",
+          "requirements": {
+            "all": [
+              {
+                "kind": "manual",
+                "value": "mega-evolution-absol-mega"
+              }
+            ]
+          },
+          "overrides": {
+            "baseStats": {
+              "add": {
+                "attack": 2,
+                "special_attack": 4,
+                "speed": 4
+              }
+            }
+          },
+          "sortOrder": 100
+        }
+      ],
+      "source_effects": [
+        {
+          "ability_added": "Magic Bounce",
+          "extra_effects": [],
+          "source_page": 692
+        }
+      ],
+      "note": "Added Ability/extra effects are preserved as source effects but are not guessed into ability-slot structures. The generated forms[] stays valid for Stage B while the mapping remains explicit and reviewable."
+    },
+    {
+      "species_id": "aerodactyl",
+      "source_family": "mega-evolution",
+      "forms": [
+        {
+          "id": "mega",
+          "name": "Mega Aerodactyl",
+          "mode": "transformation",
+          "requirements": {
+            "all": [
+              {
+                "kind": "manual",
+                "value": "mega-evolution-aerodactyl-mega"
+              }
+            ]
+          },
+          "overrides": {
+            "baseStats": {
+              "add": {
+                "attack": 3,
+                "defense": 2,
+                "special_attack": 1,
+                "special_defense": 2,
+                "speed": 2
+              }
+            }
+          },
+          "sortOrder": 100
+        }
+      ],
+      "source_effects": [
+        {
+          "ability_added": "Tough Claws",
+          "extra_effects": [],
+          "source_page": 833
+        }
+      ],
+      "note": "Added Ability/extra effects are preserved as source effects but are not guessed into ability-slot structures. The generated forms[] stays valid for Stage B while the mapping remains explicit and reviewable."
+    },
+    {
+      "species_id": "aggron",
+      "source_family": "mega-evolution",
+      "forms": [
+        {
+          "id": "mega",
+          "name": "Mega Aggron",
+          "mode": "transformation",
+          "requirements": {
+            "all": [
+              {
+                "kind": "manual",
+                "value": "mega-evolution-aggron-mega"
+              }
+            ]
+          },
+          "overrides": {
+            "baseStats": {
+              "add": {
+                "attack": 3,
+                "defense": 5,
+                "special_defense": 2
+              }
+            },
+            "types": {
+              "replace": [
+                "Steel"
+              ]
+            }
+          },
+          "sortOrder": 100
+        }
+      ],
+      "source_effects": [
+        {
+          "ability_added": "Filter",
+          "extra_effects": [],
+          "source_page": 279
+        }
+      ],
+      "note": "Added Ability/extra effects are preserved as source effects but are not guessed into ability-slot structures. The generated forms[] stays valid for Stage B while the mapping remains explicit and reviewable."
+    },
+    {
+      "species_id": "alakazam",
+      "source_family": "mega-evolution",
+      "forms": [
+        {
+          "id": "mega",
+          "name": "Mega Alakazam",
+          "mode": "transformation",
+          "requirements": {
+            "all": [
+              {
+                "kind": "manual",
+                "value": "mega-evolution-alakazam-mega"
+              }
+            ]
+          },
+          "overrides": {
+            "baseStats": {
+              "add": {
+                "defense": 2,
+                "special_attack": 4,
+                "special_defense": 1,
+                "speed": 3
+              }
+            }
+          },
+          "sortOrder": 100
+        }
+      ],
+      "source_effects": [
+        {
+          "ability_added": "Trace",
+          "extra_effects": [],
+          "source_page": 250
+        }
+      ],
+      "note": "Added Ability/extra effects are preserved as source effects but are not guessed into ability-slot structures. The generated forms[] stays valid for Stage B while the mapping remains explicit and reviewable."
+    },
+    {
+      "species_id": "altaria",
+      "source_family": "mega-evolution",
+      "forms": [
+        {
+          "id": "mega",
+          "name": "Mega Altaria",
+          "mode": "transformation",
+          "requirements": {
+            "all": [
+              {
+                "kind": "manual",
+                "value": "mega-evolution-altaria-mega"
+              }
+            ]
+          },
+          "overrides": {
+            "baseStats": {
+              "add": {
+                "attack": 4,
+                "defense": 2,
+                "special_attack": 4
+              }
+            },
+            "types": {
+              "replace": [
+                "Dragon",
+                "Fairy"
+              ]
+            }
+          },
+          "sortOrder": 100
+        }
+      ],
+      "source_effects": [
+        {
+          "ability_added": "Pixilate",
+          "extra_effects": [],
+          "source_page": 540
+        }
+      ],
+      "note": "Added Ability/extra effects are preserved as source effects but are not guessed into ability-slot structures. The generated forms[] stays valid for Stage B while the mapping remains explicit and reviewable."
+    },
+    {
+      "species_id": "ampharos",
+      "source_family": "mega-evolution",
+      "forms": [
+        {
+          "id": "mega",
+          "name": "Mega Ampharos",
+          "mode": "transformation",
+          "requirements": {
+            "all": [
+              {
+                "kind": "manual",
+                "value": "mega-evolution-ampharos-mega"
+              }
+            ]
+          },
+          "overrides": {
+            "baseStats": {
+              "add": {
+                "attack": 2,
+                "defense": 2,
+                "special_attack": 5,
+                "special_defense": 2,
+                "speed": -1
+              }
+            },
+            "types": {
+              "replace": [
+                "Electric",
+                "Dragon"
+              ]
+            }
+          },
+          "sortOrder": 100
+        }
+      ],
+      "source_effects": [
+        {
+          "ability_added": "Mold Breaker",
+          "extra_effects": [],
+          "source_page": 132
+        }
+      ],
+      "note": "Added Ability/extra effects are preserved as source effects but are not guessed into ability-slot structures. The generated forms[] stays valid for Stage B while the mapping remains explicit and reviewable."
+    },
+    {
+      "species_id": "audino",
+      "source_family": "mega-evolution",
+      "forms": [
+        {
+          "id": "mega",
+          "name": "Mega Audino",
+          "mode": "transformation",
+          "requirements": {
+            "all": [
+              {
+                "kind": "manual",
+                "value": "mega-evolution-audino-mega"
+              }
+            ]
+          },
+          "overrides": {
+            "baseStats": {
+              "add": {
+                "defense": 4,
+                "special_attack": 2,
+                "special_defense": 4
+              }
+            },
+            "types": {
+              "replace": [
+                "Normal",
+                "Fairy"
+              ]
+            }
+          },
+          "sortOrder": 100
+        }
+      ],
+      "source_effects": [
+        {
+          "ability_added": "Healer",
+          "extra_effects": [],
+          "source_page": 738
+        }
+      ],
+      "note": "Added Ability/extra effects are preserved as source effects but are not guessed into ability-slot structures. The generated forms[] stays valid for Stage B while the mapping remains explicit and reviewable."
+    },
+    {
+      "species_id": "banette",
+      "source_family": "mega-evolution",
+      "forms": [
+        {
+          "id": "mega",
+          "name": "Mega Banette",
+          "mode": "transformation",
+          "requirements": {
+            "all": [
+              {
+                "kind": "manual",
+                "value": "mega-evolution-banette-mega"
+              }
+            ]
+          },
+          "overrides": {
+            "baseStats": {
+              "add": {
+                "attack": 5,
+                "defense": 1,
+                "special_attack": 1,
+                "special_defense": 2,
+                "speed": 1
+              }
+            }
+          },
+          "sortOrder": 100
+        }
+      ],
+      "source_effects": [
+        {
+          "ability_added": "Prankster",
+          "extra_effects": [],
+          "source_page": 430
+        }
+      ],
+      "note": "Added Ability/extra effects are preserved as source effects but are not guessed into ability-slot structures. The generated forms[] stays valid for Stage B while the mapping remains explicit and reviewable."
+    },
+    {
+      "species_id": "beedrill",
+      "source_family": "mega-evolution",
+      "forms": [
+        {
+          "id": "mega",
+          "name": "Mega Beedrill",
+          "mode": "transformation",
+          "requirements": {
+            "all": [
+              {
+                "kind": "manual",
+                "value": "mega-evolution-beedrill-mega"
+              }
+            ]
+          },
+          "overrides": {
+            "baseStats": {
+              "add": {
+                "attack": 6,
+                "special_attack": -3,
+                "speed": 7
+              }
+            }
+          },
+          "sortOrder": 100
+        }
+      ],
+      "source_effects": [
+        {
+          "ability_added": "Adaptability",
+          "extra_effects": [],
+          "source_page": 93
+        }
+      ],
+      "note": "Added Ability/extra effects are preserved as source effects but are not guessed into ability-slot structures. The generated forms[] stays valid for Stage B while the mapping remains explicit and reviewable."
+    },
+    {
+      "species_id": "blastoise",
+      "source_family": "mega-evolution",
+      "forms": [
+        {
+          "id": "mega",
+          "name": "Mega Blastoise",
+          "mode": "transformation",
+          "requirements": {
+            "all": [
+              {
+                "kind": "manual",
+                "value": "mega-evolution-blastoise-mega"
+              }
+            ]
+          },
+          "overrides": {
+            "baseStats": {
+              "add": {
+                "attack": 2,
+                "defense": 2,
+                "special_attack": 5,
+                "special_defense": 1
+              }
+            }
+          },
+          "sortOrder": 100
+        }
+      ],
+      "source_effects": [
+        {
+          "ability_added": "Mega Launcher",
+          "extra_effects": [],
+          "source_page": 66
+        }
+      ],
+      "note": "Added Ability/extra effects are preserved as source effects but are not guessed into ability-slot structures. The generated forms[] stays valid for Stage B while the mapping remains explicit and reviewable."
+    },
+    {
+      "species_id": "blaziken",
+      "source_family": "mega-evolution",
+      "forms": [
+        {
+          "id": "mega",
+          "name": "Mega Blaziken",
+          "mode": "transformation",
+          "requirements": {
+            "all": [
+              {
+                "kind": "manual",
+                "value": "mega-evolution-blaziken-mega"
+              }
+            ]
+          },
+          "overrides": {
+            "baseStats": {
+              "add": {
+                "attack": 2,
+                "defense": 1,
+                "special_attack": 2,
+                "special_defense": 1,
+                "speed": 2
+              }
+            }
+          },
+          "sortOrder": 100
+        }
+      ],
+      "source_effects": [
+        {
+          "ability_added": "Speed Boost",
+          "extra_effects": [],
+          "source_page": 48
+        }
+      ],
+      "note": "Added Ability/extra effects are preserved as source effects but are not guessed into ability-slot structures. The generated forms[] stays valid for Stage B while the mapping remains explicit and reviewable."
+    },
+    {
+      "species_id": "camerupt",
+      "source_family": "mega-evolution",
+      "forms": [
+        {
+          "id": "mega",
+          "name": "Mega Camerupt",
+          "mode": "transformation",
+          "requirements": {
+            "all": [
+              {
+                "kind": "manual",
+                "value": "mega-evolution-camerupt-mega"
+              }
+            ]
+          },
+          "overrides": {
+            "baseStats": {
+              "add": {
+                "attack": 2,
+                "defense": 3,
+                "special_attack": 4,
+                "special_defense": 3,
+                "speed": -2
+              }
+            }
+          },
+          "sortOrder": 100
+        }
+      ],
+      "source_effects": [
+        {
+          "ability_added": "Sheer Force",
+          "extra_effects": [],
+          "source_page": 415
+        }
+      ],
+      "note": "Added Ability/extra effects are preserved as source effects but are not guessed into ability-slot structures. The generated forms[] stays valid for Stage B while the mapping remains explicit and reviewable."
+    },
+    {
+      "species_id": "charizard",
+      "source_family": "mega-evolution",
+      "forms": [
+        {
+          "id": "mega-x",
+          "name": "Mega Charizard X",
+          "mode": "transformation",
+          "requirements": {
+            "all": [
+              {
+                "kind": "manual",
+                "value": "mega-evolution-charizard-mega-x"
+              }
+            ]
+          },
+          "overrides": {
+            "baseStats": {
+              "add": {
+                "attack": 5,
+                "defense": 3,
+                "special_attack": 2
+              }
+            },
+            "types": {
+              "replace": [
+                "Fire",
+                "Dragon"
+              ]
+            }
+          },
+          "sortOrder": 100
+        },
+        {
+          "id": "mega-y",
+          "name": "Mega Charizard Y",
+          "mode": "transformation",
+          "requirements": {
+            "all": [
+              {
+                "kind": "manual",
+                "value": "mega-evolution-charizard-mega-y"
+              }
+            ]
+          },
+          "overrides": {
+            "baseStats": {
+              "add": {
+                "attack": 2,
+                "special_attack": 5,
+                "special_defense": 3
+              }
+            }
+          },
+          "sortOrder": 100
+        }
+      ],
+      "source_effects": [
+        {
+          "ability_added": "Tough Claws",
+          "extra_effects": [],
+          "source_page": 42
+        },
+        {
+          "ability_added": "Drought",
+          "extra_effects": [],
+          "source_page": 42
+        }
+      ],
+      "note": "Added Ability/extra effects are preserved as source effects but are not guessed into ability-slot structures. The generated forms[] stays valid for Stage B while the mapping remains explicit and reviewable."
+    },
+    {
+      "species_id": "diancie",
+      "source_family": "mega-evolution",
+      "forms": [
+        {
+          "id": "mega",
+          "name": "Mega Diancie",
+          "mode": "transformation",
+          "requirements": {
+            "all": [
+              {
+                "kind": "manual",
+                "value": "mega-evolution-diancie-mega"
+              }
+            ]
+          },
+          "overrides": {
+            "baseStats": {
+              "add": {
+                "attack": 6,
+                "defense": -4,
+                "special_attack": 6,
+                "special_defense": -4,
+                "speed": 6
+              }
+            }
+          },
+          "sortOrder": 100
+        }
+      ],
+      "source_effects": [
+        {
+          "ability_added": "Magic Bounce",
+          "extra_effects": [],
+          "source_page": 930
+        }
+      ],
+      "note": "Added Ability/extra effects are preserved as source effects but are not guessed into ability-slot structures. The generated forms[] stays valid for Stage B while the mapping remains explicit and reviewable."
+    },
+    {
+      "species_id": "gallade",
+      "source_family": "mega-evolution",
+      "forms": [
+        {
+          "id": "mega",
+          "name": "Mega Gallade",
+          "mode": "transformation",
+          "requirements": {
+            "all": [
+              {
+                "kind": "manual",
+                "value": "mega-evolution-gallade-mega"
+              }
+            ]
+          },
+          "overrides": {
+            "baseStats": {
+              "add": {
+                "attack": 4,
+                "defense": 3,
+                "speed": 3
+              }
+            }
+          },
+          "sortOrder": 100
+        }
+      ],
+      "source_effects": [
+        {
+          "ability_added": "Inner Focus",
+          "extra_effects": [],
+          "source_page": 258
+        }
+      ],
+      "note": "Added Ability/extra effects are preserved as source effects but are not guessed into ability-slot structures. The generated forms[] stays valid for Stage B while the mapping remains explicit and reviewable."
+    },
+    {
+      "species_id": "garchomp",
+      "source_family": "mega-evolution",
+      "forms": [
+        {
+          "id": "mega",
+          "name": "Mega Garchomp",
+          "mode": "transformation",
+          "requirements": {
+            "all": [
+              {
+                "kind": "manual",
+                "value": "mega-evolution-garchomp-mega"
+              }
+            ]
+          },
+          "overrides": {
+            "baseStats": {
+              "add": {
+                "attack": 4,
+                "defense": 2,
+                "special_attack": 4,
+                "special_defense": 1,
+                "speed": -1
+              }
+            }
+          },
+          "sortOrder": 100
+        }
+      ],
+      "source_effects": [
+        {
+          "ability_added": "Sand Force",
+          "extra_effects": [],
+          "source_page": 852
+        }
+      ],
+      "note": "Added Ability/extra effects are preserved as source effects but are not guessed into ability-slot structures. The generated forms[] stays valid for Stage B while the mapping remains explicit and reviewable."
+    },
+    {
+      "species_id": "gardevoir",
+      "source_family": "mega-evolution",
+      "forms": [
+        {
+          "id": "mega",
+          "name": "Mega Gardevoir",
+          "mode": "transformation",
+          "requirements": {
+            "all": [
+              {
+                "kind": "manual",
+                "value": "mega-evolution-gardevoir-mega"
+              }
+            ]
+          },
+          "overrides": {
+            "baseStats": {
+              "add": {
+                "attack": 2,
+                "special_attack": 4,
+                "special_defense": 2,
+                "speed": 2
+              }
+            }
+          },
+          "sortOrder": 100
+        }
+      ],
+      "source_effects": [
+        {
+          "ability_added": "Pixilate",
+          "extra_effects": [],
+          "source_page": 257
+        }
+      ],
+      "note": "Added Ability/extra effects are preserved as source effects but are not guessed into ability-slot structures. The generated forms[] stays valid for Stage B while the mapping remains explicit and reviewable."
+    },
+    {
+      "species_id": "gengar",
+      "source_family": "mega-evolution",
+      "forms": [
+        {
+          "id": "mega",
+          "name": "Mega Gengar",
+          "mode": "transformation",
+          "requirements": {
+            "all": [
+              {
+                "kind": "manual",
+                "value": "mega-evolution-gengar-mega"
+              }
+            ]
+          },
+          "overrides": {
+            "baseStats": {
+              "add": {
+                "defense": 2,
+                "special_attack": 4,
+                "special_defense": 2,
+                "speed": 2
+              }
+            }
+          },
+          "sortOrder": 100
+        }
+      ],
+      "source_effects": [
+        {
+          "ability_added": "Shadow Tag",
+          "extra_effects": [],
+          "source_page": 165
+        }
+      ],
+      "note": "Added Ability/extra effects are preserved as source effects but are not guessed into ability-slot structures. The generated forms[] stays valid for Stage B while the mapping remains explicit and reviewable."
+    },
+    {
+      "species_id": "glalie",
+      "source_family": "mega-evolution",
+      "forms": [
+        {
+          "id": "mega",
+          "name": "Mega Glalie",
+          "mode": "transformation",
+          "requirements": {
+            "all": [
+              {
+                "kind": "manual",
+                "value": "mega-evolution-glalie-mega"
+              }
+            ]
+          },
+          "overrides": {
+            "baseStats": {
+              "add": {
+                "attack": 4,
+                "special_attack": 4,
+                "speed": 2
+              }
+            }
+          },
+          "sortOrder": 100
+        }
+      ],
+      "source_effects": [
+        {
+          "ability_added": "Refrigerate",
+          "extra_effects": [],
+          "source_page": 505
+        }
+      ],
+      "note": "Added Ability/extra effects are preserved as source effects but are not guessed into ability-slot structures. The generated forms[] stays valid for Stage B while the mapping remains explicit and reviewable."
+    },
+    {
+      "species_id": "groudon",
+      "source_family": "primal-reversion",
+      "forms": [
+        {
+          "id": "primal",
+          "name": "Primal Groudon",
+          "mode": "transformation",
+          "requirements": {
+            "all": [
+              {
+                "kind": "manual",
+                "value": "primal-reversion-groudon-primal"
+              }
+            ]
+          },
+          "overrides": {
+            "baseStats": {
+              "add": {
+                "attack": 3,
+                "defense": 2,
+                "special_attack": 5
+              }
+            },
+            "types": {
+              "replace": [
+                "Ground",
+                "Fire"
+              ]
+            }
+          },
+          "sortOrder": 110
+        }
+      ],
+      "source_effects": [
+        {
+          "ability_added": "Heat Mirage",
+          "extra_effects": [],
+          "source_page": 884
+        }
+      ],
+      "note": "Added Ability/extra effects are preserved as source effects but are not guessed into ability-slot structures. The generated forms[] stays valid for Stage B while the mapping remains explicit and reviewable."
+    },
+    {
+      "species_id": "gyarados",
+      "source_family": "mega-evolution",
+      "forms": [
+        {
+          "id": "mega",
+          "name": "Mega Gyarados",
+          "mode": "transformation",
+          "requirements": {
+            "all": [
+              {
+                "kind": "manual",
+                "value": "mega-evolution-gyarados-mega"
+              }
+            ]
+          },
+          "overrides": {
+            "baseStats": {
+              "add": {
+                "attack": 3,
+                "defense": 3,
+                "special_attack": 1,
+                "special_defense": 3
+              }
+            },
+            "types": {
+              "replace": [
+                "Water",
+                "Dark"
+              ]
+            }
+          },
+          "sortOrder": 100
+        }
+      ],
+      "source_effects": [
+        {
+          "ability_added": "Mold Breaker",
+          "extra_effects": [],
+          "source_page": 641
+        }
+      ],
+      "note": "Added Ability/extra effects are preserved as source effects but are not guessed into ability-slot structures. The generated forms[] stays valid for Stage B while the mapping remains explicit and reviewable."
+    },
+    {
+      "species_id": "heracross",
+      "source_family": "mega-evolution",
+      "forms": [
+        {
+          "id": "mega",
+          "name": "Mega Heracross",
+          "mode": "transformation",
+          "requirements": {
+            "all": [
+              {
+                "kind": "manual",
+                "value": "mega-evolution-heracross-mega"
+              }
+            ]
+          },
+          "overrides": {
+            "baseStats": {
+              "add": {
+                "attack": 6,
+                "defense": 4,
+                "special_defense": 1,
+                "speed": -1
+              }
+            }
+          },
+          "sortOrder": 100
+        }
+      ],
+      "source_effects": [
+        {
+          "ability_added": "Skill Link",
+          "extra_effects": [],
+          "source_page": 687
+        }
+      ],
+      "note": "Added Ability/extra effects are preserved as source effects but are not guessed into ability-slot structures. The generated forms[] stays valid for Stage B while the mapping remains explicit and reviewable."
+    },
+    {
+      "species_id": "houndoom",
+      "source_family": "mega-evolution",
+      "forms": [
+        {
+          "id": "mega",
+          "name": "Mega Houndoom",
+          "mode": "transformation",
+          "requirements": {
+            "all": [
+              {
+                "kind": "manual",
+                "value": "mega-evolution-houndoom-mega"
+              }
+            ]
+          },
+          "overrides": {
+            "baseStats": {
+              "add": {
+                "defense": 4,
+                "special_attack": 3,
+                "special_defense": 1,
+                "speed": 2
+              }
+            }
+          },
+          "sortOrder": 100
+        }
+      ],
+      "source_effects": [
+        {
+          "ability_added": "Solar Power",
+          "extra_effects": [],
+          "source_page": 349
+        }
+      ],
+      "note": "Added Ability/extra effects are preserved as source effects but are not guessed into ability-slot structures. The generated forms[] stays valid for Stage B while the mapping remains explicit and reviewable."
+    },
+    {
+      "species_id": "kangaskhan",
+      "source_family": "mega-evolution",
+      "forms": [
+        {
+          "id": "mega",
+          "name": "Mega Kangaskhan",
+          "mode": "transformation",
+          "requirements": {
+            "all": [
+              {
+                "kind": "manual",
+                "value": "mega-evolution-kangaskhan-mega"
+              }
+            ]
+          },
+          "overrides": {
+            "baseStats": {
+              "add": {
+                "attack": 3,
+                "defense": 2,
+                "special_attack": 2,
+                "special_defense": 2,
+                "speed": 1
+              }
+            }
+          },
+          "sortOrder": 100
+        }
+      ],
+      "source_effects": [
+        {
+          "ability_added": "Parental Bond",
+          "extra_effects": [],
+          "source_page": 726
+        }
+      ],
+      "note": "Added Ability/extra effects are preserved as source effects but are not guessed into ability-slot structures. The generated forms[] stays valid for Stage B while the mapping remains explicit and reviewable."
+    },
+    {
+      "species_id": "kyogre",
+      "source_family": "primal-reversion",
+      "forms": [
+        {
+          "id": "primal",
+          "name": "Primal Kyogre",
+          "mode": "transformation",
+          "requirements": {
+            "all": [
+              {
+                "kind": "manual",
+                "value": "primal-reversion-kyogre-primal"
+              }
+            ]
+          },
+          "overrides": {
+            "baseStats": {
+              "add": {
+                "attack": 5,
+                "special_attack": 3,
+                "special_defense": 2
+              }
+            }
+          },
+          "sortOrder": 110
+        }
+      ],
+      "source_effects": [
+        {
+          "ability_added": "Wash Away",
+          "extra_effects": [],
+          "source_page": 883
+        }
+      ],
+      "note": "Added Ability/extra effects are preserved as source effects but are not guessed into ability-slot structures. The generated forms[] stays valid for Stage B while the mapping remains explicit and reviewable."
+    },
+    {
+      "species_id": "latias",
+      "source_family": "mega-evolution",
+      "forms": [
+        {
+          "id": "mega",
+          "name": "Mega Latias",
+          "mode": "transformation",
+          "requirements": {
+            "all": [
+              {
+                "kind": "manual",
+                "value": "mega-evolution-latias-mega"
+              }
+            ]
+          },
+          "overrides": {
+            "baseStats": {
+              "add": {
+                "attack": 2,
+                "defense": 3,
+                "special_attack": 3,
+                "special_defense": 2
+              }
+            }
+          },
+          "sortOrder": 100
+        }
+      ],
+      "source_effects": [
+        {
+          "ability_added": "Levitate",
+          "extra_effects": [],
+          "source_page": 881
+        }
+      ],
+      "note": "Added Ability/extra effects are preserved as source effects but are not guessed into ability-slot structures. The generated forms[] stays valid for Stage B while the mapping remains explicit and reviewable."
+    },
+    {
+      "species_id": "latios",
+      "source_family": "mega-evolution",
+      "forms": [
+        {
+          "id": "mega",
+          "name": "Mega Latios",
+          "mode": "transformation",
+          "requirements": {
+            "all": [
+              {
+                "kind": "manual",
+                "value": "mega-evolution-latios-mega"
+              }
+            ]
+          },
+          "overrides": {
+            "baseStats": {
+              "add": {
+                "attack": 4,
+                "defense": 2,
+                "special_attack": 3,
+                "special_defense": 1
+              }
+            }
+          },
+          "sortOrder": 100
+        }
+      ],
+      "source_effects": [
+        {
+          "ability_added": "Levitate",
+          "extra_effects": [],
+          "source_page": 882
+        }
+      ],
+      "note": "Added Ability/extra effects are preserved as source effects but are not guessed into ability-slot structures. The generated forms[] stays valid for Stage B while the mapping remains explicit and reviewable."
+    },
+    {
+      "species_id": "lopunny",
+      "source_family": "mega-evolution",
+      "forms": [
+        {
+          "id": "mega",
+          "name": "Mega Lopunny",
+          "mode": "transformation",
+          "requirements": {
+            "all": [
+              {
+                "kind": "manual",
+                "value": "mega-evolution-lopunny-mega"
+              }
+            ]
+          },
+          "overrides": {
+            "baseStats": {
+              "add": {
+                "attack": 6,
+                "defense": 1,
+                "speed": 3
+              }
+            },
+            "types": {
+              "replace": [
+                "Normal",
+                "Fighting"
+              ]
+            }
+          },
+          "sortOrder": 100
+        }
+      ],
+      "source_effects": [
+        {
+          "ability_added": "Scrappy",
+          "extra_effects": [],
+          "source_page": 544
+        }
+      ],
+      "note": "Added Ability/extra effects are preserved as source effects but are not guessed into ability-slot structures. The generated forms[] stays valid for Stage B while the mapping remains explicit and reviewable."
+    },
+    {
+      "species_id": "lucario",
+      "source_family": "mega-evolution",
+      "forms": [
+        {
+          "id": "mega",
+          "name": "Mega Lucario",
+          "mode": "transformation",
+          "requirements": {
+            "all": [
+              {
+                "kind": "manual",
+                "value": "mega-evolution-lucario-mega"
+              }
+            ]
+          },
+          "overrides": {
+            "baseStats": {
+              "add": {
+                "attack": 4,
+                "defense": 2,
+                "special_attack": 2,
+                "speed": 2
+              }
+            }
+          },
+          "sortOrder": 100
+        }
+      ],
+      "source_effects": [
+        {
+          "ability_added": "Adaptability",
+          "extra_effects": [],
+          "source_page": 397
+        }
+      ],
+      "note": "Added Ability/extra effects are preserved as source effects but are not guessed into ability-slot structures. The generated forms[] stays valid for Stage B while the mapping remains explicit and reviewable."
+    },
+    {
+      "species_id": "manectric",
+      "source_family": "mega-evolution",
+      "forms": [
+        {
+          "id": "mega",
+          "name": "Mega Manectric",
+          "mode": "transformation",
+          "requirements": {
+            "all": [
+              {
+                "kind": "manual",
+                "value": "mega-evolution-manectric-mega"
+              }
+            ]
+          },
+          "overrides": {
+            "baseStats": {
+              "add": {
+                "defense": 2,
+                "special_attack": 3,
+                "special_defense": 2,
+                "speed": 3
+              }
+            }
+          },
+          "sortOrder": 100
+        }
+      ],
+      "source_effects": [
+        {
+          "ability_added": "Intimidate",
+          "extra_effects": [],
+          "source_page": 369
+        }
+      ],
+      "note": "Added Ability/extra effects are preserved as source effects but are not guessed into ability-slot structures. The generated forms[] stays valid for Stage B while the mapping remains explicit and reviewable."
+    },
+    {
+      "species_id": "mawile",
+      "source_family": "mega-evolution",
+      "forms": [
+        {
+          "id": "mega",
+          "name": "Mega Mawile",
+          "mode": "transformation",
+          "requirements": {
+            "all": [
+              {
+                "kind": "manual",
+                "value": "mega-evolution-mawile-mega"
+              }
+            ]
+          },
+          "overrides": {
+            "baseStats": {
+              "add": {
+                "attack": 2,
+                "defense": 4,
+                "special_defense": 4
+              }
+            }
+          },
+          "sortOrder": 100
+        }
+      ],
+      "source_effects": [
+        {
+          "ability_added": "Huge Power",
+          "extra_effects": [],
+          "source_page": 756
+        }
+      ],
+      "note": "Added Ability/extra effects are preserved as source effects but are not guessed into ability-slot structures. The generated forms[] stays valid for Stage B while the mapping remains explicit and reviewable."
+    },
+    {
+      "species_id": "medicham",
+      "source_family": "mega-evolution",
+      "forms": [
+        {
+          "id": "mega",
+          "name": "Mega Medicham",
+          "mode": "transformation",
+          "requirements": {
+            "all": [
+              {
+                "kind": "manual",
+                "value": "mega-evolution-medicham-mega"
+              }
+            ]
+          },
+          "overrides": {
+            "baseStats": {
+              "add": {
+                "attack": 4,
+                "defense": 1,
+                "special_attack": 2,
+                "special_defense": 1,
+                "speed": 2
+              }
+            }
+          },
+          "sortOrder": 100
+        }
+      ],
+      "source_effects": [
+        {
+          "ability_added": "Pure Power",
+          "extra_effects": [],
+          "source_page": 395
+        }
+      ],
+      "note": "Added Ability/extra effects are preserved as source effects but are not guessed into ability-slot structures. The generated forms[] stays valid for Stage B while the mapping remains explicit and reviewable."
+    },
+    {
+      "species_id": "metagross",
+      "source_family": "mega-evolution",
+      "forms": [
+        {
+          "id": "mega",
+          "name": "Mega Metagross",
+          "mode": "transformation",
+          "requirements": {
+            "all": [
+              {
+                "kind": "manual",
+                "value": "mega-evolution-metagross-mega"
+              }
+            ]
+          },
+          "overrides": {
+            "baseStats": {
+              "add": {
+                "attack": 1,
+                "defense": 2,
+                "special_attack": 1,
+                "special_defense": 2,
+                "speed": 4
+              }
+            }
+          },
+          "sortOrder": 100
+        }
+      ],
+      "source_effects": [
+        {
+          "ability_added": "Tough Claws",
+          "extra_effects": [],
+          "source_page": 849
+        }
+      ],
+      "note": "Added Ability/extra effects are preserved as source effects but are not guessed into ability-slot structures. The generated forms[] stays valid for Stage B while the mapping remains explicit and reviewable."
+    },
+    {
+      "species_id": "mewtwo",
+      "source_family": "mega-evolution",
+      "forms": [
+        {
+          "id": "mega-x",
+          "name": "Mega Mewtwo X",
+          "mode": "transformation",
+          "requirements": {
+            "all": [
+              {
+                "kind": "manual",
+                "value": "mega-evolution-mewtwo-mega-x"
+              }
+            ]
+          },
+          "overrides": {
+            "baseStats": {
+              "add": {
+                "attack": 8,
+                "defense": 1,
+                "special_defense": 1
+              }
+            },
+            "types": {
+              "replace": [
+                "Psychic",
+                "Fighting"
+              ]
+            }
+          },
+          "sortOrder": 100
+        },
+        {
+          "id": "mega-y",
+          "name": "Mega Mewtwo Y",
+          "mode": "transformation",
+          "requirements": {
+            "all": [
+              {
+                "kind": "manual",
+                "value": "mega-evolution-mewtwo-mega-y"
+              }
+            ]
+          },
+          "overrides": {
+            "baseStats": {
+              "add": {
+                "attack": 4,
+                "defense": -2,
+                "special_attack": 4,
+                "special_defense": 3,
+                "speed": 1
+              }
+            }
+          },
+          "sortOrder": 100
+        }
+      ],
+      "source_effects": [
+        {
+          "ability_added": "Steadfast",
+          "extra_effects": [],
+          "source_page": 869
+        },
+        {
+          "ability_added": "Insomnia",
+          "extra_effects": [],
+          "source_page": 869
+        }
+      ],
+      "note": "Added Ability/extra effects are preserved as source effects but are not guessed into ability-slot structures. The generated forms[] stays valid for Stage B while the mapping remains explicit and reviewable."
+    },
+    {
+      "species_id": "necrozma-dawn-wings",
+      "source_family": "ultra-burst",
+      "forms": [
+        {
+          "id": "ultra-burst",
+          "name": "Ultra NECROZMA Dawn Wings",
+          "mode": "transformation",
+          "requirements": {
+            "all": [
+              {
+                "kind": "manual",
+                "value": "ultra-burst-necrozma-dawn-wings-ultra-burst"
+              }
+            ]
+          },
+          "overrides": {
+            "baseStats": {
+              "add": {
+                "attack": 6,
+                "defense": -1,
+                "special_attack": 1,
+                "special_defense": -3,
+                "speed": 5
+              }
+            },
+            "types": {
+              "replace": [
+                "Psychic",
+                "Dragon"
+              ]
+            }
+          },
+          "sortOrder": 120
+        }
+      ],
+      "source_effects": [
+        {
+          "ability_added": "Neuroforce",
+          "extra_effects": [
+            "Adv Ability 1 becomes Illuminate.",
+            "Gains Glow."
+          ],
+          "source_page": 946
+        }
+      ],
+      "note": "Added Ability/extra effects are preserved as source effects but are not guessed into ability-slot structures. The generated forms[] stays valid for Stage B while the mapping remains explicit and reviewable."
+    },
+    {
+      "species_id": "necrozma-dusk-mane",
+      "source_family": "ultra-burst",
+      "forms": [
+        {
+          "id": "ultra-burst",
+          "name": "Ultra NECROZMA Dusk Mane",
+          "mode": "transformation",
+          "requirements": {
+            "all": [
+              {
+                "kind": "manual",
+                "value": "ultra-burst-necrozma-dusk-mane-ultra-burst"
+              }
+            ]
+          },
+          "overrides": {
+            "baseStats": {
+              "add": {
+                "attack": 1,
+                "defense": -3,
+                "special_attack": 6,
+                "special_defense": -1,
+                "speed": 5
+              }
+            },
+            "types": {
+              "replace": [
+                "Psychic",
+                "Dragon"
+              ]
+            }
+          },
+          "sortOrder": 120
+        }
+      ],
+      "source_effects": [
+        {
+          "ability_added": "Neuroforce",
+          "extra_effects": [
+            "Adv Ability 1 becomes Illuminate.",
+            "Gains Glow."
+          ],
+          "source_page": 945
+        }
+      ],
+      "note": "Added Ability/extra effects are preserved as source effects but are not guessed into ability-slot structures. The generated forms[] stays valid for Stage B while the mapping remains explicit and reviewable."
+    },
+    {
+      "species_id": "pidgeot",
+      "source_family": "mega-evolution",
+      "forms": [
+        {
+          "id": "mega",
+          "name": "Mega Pidgeot",
+          "mode": "transformation",
+          "requirements": {
+            "all": [
+              {
+                "kind": "manual",
+                "value": "mega-evolution-pidgeot-mega"
+              }
+            ]
+          },
+          "overrides": {
+            "baseStats": {
+              "add": {
+                "special_attack": 7,
+                "special_defense": 1,
+                "speed": 2
+              }
+            }
+          },
+          "sortOrder": 100
+        }
+      ],
+      "source_effects": [
+        {
+          "ability_added": "No Guard",
+          "extra_effects": [],
+          "source_page": 211
+        }
+      ],
+      "note": "Added Ability/extra effects are preserved as source effects but are not guessed into ability-slot structures. The generated forms[] stays valid for Stage B while the mapping remains explicit and reviewable."
+    },
+    {
+      "species_id": "pinsir",
+      "source_family": "mega-evolution",
+      "forms": [
+        {
+          "id": "mega",
+          "name": "Mega Pinsir",
+          "mode": "transformation",
+          "requirements": {
+            "all": [
+              {
+                "kind": "manual",
+                "value": "mega-evolution-pinsir-mega"
+              }
+            ]
+          },
+          "overrides": {
+            "baseStats": {
+              "add": {
+                "attack": 3,
+                "defense": 2,
+                "special_attack": 1,
+                "special_defense": 2,
+                "speed": 2
+              }
+            },
+            "types": {
+              "replace": [
+                "Bug",
+                "Flying"
+              ]
+            }
+          },
+          "sortOrder": 100
+        }
+      ],
+      "source_effects": [
+        {
+          "ability_added": "Aerilate",
+          "extra_effects": [
+            "Gains Sky 6."
+          ],
+          "source_page": 685
+        }
+      ],
+      "note": "Added Ability/extra effects are preserved as source effects but are not guessed into ability-slot structures. The generated forms[] stays valid for Stage B while the mapping remains explicit and reviewable."
+    },
+    {
+      "species_id": "rayquaza",
+      "source_family": "mega-evolution",
+      "forms": [
+        {
+          "id": "mega",
+          "name": "Mega Rayquaza",
+          "mode": "transformation",
+          "requirements": {
+            "all": [
+              {
+                "kind": "manual",
+                "value": "mega-evolution-rayquaza-mega"
+              }
+            ]
+          },
+          "overrides": {
+            "baseStats": {
+              "add": {
+                "attack": 3,
+                "defense": 1,
+                "special_attack": 3,
+                "special_defense": 1,
+                "speed": 2
+              }
+            }
+          },
+          "sortOrder": 100
+        }
+      ],
+      "source_effects": [
+        {
+          "ability_added": "Run Away",
+          "extra_effects": [],
+          "source_page": 885
+        }
+      ],
+      "note": "Added Ability/extra effects are preserved as source effects but are not guessed into ability-slot structures. The generated forms[] stays valid for Stage B while the mapping remains explicit and reviewable."
+    },
+    {
+      "species_id": "sableye",
+      "source_family": "mega-evolution",
+      "forms": [
+        {
+          "id": "mega",
+          "name": "Mega Sableye",
+          "mode": "transformation",
+          "requirements": {
+            "all": [
+              {
+                "kind": "manual",
+                "value": "mega-evolution-sableye-mega"
+              }
+            ]
+          },
+          "overrides": {
+            "baseStats": {
+              "add": {
+                "attack": 1,
+                "defense": 5,
+                "special_attack": 2,
+                "special_defense": 5,
+                "speed": -3
+              }
+            }
+          },
+          "sortOrder": 100
+        }
+      ],
+      "source_effects": [
+        {
+          "ability_added": "Magic Bounce",
+          "extra_effects": [],
+          "source_page": 691
+        }
+      ],
+      "note": "Added Ability/extra effects are preserved as source effects but are not guessed into ability-slot structures. The generated forms[] stays valid for Stage B while the mapping remains explicit and reviewable."
+    },
+    {
+      "species_id": "salamence",
+      "source_family": "mega-evolution",
+      "forms": [
+        {
+          "id": "mega",
+          "name": "Mega Salamence",
+          "mode": "transformation",
+          "requirements": {
+            "all": [
+              {
+                "kind": "manual",
+                "value": "mega-evolution-salamence-mega"
+              }
+            ]
+          },
+          "overrides": {
+            "baseStats": {
+              "add": {
+                "attack": 1,
+                "defense": 5,
+                "special_attack": 1,
+                "special_defense": 1,
+                "speed": 2
+              }
+            }
+          },
+          "sortOrder": 100
+        }
+      ],
+      "source_effects": [
+        {
+          "ability_added": "Aerilate",
+          "extra_effects": [],
+          "source_page": 846
+        }
+      ],
+      "note": "Added Ability/extra effects are preserved as source effects but are not guessed into ability-slot structures. The generated forms[] stays valid for Stage B while the mapping remains explicit and reviewable."
+    },
+    {
+      "species_id": "sceptile",
+      "source_family": "mega-evolution",
+      "forms": [
+        {
+          "id": "mega",
+          "name": "Mega Sceptile",
+          "mode": "transformation",
+          "requirements": {
+            "all": [
+              {
+                "kind": "manual",
+                "value": "mega-evolution-sceptile-mega"
+              }
+            ]
+          },
+          "overrides": {
+            "baseStats": {
+              "add": {
+                "attack": 2,
+                "defense": 1,
+                "special_attack": 4,
+                "speed": 3
+              }
+            },
+            "types": {
+              "replace": [
+                "Grass",
+                "Dragon"
+              ]
+            }
+          },
+          "sortOrder": 100
+        }
+      ],
+      "source_effects": [
+        {
+          "ability_added": "Lightning Rod",
+          "extra_effects": [],
+          "source_page": 24
+        }
+      ],
+      "note": "Added Ability/extra effects are preserved as source effects but are not guessed into ability-slot structures. The generated forms[] stays valid for Stage B while the mapping remains explicit and reviewable."
+    },
+    {
+      "species_id": "scizor",
+      "source_family": "mega-evolution",
+      "forms": [
+        {
+          "id": "mega",
+          "name": "Mega Scizor",
+          "mode": "transformation",
+          "requirements": {
+            "all": [
+              {
+                "kind": "manual",
+                "value": "mega-evolution-scizor-mega"
+              }
+            ]
+          },
+          "overrides": {
+            "baseStats": {
+              "add": {
+                "attack": 2,
+                "defense": 4,
+                "special_attack": 1,
+                "special_defense": 2,
+                "speed": 1
+              }
+            }
+          },
+          "sortOrder": 100
+        }
+      ],
+      "source_effects": [
+        {
+          "ability_added": "Technician",
+          "extra_effects": [],
+          "source_page": 307
+        }
+      ],
+      "note": "Added Ability/extra effects are preserved as source effects but are not guessed into ability-slot structures. The generated forms[] stays valid for Stage B while the mapping remains explicit and reviewable."
+    },
+    {
+      "species_id": "sharpedo",
+      "source_family": "mega-evolution",
+      "forms": [
+        {
+          "id": "mega",
+          "name": "Mega Sharpedo",
+          "mode": "transformation",
+          "requirements": {
+            "all": [
+              {
+                "kind": "manual",
+                "value": "mega-evolution-sharpedo-mega"
+              }
+            ]
+          },
+          "overrides": {
+            "baseStats": {
+              "add": {
+                "attack": 2,
+                "defense": 3,
+                "special_attack": 1,
+                "special_defense": 3,
+                "speed": 1
+              }
+            }
+          },
+          "sortOrder": 100
+        }
+      ],
+      "source_effects": [
+        {
+          "ability_added": "Strong Jaw",
+          "extra_effects": [],
+          "source_page": 653
+        }
+      ],
+      "note": "Added Ability/extra effects are preserved as source effects but are not guessed into ability-slot structures. The generated forms[] stays valid for Stage B while the mapping remains explicit and reviewable."
+    },
+    {
+      "species_id": "slowbro",
+      "source_family": "mega-evolution",
+      "forms": [
+        {
+          "id": "mega",
+          "name": "Mega Slowbro",
+          "mode": "transformation",
+          "requirements": {
+            "all": [
+              {
+                "kind": "manual",
+                "value": "mega-evolution-slowbro-mega"
+              }
+            ]
+          },
+          "overrides": {
+            "baseStats": {
+              "add": {
+                "defense": 7,
+                "special_attack": 3
+              }
+            }
+          },
+          "sortOrder": 100
+        }
+      ],
+      "source_effects": [
+        {
+          "ability_added": "Shell Armor",
+          "extra_effects": [],
+          "source_page": 628
+        }
+      ],
+      "note": "Added Ability/extra effects are preserved as source effects but are not guessed into ability-slot structures. The generated forms[] stays valid for Stage B while the mapping remains explicit and reviewable."
+    },
+    {
+      "species_id": "steelix",
+      "source_family": "mega-evolution",
+      "forms": [
+        {
+          "id": "mega",
+          "name": "Mega Steelix",
+          "mode": "transformation",
+          "requirements": {
+            "all": [
+              {
+                "kind": "manual",
+                "value": "mega-evolution-steelix-mega"
+              }
+            ]
+          },
+          "overrides": {
+            "baseStats": {
+              "add": {
+                "attack": 4,
+                "defense": 3,
+                "special_defense": 3
+              }
+            }
+          },
+          "sortOrder": 100
+        }
+      ],
+      "source_effects": [
+        {
+          "ability_added": "Sand Force",
+          "extra_effects": [],
+          "source_page": 608
+        }
+      ],
+      "note": "Added Ability/extra effects are preserved as source effects but are not guessed into ability-slot structures. The generated forms[] stays valid for Stage B while the mapping remains explicit and reviewable."
+    },
+    {
+      "species_id": "swampert",
+      "source_family": "mega-evolution",
+      "forms": [
+        {
+          "id": "mega",
+          "name": "Mega Swampert",
+          "mode": "transformation",
+          "requirements": {
+            "all": [
+              {
+                "kind": "manual",
+                "value": "mega-evolution-swampert-mega"
+              }
+            ]
+          },
+          "overrides": {
+            "baseStats": {
+              "add": {
+                "attack": 4,
+                "defense": 2,
+                "special_attack": 1,
+                "special_defense": 2,
+                "speed": 1
+              }
+            }
+          },
+          "sortOrder": 100
+        }
+      ],
+      "source_effects": [
+        {
+          "ability_added": "Swift Swim",
+          "extra_effects": [],
+          "source_page": 72
+        }
+      ],
+      "note": "Added Ability/extra effects are preserved as source effects but are not guessed into ability-slot structures. The generated forms[] stays valid for Stage B while the mapping remains explicit and reviewable."
+    },
+    {
+      "species_id": "tyranitar",
+      "source_family": "mega-evolution",
+      "forms": [
+        {
+          "id": "mega",
+          "name": "Mega Tyranitar",
+          "mode": "transformation",
+          "requirements": {
+            "all": [
+              {
+                "kind": "manual",
+                "value": "mega-evolution-tyranitar-mega"
+              }
+            ]
+          },
+          "overrides": {
+            "baseStats": {
+              "add": {
+                "attack": 3,
+                "defense": 4,
+                "special_defense": 2,
+                "speed": 1
+              }
+            }
+          },
+          "sortOrder": 100
+        }
+      ],
+      "source_effects": [
+        {
+          "ability_added": "Sand Stream",
+          "extra_effects": [],
+          "source_page": 843
+        }
+      ],
+      "note": "Added Ability/extra effects are preserved as source effects but are not guessed into ability-slot structures. The generated forms[] stays valid for Stage B while the mapping remains explicit and reviewable."
+    },
+    {
+      "species_id": "venusaur",
+      "source_family": "mega-evolution",
+      "forms": [
+        {
+          "id": "mega",
+          "name": "Mega Venusaur",
+          "mode": "transformation",
+          "requirements": {
+            "all": [
+              {
+                "kind": "manual",
+                "value": "mega-evolution-venusaur-mega"
+              }
+            ]
+          },
+          "overrides": {
+            "baseStats": {
+              "add": {
+                "attack": 2,
+                "defense": 4,
+                "special_attack": 2,
+                "special_defense": 2
+              }
+            }
+          },
+          "sortOrder": 100
+        }
+      ],
+      "source_effects": [
+        {
+          "ability_added": "Thick Fat",
+          "extra_effects": [],
+          "source_page": 18
+        }
+      ],
+      "note": "Added Ability/extra effects are preserved as source effects but are not guessed into ability-slot structures. The generated forms[] stays valid for Stage B while the mapping remains explicit and reviewable."
+    }
+  ],
+  "not_materialized": [
+    {
+      "family": "aegislash",
+      "classification": "transformation",
+      "reason": "The family is source-classified, but its alternate state is rule-defined rather than represented by a separate candidate Species row; no mechanical override is guessed."
+    },
+    {
+      "family": "arceus",
+      "classification": "runtime_state",
+      "reason": "Classification is not safe for direct forms[] materialization."
+    },
+    {
+      "family": "basculin",
+      "classification": "permanent",
+      "reason": "The family is source-classified, but its alternate state is rule-defined rather than represented by a separate candidate Species row; no mechanical override is guessed."
+    },
+    {
+      "family": "burmy",
+      "classification": "persistent_form",
+      "reason": "The family is source-classified, but its alternate state is rule-defined rather than represented by a separate candidate Species row; no mechanical override is guessed."
+    },
+    {
+      "family": "castform",
+      "classification": "runtime_state",
+      "reason": "Classification is not safe for direct forms[] materialization."
+    },
+    {
+      "family": "cramorant",
+      "classification": "false_positive",
+      "reason": "Classification is not safe for direct forms[] materialization."
+    },
+    {
+      "family": "darmanitan",
+      "classification": "mixed",
+      "reason": "Classification is not safe for direct forms[] materialization."
+    },
+    {
+      "family": "deerling",
+      "classification": "persistent_form",
+      "reason": "The family is source-classified, but its alternate state is rule-defined rather than represented by a separate candidate Species row; no mechanical override is guessed."
+    },
+    {
+      "family": "deoxys",
+      "classification": "defer",
+      "reason": "Classification is not safe for direct forms[] materialization."
+    },
+    {
+      "family": "furfrou",
+      "classification": "persistent_form",
+      "reason": "The family is source-classified, but its alternate state is rule-defined rather than represented by a separate candidate Species row; no mechanical override is guessed."
+    },
+    {
+      "family": "giratina",
+      "classification": "defer",
+      "reason": "Classification is not safe for direct forms[] materialization."
+    },
+    {
+      "family": "hoopa",
+      "classification": "defer",
+      "reason": "Classification is not safe for direct forms[] materialization."
+    },
+    {
+      "family": "kyurem",
+      "classification": "defer",
+      "reason": "Classification is not safe for direct forms[] materialization."
+    },
+    {
+      "family": "landorus",
+      "classification": "defer",
+      "reason": "Classification is not safe for direct forms[] materialization."
+    },
+    {
+      "family": "mimikyu",
+      "classification": "false_positive",
+      "reason": "Classification is not safe for direct forms[] materialization."
+    },
+    {
+      "family": "morpeko",
+      "classification": "runtime_state",
+      "reason": "Classification is not safe for direct forms[] materialization."
+    },
+    {
+      "family": "necrozma",
+      "classification": "mixed",
+      "reason": "Classification is not safe for direct forms[] materialization."
+    },
+    {
+      "family": "nidoran-f",
+      "classification": "false_positive",
+      "reason": "Classification is not safe for direct forms[] materialization."
+    },
+    {
+      "family": "nidoran-m",
+      "classification": "false_positive",
+      "reason": "Classification is not safe for direct forms[] materialization."
+    },
+    {
+      "family": "oricorio",
+      "classification": "defer",
+      "reason": "Classification is not safe for direct forms[] materialization."
+    },
+    {
+      "family": "rotom",
+      "classification": "defer",
+      "reason": "Classification is not safe for direct forms[] materialization."
+    },
+    {
+      "family": "sawsbuck",
+      "classification": "persistent_form",
+      "reason": "The family is source-classified, but its alternate state is rule-defined rather than represented by a separate candidate Species row; no mechanical override is guessed."
+    },
+    {
+      "family": "shaymin",
+      "classification": "defer",
+      "reason": "Classification is not safe for direct forms[] materialization."
+    },
+    {
+      "family": "silvally",
+      "classification": "runtime_state",
+      "reason": "Classification is not safe for direct forms[] materialization."
+    },
+    {
+      "family": "solosis",
+      "classification": "false_positive",
+      "reason": "Classification is not safe for direct forms[] materialization."
+    },
+    {
+      "family": "thundurus",
+      "classification": "defer",
+      "reason": "Classification is not safe for direct forms[] materialization."
+    },
+    {
+      "family": "tornadus",
+      "classification": "defer",
+      "reason": "Classification is not safe for direct forms[] materialization."
+    },
+    {
+      "family": "zacian",
+      "classification": "mixed",
+      "reason": "Classification is not safe for direct forms[] materialization."
+    },
+    {
+      "family": "zamazenta",
+      "classification": "mixed",
+      "reason": "Classification is not safe for direct forms[] materialization."
+    },
+    {
+      "family": "zygarde",
+      "classification": "mixed",
+      "reason": "Classification is not safe for direct forms[] materialization."
+    }
+  ]
+}
