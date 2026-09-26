@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "stage_b_form_schema_version": 1,
   "applied_to_default_packs": false,
   "policy": {
@@ -11,9 +11,13 @@
     "note": "This is a generated conversion catalog. It intentionally does not mutate bundled .ptucp files while deferred families remain."
   },
   "summary": {
-    "candidate_family_entries": 37,
-    "candidate_forms": 48,
-    "omitted_or_deferred_family_entries": 30,
+    "candidate_family_entries": 41,
+    "record_backed_family_entries": 37,
+    "rule_defined_family_entries": 4,
+    "candidate_forms": 63,
+    "record_backed_forms": 48,
+    "rule_defined_forms": 15,
+    "omitted_or_deferred_family_entries": 26,
     "synthetic_species_entries": 50,
     "synthetic_forms": 52,
     "mega_forms": 48,
@@ -23,9 +27,236 @@
   },
   "candidate_families": [
     {
+      "family": "aegislash",
+      "classification": "transformation",
+      "target_layer": "activeFormId",
+      "builder": "rule_defined_stance_change",
+      "forms": [
+        {
+          "id": "sword-stance",
+          "name": "Sword Stance",
+          "mode": "transformation",
+          "requirements": {
+            "all": [
+              {
+                "kind": "manual",
+                "value": "aegislash-sword-stance"
+              }
+            ]
+          },
+          "overrides": {
+            "baseStats": {
+              "replace": {
+                "hp": 6,
+                "attack": 15,
+                "defense": 5,
+                "special_attack": 15,
+                "special_defense": 5,
+                "speed": 6
+              }
+            }
+          },
+          "sortOrder": 10
+        }
+      ],
+      "source_mechanics": {
+        "source": "Pokemon Tabletop United 1.05 Core p.331",
+        "base_state": "Shield Stance",
+        "enter": "Damaging attack, or voluntary Full Action stance change.",
+        "exit": "King's Shield, Protect, a Status Move that raises Defense Combat Stages, a Blessing, or voluntary Full Action stance change.",
+        "effect": "Swap Attack with Defense and Special Attack with Special Defense without changing Combat Stages."
+      },
+      "note": "Shield Stance remains the implicit base state. The manual requirement is only a Stage B review gate because the current generic requirement tree does not encode move-event transitions."
+    },
+    {
+      "family": "basculin",
+      "classification": "permanent",
+      "target_layer": "baseFormId",
+      "builder": "embedded_color_ability_variant",
+      "forms": [
+        {
+          "id": "red",
+          "name": "Red",
+          "mode": "permanent",
+          "overrides": {
+            "abilities": {
+              "replace": [
+                {
+                  "slot": "Basic Ability 1",
+                  "name": "Torrent",
+                  "ability_id": "torrent",
+                  "slot_category": "basic",
+                  "slot_index": 1,
+                  "reference_status": "resolved"
+                },
+                {
+                  "slot": "Adv Ability 1",
+                  "name": "Water Absorb",
+                  "ability_id": "water-absorb",
+                  "slot_category": "advanced",
+                  "slot_index": 1,
+                  "reference_status": "resolved"
+                },
+                {
+                  "slot": "Adv Ability 2",
+                  "name": "Reckless",
+                  "ability_id": "reckless",
+                  "slot_category": "advanced",
+                  "slot_index": 2,
+                  "reference_status": "unresolved"
+                },
+                {
+                  "slot": "Adv Ability 3",
+                  "name": "Adaptability",
+                  "ability_id": "adaptability",
+                  "slot_category": "advanced",
+                  "slot_index": 3,
+                  "reference_status": "resolved"
+                },
+                {
+                  "slot": "High Ability",
+                  "name": "Mold Breaker",
+                  "ability_id": "mold-breaker",
+                  "slot_category": "high",
+                  "slot_index": 1,
+                  "reference_status": "resolved"
+                }
+              ]
+            }
+          },
+          "sortOrder": 10
+        },
+        {
+          "id": "blue",
+          "name": "Blue",
+          "mode": "permanent",
+          "overrides": {
+            "abilities": {
+              "replace": [
+                {
+                  "slot": "Basic Ability 1",
+                  "name": "Torrent",
+                  "ability_id": "torrent",
+                  "slot_category": "basic",
+                  "slot_index": 1,
+                  "reference_status": "resolved"
+                },
+                {
+                  "slot": "Adv Ability 1",
+                  "name": "Water Absorb",
+                  "ability_id": "water-absorb",
+                  "slot_category": "advanced",
+                  "slot_index": 1,
+                  "reference_status": "resolved"
+                },
+                {
+                  "slot": "Adv Ability 2",
+                  "name": "Rock Head",
+                  "ability_id": "rock-head",
+                  "slot_category": "advanced",
+                  "slot_index": 2,
+                  "reference_status": "unresolved"
+                },
+                {
+                  "slot": "Adv Ability 3",
+                  "name": "Adaptability",
+                  "ability_id": "adaptability",
+                  "slot_category": "advanced",
+                  "slot_index": 3,
+                  "reference_status": "resolved"
+                },
+                {
+                  "slot": "High Ability",
+                  "name": "Mold Breaker",
+                  "ability_id": "mold-breaker",
+                  "slot_category": "high",
+                  "slot_index": 1,
+                  "reference_status": "resolved"
+                }
+              ]
+            }
+          },
+          "sortOrder": 20
+        }
+      ],
+      "source_mechanics": {
+        "source": "Gen 8ish PokeDex p.764",
+        "dynamic_slot": "Advanced Ability 2",
+        "ability_mapping": {
+          "Red": "Reckless",
+          "Blue": "Rock Head"
+        },
+        "switching_rule": null
+      },
+      "note": "The builder copies the source Ability-slot array and resolves only the explicitly parameterized Red/Blue Advanced Ability 2. No runtime switching rule is added."
+    },
+    {
+      "family": "burmy",
+      "classification": "persistent_form",
+      "target_layer": "baseFormId",
+      "builder": "rule_defined_quick_cloak",
+      "forms": [
+        {
+          "id": "plant-cloak",
+          "name": "Plant Cloak",
+          "mode": "permanent",
+          "overrides": {
+            "types": {
+              "replace": [
+                "Bug",
+                "Grass"
+              ]
+            }
+          },
+          "sortOrder": 10
+        },
+        {
+          "id": "sandy-cloak",
+          "name": "Sandy Cloak",
+          "mode": "permanent",
+          "overrides": {
+            "types": {
+              "replace": [
+                "Bug",
+                "Ground"
+              ]
+            }
+          },
+          "sortOrder": 20
+        },
+        {
+          "id": "trash-cloak",
+          "name": "Trash Cloak",
+          "mode": "permanent",
+          "overrides": {
+            "types": {
+              "replace": [
+                "Bug",
+                "Steel"
+              ]
+            }
+          },
+          "sortOrder": 30
+        }
+      ],
+      "source_mechanics": {
+        "source": "Pokemon Tabletop United 1.05 Core p.327",
+        "action": "At-Will Standard Action",
+        "materials": {
+          "plant-cloak": "leaves and twigs",
+          "sandy-cloak": "sand and rocks",
+          "trash-cloak": "trash or scrap"
+        },
+        "removal": "Cloak is destroyed by Super-Effective damage or replaced when Burmy makes a new Cloak.",
+        "evolution": "The cloak secondary Type becomes permanent upon evolution into Wormadam."
+      },
+      "note": "The three secondary Types are copied directly from Quick Cloak. No trigger, duration, or additional stat effect is inferred."
+    },
+    {
       "family": "corsola",
       "classification": "permanent",
       "target_layer": "baseFormId",
+      "builder": "parameterized_species_record",
       "forms": [
         {
           "id": "corsola-galar",
@@ -78,12 +309,13 @@
           "source_page": 802
         }
       ],
-      "note": "forms[] contains only Stage B-compatible type/base-stat overrides. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
+      "note": "forms[] contains Stage B-compatible type/base-stat overrides from separately parameterized Species rows. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
     },
     {
       "family": "darumaka",
       "classification": "permanent",
       "target_layer": "baseFormId",
+      "builder": "parameterized_species_record",
       "forms": [
         {
           "id": "darumaka-galar",
@@ -132,12 +364,13 @@
           "source_page": 807
         }
       ],
-      "note": "forms[] contains only Stage B-compatible type/base-stat overrides. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
+      "note": "forms[] contains Stage B-compatible type/base-stat overrides from separately parameterized Species rows. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
     },
     {
       "family": "diglett",
       "classification": "permanent",
       "target_layer": "baseFormId",
+      "builder": "parameterized_species_record",
       "forms": [
         {
           "id": "diglett-alola",
@@ -186,12 +419,13 @@
           "source_page": 787
         }
       ],
-      "note": "forms[] contains only Stage B-compatible type/base-stat overrides. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
+      "note": "forms[] contains Stage B-compatible type/base-stat overrides from separately parameterized Species rows. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
     },
     {
       "family": "dugtrio",
       "classification": "permanent",
       "target_layer": "baseFormId",
+      "builder": "parameterized_species_record",
       "forms": [
         {
           "id": "dugtrio-alola",
@@ -241,12 +475,13 @@
           "source_page": 788
         }
       ],
-      "note": "forms[] contains only Stage B-compatible type/base-stat overrides. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
+      "note": "forms[] contains Stage B-compatible type/base-stat overrides from separately parameterized Species rows. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
     },
     {
       "family": "eiscue",
       "classification": "transformation",
       "target_layer": "activeFormId",
+      "builder": "parameterized_species_record",
       "forms": [
         {
           "id": "eiscue-ice-face",
@@ -353,12 +588,13 @@
           "source_page": 724
         }
       ],
-      "note": "forms[] contains only Stage B-compatible type/base-stat overrides. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
+      "note": "forms[] contains Stage B-compatible type/base-stat overrides from separately parameterized Species rows. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
     },
     {
       "family": "exeggutor",
       "classification": "permanent",
       "target_layer": "baseFormId",
+      "builder": "parameterized_species_record",
       "forms": [
         {
           "id": "exeggutor-alola",
@@ -406,12 +642,13 @@
           "source_page": 445
         }
       ],
-      "note": "forms[] contains only Stage B-compatible type/base-stat overrides. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
+      "note": "forms[] contains Stage B-compatible type/base-stat overrides from separately parameterized Species rows. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
     },
     {
       "family": "farfetchd",
       "classification": "permanent",
       "target_layer": "baseFormId",
+      "builder": "parameterized_species_record",
       "forms": [
         {
           "id": "farfetchd-galar",
@@ -459,12 +696,506 @@
           "source_page": 800
         }
       ],
-      "note": "forms[] contains only Stage B-compatible type/base-stat overrides. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
+      "note": "forms[] contains Stage B-compatible type/base-stat overrides from separately parameterized Species rows. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
+    },
+    {
+      "family": "furfrou",
+      "classification": "persistent_form",
+      "target_layer": "baseFormId",
+      "builder": "rule_defined_fabulous_trim",
+      "forms": [
+        {
+          "id": "star-trim",
+          "name": "Star Trim",
+          "mode": "permanent",
+          "overrides": {
+            "abilities": {
+              "replace": [
+                {
+                  "slot": "Basic Ability 1",
+                  "name": "Fur Coat",
+                  "ability_id": "fur-coat",
+                  "slot_category": "basic",
+                  "slot_index": 1,
+                  "reference_status": "resolved"
+                },
+                {
+                  "slot": "Adv Ability 1",
+                  "name": "Beautiful",
+                  "ability_id": "beautiful",
+                  "slot_category": "advanced",
+                  "slot_index": 1,
+                  "reference_status": "resolved"
+                },
+                {
+                  "slot": "Adv Ability 2",
+                  "name": "Celebrate",
+                  "ability_id": "celebrate",
+                  "slot_category": "advanced",
+                  "slot_index": 2,
+                  "reference_status": "resolved"
+                },
+                {
+                  "slot": "Adv Ability 3",
+                  "name": "Intimidate",
+                  "ability_id": "intimidate",
+                  "slot_category": "advanced",
+                  "slot_index": 3,
+                  "reference_status": "resolved"
+                },
+                {
+                  "slot": "High Ability",
+                  "name": "Bodyguard",
+                  "ability_id": "bodyguard",
+                  "slot_category": "high",
+                  "slot_index": 1,
+                  "reference_status": "resolved"
+                }
+              ]
+            }
+          },
+          "sortOrder": 10
+        },
+        {
+          "id": "diamond-trim",
+          "name": "Diamond Trim",
+          "mode": "permanent",
+          "overrides": {
+            "abilities": {
+              "replace": [
+                {
+                  "slot": "Basic Ability 1",
+                  "name": "Fur Coat",
+                  "ability_id": "fur-coat",
+                  "slot_category": "basic",
+                  "slot_index": 1,
+                  "reference_status": "resolved"
+                },
+                {
+                  "slot": "Adv Ability 1",
+                  "name": "Beautiful",
+                  "ability_id": "beautiful",
+                  "slot_category": "advanced",
+                  "slot_index": 1,
+                  "reference_status": "resolved"
+                },
+                {
+                  "slot": "Adv Ability 2",
+                  "name": "Defiant",
+                  "ability_id": "defiant",
+                  "slot_category": "advanced",
+                  "slot_index": 2,
+                  "reference_status": "resolved"
+                },
+                {
+                  "slot": "Adv Ability 3",
+                  "name": "Intimidate",
+                  "ability_id": "intimidate",
+                  "slot_category": "advanced",
+                  "slot_index": 3,
+                  "reference_status": "resolved"
+                },
+                {
+                  "slot": "High Ability",
+                  "name": "Bodyguard",
+                  "ability_id": "bodyguard",
+                  "slot_category": "high",
+                  "slot_index": 1,
+                  "reference_status": "resolved"
+                }
+              ]
+            }
+          },
+          "sortOrder": 20
+        },
+        {
+          "id": "heart-trim",
+          "name": "Heart Trim",
+          "mode": "permanent",
+          "overrides": {
+            "abilities": {
+              "replace": [
+                {
+                  "slot": "Basic Ability 1",
+                  "name": "Fur Coat",
+                  "ability_id": "fur-coat",
+                  "slot_category": "basic",
+                  "slot_index": 1,
+                  "reference_status": "resolved"
+                },
+                {
+                  "slot": "Adv Ability 1",
+                  "name": "Beautiful",
+                  "ability_id": "beautiful",
+                  "slot_category": "advanced",
+                  "slot_index": 1,
+                  "reference_status": "resolved"
+                },
+                {
+                  "slot": "Adv Ability 2",
+                  "name": "Cute Tears",
+                  "ability_id": "cute-tears",
+                  "slot_category": "advanced",
+                  "slot_index": 2,
+                  "reference_status": "resolved"
+                },
+                {
+                  "slot": "Adv Ability 3",
+                  "name": "Intimidate",
+                  "ability_id": "intimidate",
+                  "slot_category": "advanced",
+                  "slot_index": 3,
+                  "reference_status": "resolved"
+                },
+                {
+                  "slot": "High Ability",
+                  "name": "Bodyguard",
+                  "ability_id": "bodyguard",
+                  "slot_category": "high",
+                  "slot_index": 1,
+                  "reference_status": "resolved"
+                }
+              ]
+            }
+          },
+          "sortOrder": 30
+        },
+        {
+          "id": "pharaoh-trim",
+          "name": "Pharaoh Trim",
+          "mode": "permanent",
+          "overrides": {
+            "abilities": {
+              "replace": [
+                {
+                  "slot": "Basic Ability 1",
+                  "name": "Fur Coat",
+                  "ability_id": "fur-coat",
+                  "slot_category": "basic",
+                  "slot_index": 1,
+                  "reference_status": "resolved"
+                },
+                {
+                  "slot": "Adv Ability 1",
+                  "name": "Beautiful",
+                  "ability_id": "beautiful",
+                  "slot_category": "advanced",
+                  "slot_index": 1,
+                  "reference_status": "resolved"
+                },
+                {
+                  "slot": "Adv Ability 2",
+                  "name": "Sand Veil",
+                  "ability_id": "sand-veil",
+                  "slot_category": "advanced",
+                  "slot_index": 2,
+                  "reference_status": "resolved"
+                },
+                {
+                  "slot": "Adv Ability 3",
+                  "name": "Intimidate",
+                  "ability_id": "intimidate",
+                  "slot_category": "advanced",
+                  "slot_index": 3,
+                  "reference_status": "resolved"
+                },
+                {
+                  "slot": "High Ability",
+                  "name": "Bodyguard",
+                  "ability_id": "bodyguard",
+                  "slot_category": "high",
+                  "slot_index": 1,
+                  "reference_status": "resolved"
+                }
+              ]
+            }
+          },
+          "sortOrder": 40
+        },
+        {
+          "id": "kabuki-trim",
+          "name": "Kabuki Trim",
+          "mode": "permanent",
+          "overrides": {
+            "abilities": {
+              "replace": [
+                {
+                  "slot": "Basic Ability 1",
+                  "name": "Fur Coat",
+                  "ability_id": "fur-coat",
+                  "slot_category": "basic",
+                  "slot_index": 1,
+                  "reference_status": "resolved"
+                },
+                {
+                  "slot": "Adv Ability 1",
+                  "name": "Beautiful",
+                  "ability_id": "beautiful",
+                  "slot_category": "advanced",
+                  "slot_index": 1,
+                  "reference_status": "resolved"
+                },
+                {
+                  "slot": "Adv Ability 2",
+                  "name": "Inner Focus",
+                  "ability_id": "inner-focus",
+                  "slot_category": "advanced",
+                  "slot_index": 2,
+                  "reference_status": "resolved"
+                },
+                {
+                  "slot": "Adv Ability 3",
+                  "name": "Intimidate",
+                  "ability_id": "intimidate",
+                  "slot_category": "advanced",
+                  "slot_index": 3,
+                  "reference_status": "resolved"
+                },
+                {
+                  "slot": "High Ability",
+                  "name": "Bodyguard",
+                  "ability_id": "bodyguard",
+                  "slot_category": "high",
+                  "slot_index": 1,
+                  "reference_status": "resolved"
+                }
+              ]
+            }
+          },
+          "sortOrder": 50
+        },
+        {
+          "id": "la-reine-trim",
+          "name": "La Reine Trim",
+          "mode": "permanent",
+          "overrides": {
+            "abilities": {
+              "replace": [
+                {
+                  "slot": "Basic Ability 1",
+                  "name": "Fur Coat",
+                  "ability_id": "fur-coat",
+                  "slot_category": "basic",
+                  "slot_index": 1,
+                  "reference_status": "resolved"
+                },
+                {
+                  "slot": "Adv Ability 1",
+                  "name": "Beautiful",
+                  "ability_id": "beautiful",
+                  "slot_category": "advanced",
+                  "slot_index": 1,
+                  "reference_status": "resolved"
+                },
+                {
+                  "slot": "Adv Ability 2",
+                  "name": "Intimidate",
+                  "ability_id": "intimidate",
+                  "slot_category": "advanced",
+                  "slot_index": 2,
+                  "reference_status": "resolved"
+                },
+                {
+                  "slot": "Adv Ability 3",
+                  "name": "Intimidate",
+                  "ability_id": "intimidate",
+                  "slot_category": "advanced",
+                  "slot_index": 3,
+                  "reference_status": "resolved"
+                },
+                {
+                  "slot": "High Ability",
+                  "name": "Bodyguard",
+                  "ability_id": "bodyguard",
+                  "slot_category": "high",
+                  "slot_index": 1,
+                  "reference_status": "resolved"
+                }
+              ]
+            }
+          },
+          "sortOrder": 60
+        },
+        {
+          "id": "matron-trim",
+          "name": "Matron Trim",
+          "mode": "permanent",
+          "overrides": {
+            "abilities": {
+              "replace": [
+                {
+                  "slot": "Basic Ability 1",
+                  "name": "Fur Coat",
+                  "ability_id": "fur-coat",
+                  "slot_category": "basic",
+                  "slot_index": 1,
+                  "reference_status": "resolved"
+                },
+                {
+                  "slot": "Adv Ability 1",
+                  "name": "Beautiful",
+                  "ability_id": "beautiful",
+                  "slot_category": "advanced",
+                  "slot_index": 1,
+                  "reference_status": "resolved"
+                },
+                {
+                  "slot": "Adv Ability 2",
+                  "name": "Friend Guard",
+                  "ability_id": "friend-guard",
+                  "slot_category": "advanced",
+                  "slot_index": 2,
+                  "reference_status": "resolved"
+                },
+                {
+                  "slot": "Adv Ability 3",
+                  "name": "Intimidate",
+                  "ability_id": "intimidate",
+                  "slot_category": "advanced",
+                  "slot_index": 3,
+                  "reference_status": "resolved"
+                },
+                {
+                  "slot": "High Ability",
+                  "name": "Bodyguard",
+                  "ability_id": "bodyguard",
+                  "slot_category": "high",
+                  "slot_index": 1,
+                  "reference_status": "resolved"
+                }
+              ]
+            }
+          },
+          "sortOrder": 70
+        },
+        {
+          "id": "dandy-trim",
+          "name": "Dandy Trim",
+          "mode": "permanent",
+          "overrides": {
+            "abilities": {
+              "replace": [
+                {
+                  "slot": "Basic Ability 1",
+                  "name": "Fur Coat",
+                  "ability_id": "fur-coat",
+                  "slot_category": "basic",
+                  "slot_index": 1,
+                  "reference_status": "resolved"
+                },
+                {
+                  "slot": "Adv Ability 1",
+                  "name": "Beautiful",
+                  "ability_id": "beautiful",
+                  "slot_category": "advanced",
+                  "slot_index": 1,
+                  "reference_status": "resolved"
+                },
+                {
+                  "slot": "Adv Ability 2",
+                  "name": "Moxie",
+                  "ability_id": "moxie",
+                  "slot_category": "advanced",
+                  "slot_index": 2,
+                  "reference_status": "resolved"
+                },
+                {
+                  "slot": "Adv Ability 3",
+                  "name": "Intimidate",
+                  "ability_id": "intimidate",
+                  "slot_category": "advanced",
+                  "slot_index": 3,
+                  "reference_status": "resolved"
+                },
+                {
+                  "slot": "High Ability",
+                  "name": "Bodyguard",
+                  "ability_id": "bodyguard",
+                  "slot_category": "high",
+                  "slot_index": 1,
+                  "reference_status": "resolved"
+                }
+              ]
+            }
+          },
+          "sortOrder": 80
+        },
+        {
+          "id": "debutante-trim",
+          "name": "Debutante Trim",
+          "mode": "permanent",
+          "overrides": {
+            "abilities": {
+              "replace": [
+                {
+                  "slot": "Basic Ability 1",
+                  "name": "Fur Coat",
+                  "ability_id": "fur-coat",
+                  "slot_category": "basic",
+                  "slot_index": 1,
+                  "reference_status": "resolved"
+                },
+                {
+                  "slot": "Adv Ability 1",
+                  "name": "Beautiful",
+                  "ability_id": "beautiful",
+                  "slot_category": "advanced",
+                  "slot_index": 1,
+                  "reference_status": "resolved"
+                },
+                {
+                  "slot": "Adv Ability 2",
+                  "name": "Confidence",
+                  "ability_id": "confidence",
+                  "slot_category": "advanced",
+                  "slot_index": 2,
+                  "reference_status": "resolved"
+                },
+                {
+                  "slot": "Adv Ability 3",
+                  "name": "Intimidate",
+                  "ability_id": "intimidate",
+                  "slot_category": "advanced",
+                  "slot_index": 3,
+                  "reference_status": "resolved"
+                },
+                {
+                  "slot": "High Ability",
+                  "name": "Bodyguard",
+                  "ability_id": "bodyguard",
+                  "slot_category": "high",
+                  "slot_index": 1,
+                  "reference_status": "resolved"
+                }
+              ]
+            }
+          },
+          "sortOrder": 90
+        }
+      ],
+      "source_mechanics": {
+        "source": "Pokemon Tabletop United 1.05 Core p.317",
+        "action": "Extended Action at an appropriate hair parlor",
+        "dynamic_slot": "Fabulous Trim",
+        "ability_mapping": {
+          "Star Trim": "Celebrate",
+          "Diamond Trim": "Defiant",
+          "Heart Trim": "Cute Tears",
+          "Pharaoh Trim": "Sand Veil",
+          "Kabuki Trim": "Inner Focus",
+          "La Reine Trim": "Intimidate",
+          "Matron Trim": "Friend Guard",
+          "Dandy Trim": "Moxie",
+          "Debutante Trim": "Confidence"
+        }
+      },
+      "note": "The builder copies the entire source Ability-slot array and replaces only the Fabulous Trim slot, preserving its slot/category metadata and every unaffected Ability."
     },
     {
       "family": "geodude",
       "classification": "permanent",
       "target_layer": "baseFormId",
+      "builder": "parameterized_species_record",
       "forms": [
         {
           "id": "geodude-alola",
@@ -515,12 +1246,13 @@
           "source_page": 791
         }
       ],
-      "note": "forms[] contains only Stage B-compatible type/base-stat overrides. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
+      "note": "forms[] contains Stage B-compatible type/base-stat overrides from separately parameterized Species rows. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
     },
     {
       "family": "golem",
       "classification": "permanent",
       "target_layer": "baseFormId",
+      "builder": "parameterized_species_record",
       "forms": [
         {
           "id": "golem-alola",
@@ -571,12 +1303,13 @@
           "source_page": 793
         }
       ],
-      "note": "forms[] contains only Stage B-compatible type/base-stat overrides. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
+      "note": "forms[] contains Stage B-compatible type/base-stat overrides from separately parameterized Species rows. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
     },
     {
       "family": "graveler",
       "classification": "permanent",
       "target_layer": "baseFormId",
+      "builder": "parameterized_species_record",
       "forms": [
         {
           "id": "graveler-alola",
@@ -628,12 +1361,13 @@
           "source_page": 792
         }
       ],
-      "note": "forms[] contains only Stage B-compatible type/base-stat overrides. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
+      "note": "forms[] contains Stage B-compatible type/base-stat overrides from separately parameterized Species rows. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
     },
     {
       "family": "grimer",
       "classification": "permanent",
       "target_layer": "baseFormId",
+      "builder": "parameterized_species_record",
       "forms": [
         {
           "id": "grimer-alola",
@@ -685,12 +1419,13 @@
           "source_page": 794
         }
       ],
-      "note": "forms[] contains only Stage B-compatible type/base-stat overrides. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
+      "note": "forms[] contains Stage B-compatible type/base-stat overrides from separately parameterized Species rows. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
     },
     {
       "family": "indeedee",
       "classification": "permanent",
       "target_layer": "baseFormId",
+      "builder": "parameterized_species_record",
       "forms": [
         {
           "id": "indeedee-male",
@@ -783,12 +1518,13 @@
           "source_page": 748
         }
       ],
-      "note": "forms[] contains only Stage B-compatible type/base-stat overrides. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
+      "note": "forms[] contains Stage B-compatible type/base-stat overrides from separately parameterized Species rows. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
     },
     {
       "family": "linoone",
       "classification": "permanent",
       "target_layer": "baseFormId",
+      "builder": "parameterized_species_record",
       "forms": [
         {
           "id": "linoone-galar",
@@ -838,12 +1574,13 @@
           "source_page": 805
         }
       ],
-      "note": "forms[] contains only Stage B-compatible type/base-stat overrides. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
+      "note": "forms[] contains Stage B-compatible type/base-stat overrides from separately parameterized Species rows. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
     },
     {
       "family": "lycanroc",
       "classification": "permanent",
       "target_layer": "baseFormId",
+      "builder": "parameterized_species_record",
       "forms": [
         {
           "id": "lycanroc-midday",
@@ -975,12 +1712,13 @@
           "source_page": 618
         }
       ],
-      "note": "forms[] contains only Stage B-compatible type/base-stat overrides. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
+      "note": "forms[] contains Stage B-compatible type/base-stat overrides from separately parameterized Species rows. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
     },
     {
       "family": "marowak",
       "classification": "permanent",
       "target_layer": "baseFormId",
+      "builder": "parameterized_species_record",
       "forms": [
         {
           "id": "marowak-alola",
@@ -1031,12 +1769,13 @@
           "source_page": 485
         }
       ],
-      "note": "forms[] contains only Stage B-compatible type/base-stat overrides. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
+      "note": "forms[] contains Stage B-compatible type/base-stat overrides from separately parameterized Species rows. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
     },
     {
       "family": "meloetta",
       "classification": "transformation",
       "target_layer": "activeFormId",
+      "builder": "parameterized_species_record",
       "forms": [
         {
           "id": "meloetta-aria-forme",
@@ -1141,12 +1880,13 @@
           "source_page": 923
         }
       ],
-      "note": "forms[] contains only Stage B-compatible type/base-stat overrides. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
+      "note": "forms[] contains Stage B-compatible type/base-stat overrides from separately parameterized Species rows. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
     },
     {
       "family": "meowstic",
       "classification": "permanent",
       "target_layer": "baseFormId",
+      "builder": "parameterized_species_record",
       "forms": [
         {
           "id": "meowstic-m",
@@ -1237,12 +1977,13 @@
           "source_page": 606
         }
       ],
-      "note": "forms[] contains only Stage B-compatible type/base-stat overrides. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
+      "note": "forms[] contains Stage B-compatible type/base-stat overrides from separately parameterized Species rows. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
     },
     {
       "family": "meowth",
       "classification": "permanent",
       "target_layer": "baseFormId",
+      "builder": "parameterized_species_record",
       "forms": [
         {
           "id": "meowth-alola",
@@ -1336,12 +2077,13 @@
           "source_page": 796
         }
       ],
-      "note": "forms[] contains only Stage B-compatible type/base-stat overrides. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
+      "note": "forms[] contains Stage B-compatible type/base-stat overrides from separately parameterized Species rows. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
     },
     {
       "family": "minior",
       "classification": "transformation",
       "target_layer": "activeFormId",
+      "builder": "parameterized_species_record",
       "forms": [
         {
           "id": "minior-meteor",
@@ -1452,12 +2194,13 @@
           "source_page": 753
         }
       ],
-      "note": "forms[] contains only Stage B-compatible type/base-stat overrides. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
+      "note": "forms[] contains Stage B-compatible type/base-stat overrides from separately parameterized Species rows. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
     },
     {
       "family": "mr-mime",
       "classification": "permanent",
       "target_layer": "baseFormId",
+      "builder": "parameterized_species_record",
       "forms": [
         {
           "id": "mr-mime-galar",
@@ -1508,12 +2251,13 @@
           "source_page": 253
         }
       ],
-      "note": "forms[] contains only Stage B-compatible type/base-stat overrides. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
+      "note": "forms[] contains Stage B-compatible type/base-stat overrides from separately parameterized Species rows. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
     },
     {
       "family": "muk",
       "classification": "permanent",
       "target_layer": "baseFormId",
+      "builder": "parameterized_species_record",
       "forms": [
         {
           "id": "muk-alola",
@@ -1564,12 +2308,13 @@
           "source_page": 795
         }
       ],
-      "note": "forms[] contains only Stage B-compatible type/base-stat overrides. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
+      "note": "forms[] contains Stage B-compatible type/base-stat overrides from separately parameterized Species rows. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
     },
     {
       "family": "ninetales",
       "classification": "permanent",
       "target_layer": "baseFormId",
+      "builder": "parameterized_species_record",
       "forms": [
         {
           "id": "ninetales-alola",
@@ -1618,12 +2363,13 @@
           "source_page": 786
         }
       ],
-      "note": "forms[] contains only Stage B-compatible type/base-stat overrides. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
+      "note": "forms[] contains Stage B-compatible type/base-stat overrides from separately parameterized Species rows. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
     },
     {
       "family": "persian",
       "classification": "permanent",
       "target_layer": "baseFormId",
+      "builder": "parameterized_species_record",
       "forms": [
         {
           "id": "persian-alola",
@@ -1673,12 +2419,13 @@
           "source_page": 790
         }
       ],
-      "note": "forms[] contains only Stage B-compatible type/base-stat overrides. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
+      "note": "forms[] contains Stage B-compatible type/base-stat overrides from separately parameterized Species rows. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
     },
     {
       "family": "ponyta",
       "classification": "permanent",
       "target_layer": "baseFormId",
+      "builder": "parameterized_species_record",
       "forms": [
         {
           "id": "ponyta-galar",
@@ -1727,12 +2474,13 @@
           "source_page": 798
         }
       ],
-      "note": "forms[] contains only Stage B-compatible type/base-stat overrides. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
+      "note": "forms[] contains Stage B-compatible type/base-stat overrides from separately parameterized Species rows. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
     },
     {
       "family": "raichu",
       "classification": "permanent",
       "target_layer": "baseFormId",
+      "builder": "parameterized_species_record",
       "forms": [
         {
           "id": "raichu-alola",
@@ -1781,12 +2529,13 @@
           "source_page": 123
         }
       ],
-      "note": "forms[] contains only Stage B-compatible type/base-stat overrides. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
+      "note": "forms[] contains Stage B-compatible type/base-stat overrides from separately parameterized Species rows. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
     },
     {
       "family": "rapidash",
       "classification": "permanent",
       "target_layer": "baseFormId",
+      "builder": "parameterized_species_record",
       "forms": [
         {
           "id": "rapidash-galar",
@@ -1836,12 +2585,13 @@
           "source_page": 799
         }
       ],
-      "note": "forms[] contains only Stage B-compatible type/base-stat overrides. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
+      "note": "forms[] contains Stage B-compatible type/base-stat overrides from separately parameterized Species rows. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
     },
     {
       "family": "raticate",
       "classification": "permanent",
       "target_layer": "baseFormId",
+      "builder": "parameterized_species_record",
       "forms": [
         {
           "id": "raticate-alola",
@@ -1891,12 +2641,13 @@
           "source_page": 782
         }
       ],
-      "note": "forms[] contains only Stage B-compatible type/base-stat overrides. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
+      "note": "forms[] contains Stage B-compatible type/base-stat overrides from separately parameterized Species rows. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
     },
     {
       "family": "rattata",
       "classification": "permanent",
       "target_layer": "baseFormId",
+      "builder": "parameterized_species_record",
       "forms": [
         {
           "id": "rattata-alola",
@@ -1946,12 +2697,13 @@
           "source_page": 781
         }
       ],
-      "note": "forms[] contains only Stage B-compatible type/base-stat overrides. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
+      "note": "forms[] contains Stage B-compatible type/base-stat overrides from separately parameterized Species rows. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
     },
     {
       "family": "sandshrew",
       "classification": "permanent",
       "target_layer": "baseFormId",
+      "builder": "parameterized_species_record",
       "forms": [
         {
           "id": "sandshrew-alola",
@@ -2002,12 +2754,13 @@
           "source_page": 783
         }
       ],
-      "note": "forms[] contains only Stage B-compatible type/base-stat overrides. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
+      "note": "forms[] contains Stage B-compatible type/base-stat overrides from separately parameterized Species rows. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
     },
     {
       "family": "sandslash",
       "classification": "permanent",
       "target_layer": "baseFormId",
+      "builder": "parameterized_species_record",
       "forms": [
         {
           "id": "sandslash-alola",
@@ -2057,12 +2810,13 @@
           "source_page": 784
         }
       ],
-      "note": "forms[] contains only Stage B-compatible type/base-stat overrides. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
+      "note": "forms[] contains Stage B-compatible type/base-stat overrides from separately parameterized Species rows. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
     },
     {
       "family": "stunfisk",
       "classification": "permanent",
       "target_layer": "baseFormId",
+      "builder": "parameterized_species_record",
       "forms": [
         {
           "id": "stunfisk-galar",
@@ -2110,12 +2864,13 @@
           "source_page": 812
         }
       ],
-      "note": "forms[] contains only Stage B-compatible type/base-stat overrides. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
+      "note": "forms[] contains Stage B-compatible type/base-stat overrides from separately parameterized Species rows. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
     },
     {
       "family": "vulpix",
       "classification": "permanent",
       "target_layer": "baseFormId",
+      "builder": "parameterized_species_record",
       "forms": [
         {
           "id": "vulpix-alola",
@@ -2164,12 +2919,13 @@
           "source_page": 785
         }
       ],
-      "note": "forms[] contains only Stage B-compatible type/base-stat overrides. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
+      "note": "forms[] contains Stage B-compatible type/base-stat overrides from separately parameterized Species rows. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
     },
     {
       "family": "weezing",
       "classification": "permanent",
       "target_layer": "baseFormId",
+      "builder": "parameterized_species_record",
       "forms": [
         {
           "id": "weezing-galar",
@@ -2217,12 +2973,13 @@
           "source_page": 571
         }
       ],
-      "note": "forms[] contains only Stage B-compatible type/base-stat overrides. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
+      "note": "forms[] contains Stage B-compatible type/base-stat overrides from separately parameterized Species rows. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
     },
     {
       "family": "wishiwashi",
       "classification": "transformation",
       "target_layer": "activeFormId",
+      "builder": "parameterized_species_record",
       "forms": [
         {
           "id": "wishiwashi-solo",
@@ -2332,12 +3089,13 @@
           "source_page": 767
         }
       ],
-      "note": "forms[] contains only Stage B-compatible type/base-stat overrides. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
+      "note": "forms[] contains Stage B-compatible type/base-stat overrides from separately parameterized Species rows. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
     },
     {
       "family": "wormadam",
       "classification": "permanent",
       "target_layer": "baseFormId",
+      "builder": "parameterized_species_record",
       "forms": [
         {
           "id": "wormadam-plant-cloak",
@@ -2474,12 +3232,13 @@
           "source_page": 326
         }
       ],
-      "note": "forms[] contains only Stage B-compatible type/base-stat overrides. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
+      "note": "forms[] contains Stage B-compatible type/base-stat overrides from separately parameterized Species rows. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
     },
     {
       "family": "yamask",
       "classification": "permanent",
       "target_layer": "baseFormId",
+      "builder": "parameterized_species_record",
       "forms": [
         {
           "id": "yamask-galar",
@@ -2531,12 +3290,13 @@
           "source_page": 810
         }
       ],
-      "note": "forms[] contains only Stage B-compatible type/base-stat overrides. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
+      "note": "forms[] contains Stage B-compatible type/base-stat overrides from separately parameterized Species rows. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
     },
     {
       "family": "zigzagoon",
       "classification": "permanent",
       "target_layer": "baseFormId",
+      "builder": "parameterized_species_record",
       "forms": [
         {
           "id": "zigzagoon-galar",
@@ -2585,7 +3345,7 @@
           "source_page": 804
         }
       ],
-      "note": "forms[] contains only Stage B-compatible type/base-stat overrides. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
+      "note": "forms[] contains Stage B-compatible type/base-stat overrides from separately parameterized Species rows. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
     }
   ],
   "synthetic_transform_species": [
@@ -4638,24 +5398,9 @@
   ],
   "not_materialized": [
     {
-      "family": "aegislash",
-      "classification": "transformation",
-      "reason": "The family is source-classified, but its alternate state is rule-defined rather than represented by a separate candidate Species row; no mechanical override is guessed."
-    },
-    {
       "family": "arceus",
       "classification": "runtime_state",
       "reason": "Classification is not safe for direct forms[] materialization."
-    },
-    {
-      "family": "basculin",
-      "classification": "permanent",
-      "reason": "The family is source-classified, but its alternate state is rule-defined rather than represented by a separate candidate Species row; no mechanical override is guessed."
-    },
-    {
-      "family": "burmy",
-      "classification": "persistent_form",
-      "reason": "The family is source-classified, but its alternate state is rule-defined rather than represented by a separate candidate Species row; no mechanical override is guessed."
     },
     {
       "family": "castform",
@@ -4681,11 +5426,6 @@
       "family": "deoxys",
       "classification": "defer",
       "reason": "Classification is not safe for direct forms[] materialization."
-    },
-    {
-      "family": "furfrou",
-      "classification": "persistent_form",
-      "reason": "The family is source-classified, but its alternate state is rule-defined rather than represented by a separate candidate Species row; no mechanical override is guessed."
     },
     {
       "family": "giratina",

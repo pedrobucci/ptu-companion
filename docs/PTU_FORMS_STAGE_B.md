@@ -4,21 +4,32 @@ Generated deterministically from the versioned PTU classification/inventory. Thi
 
 ## Summary
 
-- Candidate-family form entries: **37**
-- Candidate-record Stage B forms emitted: **48**
+- Candidate-family form entries: **41**
+- Record-backed family entries: **37**
+- Rule-defined family entries: **4**
+- Candidate-record/derived Stage B forms emitted: **63**
+- Record-backed forms: **48**
+- Rule-defined forms: **15**
 - Synthetic Stage B transforms emitted: **52**
 - Mega transforms: **48**
 - Primal transforms: **2**
 - Ultra Burst transforms: **2**
-- Families not directly materialized: **30**
+- Families not directly materialized: **26**
 
 ## Safety gates
 
 - Every emitted `forms[]` entry uses Stage B mode `permanent` or `transformation`.
-- Source-insufficient requirements use Stage B `manual` review gates instead of guessed items/conditions.
+- Source-insufficient/event-driven requirements use Stage B `manual` review gates instead of guessed items/conditions.
 - No artwork URL is generated. Artwork remains governed by the separate asset audit and the existing Stage B fallback.
-- Ability/capability source snapshots and synthetic added-Ability effects remain explicit metadata until they can be mapped losslessly to definition-layer objects.
+- Rule-defined Ability builders clone the source Species Ability-slot array and replace only the explicitly dynamic slot.
 - No `.ptucp` file is written by this generator.
+
+## Rule-defined builders
+
+- `aegislash` / `rule_defined_stance_change` — Sword Stance
+- `basculin` / `embedded_color_ability_variant` — Red, Blue
+- `burmy` / `rule_defined_quick_cloak` — Plant Cloak, Sandy Cloak, Trash Cloak
+- `furfrou` / `rule_defined_fabulous_trim` — Star Trim, Diamond Trim, Heart Trim, Pharaoh Trim, Kabuki Trim, La Reine Trim, Matron Trim, Dandy Trim, Debutante Trim
 
 ## Synthetic transformations
 
@@ -75,16 +86,12 @@ Generated deterministically from the versioned PTU classification/inventory. Thi
 
 ## Not directly materialized
 
-- `aegislash` (transformation) — The family is source-classified, but its alternate state is rule-defined rather than represented by a separate candidate Species row; no mechanical override is guessed.
 - `arceus` (runtime_state) — Classification is not safe for direct forms[] materialization.
-- `basculin` (permanent) — The family is source-classified, but its alternate state is rule-defined rather than represented by a separate candidate Species row; no mechanical override is guessed.
-- `burmy` (persistent_form) — The family is source-classified, but its alternate state is rule-defined rather than represented by a separate candidate Species row; no mechanical override is guessed.
 - `castform` (runtime_state) — Classification is not safe for direct forms[] materialization.
 - `cramorant` (false_positive) — Classification is not safe for direct forms[] materialization.
 - `darmanitan` (mixed) — Classification is not safe for direct forms[] materialization.
 - `deerling` (runtime_state) — Classification is not safe for direct forms[] materialization.
 - `deoxys` (defer) — Classification is not safe for direct forms[] materialization.
-- `furfrou` (persistent_form) — The family is source-classified, but its alternate state is rule-defined rather than represented by a separate candidate Species row; no mechanical override is guessed.
 - `giratina` (defer) — Classification is not safe for direct forms[] materialization.
 - `hoopa` (defer) — Classification is not safe for direct forms[] materialization.
 - `kyurem` (defer) — Classification is not safe for direct forms[] materialization.
