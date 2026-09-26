@@ -1,0 +1,73 @@
+{
+  "schema_version": 1,
+  "scope": "Targeted third supplied-source pass over the ten families still classified as defer. This artifact records what the PTU material establishes and, equally importantly, which switching semantics were not found.",
+  "policy": "No main-series assumptions. A family remains deferred unless a supplied PTU source establishes the missing activation/switching/duration semantics.",
+  "result": {
+    "families_reviewed": 10,
+    "reclassified": 0,
+    "still_deferred": 10
+  },
+  "families": [
+    {
+      "family": "deoxys",
+      "status": "defer",
+      "source_evidence": "Gen 8ish PokeDex contains separately parameterized Normal, Attack, Defense, and Speed Forme records carrying Forme Change and Multiform.",
+      "missing_semantics": "No supplied rule defining how or when Deoxys changes among those Formes, or how long a selected Forme lasts, was found in the targeted source pass."
+    },
+    {
+      "family": "giratina",
+      "status": "defer",
+      "source_evidence": "Gen 8ish PokeDex contains Altered and Origin Forme records with Forme Change / Origin Forme capabilities and distinct parameters.",
+      "missing_semantics": "No supplied PTU rule establishing the requirement or transition into/out of Origin Forme was found."
+    },
+    {
+      "family": "hoopa",
+      "status": "defer",
+      "source_evidence": "Gen 8ish PokeDex contains Confined and Unbound records, Forme Change / Confined capability references, distinct Types/Stats/Abilities, and source-linked Move replacements.",
+      "missing_semantics": "No supplied PTU rule establishing the activation, release condition, or duration of Confined/Unbound switching was found."
+    },
+    {
+      "family": "kyurem",
+      "status": "defer",
+      "source_evidence": "Gen 8ish PokeDex contains Normal, Black Fusion, and White Fusion records with Dragon Fusion / Forme Change signals and distinct mechanics.",
+      "missing_semantics": "No supplied definition of Dragon Fusion or source-backed transition/termination rule for the fusion states was found."
+    },
+    {
+      "family": "landorus",
+      "status": "defer",
+      "source_evidence": "Gen 8ish PokeDex contains Incarnate and Therian Forme records with Forme Change / Therian Forme signals and distinct parameters.",
+      "missing_semantics": "No supplied PTU switching rule for Incarnate/Therian states was found."
+    },
+    {
+      "family": "oricorio",
+      "status": "defer",
+      "source_evidence": "Gen 8ish PokeDex defines Oricorio as Special / Flying 'see Nectar Dancer' and lists Forme Change and Nectar Dancer capabilities.",
+      "missing_semantics": "No supplied definition of Nectar Dancer was found that establishes the four style Types or a source-backed switching action/requirement."
+    },
+    {
+      "family": "rotom",
+      "status": "defer",
+      "source_evidence": "Gen 8ish PokeDex explicitly parameterizes Normal plus five Appliance Forms, including Type, Size, Capabilities, Skills and Move-list changes. February 2016 Poltergeist additionally maps Standard/Heat/Wash/Frost/Fan/Mow to their source Abilities and level-40 Moves.",
+      "missing_semantics": "The supplied material establishes the effects of each Form but the targeted pass did not find the action, requirement, or duration for changing appliances."
+    },
+    {
+      "family": "shaymin",
+      "status": "defer",
+      "source_evidence": "Gen 8ish PokeDex contains separately parameterized Land and Sky Forme records with Forme Change / Sky Forme signals.",
+      "missing_semantics": "No supplied PTU rule defining the requirement, action, or duration for entering/leaving Sky Forme was found."
+    },
+    {
+      "family": "thundurus",
+      "status": "defer",
+      "source_evidence": "Gen 8ish PokeDex contains Incarnate and Therian Forme records with Forme Change / Therian Forme signals and distinct parameters.",
+      "missing_semantics": "No supplied PTU switching rule for Incarnate/Therian states was found."
+    },
+    {
+      "family": "tornadus",
+      "status": "defer",
+      "source_evidence": "Gen 8ish PokeDex contains Incarnate and Therian Forme records with Forme Change / Therian Forme signals and distinct parameters.",
+      "missing_semantics": "No supplied PTU switching rule for Incarnate/Therian states was found."
+    }
+  ],
+  "modeling_consequence": "All ten families remain excluded from automatic Stage B forms[] materialization. Their source-backed parameter blocks may be inventoried for future builders, but no requirement, item gate, duration, or transition is synthesized."
+}
