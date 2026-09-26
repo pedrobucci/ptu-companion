@@ -20,11 +20,11 @@ KNOWN = {
     'aegislash': ('transformation', 'activeFormId', 'source_explicit', 'Stance Change defines Shield/Sword switching and stat swaps.'),
     'arceus': ('runtime_state', 'runtime_resolver', 'source_explicit', 'Multitype changes Elemental Type directly; no separate Species record is needed.'),
     'basculin': ('permanent', 'baseFormId', 'source_explicit_variant', 'The supplied Species entry embeds Red/Blue Ability variants.'),
-    'burmy': ('persistent_form', 'baseFormId', 'source_explicit', 'Quick Cloak creates Plant/Sandy/Trash cloaks; the cloak Typing becomes permanent on evolution to Wormadam.'),
+    'burmy': ('persistent_form', 'baseFormId', 'source_explicit', 'Quick Cloak creates Plant/Sandy/Trash cloaks with source-defined secondary Types; the cloak Typing becomes permanent on evolution to Wormadam.'),
     'castform': ('runtime_state', 'runtime_resolver', 'source_explicit', 'Forecast changes Type according to current weather.'),
     'cramorant': ('false_positive', 'none', 'source_explicit_non_form', 'The supplied Gulp Missile rule is a reaction effect and does not define a PTU Form state.'),
     'darmanitan': ('mixed', 'baseFormId+activeFormId', 'source_explicit', 'Standard is the base state; Zen Mode is an active transformation. Galarian Zen Snowed uses its own source action/duration.'),
-    'deerling': ('persistent_form', 'baseFormId', 'source_explicit', 'Seasonal defines four source-backed seasonal states and a change action.'),
+    'deerling': ('runtime_state', 'runtime_resolver', 'source_explicit', 'Seasonal is Static and grants an Ability from the current season; the supplied rule does not define a persistent selectable Form or change action.'),
     'eiscue': ('transformation', 'activeFormId', 'source_explicit', 'Ice Face/Noice Face is controlled by Temporary HP from Ice Face.'),
     'furfrou': ('persistent_form', 'baseFormId', 'source_explicit', 'Fabulous Trim defines persistent hairstyle states changed at a hair parlor.'),
     'gourgeist': ('permanent', 'baseFormId', 'source_explicit_variant', 'The supplied entry embeds four size-specific Base Stat sets.'),
@@ -40,7 +40,7 @@ KNOWN = {
     'nidoran-m': ('false_positive', 'none', 'distinct_species', 'Nidoran Male is already a distinct Species record, not a Form of Nidoran Female.'),
     'oricorio': ('defer', 'none', 'source_insufficient', 'The Species references Nectar Dancer/Forme Change, but the switching rule was not found in the audited supplied sources.'),
     'pumpkaboo': ('permanent', 'baseFormId', 'source_explicit_variant', 'The supplied entry embeds four size-specific Base Stat sets.'),
-    'sawsbuck': ('persistent_form', 'baseFormId', 'source_explicit', 'Seasonal defines four source-backed seasonal states and a change action.'),
+    'sawsbuck': ('runtime_state', 'runtime_resolver', 'source_explicit', 'Seasonal is Static and grants an Ability from the current season; the supplied rule does not define a persistent selectable Form or change action.'),
     'silvally': ('runtime_state', 'runtime_resolver', 'source_explicit', 'RKS System changes Type to the held Memory Disc Type.'),
     'solosis': ('false_positive', 'none', 'no_independent_form_signal', 'The hardened audit found no independent Form signal beyond the first heuristic census.'),
     'wishiwashi': ('transformation', 'activeFormId', 'source_explicit', 'Schooling defines Solo/Schooling states with HP/Temporary HP rules.'),
@@ -157,7 +157,7 @@ def main() -> None:
     for family in ('wishiwashi', 'minior', 'eiscue', 'meloetta'):
         if family in family_lookup and family_lookup[family]['classification'] != 'transformation':
             raise SystemExit(f'{family} must be a source-backed transformation')
-    for family in ('silvally', 'morpeko', 'arceus', 'castform'):
+    for family in ('silvally', 'morpeko', 'arceus', 'castform', 'deerling', 'sawsbuck'):
         if family in family_lookup and family_lookup[family]['classification'] != 'runtime_state':
             raise SystemExit(f'{family} must be a source-backed runtime state')
     expected_deferred = {'deoxys', 'giratina', 'hoopa', 'kyurem', 'landorus', 'oricorio', 'rotom', 'shaymin', 'thundurus', 'tornadus'}
@@ -165,6 +165,8 @@ def main() -> None:
         raise SystemExit(f'Deferred family set changed unexpectedly: {sorted(deferred)}')
     if counts.get('defer', 0) != 10 or counts.get('false_positive', 0) != 5:
         raise SystemExit(f'Expected 10 deferred and 5 false-positive families, got {counts.get("defer", 0)} / {counts.get("false_positive", 0)}')
+    if counts.get('persistent_form', 0) != 2 or counts.get('runtime_state', 0) != 6:
+        raise SystemExit(f'Expected 2 persistent-form and 6 runtime-state families after Seasonal source correction, got {counts.get("persistent_form", 0)} / {counts.get("runtime_state", 0)}')
 
     payload = {
         'schema_version': 1,
