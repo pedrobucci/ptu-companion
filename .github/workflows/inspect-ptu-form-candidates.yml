@@ -12,8 +12,11 @@ on:
       - 'PTU_Companion_Windows_Source/scripts/repair_ptu_forms_inventory.py'
       - 'PTU_Companion_Windows_Source/scripts/audit_ptu_form_discovery.py'
       - 'PTU_Companion_Windows_Source/scripts/audit_ptu_form_mechanics.py'
+      - 'PTU_Companion_Windows_Source/scripts/classify_ptu_form_families.py'
       - 'PTU_Companion_Windows_Source/seed/content-packs/ptu-gen8ish-pokedex.ptucp'
       - 'PTU_Companion_Windows_Source/seed/content-packs/ptu-core-1.05.ptucp'
+      - 'docs/PTU_FORM_SUPPLEMENTAL_RULES.md'
+      - 'docs/data/PTU_FORM_SUPPLEMENTAL_RULES.json'
 
 permissions:
   contents: write
@@ -39,6 +42,8 @@ jobs:
         run: python PTU_Companion_Windows_Source/scripts/audit_ptu_form_discovery.py
       - name: Audit form-driving mechanics
         run: python PTU_Companion_Windows_Source/scripts/audit_ptu_form_mechanics.py
+      - name: Classify form families
+        run: python PTU_Companion_Windows_Source/scripts/classify_ptu_form_families.py
       - name: Check generated inventory
         run: |
           test -s docs/PTU_FORMS_INVENTORY.md
@@ -47,24 +52,36 @@ jobs:
           test -s docs/data/PTU_FORMS_DISCOVERY.json
           test -s docs/PTU_FORM_MECHANICS_AUDIT.md
           test -s docs/data/PTU_FORM_MECHANICS_AUDIT.json
+          test -s docs/PTU_FORMS_CLASSIFICATION.md
+          test -s docs/data/PTU_FORMS_CLASSIFICATION.json
+          test -s docs/PTU_FORM_SUPPLEMENTAL_RULES.md
+          test -s docs/data/PTU_FORM_SUPPLEMENTAL_RULES.json
           grep -q '48 Mega forms across 46 Species' docs/PTU_FORMS_INVENTORY.md
+          grep -q '2 Ultra Burst source blocks' docs/PTU_FORMS_INVENTORY.md
+          grep -q 'NECROZMA Dusk Mane.*Neuroforce.*Illuminate.*Glow' docs/PTU_FORMS_INVENTORY.md
+          grep -q 'NECROZMA Dawn Wings.*Neuroforce.*Illuminate.*Glow' docs/PTU_FORMS_INVENTORY.md
           grep -q 'Groudon' docs/PTU_FORMS_INVENTORY.md
           grep -q 'Kyogre' docs/PTU_FORMS_INVENTORY.md
           grep -q 'Swampert.*Swift Swim.*Atk +4' docs/PTU_FORMS_INVENTORY.md
           grep -q 'Beedrill.*Adaptability.*Atk +6' docs/PTU_FORMS_INVENTORY.md
           grep -q 'Metagross.*Tough Claws.*Atk +1' docs/PTU_FORMS_INVENTORY.md
+          grep -q 'Pinsir.*Aerilate.*Gains Sky 6' docs/PTU_FORMS_INVENTORY.md
           grep -q 'New candidates beyond the first inventory' docs/PTU_FORMS_DISCOVERY.md
           grep -q 'Form-driving Mechanics Audit' docs/PTU_FORM_MECHANICS_AUDIT.md
+          grep -q 'Synthetic transform inventory:.*48 Mega.*2 Primal.*2 Ultra Burst' docs/PTU_FORMS_CLASSIFICATION.md
+          grep -q 'cramorant.*false_positive' docs/PTU_FORMS_CLASSIFICATION.md
+          grep -q 'wishiwashi.*transformation' docs/PTU_FORMS_CLASSIFICATION.md
+          grep -q 'silvally.*runtime_state' docs/PTU_FORMS_CLASSIFICATION.md
           git diff --check
       - name: Commit generated inventory
         shell: bash
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add docs/PTU_FORMS_INVENTORY.md docs/data/PTU_FORMS_INVENTORY.json docs/PTU_FORMS_DISCOVERY.md docs/data/PTU_FORMS_DISCOVERY.json docs/PTU_FORM_MECHANICS_AUDIT.md docs/data/PTU_FORM_MECHANICS_AUDIT.json
+          git add docs/PTU_FORMS_INVENTORY.md docs/data/PTU_FORMS_INVENTORY.json docs/PTU_FORMS_DISCOVERY.md docs/data/PTU_FORMS_DISCOVERY.json docs/PTU_FORM_MECHANICS_AUDIT.md docs/data/PTU_FORM_MECHANICS_AUDIT.json docs/PTU_FORMS_CLASSIFICATION.md docs/data/PTU_FORMS_CLASSIFICATION.json
           if git diff --cached --quiet; then
             echo 'Inventory already current.'
           else
-            git commit -m 'docs(content): refresh PTU forms discovery [skip ci]'
+            git commit -m 'docs(content): refresh PTU forms classification [skip ci]'
             git push origin HEAD:"${GITHUB_REF_NAME}"
           fi
