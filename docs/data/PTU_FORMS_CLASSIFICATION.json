@@ -9,8 +9,8 @@
       "false_positive": 5,
       "mixed": 5,
       "permanent": 34,
-      "persistent_form": 4,
-      "runtime_state": 4,
+      "persistent_form": 2,
+      "runtime_state": 6,
       "transformation": 5
     },
     "deferred_families": [
@@ -245,7 +245,7 @@
       "signals": [
         "form_ability:quick-cloak"
       ],
-      "reason": "Quick Cloak creates Plant/Sandy/Trash cloaks; the cloak Typing becomes permanent on evolution to Wormadam.",
+      "reason": "Quick Cloak creates Plant/Sandy/Trash cloaks with source-defined secondary Types; the cloak Typing becomes permanent on evolution to Wormadam.",
       "preserve_legacy_ids": true
     },
     {
@@ -655,8 +655,8 @@
     },
     {
       "family": "deerling",
-      "classification": "persistent_form",
-      "target_layer": "baseFormId",
+      "classification": "runtime_state",
+      "target_layer": "runtime_resolver",
       "evidence_status": "source_explicit",
       "records": [
         {
@@ -701,8 +701,8 @@
       "signals": [
         "form_ability:seasonal"
       ],
-      "reason": "Seasonal defines four source-backed seasonal states and a change action.",
-      "preserve_legacy_ids": true
+      "reason": "Seasonal is Static and grants an Ability from the current season; the supplied rule does not define a persistent selectable Form or change action.",
+      "preserve_legacy_ids": false
     },
     {
       "family": "deoxys",
@@ -3976,8 +3976,8 @@
     },
     {
       "family": "sawsbuck",
-      "classification": "persistent_form",
-      "target_layer": "baseFormId",
+      "classification": "runtime_state",
+      "target_layer": "runtime_resolver",
       "evidence_status": "source_explicit",
       "records": [
         {
@@ -4022,8 +4022,8 @@
       "signals": [
         "form_ability:seasonal"
       ],
-      "reason": "Seasonal defines four source-backed seasonal states and a change action.",
-      "preserve_legacy_ids": true
+      "reason": "Seasonal is Static and grants an Ability from the current season; the supplied rule does not define a persistent selectable Form or change action.",
+      "preserve_legacy_ids": false
     },
     {
       "family": "shaymin",

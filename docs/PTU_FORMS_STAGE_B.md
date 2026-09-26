@@ -82,7 +82,7 @@ Generated deterministically from the versioned PTU classification/inventory. Thi
 - `castform` (runtime_state) — Classification is not safe for direct forms[] materialization.
 - `cramorant` (false_positive) — Classification is not safe for direct forms[] materialization.
 - `darmanitan` (mixed) — Classification is not safe for direct forms[] materialization.
-- `deerling` (persistent_form) — The family is source-classified, but its alternate state is rule-defined rather than represented by a separate candidate Species row; no mechanical override is guessed.
+- `deerling` (runtime_state) — Classification is not safe for direct forms[] materialization.
 - `deoxys` (defer) — Classification is not safe for direct forms[] materialization.
 - `furfrou` (persistent_form) — The family is source-classified, but its alternate state is rule-defined rather than represented by a separate candidate Species row; no mechanical override is guessed.
 - `giratina` (defer) — Classification is not safe for direct forms[] materialization.
@@ -96,7 +96,7 @@ Generated deterministically from the versioned PTU classification/inventory. Thi
 - `nidoran-m` (false_positive) — Classification is not safe for direct forms[] materialization.
 - `oricorio` (defer) — Classification is not safe for direct forms[] materialization.
 - `rotom` (defer) — Classification is not safe for direct forms[] materialization.
-- `sawsbuck` (persistent_form) — The family is source-classified, but its alternate state is rule-defined rather than represented by a separate candidate Species row; no mechanical override is guessed.
+- `sawsbuck` (runtime_state) — Classification is not safe for direct forms[] materialization.
 - `shaymin` (defer) — Classification is not safe for direct forms[] materialization.
 - `silvally` (runtime_state) — Classification is not safe for direct forms[] materialization.
 - `solosis` (false_positive) — Classification is not safe for direct forms[] materialization.

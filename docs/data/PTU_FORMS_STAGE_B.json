@@ -4674,8 +4674,8 @@
     },
     {
       "family": "deerling",
-      "classification": "persistent_form",
-      "reason": "The family is source-classified, but its alternate state is rule-defined rather than represented by a separate candidate Species row; no mechanical override is guessed."
+      "classification": "runtime_state",
+      "reason": "Classification is not safe for direct forms[] materialization."
     },
     {
       "family": "deoxys",
@@ -4744,8 +4744,8 @@
     },
     {
       "family": "sawsbuck",
-      "classification": "persistent_form",
-      "reason": "The family is source-classified, but its alternate state is rule-defined rather than represented by a separate candidate Species row; no mechanical override is guessed."
+      "classification": "runtime_state",
+      "reason": "Classification is not safe for direct forms[] materialization."
     },
     {
       "family": "shaymin",

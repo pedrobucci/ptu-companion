@@ -7,9 +7,9 @@ This is the conversion gate between source discovery and default `.ptucp` mutati
 - Candidate records classified: **104**
 - Candidate families classified: **67**
 - Permanent/base families: **34**
-- Persistent-form families: **4**
+- Persistent-form families: **2**
 - Transformation families: **5**
-- Runtime-state families: **4**
+- Runtime-state families: **6**
 - Mixed base + transformation families: **5**
 - Deferred/source-insufficient families: **10**
 - False-positive families: **5**
@@ -22,13 +22,13 @@ This is the conversion gate between source discovery and default `.ptucp` mutati
 | aegislash | transformation | `activeFormId` | source_explicit | 1 | Stance Change defines Shield/Sword switching and stat swaps. |
 | arceus | runtime_state | `runtime_resolver` | source_explicit | 1 | Multitype changes Elemental Type directly; no separate Species record is needed. |
 | basculin | permanent | `baseFormId` | source_explicit_variant | 1 | The supplied Species entry embeds Red/Blue Ability variants. |
-| burmy | persistent_form | `baseFormId` | source_explicit | 1 | Quick Cloak creates Plant/Sandy/Trash cloaks; the cloak Typing becomes permanent on evolution to Wormadam. |
+| burmy | persistent_form | `baseFormId` | source_explicit | 1 | Quick Cloak creates Plant/Sandy/Trash cloaks with source-defined secondary Types; the cloak Typing becomes permanent on evolution to Wormadam. |
 | castform | runtime_state | `runtime_resolver` | source_explicit | 1 | Forecast changes Type according to current weather. |
 | corsola | permanent | `baseFormId` | source_explicit_variant | 1 | The supplied Pokédex contains a separately parameterized regional variant. Preserve legacy Species IDs as aliases/import compatibility while moving selection to the generic base Form layer. |
 | cramorant | false_positive | `none` | source_explicit_non_form | 1 | The supplied Gulp Missile rule is a reaction effect and does not define a PTU Form state. |
 | darmanitan | mixed | `baseFormId+activeFormId` | source_explicit | 4 | Standard is the base state; Zen Mode is an active transformation. Galarian Zen Snowed uses its own source action/duration. |
 | darumaka | permanent | `baseFormId` | source_explicit_variant | 1 | The supplied Pokédex contains a separately parameterized regional variant. Preserve legacy Species IDs as aliases/import compatibility while moving selection to the generic base Form layer. |
-| deerling | persistent_form | `baseFormId` | source_explicit | 1 | Seasonal defines four source-backed seasonal states and a change action. |
+| deerling | runtime_state | `runtime_resolver` | source_explicit | 1 | Seasonal is Static and grants an Ability from the current season; the supplied rule does not define a persistent selectable Form or change action. |
 | deoxys | defer | `none` | source_insufficient | 4 | Forme Change/Multiform records exist, but the switching rule/duration was not found. |
 | diglett | permanent | `baseFormId` | source_explicit_variant | 1 | The supplied Pokédex contains a separately parameterized regional variant. Preserve legacy Species IDs as aliases/import compatibility while moving selection to the generic base Form layer. |
 | dugtrio | permanent | `baseFormId` | source_explicit_variant | 1 | The supplied Pokédex contains a separately parameterized regional variant. Preserve legacy Species IDs as aliases/import compatibility while moving selection to the generic base Form layer. |
@@ -70,7 +70,7 @@ This is the conversion gate between source discovery and default `.ptucp` mutati
 | rotom | defer | `none` | source_insufficient | 7 | Normal/appliance records exist and are mechanically distinct, but the Forme Change requirement was not found. |
 | sandshrew | permanent | `baseFormId` | source_explicit_variant | 1 | The supplied Pokédex contains a separately parameterized regional variant. Preserve legacy Species IDs as aliases/import compatibility while moving selection to the generic base Form layer. |
 | sandslash | permanent | `baseFormId` | source_explicit_variant | 1 | The supplied Pokédex contains a separately parameterized regional variant. Preserve legacy Species IDs as aliases/import compatibility while moving selection to the generic base Form layer. |
-| sawsbuck | persistent_form | `baseFormId` | source_explicit | 1 | Seasonal defines four source-backed seasonal states and a change action. |
+| sawsbuck | runtime_state | `runtime_resolver` | source_explicit | 1 | Seasonal is Static and grants an Ability from the current season; the supplied rule does not define a persistent selectable Form or change action. |
 | shaymin | defer | `none` | source_insufficient | 2 | Land/Sky records exist, but the Sky Forme switching requirement/duration was not found. |
 | silvally | runtime_state | `runtime_resolver` | source_explicit | 1 | RKS System changes Type to the held Memory Disc Type. |
 | solosis | false_positive | `none` | no_independent_form_signal | 1 | The hardened audit found no independent Form signal beyond the first heuristic census. |
