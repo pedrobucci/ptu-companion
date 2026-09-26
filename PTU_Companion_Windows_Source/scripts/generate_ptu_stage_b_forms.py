@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 
+import copy
 import json
 import re
+import zipfile
 from collections import defaultdict
 from pathlib import Path
 
@@ -11,9 +13,11 @@ REPO = ROOT.parent
 CLASSIFICATION = REPO / 'docs' / 'data' / 'PTU_FORMS_CLASSIFICATION.json'
 INVENTORY = REPO / 'docs' / 'data' / 'PTU_FORMS_INVENTORY.json'
 ASSET_AUDIT = REPO / 'docs' / 'data' / 'PTU_FORM_ASSET_AUDIT.json'
+POKEDEX_PACK = ROOT / 'seed' / 'content-packs' / 'ptu-gen8ish-pokedex.ptucp'
 OUT_JSON = REPO / 'docs' / 'data' / 'PTU_FORMS_STAGE_B.json'
 OUT_MD = REPO / 'docs' / 'PTU_FORMS_STAGE_B.md'
 DIRECT_CLASSIFICATIONS = {'permanent', 'persistent_form', 'transformation'}
+RULE_DEFINED_BUILDERS = {'aegislash', 'basculin', 'burmy', 'furfrou'}
 
 
 def slug(value: str) -> str:
@@ -35,6 +39,49 @@ def manual_requirement(key: str) -> dict:
     return {'all': [{'kind': 'manual', 'value': slug(key)}]}
 
 
+def load_species_rows() -> dict[str, dict]:
+    with zipfile.ZipFile(POKEDEX_PACK) as archive:
+        species_path = next(name for name in archive.namelist() if name.endswith('species.ndjson'))
+        rows = [json.loads(line) for line in archive.read(species_path).decode('utf-8').splitlines() if line.strip()]
+    return {
+        slug(row.get('logical_id') or row.get('id')): row
+        for row in rows
+        if row.get('logical_id') or row.get('id')
+    }
+
+
+def source_row(rows: dict[str, dict], ident: str) -> dict:
+    row = rows.get(slug(ident))
+    if not row:
+        raise SystemExit(f'Source Species row missing for rule-defined builder: {ident}')
+    return row
+
+
+def ability_label(slot: object) -> str:
+    if isinstance(slot, dict):
+        return str(slot.get('name') or slot.get('ability_id') or '')
+    return str(slot or '')
+
+
+def replace_ability_slot(slots: list, predicate, new_name: str) -> list:
+    output = copy.deepcopy(slots)
+    matches = []
+    for index, slot in enumerate(output):
+        label = slug(ability_label(slot))
+        if predicate(label):
+            matches.append(index)
+    if len(matches) != 1:
+        raise SystemExit(f'Expected one dynamic Ability slot for {new_name}, found {len(matches)} in {[ability_label(x) for x in slots]}')
+    index = matches[0]
+    slot = output[index]
+    if isinstance(slot, dict):
+        slot['name'] = new_name
+        slot['ability_id'] = slug(new_name)
+    else:
+        output[index] = {'name': new_name, 'ability_id': slug(new_name)}
+    return output
+
+
 def record_form(family: dict, record: dict, sort_order: int) -> dict:
     classification = family['classification']
     mode = 'transformation' if classification == 'transformation' else 'permanent'
@@ -51,8 +98,8 @@ def record_form(family: dict, record: dict, sort_order: int) -> dict:
         'sortOrder': sort_order,
     }
     if mode == 'transformation':
-        # Stage B's manual requirement is used deliberately when the PTU source proves
-        # the transformation but cannot be represented by a stable generic trigger yet.
+        # Stage B's generic requirement tree cannot encode event-driven PTU triggers yet.
+        # A manual condition is therefore a review gate, never a fabricated rule.
         form['requirements'] = manual_requirement(f'{family["family"]}:{form["id"]}')
     return form
 
@@ -61,6 +108,8 @@ def candidate_catalog(classification: dict) -> tuple[list[dict], list[dict]]:
     emitted: list[dict] = []
     omitted: list[dict] = []
     for family in classification.get('families', []):
+        if family['family'] in RULE_DEFINED_BUILDERS:
+            continue
         kind = family.get('classification')
         if kind not in DIRECT_CLASSIFICATIONS:
             omitted.append({
@@ -86,6 +135,7 @@ def candidate_catalog(classification: dict) -> tuple[list[dict], list[dict]]:
             'family': family['family'],
             'classification': kind,
             'target_layer': family['target_layer'],
+            'builder': 'parameterized_species_record',
             'forms': forms,
             'source_snapshots': [
                 {
@@ -96,9 +146,178 @@ def candidate_catalog(classification: dict) -> tuple[list[dict], list[dict]]:
                 }
                 for row in alternate_records
             ],
-            'note': 'forms[] contains only Stage B-compatible type/base-stat overrides. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available.'
+            'note': 'forms[] contains Stage B-compatible type/base-stat overrides from separately parameterized Species rows. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available.'
         })
     return emitted, omitted
+
+
+def aegislash_builder(family: dict, rows: dict[str, dict]) -> dict:
+    row = source_row(rows, 'aegislash')
+    stats = copy.deepcopy(row.get('base_stats') or {})
+    required = {'hp', 'attack', 'defense', 'special_attack', 'special_defense', 'speed'}
+    if not required <= set(stats):
+        raise SystemExit(f'Aegislash source stats incomplete: {stats}')
+    sword = copy.deepcopy(stats)
+    sword['attack'], sword['defense'] = stats['defense'], stats['attack']
+    sword['special_attack'], sword['special_defense'] = stats['special_defense'], stats['special_attack']
+    return {
+        'family': 'aegislash',
+        'classification': family['classification'],
+        'target_layer': family['target_layer'],
+        'builder': 'rule_defined_stance_change',
+        'forms': [{
+            'id': 'sword-stance',
+            'name': 'Sword Stance',
+            'mode': 'transformation',
+            'requirements': manual_requirement('aegislash:sword-stance'),
+            'overrides': {'baseStats': {'replace': sword}},
+            'sortOrder': 10,
+        }],
+        'source_mechanics': {
+            'source': 'Pokemon Tabletop United 1.05 Core p.331',
+            'base_state': 'Shield Stance',
+            'enter': 'Damaging attack, or voluntary Full Action stance change.',
+            'exit': "King's Shield, Protect, a Status Move that raises Defense Combat Stages, a Blessing, or voluntary Full Action stance change.",
+            'effect': 'Swap Attack with Defense and Special Attack with Special Defense without changing Combat Stages.'
+        },
+        'note': 'Shield Stance remains the implicit base state. The manual requirement is only a Stage B review gate because the current generic requirement tree does not encode move-event transitions.'
+    }
+
+
+def burmy_builder(family: dict, rows: dict[str, dict]) -> dict:
+    row = source_row(rows, 'burmy')
+    base_types = list(row.get('types') or [])
+    if not base_types:
+        raise SystemExit('Burmy source Type is missing')
+    forms = []
+    for order, (ident, name, secondary, material) in enumerate((
+        ('plant-cloak', 'Plant Cloak', 'Grass', 'leaves and twigs'),
+        ('sandy-cloak', 'Sandy Cloak', 'Ground', 'sand and rocks'),
+        ('trash-cloak', 'Trash Cloak', 'Steel', 'trash or scrap'),
+    ), start=1):
+        forms.append({
+            'id': ident,
+            'name': name,
+            'mode': 'permanent',
+            'overrides': {'types': {'replace': [*base_types, secondary]}},
+            'sortOrder': order * 10,
+        })
+    return {
+        'family': 'burmy',
+        'classification': family['classification'],
+        'target_layer': family['target_layer'],
+        'builder': 'rule_defined_quick_cloak',
+        'forms': forms,
+        'source_mechanics': {
+            'source': 'Pokemon Tabletop United 1.05 Core p.327',
+            'action': 'At-Will Standard Action',
+            'materials': {
+                'plant-cloak': 'leaves and twigs',
+                'sandy-cloak': 'sand and rocks',
+                'trash-cloak': 'trash or scrap'
+            },
+            'removal': 'Cloak is destroyed by Super-Effective damage or replaced when Burmy makes a new Cloak.',
+            'evolution': 'The cloak secondary Type becomes permanent upon evolution into Wormadam.'
+        },
+        'note': 'The three secondary Types are copied directly from Quick Cloak. No trigger, duration, or additional stat effect is inferred.'
+    }
+
+
+def furfrou_builder(family: dict, rows: dict[str, dict]) -> dict:
+    row = source_row(rows, 'furfrou')
+    slots = row.get('ability_slots') or row.get('abilities') or []
+    if not slots:
+        raise SystemExit('Furfrou source Ability slots are missing')
+    mapping = (
+        ('star-trim', 'Star Trim', 'Celebrate'),
+        ('diamond-trim', 'Diamond Trim', 'Defiant'),
+        ('heart-trim', 'Heart Trim', 'Cute Tears'),
+        ('pharaoh-trim', 'Pharaoh Trim', 'Sand Veil'),
+        ('kabuki-trim', 'Kabuki Trim', 'Inner Focus'),
+        ('la-reine-trim', 'La Reine Trim', 'Intimidate'),
+        ('matron-trim', 'Matron Trim', 'Friend Guard'),
+        ('dandy-trim', 'Dandy Trim', 'Moxie'),
+        ('debutante-trim', 'Debutante Trim', 'Confidence'),
+    )
+    forms = []
+    for order, (ident, name, ability_name) in enumerate(mapping, start=1):
+        abilities = replace_ability_slot(slots, lambda label: label == 'fabulous-trim', ability_name)
+        forms.append({
+            'id': ident,
+            'name': name,
+            'mode': 'permanent',
+            'overrides': {'abilities': {'replace': abilities}},
+            'sortOrder': order * 10,
+        })
+    return {
+        'family': 'furfrou',
+        'classification': family['classification'],
+        'target_layer': family['target_layer'],
+        'builder': 'rule_defined_fabulous_trim',
+        'forms': forms,
+        'source_mechanics': {
+            'source': 'Pokemon Tabletop United 1.05 Core p.317',
+            'action': 'Extended Action at an appropriate hair parlor',
+            'dynamic_slot': 'Fabulous Trim',
+            'ability_mapping': {name: ability for _, name, ability in mapping}
+        },
+        'note': 'The builder copies the entire source Ability-slot array and replaces only the Fabulous Trim slot, preserving its slot/category metadata and every unaffected Ability.'
+    }
+
+
+def basculin_builder(family: dict, rows: dict[str, dict]) -> dict:
+    row = source_row(rows, 'basculin')
+    slots = row.get('ability_slots') or row.get('abilities') or []
+    if not slots:
+        raise SystemExit('Basculin source Ability slots are missing')
+    predicate = lambda label: 'reckless' in label and 'rock-head' in label
+    forms = []
+    for order, (ident, name, ability_name) in enumerate((
+        ('red', 'Red', 'Reckless'),
+        ('blue', 'Blue', 'Rock Head'),
+    ), start=1):
+        abilities = replace_ability_slot(slots, predicate, ability_name)
+        forms.append({
+            'id': ident,
+            'name': name,
+            'mode': 'permanent',
+            'overrides': {'abilities': {'replace': abilities}},
+            'sortOrder': order * 10,
+        })
+    return {
+        'family': 'basculin',
+        'classification': family['classification'],
+        'target_layer': family['target_layer'],
+        'builder': 'embedded_color_ability_variant',
+        'forms': forms,
+        'source_mechanics': {
+            'source': 'Gen 8ish PokeDex p.764',
+            'dynamic_slot': 'Advanced Ability 2',
+            'ability_mapping': {'Red': 'Reckless', 'Blue': 'Rock Head'},
+            'switching_rule': None,
+        },
+        'note': 'The builder copies the source Ability-slot array and resolves only the explicitly parameterized Red/Blue Advanced Ability 2. No runtime switching rule is added.'
+    }
+
+
+def rule_defined_catalog(classification: dict, rows: dict[str, dict]) -> list[dict]:
+    families = {entry['family']: entry for entry in classification.get('families', [])}
+    expected = {
+        'aegislash': 'transformation',
+        'basculin': 'permanent',
+        'burmy': 'persistent_form',
+        'furfrou': 'persistent_form',
+    }
+    for family, kind in expected.items():
+        actual = families.get(family, {}).get('classification')
+        if actual != kind:
+            raise SystemExit(f'Rule-defined builder classification drift for {family}: {actual} != {kind}')
+    return [
+        aegislash_builder(families['aegislash'], rows),
+        basculin_builder(families['basculin'], rows),
+        burmy_builder(families['burmy'], rows),
+        furfrou_builder(families['furfrou'], rows),
+    ]
 
 
 def synthetic_form(row: dict, family: str, form_id: str, form_name: str, sort_order: int) -> dict:
@@ -159,12 +378,12 @@ def synthetic_catalog(inventory: dict) -> list[dict]:
         })
 
     output: list[dict] = []
-    for (species_id, family), rows in sorted(by_species.items()):
+    for (species_id, family), entries in sorted(by_species.items()):
         output.append({
             'species_id': species_id,
             'source_family': family,
-            'forms': [row['form'] for row in rows],
-            'source_effects': [row['source_effects'] for row in rows],
+            'forms': [entry['form'] for entry in entries],
+            'source_effects': [entry['source_effects'] for entry in entries],
             'note': 'Added Ability/extra effects are preserved as source effects but are not guessed into ability-slot structures. The generated forms[] stays valid for Stage B while the mapping remains explicit and reviewable.'
         })
     return output
@@ -174,13 +393,18 @@ def main() -> None:
     classification = json.loads(CLASSIFICATION.read_text(encoding='utf-8'))
     inventory = json.loads(INVENTORY.read_text(encoding='utf-8'))
     assets = json.loads(ASSET_AUDIT.read_text(encoding='utf-8'))
-    candidate_entries, omitted = candidate_catalog(classification)
+    species_rows = load_species_rows()
+    record_entries, omitted = candidate_catalog(classification)
+    builder_entries = rule_defined_catalog(classification, species_rows)
+    candidate_entries = sorted([*record_entries, *builder_entries], key=lambda row: row['family'])
     synthetic_entries = synthetic_catalog(inventory)
 
-    candidate_forms = sum(len(row['forms']) for row in candidate_entries)
+    record_forms = sum(len(row['forms']) for row in record_entries)
+    builder_forms = sum(len(row['forms']) for row in builder_entries)
+    candidate_forms = record_forms + builder_forms
     synthetic_forms = sum(len(row['forms']) for row in synthetic_entries)
     payload = {
-        'schema_version': 1,
+        'schema_version': 2,
         'stage_b_form_schema_version': 1,
         'applied_to_default_packs': False,
         'policy': {
@@ -193,7 +417,11 @@ def main() -> None:
         },
         'summary': {
             'candidate_family_entries': len(candidate_entries),
+            'record_backed_family_entries': len(record_entries),
+            'rule_defined_family_entries': len(builder_entries),
             'candidate_forms': candidate_forms,
+            'record_backed_forms': record_forms,
+            'rule_defined_forms': builder_forms,
             'omitted_or_deferred_family_entries': len(omitted),
             'synthetic_species_entries': len(synthetic_entries),
             'synthetic_forms': synthetic_forms,
@@ -214,7 +442,11 @@ def main() -> None:
         'Generated deterministically from the versioned PTU classification/inventory. This catalog is intentionally **not applied to the bundled/default packs** while source-insufficient families remain.', '',
         '## Summary', '',
         f'- Candidate-family form entries: **{len(candidate_entries)}**',
-        f'- Candidate-record Stage B forms emitted: **{candidate_forms}**',
+        f'- Record-backed family entries: **{len(record_entries)}**',
+        f'- Rule-defined family entries: **{len(builder_entries)}**',
+        f'- Candidate-record/derived Stage B forms emitted: **{candidate_forms}**',
+        f'- Record-backed forms: **{record_forms}**',
+        f'- Rule-defined forms: **{builder_forms}**',
         f'- Synthetic Stage B transforms emitted: **{synthetic_forms}**',
         f'- Mega transforms: **{len(inventory.get("mega_forms", []))}**',
         f'- Primal transforms: **{len(inventory.get("primal_forms", []))}**',
@@ -222,12 +454,16 @@ def main() -> None:
         f'- Families not directly materialized: **{len(omitted)}**', '',
         '## Safety gates', '',
         '- Every emitted `forms[]` entry uses Stage B mode `permanent` or `transformation`.',
-        '- Source-insufficient requirements use Stage B `manual` review gates instead of guessed items/conditions.',
+        '- Source-insufficient/event-driven requirements use Stage B `manual` review gates instead of guessed items/conditions.',
         '- No artwork URL is generated. Artwork remains governed by the separate asset audit and the existing Stage B fallback.',
-        '- Ability/capability source snapshots and synthetic added-Ability effects remain explicit metadata until they can be mapped losslessly to definition-layer objects.',
+        '- Rule-defined Ability builders clone the source Species Ability-slot array and replace only the explicitly dynamic slot.',
         '- No `.ptucp` file is written by this generator.', '',
-        '## Synthetic transformations', ''
+        '## Rule-defined builders', ''
     ]
+    for entry in sorted(builder_entries, key=lambda row: row['family']):
+        labels = ', '.join(form['name'] for form in entry['forms'])
+        lines.append(f'- `{entry["family"]}` / `{entry["builder"]}` — {labels}')
+    lines += ['', '## Synthetic transformations', '']
     for entry in synthetic_entries:
         labels = ', '.join(form['name'] for form in entry['forms'])
         lines.append(f'- `{entry["species_id"]}` / `{entry["source_family"]}` — {labels}')
