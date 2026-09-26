@@ -91,7 +91,9 @@ def parse_ultra_bursts():
         ability_match=re.match(r'^([^;]+?)(?:\s+Adv Ability 1 becomes\s+(.+?))?$',ability_section,flags=re.I)
         if not ability_match:
             raise SystemExit(f'Unable to parse Ultra Burst ability section for {ident}: {ability_section}')
-        ability=ability_match.group(1).strip()
+        # Packed raw_text can cross a page boundary and append Diet/Habitat metadata after
+        # Neuroforce. Apply the same adjacent-field cleanup used for Mega/Primal fields.
+        ability=clean_field(ability_match.group(1))
         remainder=(ability_match.group(2) or '').strip()
         extras=[]
         if remainder:
