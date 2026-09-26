@@ -5,8 +5,8 @@ Generated from the project’s supplied PTU data packs. This is an audit invento
 ## Source anchors
 
 - **PTU Core 1.05, p.206** defines Mega Evolution as a temporary physical transformation requiring a Pokémon-held species/form-specific Mega Stone and a Trainer-worn Mega Ring. It adds an Ability, may change Type, and changes Stats while preserving HP.
-- **Gen 8ish PokéDex pack** contains 956 parsed Species records and exactly **48 Mega forms across 46 Species**, plus **2 Primal Reversions**.
-- Charizard X/Y and Mewtwo X/Y remain distinct Mega Forms. No missing Stone IDs or artwork URLs are invented.
+- **Gen 8ish PokéDex pack** contains 956 parsed Species records and exactly **48 Mega forms across 46 Species**, plus **2 Primal Reversions** and **2 Ultra Burst source blocks**.
+- Charizard X/Y and Mewtwo X/Y remain distinct Mega Forms. No missing Stone IDs, Ultra Burst requirements, or artwork URLs are invented.
 
 ## Mega Forms
 
@@ -68,6 +68,15 @@ Generated from the project’s supplied PTU data packs. This is an audit invento
 | Groudon | Ground / Fire | Heat Mirage | — | Atk +3, Def +2, Sp.Atk +5 | 884 |
 | Kyogre | Unchanged | Wash Away | — | Atk +5, Sp.Atk +3, Sp.Def +2 | 883 |
 
+## Ultra Burst
+
+The supplied Pokédex contains two source-specific Ultra Burst blocks. The transformation data is complete, but the activation requirement remains source-insufficient in the audited project material and is therefore not invented.
+
+| Source Form | Type | Added Ability | Extra effects | Stat changes | Source page |
+|---|---|---|---|---|---:|
+| NECROZMA Dusk Mane | Psychic / Dragon | Neuroforce | Adv Ability 1 becomes Illuminate.; Gains Glow. | Atk +1, Def -3, Sp.Atk +6, Sp.Def -1, Speed +5 | 945 |
+| NECROZMA Dawn Wings | Psychic / Dragon | Neuroforce | Adv Ability 1 becomes Illuminate.; Gains Glow. | Atk +6, Def -1, Sp.Atk +1, Sp.Def -3, Speed +5 | 946 |
+
 ## Alternate-form candidate census
 
 - Records with `variant_of`: **5**
@@ -89,4 +98,4 @@ These candidates are the original first-pass census. The hardened discovery repo
 
 ## Conversion gate
 
-Before changing bundled/default `.ptucp` files: classify all alternate candidates family-by-family, audit local artwork mappings, generate deterministic Forms, and add completeness regressions for all 48 Mega Forms + 2 Primals.
+Before changing bundled/default `.ptucp` files: classify all alternate candidates family-by-family, audit local artwork mappings, generate deterministic Forms, and add completeness regressions for all 48 Mega Forms + 2 Primals + 2 Ultra Burst source blocks.

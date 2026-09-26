@@ -1,5 +1,5 @@
 {
-  "schema_version": 3,
+  "schema_version": 4,
   "sources": {
     "ptu_core": {
       "reference": "Pokemon Tabletop United 1.05 Core",
@@ -76,7 +76,8 @@
     },
     "species_with_normal_artwork_metadata": 0,
     "species_with_shiny_artwork_metadata": 0,
-    "mega_related_core_items": 3
+    "mega_related_core_items": 3,
+    "ultra_burst_forms": 2
   },
   "mega_forms": [
     {
@@ -75693,6 +75694,88 @@
     "Shiny is an individual presentation state. Missing dedicated Shiny artwork must not disable Shiny state.",
     "Alternate-form candidates are inventory data only; conversion to permanent vs transformation form requires family-by-family review.",
     "Swampert, Beedrill, and Metagross Mega stat blocks are restored from their supplied PDF pages because packed raw_text loses those lines at page boundaries.",
-    "Mega Pinsir source grants Sky 6 as a separate extra effect; it is not part of the Aerilate Ability name."
+    "Mega Pinsir source grants Sky 6 as a separate extra effect; it is not part of the Aerilate Ability name.",
+    "The Gen 8ish Pokédex defines two Ultra Burst blocks, from Necrozma Dusk Mane and Dawn Wings. Both become Psychic/Dragon with Neuroforce and Illuminate/Glow side effects; their stat deltas differ by source form.",
+    "No Ultra Burst activation item/condition is inferred until a supplied project source explicitly supports it."
+  ],
+  "ultra_burst_forms": [
+    {
+      "kind": "ultra_burst",
+      "label": "Ultra Burst",
+      "source_form_id": "necrozma-dusk-mane",
+      "type_change": "Psychic / Dragon",
+      "ability_added": "Neuroforce",
+      "extra_effects": [
+        "Adv Ability 1 becomes Illuminate.",
+        "Gains Glow."
+      ],
+      "stat_changes": {
+        "attack": 1,
+        "defense": -3,
+        "special_attack": 6,
+        "special_defense": -1,
+        "speed": 5
+      },
+      "raw_stats_text": "+1 Atk, -3 Def, +6 Sp. Atk, -1 Sp. Def, +5 Speed Unofficial PTU 1.05.5 PokéDex. DataNinja’s Homebrew.",
+      "species": {
+        "id": "necrozma-dusk-mane",
+        "name": "NECROZMA Dusk Mane",
+        "types": [
+          "Psychic",
+          "Steel"
+        ],
+        "base_stats": {
+          "hp": 10,
+          "attack": 16,
+          "defense": 13,
+          "special_attack": 11,
+          "special_defense": 11,
+          "speed": 8
+        },
+        "source_id": "gen8",
+        "source_page": 945
+      },
+      "requirement_status": "source_insufficient",
+      "requirement_note": "The supplied Pokédex defines the Ultra Burst transformation effects but the audited project sources have not yet yielded an activation requirement. Do not infer one from main-series rules."
+    },
+    {
+      "kind": "ultra_burst",
+      "label": "Ultra Burst",
+      "source_form_id": "necrozma-dawn-wings",
+      "type_change": "Psychic / Dragon",
+      "ability_added": "Neuroforce",
+      "extra_effects": [
+        "Adv Ability 1 becomes Illuminate.",
+        "Gains Glow."
+      ],
+      "stat_changes": {
+        "attack": 6,
+        "defense": -1,
+        "special_attack": 1,
+        "special_defense": -3,
+        "speed": 5
+      },
+      "raw_stats_text": "+6 Atk, -1 Def, +1 Sp. Atk, -3 Sp. Def, +5 Speed 946 Unofficial PTU 1.05.5 PokéDex. DataNinja’s Homebrew.",
+      "species": {
+        "id": "necrozma-dawn-wings",
+        "name": "NECROZMA Dawn Wings",
+        "types": [
+          "Psychic",
+          "Ghost"
+        ],
+        "base_stats": {
+          "hp": 10,
+          "attack": 11,
+          "defense": 11,
+          "special_attack": 16,
+          "special_defense": 13,
+          "speed": 8
+        },
+        "source_id": "gen8",
+        "source_page": 946
+      },
+      "requirement_status": "source_insufficient",
+      "requirement_note": "The supplied Pokédex defines the Ultra Burst transformation effects but the audited project sources have not yet yielded an activation requirement. Do not infer one from main-series rules."
+    }
   ]
 }
