@@ -18,18 +18,21 @@ REGIONS = {'alola', 'galar', 'hisui', 'paldea'}
 FORM_WORDS = {
     'form', 'forme', 'forms', 'mode', 'style', 'cloak', 'pattern', 'trim', 'stripe', 'striped',
     'schooling', 'solo', 'meteor', 'core', 'confined', 'unbound', 'crowned', 'rider', 'appliance',
-    'midday', 'midnight', 'dusk', 'amped', 'noice', 'spring', 'summer', 'autumn', 'winter'
+    'midday', 'midnight', 'dusk', 'amped', 'noice', 'spring', 'summer', 'autumn', 'winter',
+    'male', 'female'
 }
 PHRASE_SIGNALS = (
     'hero of many battles', 'low key', 'single strike', 'rapid strike', 'east sea', 'west sea',
     'ice face', 'dawn wings', 'dusk mane', 'attack forme', 'defense forme', 'speed forme',
     'normal forme', 'origin forme', 'altered forme', 'sky forme', 'land forme', 'therian forme',
-    'incarnate forme', 'fusion forme', 'zen mode', 'standard mode'
+    'incarnate forme', 'fusion forme', 'zen mode', 'standard mode', 'plant cloak', 'sandy cloak',
+    'trash cloak'
 )
 FORM_ABILITIES = {
-    'stance-change', 'forecast', 'flower-gift', 'schooling', 'shields-down', 'hunger-switch',
-    'gulp-missile', 'disguise', 'rks-system', 'multitype', 'zen-mode'
+    'stance-change', 'forecast', 'schooling', 'shields-down', 'hunger-switch', 'gulp-missile',
+    'disguise', 'rks-system', 'multitype', 'zen-mode', 'fabulous-trim', 'quick-cloak', 'seasonal'
 }
+# Flower Gift is intentionally absent: the bundled PTU Core definition is a Sunny burst buff, not a Form rule.
 FORM_CAPABILITIES = {
     'forme-change', 'multiform', 'origin-forme', 'sky-forme', 'therian-forme', 'dragon-fusion',
     'viral-fusion', 'zygarde-cells', 'weapon-bond', 'nectar-dancer'
@@ -72,6 +75,26 @@ def capability_names(row: dict) -> set[str]:
     return {x for x in out if x}
 
 
+def embedded_signals(row: dict) -> list[str]:
+    raw = str(row.get('raw_text') or '')
+    found = []
+    if re.search(r'(?im)^\s*(?:Type Information|Appliance Forms|Forme? Change|\w+ Forms?)\s*$', raw):
+        found.append('embedded_form_section')
+    # Pumpkaboo/Gourgeist: four size-specific Base Stat columns are embedded in one Species entry.
+    if re.search(r'(?is)Base Stats:\s*Small:\s*Average:.*?Large:\s*Super:', raw):
+        found.append('embedded_size_forms:small,average,large,super')
+    # Basculin: the supplied PTU entry explicitly parameterizes an Ability by Red/Blue coloration.
+    if re.search(r'(?i)Reckless\s*\(Red\)\s*/\s*Rock Head\s*\(Blue\)', raw):
+        found.append('embedded_color_forms:red,blue')
+    # Explicit male/female records may use '(M)/(F)' rather than the full words in normalized names.
+    name = row_name(row)
+    if re.search(r'\(M\)\s*$', name, flags=re.I):
+        found.append('gender_form:male')
+    if re.search(r'\(F\)\s*$', name, flags=re.I):
+        found.append('gender_form:female')
+    return found
+
+
 def signals(row: dict, existing_ids: set[str]) -> list[str]:
     ident = row_id(row)
     name = row_name(row)
@@ -99,9 +122,7 @@ def signals(row: dict, existing_ids: set[str]) -> list[str]:
     capability_hits = sorted(FORM_CAPABILITIES & capability_set)
     if capability_hits:
         found.append('form_capability:' + ','.join(capability_hits))
-    raw = str(row.get('raw_text') or '')
-    if re.search(r'(?im)^\s*(?:Type Information|Appliance Forms|Forme? Change|\w+ Forms?)\s*$', raw):
-        found.append('embedded_form_section')
+    found.extend(embedded_signals(row))
     return found
 
 
@@ -122,7 +143,6 @@ def compact(row: dict, found: list[str]) -> dict:
 
 def likely_family_key(row: dict) -> str:
     ident = norm(row_id(row))
-    # Explicit source families that use several separately parameterized records.
     prefixes = (
         'darmanitan-', 'deoxys-', 'giratina-', 'shaymin-', 'tornadus-', 'thundurus-', 'landorus-',
         'kyurem-', 'zygarde-', 'hoopa-', 'zacian-', 'zamazenta-', 'necrozma-', 'meloetta-',
@@ -133,7 +153,6 @@ def likely_family_key(row: dict) -> str:
     for prefix in prefixes:
         if ident.startswith(prefix):
             return prefix[:-1]
-    # Regional suffixes map back to the base species identifier when possible.
     for region in REGIONS:
         suffix = '-' + region
         if ident.endswith(suffix):
@@ -157,21 +176,22 @@ for row in rows:
 by_family: dict[str, list[dict]] = defaultdict(list)
 row_lookup = {row_id(row): row for row in rows}
 for candidate in candidates:
-    source_row = row_lookup[candidate['id']]
-    by_family[likely_family_key(source_row)].append(candidate)
+    by_family[likely_family_key(row_lookup[candidate['id']])].append(candidate)
 
 new_ids = sorted({row['id'] for row in candidates} - existing_ids)
 missing_ids = sorted(existing_ids - {row['id'] for row in candidates})
 signal_counts = Counter(sig.split(':', 1)[0] for row in candidates for sig in row['signals'])
+legacy_only = sorted(row['id'] for row in candidates if row['signals'] == ['existing_inventory'])
 
 payload = {
-    'schema_version': 1,
+    'schema_version': 2,
     'source': str(PACK.relative_to(REPO)),
     'species_count': len(rows),
     'previous_inventory_candidate_count': len(existing_ids),
     'expanded_candidate_count': len(candidates),
     'new_candidate_ids': new_ids,
     'previous_candidates_not_rediscovered': missing_ids,
+    'legacy_inventory_only_ids': legacy_only,
     'signal_counts': dict(sorted(signal_counts.items())),
     'families': [
         {'family': family, 'records': sorted(records, key=lambda x: (x.get('source_page') or 9999, x['id']))}
@@ -188,14 +208,19 @@ lines = [
     f'- Previous inventory candidates: **{len(existing_ids)}**',
     f'- Expanded source-signal candidates: **{len(candidates)}**',
     f'- Newly discovered candidate records: **{len(new_ids)}**',
-    f'- Previous candidates not rediscovered by hardened signals: **{len(missing_ids)}**', '',
+    f'- Previous candidates not rediscovered by hardened signals: **{len(missing_ids)}**',
+    f'- Legacy-only candidates with no independent hardened signal: **{len(legacy_only)}**', '',
     '## New candidates beyond the first inventory', ''
 ]
-if new_ids:
-    for ident in new_ids:
-        row = next(x for x in candidates if x['id'] == ident)
-        lines.append(f'- `{ident}` — {row["name"]} (p. {row.get("source_page") or "—"}); signals: {", ".join(row["signals"])}')
-else:
+for ident in new_ids:
+    row = next(x for x in candidates if x['id'] == ident)
+    lines.append(f'- `{ident}` — {row["name"]} (p. {row.get("source_page") or "—"}); signals: {", ".join(row["signals"])}')
+if not new_ids:
+    lines.append('- None.')
+lines += ['', '## Legacy-only review queue', '']
+for ident in legacy_only:
+    lines.append(f'- `{ident}` — retained only because it appeared in the first census; classification must reject or independently source it.')
+if not legacy_only:
     lines.append('- None.')
 lines += ['', '## Candidate families', '']
 for family, records in sorted(by_family.items()):
@@ -204,10 +229,11 @@ for family, records in sorted(by_family.items()):
         lines.append(f'- `{row["id"]}` — {row["name"]} (p. {row.get("source_page") or "—"}); {"; ".join(row["signals"])}')
     lines.append('')
 lines += ['## Discovery notes', '',
-    '- `existing_inventory` means the record was already in the first 81-record census.',
-    '- `form_capability` / `form_ability` are stronger mechanical signals than name matching.',
-    '- Name descriptors intentionally include styles, cloaks, patterns, seasons, sizes and rider states so the next classification pass can catch forms that do not literally use “Form/Forme” in their title.',
-    '- Records discovered only by broad naming signals are not automatically treated as Forms; classification must either promote them with source evidence or reject them as false positives.',
+    '- `existing_inventory` means the record was already in the first census; by itself it is not evidence of a Form.',
+    '- `form_capability` / `form_ability`, embedded parameter blocks, structured variant metadata, and explicit gender/regional records are stronger signals than broad name matching.',
+    '- Flower Gift is not treated as a Form-driving Ability because the supplied PTU Core definition is a Sunny burst buff, not a Cherrim transformation rule.',
+    '- Embedded size and color parameter blocks are inventoried even when the source stores them inside a single Species record.',
+    '- Records discovered only by broad naming signals are not automatically Forms; classification must promote them with source evidence or reject them.',
 ]
 OUT_MD.write_text('\n'.join(lines) + '\n', encoding='utf-8')
 
@@ -217,5 +243,6 @@ print(json.dumps({
     'expanded': len(candidates),
     'new': len(new_ids),
     'missing': len(missing_ids),
+    'legacy_only': legacy_only,
     'new_ids': new_ids,
 }, ensure_ascii=False))
