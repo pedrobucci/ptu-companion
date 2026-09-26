@@ -81,7 +81,9 @@ def embedded_signals(row: dict) -> list[str]:
     if re.search(r'(?im)^\s*(?:Type Information|Appliance Forms|Forme? Change|\w+ Forms?)\s*$', raw):
         found.append('embedded_form_section')
     # Pumpkaboo/Gourgeist: four size-specific Base Stat columns are embedded in one Species entry.
-    if re.search(r'(?is)Base Stats:\s*Small:\s*Average:.*?Large:\s*Super:', raw):
+    # Some pack snapshots omit the literal "Base Stats:" label from raw_text, so anchor on the
+    # distinctive Small/Average + Large/Super table itself rather than on that optional heading.
+    if re.search(r'(?is)Small\s*:\s*Average\s*:.*?Large\s*:\s*Super\s*:', raw):
         found.append('embedded_size_forms:small,average,large,super')
     # Basculin: the supplied PTU entry explicitly parameterizes an Ability by Red/Blue coloration.
     if re.search(r'(?i)Reckless\s*\(Red\)\s*/\s*Rock Head\s*\(Blue\)', raw):
