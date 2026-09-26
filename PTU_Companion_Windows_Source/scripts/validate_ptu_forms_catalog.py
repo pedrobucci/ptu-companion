@@ -14,6 +14,15 @@ ASSETS = DATA / 'PTU_FORM_ASSET_AUDIT.json'
 STAGE_B = DATA / 'PTU_FORMS_STAGE_B.json'
 EXPECTED_DEFERRED = {'deoxys', 'giratina', 'hoopa', 'kyurem', 'landorus', 'oricorio', 'rotom', 'shaymin', 'thundurus', 'tornadus'}
 EXPECTED_FALSE_POSITIVES = {'cramorant', 'mimikyu', 'nidoran-f', 'nidoran-m', 'solosis'}
+EXPECTED_CLASS_COUNTS = {
+    'permanent': 34,
+    'persistent_form': 2,
+    'transformation': 5,
+    'runtime_state': 6,
+    'mixed': 5,
+    'defer': 10,
+    'false_positive': 5,
+}
 
 
 def slug(value: str) -> str:
@@ -29,6 +38,17 @@ def all_forms(stage_b: dict):
             yield (entry.get('source_family'), entry.get('species_id'), form)
 
 
+def form_ability_ids(form: dict) -> set[str]:
+    slots = form.get('overrides', {}).get('abilities', {}).get('replace', [])
+    result = set()
+    for slot in slots:
+        if isinstance(slot, dict):
+            result.add(slug(slot.get('ability_id') or slot.get('name')))
+        else:
+            result.add(slug(slot))
+    return {value for value in result if value}
+
+
 def main() -> None:
     classification = json.loads(CLASSIFICATION.read_text(encoding='utf-8'))
     inventory = json.loads(INVENTORY.read_text(encoding='utf-8'))
@@ -38,14 +58,17 @@ def main() -> None:
     summary = classification['summary']
     assert summary['candidate_records'] == 104, summary
     assert summary['candidate_families'] == 67, summary
-    assert summary['classification_counts']['defer'] == 10, summary
-    assert summary['classification_counts']['false_positive'] == 5, summary
+    assert summary['classification_counts'] == EXPECTED_CLASS_COUNTS, summary['classification_counts']
     assert set(summary['deferred_families']) == EXPECTED_DEFERRED, summary['deferred_families']
     assert set(summary['false_positive_families']) == EXPECTED_FALSE_POSITIVES, summary['false_positive_families']
+    assert summary['supplemental_rules'] == 17, summary['supplemental_rules']
 
     families = {row['family']: row for row in classification['families']}
     assert families['mimikyu']['classification'] == 'false_positive'
     assert families['mimikyu']['evidence_status'] == 'source_explicit_non_form'
+    for family in ('deerling', 'sawsbuck'):
+        assert families[family]['classification'] == 'runtime_state', families[family]
+        assert families[family]['target_layer'] == 'runtime_resolver', families[family]
 
     mega = inventory.get('mega_forms', [])
     primal = inventory.get('primal_forms', [])
@@ -58,17 +81,28 @@ def main() -> None:
 
     assert stage_b['applied_to_default_packs'] is False
     assert stage_b['stage_b_form_schema_version'] == 1
-    assert stage_b['summary']['mega_forms'] == 48
-    assert stage_b['summary']['primal_forms'] == 2
-    assert stage_b['summary']['ultra_burst_forms'] == 2
-    assert stage_b['summary']['synthetic_forms'] == 52
+    assert stage_b['schema_version'] == 2
+    stage_summary = stage_b['summary']
+    assert stage_summary['candidate_family_entries'] == 41, stage_summary
+    assert stage_summary['record_backed_family_entries'] == 37, stage_summary
+    assert stage_summary['rule_defined_family_entries'] == 4, stage_summary
+    assert stage_summary['candidate_forms'] == 63, stage_summary
+    assert stage_summary['record_backed_forms'] == 48, stage_summary
+    assert stage_summary['rule_defined_forms'] == 15, stage_summary
+    assert stage_summary['omitted_or_deferred_family_entries'] == 26, stage_summary
+    assert stage_summary['mega_forms'] == 48
+    assert stage_summary['primal_forms'] == 2
+    assert stage_summary['ultra_burst_forms'] == 2
+    assert stage_summary['synthetic_forms'] == 52
 
-    emitted_candidates = {row['family'] for row in stage_b.get('candidate_families', [])}
+    candidate_entries = {row['family']: row for row in stage_b.get('candidate_families', [])}
+    emitted_candidates = set(candidate_entries)
     unsafe = {
         row['family'] for row in classification['families']
         if row['classification'] in {'defer', 'false_positive', 'runtime_state', 'mixed'}
     }
     assert not (emitted_candidates & unsafe), sorted(emitted_candidates & unsafe)
+    assert not ({'deerling', 'sawsbuck'} & emitted_candidates)
 
     for source, owner, form in all_forms(stage_b):
         assert form['mode'] in {'permanent', 'transformation'}, (source, owner, form)
@@ -78,6 +112,54 @@ def main() -> None:
             assert form['mode'] == 'transformation'
             reqs = form.get('requirements', {}).get('all', [])
             assert any(req.get('kind') == 'manual' for req in reqs), (source, owner, form)
+
+    # Lossless source-defined builders.
+    aegislash = candidate_entries['aegislash']
+    assert aegislash['builder'] == 'rule_defined_stance_change'
+    assert len(aegislash['forms']) == 1
+    sword = aegislash['forms'][0]
+    assert sword['id'] == 'sword-stance' and sword['mode'] == 'transformation'
+    assert sword['overrides']['baseStats']['replace'] == {
+        'hp': 6, 'attack': 15, 'defense': 5,
+        'special_attack': 15, 'special_defense': 5, 'speed': 6,
+    }
+    assert any(req.get('kind') == 'manual' for req in sword['requirements']['all'])
+
+    burmy = candidate_entries['burmy']
+    assert burmy['builder'] == 'rule_defined_quick_cloak'
+    burmy_forms = {form['id']: form for form in burmy['forms']}
+    assert set(burmy_forms) == {'plant-cloak', 'sandy-cloak', 'trash-cloak'}
+    assert burmy_forms['plant-cloak']['overrides']['types']['replace'] == ['Bug', 'Grass']
+    assert burmy_forms['sandy-cloak']['overrides']['types']['replace'] == ['Bug', 'Ground']
+    assert burmy_forms['trash-cloak']['overrides']['types']['replace'] == ['Bug', 'Steel']
+    assert all(form['mode'] == 'permanent' for form in burmy_forms.values())
+
+    furfrou = candidate_entries['furfrou']
+    assert furfrou['builder'] == 'rule_defined_fabulous_trim'
+    furfrou_expected = {
+        'star-trim': 'celebrate',
+        'diamond-trim': 'defiant',
+        'heart-trim': 'cute-tears',
+        'pharaoh-trim': 'sand-veil',
+        'kabuki-trim': 'inner-focus',
+        'la-reine-trim': 'intimidate',
+        'matron-trim': 'friend-guard',
+        'dandy-trim': 'moxie',
+        'debutante-trim': 'confidence',
+    }
+    furfrou_forms = {form['id']: form for form in furfrou['forms']}
+    assert set(furfrou_forms) == set(furfrou_expected)
+    for ident, ability_id in furfrou_expected.items():
+        abilities = form_ability_ids(furfrou_forms[ident])
+        assert ability_id in abilities, (ident, abilities)
+        assert 'fabulous-trim' not in abilities, (ident, abilities)
+
+    basculin = candidate_entries['basculin']
+    assert basculin['builder'] == 'embedded_color_ability_variant'
+    basculin_forms = {form['id']: form for form in basculin['forms']}
+    assert set(basculin_forms) == {'red', 'blue'}
+    assert 'reckless' in form_ability_ids(basculin_forms['red'])
+    assert 'rock-head' in form_ability_ids(basculin_forms['blue'])
 
     synthetic = stage_b.get('synthetic_transform_species', [])
     mega_entries = {row['species_id']: row for row in synthetic if row['source_family'] == 'mega-evolution'}
@@ -101,11 +183,14 @@ def main() -> None:
         'candidate_families': summary['candidate_families'],
         'deferred': len(EXPECTED_DEFERRED),
         'false_positive': len(EXPECTED_FALSE_POSITIVES),
+        'runtime_states': EXPECTED_CLASS_COUNTS['runtime_state'],
+        'rule_defined_forms': stage_summary['rule_defined_forms'],
+        'candidate_forms': stage_summary['candidate_forms'],
         'mega_forms': len(mega),
         'mega_species': len(mega_entries),
         'primal_forms': len(primal),
         'ultra_burst_forms': len(ultra),
-        'stage_b_synthetic_forms': stage_b['summary']['synthetic_forms'],
+        'stage_b_synthetic_forms': stage_summary['synthetic_forms'],
     }, sort_keys=True))
 
 
