@@ -107,12 +107,18 @@ jobs:
           grep -q 'mimikyu.*false_positive.*source_explicit_non_form' docs/PTU_FORMS_CLASSIFICATION.md
           grep -q 'wishiwashi.*transformation' docs/PTU_FORMS_CLASSIFICATION.md
           grep -q 'silvally.*runtime_state' docs/PTU_FORMS_CLASSIFICATION.md
-          grep -q 'Rule-defined family entries:.*4' docs/PTU_FORMS_STAGE_B.md
-          grep -q 'Rule-defined forms:.*15' docs/PTU_FORMS_STAGE_B.md
+          grep -q 'Rule-defined family entries:.*8' docs/PTU_FORMS_STAGE_B.md
+          grep -q 'Rule-defined forms:.*19' docs/PTU_FORMS_STAGE_B.md
+          grep -q 'Candidate-record/derived Stage B forms emitted:.*59' docs/PTU_FORMS_STAGE_B.md
+          grep -q 'Record-backed forms:.*40' docs/PTU_FORMS_STAGE_B.md
           grep -q 'aegislash.*rule_defined_stance_change.*Sword Stance' docs/PTU_FORMS_STAGE_B.md
           grep -q 'burmy.*rule_defined_quick_cloak.*Plant Cloak.*Sandy Cloak.*Trash Cloak' docs/PTU_FORMS_STAGE_B.md
           grep -q 'furfrou.*rule_defined_fabulous_trim.*Star Trim.*Debutante Trim' docs/PTU_FORMS_STAGE_B.md
           grep -q 'basculin.*embedded_color_ability_variant.*Red.*Blue' docs/PTU_FORMS_STAGE_B.md
+          grep -q 'wishiwashi.*rule_defined_schooling.*Schooling Forme' docs/PTU_FORMS_STAGE_B.md
+          grep -q 'minior.*rule_defined_shields_down.*Core Forme' docs/PTU_FORMS_STAGE_B.md
+          grep -q 'eiscue.*rule_defined_ice_face.*Noice Face' docs/PTU_FORMS_STAGE_B.md
+          grep -q 'meloetta.*rule_defined_relic_song.*Step Forme' docs/PTU_FORMS_STAGE_B.md
           grep -q 'Mega transforms:.*48' docs/PTU_FORMS_STAGE_B.md
           grep -q 'Primal transforms:.*2' docs/PTU_FORMS_STAGE_B.md
           grep -q 'Ultra Burst transforms:.*2' docs/PTU_FORMS_STAGE_B.md
