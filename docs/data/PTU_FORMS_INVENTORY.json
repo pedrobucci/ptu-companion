@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "sources": {
     "ptu_core": {
       "reference": "Pokemon Tabletop United 1.05 Core",
@@ -2065,7 +2065,7 @@
       "label": "Mega Evolution",
       "form_suffix": null,
       "type_change": "Steel",
-      "ability_added": "Filter Diet: Terravore Habitat: Cave, Mountain",
+      "ability_added": "Filter",
       "stat_changes": {
         "attack": 3,
         "defense": 5,
@@ -4666,7 +4666,7 @@
       "label": "Mega Evolution",
       "form_suffix": null,
       "type_change": "Normal / Fairy",
-      "ability_added": "Healer Diet: Herbivore Habitat: Forest, Grassland",
+      "ability_added": "Healer",
       "stat_changes": {
         "defense": 4,
         "special_attack": 2,
@@ -6050,9 +6050,13 @@
       "label": "Mega Evolution",
       "form_suffix": null,
       "type_change": null,
-      "ability_added": null,
-      "stat_changes": {},
-      "raw_stats_text": "",
+      "ability_added": "Adaptability",
+      "stat_changes": {
+        "attack": 6,
+        "special_attack": -3,
+        "speed": 7
+      },
+      "raw_stats_text": "source-backed page-boundary fallback",
       "species": {
         "id": "beedrill",
         "name": "Beedrill",
@@ -14264,7 +14268,7 @@
       "label": "Mega Evolution",
       "form_suffix": null,
       "type_change": null,
-      "ability_added": "Skill Link Diet: Herbivore Habitat: Forest, Rainforest",
+      "ability_added": "Skill Link",
       "stat_changes": {
         "attack": 6,
         "defense": 4,
@@ -20069,7 +20073,7 @@
       "label": "Mega Evolution",
       "form_suffix": null,
       "type_change": null,
-      "ability_added": "Pure Power Diet: Omnivore Habitat: Cave, Mountain",
+      "ability_added": "Pure Power",
       "stat_changes": {
         "attack": 4,
         "defense": 1,
@@ -20696,9 +20700,15 @@
       "label": "Mega Evolution",
       "form_suffix": null,
       "type_change": null,
-      "ability_added": null,
-      "stat_changes": {},
-      "raw_stats_text": "",
+      "ability_added": "Tough Claws",
+      "stat_changes": {
+        "attack": 1,
+        "defense": 2,
+        "special_attack": 1,
+        "special_defense": 2,
+        "speed": 4
+      },
+      "raw_stats_text": "source-backed page-boundary fallback",
       "species": {
         "id": "metagross",
         "name": "Metagross",
@@ -23994,7 +24004,7 @@
       "label": "Mega Evolution",
       "form_suffix": null,
       "type_change": null,
-      "ability_added": "Run Away Diet: Omnivore Habitat: Mountain",
+      "ability_added": "Run Away",
       "stat_changes": {
         "attack": 3,
         "defense": 1,
@@ -24701,7 +24711,7 @@
       "kind": "mega",
       "label": "Mega Evolution",
       "form_suffix": null,
-      "type_change": "Unchanged Diet: Terravore Habitat: Cave, Mountain",
+      "type_change": "Unchanged",
       "ability_added": "Magic Bounce",
       "stat_changes": {
         "attack": 1,
@@ -29188,9 +29198,15 @@
       "label": "Mega Evolution",
       "form_suffix": null,
       "type_change": null,
-      "ability_added": null,
-      "stat_changes": {},
-      "raw_stats_text": "",
+      "ability_added": "Swift Swim",
+      "stat_changes": {
+        "attack": 4,
+        "defense": 2,
+        "special_attack": 1,
+        "special_defense": 2,
+        "speed": 1
+      },
+      "raw_stats_text": "source-backed page-boundary fallback",
       "species": {
         "id": "swampert",
         "name": "Swampert",
@@ -75623,6 +75639,7 @@
     "Mega forms are temporary transformations, not permanent Species replacements.",
     "PTU Core requires a species/form-specific Mega Stone and a Trainer Mega Ring; exact item IDs are not inferred when the supplied item data does not provide them.",
     "Shiny is an individual presentation state. Missing dedicated Shiny artwork must not disable Shiny state.",
-    "Alternate-form candidates are inventory data only; conversion to permanent vs transformation form requires family-by-family review."
+    "Alternate-form candidates are inventory data only; conversion to permanent vs transformation form requires family-by-family review.",
+    "Swampert, Beedrill, and Metagross Mega stat blocks are restored from their supplied PDF pages because packed raw_text loses those lines at page boundaries."
   ]
 }
