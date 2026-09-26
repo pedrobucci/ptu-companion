@@ -113,6 +113,16 @@
       "confidence": "source_explicit"
     },
     {
+      "id": "relic-song",
+      "family": "meloetta",
+      "source_title": "Pokemon Tabletop United 1.05 Core",
+      "source_page": 405,
+      "kind": "transformation",
+      "activation": "move_known_swift_on_use_or_standard_action",
+      "summary": "As long as Meloetta knows Relic Song, it may switch between Aria Form and Step Form as a Swift Action when using Relic Song, or as a Standard Action otherwise. Both forms must use the same HP Stat.",
+      "confidence": "source_explicit"
+    },
+    {
       "id": "ultra-burst",
       "family": "necrozma",
       "source_title": "Gen 8ish PokeDex",
