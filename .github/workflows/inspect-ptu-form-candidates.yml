@@ -13,6 +13,7 @@ on:
       - 'PTU_Companion_Windows_Source/scripts/audit_ptu_form_discovery.py'
       - 'PTU_Companion_Windows_Source/scripts/audit_ptu_form_mechanics.py'
       - 'PTU_Companion_Windows_Source/scripts/classify_ptu_form_families.py'
+      - 'PTU_Companion_Windows_Source/scripts/resolve_meloetta_form_rule.py'
       - 'PTU_Companion_Windows_Source/seed/content-packs/ptu-gen8ish-pokedex.ptucp'
       - 'PTU_Companion_Windows_Source/seed/content-packs/ptu-core-1.05.ptucp'
       - 'docs/PTU_FORM_SUPPLEMENTAL_RULES.md'
@@ -32,6 +33,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Resolve source-backed Meloetta rule
+        run: python PTU_Companion_Windows_Source/scripts/resolve_meloetta_form_rule.py
       - name: Inspect source pack
         run: python PTU_Companion_Windows_Source/scripts/inspect_ptu_form_candidates.py
       - name: Build audited forms inventory
@@ -69,6 +72,10 @@ jobs:
           grep -q 'New candidates beyond the first inventory' docs/PTU_FORMS_DISCOVERY.md
           grep -q 'Form-driving Mechanics Audit' docs/PTU_FORM_MECHANICS_AUDIT.md
           grep -q 'Synthetic transform inventory:.*48 Mega.*2 Primal.*2 Ultra Burst' docs/PTU_FORMS_CLASSIFICATION.md
+          grep -q 'Transformation families:.*5' docs/PTU_FORMS_CLASSIFICATION.md
+          grep -q 'Deferred/source-insufficient families:.*11' docs/PTU_FORMS_CLASSIFICATION.md
+          grep -q 'meloetta.*transformation.*activeFormId.*source_explicit' docs/PTU_FORMS_CLASSIFICATION.md
+          grep -q 'Meloetta.*Relic Song.*PTU Core 1.05 p.405.*transformation' docs/PTU_FORM_SUPPLEMENTAL_RULES.md
           grep -q 'cramorant.*false_positive' docs/PTU_FORMS_CLASSIFICATION.md
           grep -q 'wishiwashi.*transformation' docs/PTU_FORMS_CLASSIFICATION.md
           grep -q 'silvally.*runtime_state' docs/PTU_FORMS_CLASSIFICATION.md
@@ -78,7 +85,7 @@ jobs:
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add docs/PTU_FORMS_INVENTORY.md docs/data/PTU_FORMS_INVENTORY.json docs/PTU_FORMS_DISCOVERY.md docs/data/PTU_FORMS_DISCOVERY.json docs/PTU_FORM_MECHANICS_AUDIT.md docs/data/PTU_FORM_MECHANICS_AUDIT.json docs/PTU_FORMS_CLASSIFICATION.md docs/data/PTU_FORMS_CLASSIFICATION.json
+          git add PTU_Companion_Windows_Source/scripts/classify_ptu_form_families.py docs/PTU_FORMS_INVENTORY.md docs/data/PTU_FORMS_INVENTORY.json docs/PTU_FORMS_DISCOVERY.md docs/data/PTU_FORMS_DISCOVERY.json docs/PTU_FORM_MECHANICS_AUDIT.md docs/data/PTU_FORM_MECHANICS_AUDIT.json docs/PTU_FORMS_CLASSIFICATION.md docs/data/PTU_FORMS_CLASSIFICATION.json
           if git diff --cached --quiet; then
             echo 'Inventory already current.'
           else
