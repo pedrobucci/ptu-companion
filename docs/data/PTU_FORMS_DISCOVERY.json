@@ -1,32 +1,47 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "source": "PTU_Companion_Windows_Source/seed/content-packs/ptu-gen8ish-pokedex.ptucp",
   "species_count": 956,
   "previous_inventory_candidate_count": 81,
-  "expanded_candidate_count": 94,
+  "expanded_candidate_count": 104,
   "new_candidate_ids": [
     "aegislash",
     "arceus",
-    "cherrim",
+    "basculin",
+    "burmy",
     "cramorant",
+    "deerling",
+    "furfrou",
+    "indeedee-female",
+    "indeedee-male",
     "lycanroc-dusk",
     "lycanroc-midday",
     "lycanroc-midnight",
+    "meowstic-f",
+    "meowstic-m",
     "mimikyu",
     "morpeko",
+    "nidoran-f",
+    "nidoran-m",
+    "sawsbuck",
     "silvally",
     "wormadam-plant-cloak",
     "wormadam-sandy-cloak",
     "wormadam-trash-cloak"
   ],
   "previous_candidates_not_rediscovered": [],
+  "legacy_inventory_only_ids": [
+    "solosis"
+  ],
   "signal_counts": {
+    "embedded_color_forms": 1,
     "embedded_form_section": 6,
     "existing_inventory": 81,
-    "form_ability": 14,
+    "form_ability": 17,
     "form_capability": 49,
-    "name_descriptor": 46,
-    "name_phrase": 27,
+    "gender_form": 4,
+    "name_descriptor": 48,
+    "name_phrase": 30,
     "regional_name": 32,
     "structured_variant_metadata": 5
   },
@@ -125,6 +140,91 @@
       ]
     },
     {
+      "family": "basculin",
+      "records": [
+        {
+          "id": "basculin",
+          "name": "Basculin",
+          "source_page": 764,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Water"
+          ],
+          "base_stats": {
+            "hp": 7,
+            "attack": 9,
+            "defense": 7,
+            "special_attack": 8,
+            "special_defense": 6,
+            "speed": 10
+          },
+          "abilities": [
+            "adaptability",
+            "mold-breaker",
+            "reckless-red-rock-head-blue",
+            "torrent",
+            "water-absorb"
+          ],
+          "capabilities": [
+            "fountain",
+            "gilled",
+            "jump",
+            "naturewalk",
+            "overland",
+            "power",
+            "swim"
+          ],
+          "signals": [
+            "embedded_color_forms:red,blue"
+          ]
+        }
+      ]
+    },
+    {
+      "family": "burmy",
+      "records": [
+        {
+          "id": "burmy",
+          "name": "Burmy",
+          "source_page": 323,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Bug"
+          ],
+          "base_stats": {
+            "hp": 4,
+            "attack": 3,
+            "defense": 5,
+            "special_attack": 3,
+            "special_defense": 5,
+            "speed": 4
+          },
+          "abilities": [
+            "overcoat",
+            "quick-cloak",
+            "shed-skin",
+            "sturdy",
+            "tolerance"
+          ],
+          "capabilities": [
+            "jump",
+            "naturewalk",
+            "overland",
+            "power",
+            "split-evolution",
+            "swim",
+            "threaded",
+            "underdog"
+          ],
+          "signals": [
+            "form_ability:quick-cloak"
+          ]
+        }
+      ]
+    },
+    {
       "family": "castform",
       "records": [
         {
@@ -164,47 +264,6 @@
           "signals": [
             "existing_inventory",
             "form_ability:forecast"
-          ]
-        }
-      ]
-    },
-    {
-      "family": "cherrim",
-      "records": [
-        {
-          "id": "cherrim",
-          "name": "Cherrim",
-          "source_page": 455,
-          "variant_of": null,
-          "variant_kind": null,
-          "types": [
-            "Grass"
-          ],
-          "base_stats": {
-            "hp": 7,
-            "attack": 6,
-            "defense": 7,
-            "special_attack": 9,
-            "special_defense": 8,
-            "speed": 9
-          },
-          "abilities": [
-            "chlorophyll",
-            "drought",
-            "flower-gift",
-            "flower-power",
-            "sun-blanket"
-          ],
-          "capabilities": [
-            "bloom",
-            "jump",
-            "naturewalk",
-            "overland",
-            "power",
-            "swim"
-          ],
-          "signals": [
-            "form_ability:flower-gift"
           ]
         }
       ]
@@ -517,6 +576,49 @@
           "signals": [
             "existing_inventory",
             "regional_name:galar"
+          ]
+        }
+      ]
+    },
+    {
+      "family": "deerling",
+      "records": [
+        {
+          "id": "deerling",
+          "name": "Deerling",
+          "source_page": 551,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Normal",
+            "Grass"
+          ],
+          "base_stats": {
+            "hp": 6,
+            "attack": 6,
+            "defense": 5,
+            "special_attack": 4,
+            "special_defense": 5,
+            "speed": 8
+          },
+          "abilities": [
+            "chlorophyll",
+            "ragelope",
+            "sap-sipper",
+            "seasonal",
+            "serene-grace"
+          ],
+          "capabilities": [
+            "jump",
+            "naturewalk",
+            "overland",
+            "pack-mon",
+            "power",
+            "swim",
+            "underdog"
+          ],
+          "signals": [
+            "form_ability:seasonal"
           ]
         }
       ]
@@ -958,6 +1060,46 @@
       ]
     },
     {
+      "family": "furfrou",
+      "records": [
+        {
+          "id": "furfrou",
+          "name": "Furfrou",
+          "source_page": 740,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Normal"
+          ],
+          "base_stats": {
+            "hp": 8,
+            "attack": 8,
+            "defense": 6,
+            "special_attack": 7,
+            "special_defense": 9,
+            "speed": 10
+          },
+          "abilities": [
+            "beautiful",
+            "bodyguard",
+            "fabulous-trim",
+            "fur-coat",
+            "intimidate"
+          ],
+          "capabilities": [
+            "jump",
+            "overland",
+            "power",
+            "swim",
+            "tracker"
+          ],
+          "signals": [
+            "form_ability:fabulous-trim"
+          ]
+        }
+      ]
+    },
+    {
       "family": "geodude",
       "records": [
         {
@@ -1327,6 +1469,87 @@
             "existing_inventory",
             "name_descriptor:unbound",
             "form_capability:forme-change"
+          ]
+        }
+      ]
+    },
+    {
+      "family": "indeedee",
+      "records": [
+        {
+          "id": "indeedee-male",
+          "name": "INDEEDEE Male",
+          "source_page": 747,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Psychic",
+            "Normal"
+          ],
+          "base_stats": {
+            "hp": 6,
+            "attack": 7,
+            "defense": 6,
+            "special_attack": 11,
+            "special_defense": 10,
+            "speed": 10
+          },
+          "abilities": [
+            "bodyguard",
+            "helper",
+            "inner-focus",
+            "psychic-surge",
+            "synchronize"
+          ],
+          "capabilities": [
+            "jump",
+            "naturewalk",
+            "overland",
+            "power",
+            "swim",
+            "telekinetic",
+            "telepath"
+          ],
+          "signals": [
+            "name_descriptor:male"
+          ]
+        },
+        {
+          "id": "indeedee-female",
+          "name": "INDEEDEE Female",
+          "source_page": 748,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Psychic",
+            "Normal"
+          ],
+          "base_stats": {
+            "hp": 7,
+            "attack": 6,
+            "defense": 7,
+            "special_attack": 10,
+            "special_defense": 11,
+            "speed": 9
+          },
+          "abilities": [
+            "friend-guard",
+            "helper",
+            "own-tempo",
+            "psychic-surge",
+            "synchronize"
+          ],
+          "capabilities": [
+            "jump",
+            "naturewalk",
+            "overland",
+            "power",
+            "swim",
+            "telekinetic",
+            "telepath"
+          ],
+          "signals": [
+            "name_descriptor:female"
           ]
         }
       ]
@@ -1853,6 +2076,85 @@
       ]
     },
     {
+      "family": "meowstic",
+      "records": [
+        {
+          "id": "meowstic-m",
+          "name": "MEOWSTIC (M)",
+          "source_page": 605,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Psychic"
+          ],
+          "base_stats": {
+            "hp": 7,
+            "attack": 5,
+            "defense": 8,
+            "special_attack": 8,
+            "special_defense": 8,
+            "speed": 10
+          },
+          "abilities": [
+            "infiltrator",
+            "keen-eye",
+            "magic-guard",
+            "own-tempo",
+            "prankster"
+          ],
+          "capabilities": [
+            "jump",
+            "naturewalk",
+            "overland",
+            "power",
+            "swim",
+            "telekinetic",
+            "telepath"
+          ],
+          "signals": [
+            "gender_form:male"
+          ]
+        },
+        {
+          "id": "meowstic-f",
+          "name": "MEOWSTIC (F)",
+          "source_page": 606,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Psychic"
+          ],
+          "base_stats": {
+            "hp": 7,
+            "attack": 5,
+            "defense": 8,
+            "special_attack": 8,
+            "special_defense": 8,
+            "speed": 10
+          },
+          "abilities": [
+            "competitive",
+            "infiltrator",
+            "keen-eye",
+            "own-tempo",
+            "sorcery"
+          ],
+          "capabilities": [
+            "jump",
+            "naturewalk",
+            "overland",
+            "power",
+            "swim",
+            "telekinetic",
+            "telepath"
+          ],
+          "signals": [
+            "gender_form:female"
+          ]
+        }
+      ]
+    },
+    {
       "family": "meowth",
       "records": [
         {
@@ -2330,6 +2632,90 @@
             "existing_inventory",
             "name_phrase:dawn wings",
             "form_capability:viral-fusion"
+          ]
+        }
+      ]
+    },
+    {
+      "family": "nidoran-f",
+      "records": [
+        {
+          "id": "nidoran-f",
+          "name": "NIDORAN (F)",
+          "source_page": 239,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Poison"
+          ],
+          "base_stats": {
+            "hp": 6,
+            "attack": 5,
+            "defense": 5,
+            "special_attack": 4,
+            "special_defense": 4,
+            "speed": 4
+          },
+          "abilities": [
+            "bodyguard",
+            "celebrate",
+            "hustle",
+            "poison-point",
+            "rivalry"
+          ],
+          "capabilities": [
+            "burrow",
+            "jump",
+            "naturewalk",
+            "overland",
+            "power",
+            "swim",
+            "underdog"
+          ],
+          "signals": [
+            "gender_form:female"
+          ]
+        }
+      ]
+    },
+    {
+      "family": "nidoran-m",
+      "records": [
+        {
+          "id": "nidoran-m",
+          "name": "NIDORAN (M)",
+          "source_page": 242,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Poison"
+          ],
+          "base_stats": {
+            "hp": 5,
+            "attack": 6,
+            "defense": 4,
+            "special_attack": 4,
+            "special_defense": 4,
+            "speed": 5
+          },
+          "abilities": [
+            "bodyguard",
+            "celebrate",
+            "hustle",
+            "poison-point",
+            "rivalry"
+          ],
+          "capabilities": [
+            "burrow",
+            "jump",
+            "naturewalk",
+            "overland",
+            "power",
+            "swim",
+            "underdog"
+          ],
+          "signals": [
+            "gender_form:male"
           ]
         }
       ]
@@ -3113,6 +3499,49 @@
       ]
     },
     {
+      "family": "sawsbuck",
+      "records": [
+        {
+          "id": "sawsbuck",
+          "name": "Sawsbuck",
+          "source_page": 552,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Normal",
+            "Grass"
+          ],
+          "base_stats": {
+            "hp": 8,
+            "attack": 10,
+            "defense": 7,
+            "special_attack": 6,
+            "special_defense": 7,
+            "speed": 10
+          },
+          "abilities": [
+            "chlorophyll",
+            "ragelope",
+            "sap-sipper",
+            "seasonal",
+            "serene-grace"
+          ],
+          "capabilities": [
+            "jump",
+            "mountable",
+            "naturewalk",
+            "overland",
+            "pack-mon",
+            "power",
+            "swim"
+          ],
+          "signals": [
+            "form_ability:seasonal"
+          ]
+        }
+      ]
+    },
+    {
       "family": "shaymin",
       "records": [
         {
@@ -3729,7 +4158,8 @@
             "underdog"
           ],
           "signals": [
-            "name_descriptor:cloak"
+            "name_descriptor:cloak",
+            "name_phrase:plant cloak"
           ]
         },
         {
@@ -3767,7 +4197,8 @@
             "underdog"
           ],
           "signals": [
-            "name_descriptor:cloak"
+            "name_descriptor:cloak",
+            "name_phrase:sandy cloak"
           ]
         },
         {
@@ -3805,7 +4236,8 @@
             "underdog"
           ],
           "signals": [
-            "name_descriptor:cloak"
+            "name_descriptor:cloak",
+            "name_phrase:trash cloak"
           ]
         }
       ]

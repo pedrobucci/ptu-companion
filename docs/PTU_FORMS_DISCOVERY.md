@@ -4,25 +4,40 @@ This is a discovery/audit artifact. It deliberately over-collects source-backed 
 
 - Parsed Species records: **956**
 - Previous inventory candidates: **81**
-- Expanded source-signal candidates: **94**
-- Newly discovered candidate records: **13**
+- Expanded source-signal candidates: **104**
+- Newly discovered candidate records: **23**
 - Previous candidates not rediscovered by hardened signals: **0**
+- Legacy-only candidates with no independent hardened signal: **1**
 
 ## New candidates beyond the first inventory
 
 - `aegislash` — Aegislash (p. 285); signals: form_ability:stance-change
 - `arceus` — Arceus (p. 905); signals: form_ability:multitype
-- `cherrim` — Cherrim (p. 455); signals: form_ability:flower-gift
+- `basculin` — Basculin (p. 764); signals: embedded_color_forms:red,blue
+- `burmy` — Burmy (p. 323); signals: form_ability:quick-cloak
 - `cramorant` — Cramorant (p. 713); signals: form_ability:gulp-missile
+- `deerling` — Deerling (p. 551); signals: form_ability:seasonal
+- `furfrou` — Furfrou (p. 740); signals: form_ability:fabulous-trim
+- `indeedee-female` — INDEEDEE Female (p. 748); signals: name_descriptor:female
+- `indeedee-male` — INDEEDEE Male (p. 747); signals: name_descriptor:male
 - `lycanroc-dusk` — LYCANROC Dusk (p. 618); signals: name_descriptor:dusk
 - `lycanroc-midday` — LYCANROC Midday (p. 616); signals: name_descriptor:midday
 - `lycanroc-midnight` — LYCANROC Midnight (p. 617); signals: name_descriptor:midnight
+- `meowstic-f` — MEOWSTIC (F) (p. 606); signals: gender_form:female
+- `meowstic-m` — MEOWSTIC (M) (p. 605); signals: gender_form:male
 - `mimikyu` — Mimikyu (p. 715); signals: form_ability:disguise
 - `morpeko` — Morpeko (p. 703); signals: form_ability:hunger-switch
+- `nidoran-f` — NIDORAN (F) (p. 239); signals: gender_form:female
+- `nidoran-m` — NIDORAN (M) (p. 242); signals: gender_form:male
+- `sawsbuck` — Sawsbuck (p. 552); signals: form_ability:seasonal
 - `silvally` — Silvally (p. 935); signals: form_ability:rks-system
-- `wormadam-plant-cloak` — WORMADAM Plant Cloak (p. 324); signals: name_descriptor:cloak
-- `wormadam-sandy-cloak` — WORMADAM Sandy Cloak (p. 325); signals: name_descriptor:cloak
-- `wormadam-trash-cloak` — WORMADAM Trash Cloak (p. 326); signals: name_descriptor:cloak
+- `wormadam-plant-cloak` — WORMADAM Plant Cloak (p. 324); signals: name_descriptor:cloak, name_phrase:plant cloak
+- `wormadam-sandy-cloak` — WORMADAM Sandy Cloak (p. 325); signals: name_descriptor:cloak, name_phrase:sandy cloak
+- `wormadam-trash-cloak` — WORMADAM Trash Cloak (p. 326); signals: name_descriptor:cloak, name_phrase:trash cloak
+
+## Legacy-only review queue
+
+- `solosis` — retained only because it appeared in the first census; classification must reject or independently source it.
 
 ## Candidate families
 
@@ -32,11 +47,14 @@ This is a discovery/audit artifact. It deliberately over-collects source-backed 
 ### arceus
 - `arceus` — Arceus (p. 905); form_ability:multitype
 
+### basculin
+- `basculin` — Basculin (p. 764); embedded_color_forms:red,blue
+
+### burmy
+- `burmy` — Burmy (p. 323); form_ability:quick-cloak
+
 ### castform
 - `castform` — Castform (p. 735); existing_inventory; form_ability:forecast
-
-### cherrim
-- `cherrim` — Cherrim (p. 455); form_ability:flower-gift
 
 ### corsola
 - `corsola-galar` — CORSOLA Galar (p. 802); existing_inventory; regional_name:galar
@@ -52,6 +70,9 @@ This is a discovery/audit artifact. It deliberately over-collects source-backed 
 
 ### darumaka
 - `darumaka-galar` — DARUMAKA Galar (p. 807); existing_inventory; regional_name:galar
+
+### deerling
+- `deerling` — Deerling (p. 551); form_ability:seasonal
 
 ### deoxys
 - `deoxys-normal-forme` — DEOXYS Normal Forme (p. 887); existing_inventory; name_descriptor:forme; name_phrase:normal forme; form_capability:forme-change,multiform
@@ -75,6 +96,9 @@ This is a discovery/audit artifact. It deliberately over-collects source-backed 
 ### farfetchd
 - `farfetchd-galar` — FARFETCH’D Galar (p. 800); existing_inventory; regional_name:galar
 
+### furfrou
+- `furfrou` — Furfrou (p. 740); form_ability:fabulous-trim
+
 ### geodude
 - `geodude-alola` — GEODUDE Alola (p. 791); existing_inventory; regional_name:alola
 
@@ -94,6 +118,10 @@ This is a discovery/audit artifact. It deliberately over-collects source-backed 
 ### hoopa
 - `hoopa-confined` — HOOPA Confined (p. 931); existing_inventory; name_descriptor:confined; form_capability:forme-change
 - `hoopa-unbound` — HOOPA Unbound (p. 932); existing_inventory; name_descriptor:unbound; form_capability:forme-change
+
+### indeedee
+- `indeedee-male` — INDEEDEE Male (p. 747); name_descriptor:male
+- `indeedee-female` — INDEEDEE Female (p. 748); name_descriptor:female
 
 ### kyurem
 - `kyurem-normal-forme` — KYUREM Normal Forme (p. 919); existing_inventory; name_descriptor:forme; name_phrase:normal forme; form_capability:dragon-fusion,forme-change
@@ -119,6 +147,10 @@ This is a discovery/audit artifact. It deliberately over-collects source-backed 
 - `meloetta-aria-forme` — MELOETTA Aria Forme (p. 922); existing_inventory; name_descriptor:forme; form_capability:forme-change
 - `meloetta-step-forme` — MELOETTA Step Forme (p. 923); existing_inventory; name_descriptor:forme; form_capability:forme-change
 
+### meowstic
+- `meowstic-m` — MEOWSTIC (M) (p. 605); gender_form:male
+- `meowstic-f` — MEOWSTIC (F) (p. 606); gender_form:female
+
 ### meowth
 - `meowth-alola` — MEOWTH Alola (p. 789); existing_inventory; regional_name:alola
 - `meowth-galar` — MEOWTH Galar (p. 796); existing_inventory; regional_name:galar
@@ -143,6 +175,12 @@ This is a discovery/audit artifact. It deliberately over-collects source-backed 
 - `necrozma` — Necrozma (p. 944); existing_inventory; form_capability:viral-fusion
 - `necrozma-dusk-mane` — NECROZMA Dusk Mane (p. 945); existing_inventory; name_descriptor:dusk; name_phrase:dusk mane; form_capability:viral-fusion
 - `necrozma-dawn-wings` — NECROZMA Dawn Wings (p. 946); existing_inventory; name_phrase:dawn wings; form_capability:viral-fusion
+
+### nidoran-f
+- `nidoran-f` — NIDORAN (F) (p. 239); gender_form:female
+
+### nidoran-m
+- `nidoran-m` — NIDORAN (M) (p. 242); gender_form:male
 
 ### ninetales
 - `ninetales-alola` — NINETALES Alola (p. 786); existing_inventory; regional_name:alola
@@ -183,6 +221,9 @@ This is a discovery/audit artifact. It deliberately over-collects source-backed 
 ### sandslash
 - `sandslash-alola` — SANDSLASH Alola (p. 784); existing_inventory; regional_name:alola
 
+### sawsbuck
+- `sawsbuck` — Sawsbuck (p. 552); form_ability:seasonal
+
 ### shaymin
 - `shaymin-land-forme` — SHAYMIN Land Forme (p. 903); existing_inventory; name_descriptor:forme; name_phrase:land forme; form_capability:forme-change,sky-forme
 - `shaymin-sky-forme` — SHAYMIN Sky Forme (p. 904); existing_inventory; name_descriptor:forme; name_phrase:sky forme; form_capability:forme-change,sky-forme
@@ -215,9 +256,9 @@ This is a discovery/audit artifact. It deliberately over-collects source-backed 
 - `wishiwashi-schooling` — WISHIWASHI Schooling (p. 767); existing_inventory; name_descriptor:schooling; form_ability:schooling; form_capability:forme-change
 
 ### wormadam
-- `wormadam-plant-cloak` — WORMADAM Plant Cloak (p. 324); name_descriptor:cloak
-- `wormadam-sandy-cloak` — WORMADAM Sandy Cloak (p. 325); name_descriptor:cloak
-- `wormadam-trash-cloak` — WORMADAM Trash Cloak (p. 326); name_descriptor:cloak
+- `wormadam-plant-cloak` — WORMADAM Plant Cloak (p. 324); name_descriptor:cloak; name_phrase:plant cloak
+- `wormadam-sandy-cloak` — WORMADAM Sandy Cloak (p. 325); name_descriptor:cloak; name_phrase:sandy cloak
+- `wormadam-trash-cloak` — WORMADAM Trash Cloak (p. 326); name_descriptor:cloak; name_phrase:trash cloak
 
 ### yamask
 - `yamask-galar` — YAMASK Galar (p. 810); existing_inventory; regional_name:galar
@@ -240,7 +281,8 @@ This is a discovery/audit artifact. It deliberately over-collects source-backed 
 
 ## Discovery notes
 
-- `existing_inventory` means the record was already in the first 81-record census.
-- `form_capability` / `form_ability` are stronger mechanical signals than name matching.
-- Name descriptors intentionally include styles, cloaks, patterns, seasons, sizes and rider states so the next classification pass can catch forms that do not literally use “Form/Forme” in their title.
-- Records discovered only by broad naming signals are not automatically treated as Forms; classification must either promote them with source evidence or reject them as false positives.
+- `existing_inventory` means the record was already in the first census; by itself it is not evidence of a Form.
+- `form_capability` / `form_ability`, embedded parameter blocks, structured variant metadata, and explicit gender/regional records are stronger signals than broad name matching.
+- Flower Gift is not treated as a Form-driving Ability because the supplied PTU Core definition is a Sunny burst buff, not a Cherrim transformation rule.
+- Embedded size and color parameter blocks are inventoried even when the source stores them inside a single Species record.
+- Records discovered only by broad naming signals are not automatically Forms; classification must promote them with source evidence or reject them.
