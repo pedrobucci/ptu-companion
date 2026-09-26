@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "policy": "Only mechanics explicitly supported by supplied project sources are recorded. Missing activation requirements stay source_insufficient and are not inferred from main-series game rules.",
   "rules": [
     {
@@ -103,13 +103,53 @@
       "confidence": "source_explicit"
     },
     {
+      "id": "stance-change",
+      "family": "aegislash",
+      "source_title": "Pokemon Tabletop United 1.05 Core",
+      "source_page": 331,
+      "kind": "transformation",
+      "activation": "automatic_move_trigger_or_full_action",
+      "summary": "Aegislash defaults to Shield Stance. A damaging attack switches it to Sword Stance and swaps Attack with Defense and Special Attack with Special Defense without changing Combat Stages. King's Shield, Protect, a Status Move that raises Defense Combat Stages, or a Blessing returns it to Shield Stance; it may also change Stance as a Full Action.",
+      "confidence": "source_explicit"
+    },
+    {
+      "id": "quick-cloak",
+      "family": "burmy",
+      "source_title": "Pokemon Tabletop United 1.05 Core",
+      "source_page": 327,
+      "kind": "persistent_form",
+      "activation": "at_will_standard_action_from_nearby_material",
+      "summary": "Burmy may build Plant, Sandy, or Trash Cloaks from source-defined nearby materials. The cloak adds Grass, Ground, or Steel respectively as secondary Type, is replaced by making another cloak, and is destroyed by Super-Effective damage. The cloak Type becomes permanent upon evolution into Wormadam.",
+      "confidence": "source_explicit"
+    },
+    {
+      "id": "fabulous-trim",
+      "family": "furfrou",
+      "source_title": "Pokemon Tabletop United 1.05 Core",
+      "source_page": 317,
+      "kind": "persistent_form",
+      "activation": "extended_action_at_appropriate_hair_parlor",
+      "summary": "Furfrou's current hairstyle determines the Ability granted by Fabulous Trim: Star/Celebrate, Diamond/Defiant, Heart/Cute Tears, Pharaoh/Sand Veil, Kabuki/Inner Focus, La Reine/Intimidate, Matron/Friend Guard, Dandy/Moxie, and Debutante/Confidence.",
+      "confidence": "source_explicit"
+    },
+    {
+      "id": "basculin-color",
+      "family": "basculin",
+      "source_title": "Gen 8ish PokeDex",
+      "source_page": 764,
+      "kind": "permanent",
+      "activation": "intrinsic_color_variant",
+      "summary": "The supplied Basculin entry explicitly parameterizes Advanced Ability 2 by color: Reckless for Red and Rock Head for Blue. No runtime switching rule is introduced.",
+      "confidence": "source_explicit_variant"
+    },
+    {
       "id": "seasonal",
       "family": "deerling-sawsbuck",
       "source_title": "February 2016 Playtest Packet",
-      "source_page": null,
-      "kind": "persistent_form",
-      "activation": "extended_action_or_source_environment",
-      "summary": "Seasonal represents Spring, Summer, Fall, and Winter states with source-defined Combat Stage benefits and permits changing season as an Extended Action, with additional source-specific environmental rules.",
+      "source_page": 13,
+      "kind": "runtime_state",
+      "activation": "current_season",
+      "summary": "Seasonal is Static and grants an Ability based on the current season: Spring/Run Away, Summer/Grass Pelt, Autumn/Rivalry, Winter/Thick Fat. The supplied rule does not define an Extended Action or persistent manual season-selection mechanic.",
       "confidence": "source_explicit"
     },
     {
