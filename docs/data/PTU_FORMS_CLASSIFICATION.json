@@ -2,13 +2,13 @@
   "schema_version": 1,
   "policy": "Conservative source-backed classification. Deferred families are not converted into automatic runtime Forms until supplied sources establish the missing semantics.",
   "summary": {
-    "candidate_records": 104,
-    "candidate_families": 67,
+    "candidate_records": 106,
+    "candidate_families": 69,
     "classification_counts": {
       "defer": 10,
       "false_positive": 5,
       "mixed": 5,
-      "permanent": 34,
+      "permanent": 36,
       "persistent_form": 2,
       "runtime_state": 6,
       "transformation": 5
@@ -1468,6 +1468,60 @@
         "regional_name:alola"
       ],
       "reason": "The supplied Pokédex contains a separately parameterized regional variant. Preserve legacy Species IDs as aliases/import compatibility while moving selection to the generic base Form layer.",
+      "preserve_legacy_ids": true
+    },
+    {
+      "family": "gourgeist",
+      "classification": "permanent",
+      "target_layer": "baseFormId",
+      "evidence_status": "source_explicit_variant",
+      "records": [
+        {
+          "id": "gourgeist",
+          "name": "Gourgeist",
+          "source_page": 438,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Ghost",
+            "Grass"
+          ],
+          "base_stats": {
+            "hp": 6,
+            "attack": 9,
+            "defense": 12,
+            "special_attack": 6,
+            "special_defense": 8,
+            "speed": 10
+          },
+          "abilities": [
+            "flash-fire",
+            "frisk",
+            "insomnia",
+            "pumpkingrab",
+            "regenerator"
+          ],
+          "capabilities": [
+            "darkvision",
+            "dead-silent",
+            "invisibility",
+            "jump",
+            "levitate",
+            "naturewalk",
+            "overland",
+            "phasing",
+            "power",
+            "swim"
+          ],
+          "signals": [
+            "embedded_size_forms:small,average,large,super"
+          ]
+        }
+      ],
+      "signals": [
+        "embedded_size_forms:small,average,large,super"
+      ],
+      "reason": "The supplied Gen 8ish PokéDex entry embeds four explicit Small/Average/Large/Super Base Stat sets. Exact per-size height/weight values are not inferred from the aggregate source range.",
       "preserve_legacy_ids": true
     },
     {
@@ -3304,6 +3358,61 @@
         "regional_name:galar"
       ],
       "reason": "The supplied Pokédex contains a separately parameterized regional variant. Preserve legacy Species IDs as aliases/import compatibility while moving selection to the generic base Form layer.",
+      "preserve_legacy_ids": true
+    },
+    {
+      "family": "pumpkaboo",
+      "classification": "permanent",
+      "target_layer": "baseFormId",
+      "evidence_status": "source_explicit_variant",
+      "records": [
+        {
+          "id": "pumpkaboo",
+          "name": "Pumpkaboo",
+          "source_page": 437,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Ghost",
+            "Grass"
+          ],
+          "base_stats": {
+            "hp": 4,
+            "attack": 7,
+            "defense": 7,
+            "special_attack": 4,
+            "special_defense": 6,
+            "speed": 6
+          },
+          "abilities": [
+            "flash-fire",
+            "frisk",
+            "insomnia",
+            "life-force",
+            "pickup"
+          ],
+          "capabilities": [
+            "darkvision",
+            "dead-silent",
+            "invisibility",
+            "jump",
+            "levitate",
+            "naturewalk",
+            "overland",
+            "phasing",
+            "power",
+            "swim",
+            "underdog"
+          ],
+          "signals": [
+            "embedded_size_forms:small,average,large,super"
+          ]
+        }
+      ],
+      "signals": [
+        "embedded_size_forms:small,average,large,super"
+      ],
+      "reason": "The supplied Gen 8ish PokéDex entry embeds four explicit Small/Average/Large/Super Base Stat sets. Exact per-size height/weight values are not inferred from the aggregate source range.",
       "preserve_legacy_ids": true
     },
     {

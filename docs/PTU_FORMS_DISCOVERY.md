@@ -4,8 +4,8 @@ This is a discovery/audit artifact. It deliberately over-collects source-backed 
 
 - Parsed Species records: **956**
 - Previous inventory candidates: **81**
-- Expanded source-signal candidates: **104**
-- Newly discovered candidate records: **23**
+- Expanded source-signal candidates: **106**
+- Newly discovered candidate records: **25**
 - Previous candidates not rediscovered by hardened signals: **0**
 - Legacy-only candidates with no independent hardened signal: **1**
 
@@ -18,6 +18,7 @@ This is a discovery/audit artifact. It deliberately over-collects source-backed 
 - `cramorant` — Cramorant (p. 713); signals: form_ability:gulp-missile
 - `deerling` — Deerling (p. 551); signals: form_ability:seasonal
 - `furfrou` — Furfrou (p. 740); signals: form_ability:fabulous-trim
+- `gourgeist` — Gourgeist (p. 438); signals: embedded_size_forms:small,average,large,super
 - `indeedee-female` — INDEEDEE Female (p. 748); signals: name_descriptor:female
 - `indeedee-male` — INDEEDEE Male (p. 747); signals: name_descriptor:male
 - `lycanroc-dusk` — LYCANROC Dusk (p. 618); signals: name_descriptor:dusk
@@ -29,6 +30,7 @@ This is a discovery/audit artifact. It deliberately over-collects source-backed 
 - `morpeko` — Morpeko (p. 703); signals: form_ability:hunger-switch
 - `nidoran-f` — NIDORAN (F) (p. 239); signals: gender_form:female
 - `nidoran-m` — NIDORAN (M) (p. 242); signals: gender_form:male
+- `pumpkaboo` — Pumpkaboo (p. 437); signals: embedded_size_forms:small,average,large,super
 - `sawsbuck` — Sawsbuck (p. 552); signals: form_ability:seasonal
 - `silvally` — Silvally (p. 935); signals: form_ability:rks-system
 - `wormadam-plant-cloak` — WORMADAM Plant Cloak (p. 324); signals: name_descriptor:cloak, name_phrase:plant cloak
@@ -108,6 +110,9 @@ This is a discovery/audit artifact. It deliberately over-collects source-backed 
 
 ### golem
 - `golem-alola` — GOLEM Alola (p. 793); existing_inventory; regional_name:alola
+
+### gourgeist
+- `gourgeist` — Gourgeist (p. 438); embedded_size_forms:small,average,large,super
 
 ### graveler
 - `graveler-alola` — GRAVELER Alola (p. 792); existing_inventory; regional_name:alola
@@ -193,6 +198,9 @@ This is a discovery/audit artifact. It deliberately over-collects source-backed 
 
 ### ponyta
 - `ponyta-galar` — PONYTA Galar (p. 798); existing_inventory; regional_name:galar
+
+### pumpkaboo
+- `pumpkaboo` — Pumpkaboo (p. 437); embedded_size_forms:small,average,large,super
 
 ### raichu
 - `raichu-alola` — RAICHU Alola (p. 123); existing_inventory; regional_name:alola
@@ -284,5 +292,5 @@ This is a discovery/audit artifact. It deliberately over-collects source-backed 
 - `existing_inventory` means the record was already in the first census; by itself it is not evidence of a Form.
 - `form_capability` / `form_ability`, embedded parameter blocks, structured variant metadata, and explicit gender/regional records are stronger signals than broad name matching.
 - Flower Gift is not treated as a Form-driving Ability because the supplied PTU Core definition is a Sunny burst buff, not a Cherrim transformation rule.
-- Embedded size and color parameter blocks are inventoried even when the source stores them inside a single Species record.
+- Pumpkaboo and Gourgeist are explicitly retained as embedded size-form families because the supplied Gen 8ish PokéDex pages 437–438 contain Small/Average/Large/Super Base Stat matrices even when that table is not preserved verbatim in the pack row raw text.
 - Records discovered only by broad naming signals are not automatically Forms; classification must promote them with source evidence or reject them.

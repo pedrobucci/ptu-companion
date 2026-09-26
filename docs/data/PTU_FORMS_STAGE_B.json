@@ -1,5 +1,5 @@
 {
-  "schema_version": 3,
+  "schema_version": 4,
   "stage_b_form_schema_version": 1,
   "applied_to_default_packs": false,
   "policy": {
@@ -11,12 +11,12 @@
     "note": "This is a generated conversion catalog. It intentionally does not mutate bundled .ptucp files while deferred families remain."
   },
   "summary": {
-    "candidate_family_entries": 41,
-    "record_backed_family_entries": 33,
-    "rule_defined_family_entries": 8,
-    "candidate_forms": 59,
-    "record_backed_forms": 40,
-    "rule_defined_forms": 19,
+    "candidate_family_entries": 43,
+    "record_backed_family_entries": 32,
+    "rule_defined_family_entries": 11,
+    "candidate_forms": 67,
+    "record_backed_forms": 37,
+    "rule_defined_forms": 30,
     "omitted_or_deferred_family_entries": 26,
     "synthetic_species_entries": 50,
     "synthetic_forms": 52,
@@ -1299,6 +1299,101 @@
         }
       ],
       "note": "forms[] contains Stage B-compatible type/base-stat overrides from separately parameterized Species rows. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
+    },
+    {
+      "family": "gourgeist",
+      "classification": "permanent",
+      "target_layer": "baseFormId",
+      "builder": "embedded_size_base_stats",
+      "forms": [
+        {
+          "id": "small",
+          "name": "Small",
+          "mode": "permanent",
+          "overrides": {
+            "baseStats": {
+              "replace": {
+                "hp": 6,
+                "attack": 9,
+                "defense": 12,
+                "special_attack": 6,
+                "special_defense": 8,
+                "speed": 10
+              }
+            }
+          },
+          "sortOrder": 10
+        },
+        {
+          "id": "average",
+          "name": "Average",
+          "mode": "permanent",
+          "overrides": {
+            "baseStats": {
+              "replace": {
+                "hp": 7,
+                "attack": 9,
+                "defense": 12,
+                "special_attack": 6,
+                "special_defense": 8,
+                "speed": 8
+              }
+            }
+          },
+          "sortOrder": 20
+        },
+        {
+          "id": "large",
+          "name": "Large",
+          "mode": "permanent",
+          "overrides": {
+            "baseStats": {
+              "replace": {
+                "hp": 8,
+                "attack": 10,
+                "defense": 12,
+                "special_attack": 6,
+                "special_defense": 8,
+                "speed": 7
+              }
+            }
+          },
+          "sortOrder": 30
+        },
+        {
+          "id": "super",
+          "name": "Super",
+          "mode": "permanent",
+          "overrides": {
+            "baseStats": {
+              "replace": {
+                "hp": 9,
+                "attack": 10,
+                "defense": 12,
+                "special_attack": 6,
+                "special_defense": 8,
+                "speed": 5
+              }
+            }
+          },
+          "sortOrder": 40
+        }
+      ],
+      "source_mechanics": {
+        "source": "Gen 8ish PokeDex p.438",
+        "size_labels": [
+          "Small",
+          "Average",
+          "Large",
+          "Super"
+        ],
+        "source_size_range": {
+          "height": "2' 4\" - 5' 7\" / 0.7m - 1.7m",
+          "weight": "20.9 lbs - 86 lbs / 9.5kg - 39kg"
+        },
+        "size_measurement_status": "aggregate_range_only"
+      },
+      "note": "The supplied PTU page explicitly provides four Base Stat columns. It only provides aggregate height/weight ranges, so no exact per-size height, weight, Weight Class, or size-category override is fabricated."
     },
     {
       "family": "graveler",
@@ -2621,6 +2716,101 @@
       "note": "forms[] contains Stage B-compatible type/base-stat overrides from separately parameterized Species rows. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
     },
     {
+      "family": "pumpkaboo",
+      "classification": "permanent",
+      "target_layer": "baseFormId",
+      "builder": "embedded_size_base_stats",
+      "forms": [
+        {
+          "id": "small",
+          "name": "Small",
+          "mode": "permanent",
+          "overrides": {
+            "baseStats": {
+              "replace": {
+                "hp": 4,
+                "attack": 7,
+                "defense": 7,
+                "special_attack": 4,
+                "special_defense": 6,
+                "speed": 6
+              }
+            }
+          },
+          "sortOrder": 10
+        },
+        {
+          "id": "average",
+          "name": "Average",
+          "mode": "permanent",
+          "overrides": {
+            "baseStats": {
+              "replace": {
+                "hp": 5,
+                "attack": 7,
+                "defense": 7,
+                "special_attack": 4,
+                "special_defense": 6,
+                "speed": 5
+              }
+            }
+          },
+          "sortOrder": 20
+        },
+        {
+          "id": "large",
+          "name": "Large",
+          "mode": "permanent",
+          "overrides": {
+            "baseStats": {
+              "replace": {
+                "hp": 5,
+                "attack": 7,
+                "defense": 7,
+                "special_attack": 4,
+                "special_defense": 6,
+                "speed": 5
+              }
+            }
+          },
+          "sortOrder": 30
+        },
+        {
+          "id": "super",
+          "name": "Super",
+          "mode": "permanent",
+          "overrides": {
+            "baseStats": {
+              "replace": {
+                "hp": 6,
+                "attack": 7,
+                "defense": 7,
+                "special_attack": 4,
+                "special_defense": 6,
+                "speed": 4
+              }
+            }
+          },
+          "sortOrder": 40
+        }
+      ],
+      "source_mechanics": {
+        "source": "Gen 8ish PokeDex p.437",
+        "size_labels": [
+          "Small",
+          "Average",
+          "Large",
+          "Super"
+        ],
+        "source_size_range": {
+          "height": "1' 0\" - 2' 7\" / 0.3m - 0.8m",
+          "weight": "7.7 lbs - 33.1 lbs / 3.5kg - 15kg"
+        },
+        "size_measurement_status": "aggregate_range_only"
+      },
+      "note": "The supplied PTU page explicitly provides four Base Stat columns. It only provides aggregate height/weight ranges, so no exact per-size height, weight, Weight Class, or size-category override is fabricated."
+    },
+    {
       "family": "raichu",
       "classification": "permanent",
       "target_layer": "baseFormId",
@@ -3278,11 +3468,11 @@
       "family": "wormadam",
       "classification": "permanent",
       "target_layer": "baseFormId",
-      "builder": "parameterized_species_record",
+      "builder": "source_record_cloak_forms",
       "forms": [
         {
-          "id": "wormadam-plant-cloak",
-          "name": "WORMADAM Plant Cloak",
+          "id": "plant-cloak",
+          "name": "Plant Cloak",
           "mode": "permanent",
           "overrides": {
             "types": {
@@ -3300,13 +3490,538 @@
                 "special_defense": 11,
                 "speed": 4
               }
+            },
+            "abilities": {
+              "replace": [
+                {
+                  "slot": "Basic Ability 1",
+                  "name": "Anticipation",
+                  "ability_id": "anticipation",
+                  "slot_category": "basic",
+                  "slot_index": 1,
+                  "reference_status": "resolved"
+                },
+                {
+                  "slot": "Adv Ability 1",
+                  "name": "Overcoat",
+                  "ability_id": "overcoat",
+                  "slot_category": "advanced",
+                  "slot_index": 1,
+                  "reference_status": "resolved"
+                },
+                {
+                  "slot": "Adv Ability 2",
+                  "name": "Adaptability",
+                  "ability_id": "adaptability",
+                  "slot_category": "advanced",
+                  "slot_index": 2,
+                  "reference_status": "resolved"
+                },
+                {
+                  "slot": "Adv Ability 3",
+                  "name": "Tolerance",
+                  "ability_id": "tolerance",
+                  "slot_category": "advanced",
+                  "slot_index": 3,
+                  "reference_status": "resolved"
+                },
+                {
+                  "slot": "High Ability",
+                  "name": "Grass Pelt",
+                  "ability_id": "grass-pelt",
+                  "slot_category": "high",
+                  "slot_index": 1,
+                  "reference_status": "resolved"
+                }
+              ]
+            },
+            "capabilities": {
+              "replace": [
+                {
+                  "name": "Overland",
+                  "value": 4,
+                  "kind": "movement",
+                  "capability_id": "overland",
+                  "reference_status": "resolved_exact_normalized"
+                },
+                {
+                  "name": "Swim",
+                  "value": 1,
+                  "kind": "movement",
+                  "capability_id": "swim",
+                  "reference_status": "resolved_exact_normalized"
+                },
+                {
+                  "name": "Jump",
+                  "high": 1,
+                  "long": 2,
+                  "kind": "jump",
+                  "component_capability_ids": [
+                    "high-jump",
+                    "long-jump"
+                  ],
+                  "reference_status": "resolved_composite"
+                },
+                {
+                  "name": "Power",
+                  "value": 2,
+                  "kind": "power",
+                  "capability_id": "power",
+                  "reference_status": "resolved_exact_normalized"
+                },
+                {
+                  "name": "Naturewalk",
+                  "terrains": [
+                    "Forest",
+                    "Grassland"
+                  ],
+                  "kind": "special",
+                  "capability_id": "naturewalk",
+                  "reference_status": "resolved_exact_normalized"
+                },
+                {
+                  "name": "Threaded",
+                  "kind": "special",
+                  "capability_id": "threaded",
+                  "reference_status": "resolved_exact_normalized"
+                },
+                {
+                  "name": "Underdog",
+                  "kind": "special",
+                  "capability_id": "underdog",
+                  "reference_status": "resolved_exact_normalized"
+                }
+              ]
+            },
+            "skills": {
+              "replace": [
+                {
+                  "skill": "Athletics",
+                  "dice": 2,
+                  "modifier": 0
+                },
+                {
+                  "skill": "Acrobatics",
+                  "dice": 3,
+                  "modifier": -1
+                },
+                {
+                  "skill": "Combat",
+                  "dice": 2,
+                  "modifier": 0
+                },
+                {
+                  "skill": "Stealth",
+                  "dice": 4,
+                  "modifier": 0
+                },
+                {
+                  "skill": "Perception",
+                  "dice": 4,
+                  "modifier": 0
+                },
+                {
+                  "skill": "Focus",
+                  "dice": 3,
+                  "modifier": 0
+                }
+              ]
+            },
+            "levelUpMoves": {
+              "replace": [
+                {
+                  "level": "Evo",
+                  "move": "Quiver Dance",
+                  "type_hint": "Bug",
+                  "move_id": "quiver-dance",
+                  "reference_status": "resolved"
+                },
+                {
+                  "level": "10",
+                  "move": "Protect",
+                  "type_hint": "Normal",
+                  "move_id": "protect",
+                  "reference_status": "resolved"
+                },
+                {
+                  "level": "15",
+                  "move": "Bug Bite",
+                  "type_hint": "Bug",
+                  "move_id": "bug-bite",
+                  "reference_status": "resolved"
+                },
+                {
+                  "level": "20",
+                  "move": "Hidden Power",
+                  "type_hint": "Normal",
+                  "move_id": "hidden-power",
+                  "reference_status": "resolved"
+                },
+                {
+                  "level": "23",
+                  "move": "Confusion",
+                  "type_hint": "Psychic",
+                  "move_id": "confusion",
+                  "reference_status": "resolved"
+                },
+                {
+                  "level": "26",
+                  "move": "Razor Leaf",
+                  "type_hint": "Grass",
+                  "move_id": "razor-leaf",
+                  "reference_status": "resolved"
+                },
+                {
+                  "level": "29",
+                  "move": "Growth",
+                  "type_hint": "Normal",
+                  "move_id": "growth",
+                  "reference_status": "resolved"
+                },
+                {
+                  "level": "32",
+                  "move": "Psybeam",
+                  "type_hint": "Psychic",
+                  "move_id": "psybeam",
+                  "reference_status": "resolved"
+                },
+                {
+                  "level": "35",
+                  "move": "Captivate",
+                  "type_hint": "Normal",
+                  "move_id": "captivate",
+                  "reference_status": "resolved"
+                },
+                {
+                  "level": "38",
+                  "move": "Flail",
+                  "type_hint": "Normal",
+                  "move_id": "flail",
+                  "reference_status": "resolved"
+                },
+                {
+                  "level": "41",
+                  "move": "Attract",
+                  "type_hint": "Normal",
+                  "move_id": "attract",
+                  "reference_status": "resolved"
+                },
+                {
+                  "level": "44",
+                  "move": "Psychic",
+                  "type_hint": "Psychic",
+                  "move_id": "psychic",
+                  "reference_status": "resolved"
+                },
+                {
+                  "level": "47",
+                  "move": "Leaf Storm",
+                  "type_hint": "Grass",
+                  "move_id": "leaf-storm",
+                  "reference_status": "resolved"
+                },
+                {
+                  "level": "50",
+                  "move": "Bug Buzz",
+                  "type_hint": "Bug",
+                  "move_id": "bug-buzz",
+                  "reference_status": "resolved"
+                }
+              ]
+            },
+            "tmMoves": {
+              "replace": [
+                {
+                  "code": "06",
+                  "move": "Toxic",
+                  "move_id": "toxic",
+                  "reference_status": "resolved"
+                },
+                {
+                  "code": "09",
+                  "move": "Venoshock",
+                  "move_id": "venoshock",
+                  "reference_status": "resolved"
+                },
+                {
+                  "code": "10",
+                  "move": "Hidden Power",
+                  "move_id": "hidden-power",
+                  "reference_status": "resolved"
+                },
+                {
+                  "code": "11",
+                  "move": "Sunny Day",
+                  "move_id": "sunny-day",
+                  "reference_status": "resolved"
+                },
+                {
+                  "code": "15",
+                  "move": "Hyper Beam",
+                  "move_id": "hyper-beam",
+                  "reference_status": "resolved"
+                },
+                {
+                  "code": "17",
+                  "move": "Protect",
+                  "move_id": "protect",
+                  "reference_status": "resolved"
+                },
+                {
+                  "code": "18",
+                  "move": "Rain Dance",
+                  "move_id": "rain-dance",
+                  "reference_status": "resolved"
+                },
+                {
+                  "code": "20",
+                  "move": "Safeguard",
+                  "move_id": "safeguard",
+                  "reference_status": "resolved"
+                },
+                {
+                  "code": "21",
+                  "move": "Frustration",
+                  "move_id": "frustration",
+                  "reference_status": "resolved"
+                },
+                {
+                  "code": "22",
+                  "move": "Solar Beam",
+                  "move_id": "solar-beam",
+                  "reference_status": "resolved"
+                },
+                {
+                  "code": "27",
+                  "move": "Return",
+                  "move_id": "return",
+                  "reference_status": "resolved"
+                },
+                {
+                  "code": "29",
+                  "move": "Psychic",
+                  "move_id": "psychic",
+                  "reference_status": "resolved"
+                },
+                {
+                  "code": "30",
+                  "move": "Shadow Ball",
+                  "move_id": "shadow-ball",
+                  "reference_status": "resolved"
+                },
+                {
+                  "code": "32",
+                  "move": "Double Team",
+                  "move_id": "double-team",
+                  "reference_status": "resolved"
+                },
+                {
+                  "code": "42",
+                  "move": "Façade",
+                  "move_id": "facade",
+                  "reference_status": "resolved"
+                },
+                {
+                  "code": "44",
+                  "move": "Rest",
+                  "move_id": "rest",
+                  "reference_status": "resolved"
+                },
+                {
+                  "code": "45",
+                  "move": "Attract",
+                  "move_id": "attract",
+                  "reference_status": "resolved"
+                },
+                {
+                  "code": "46",
+                  "move": "Thief",
+                  "move_id": "thief",
+                  "reference_status": "resolved"
+                },
+                {
+                  "code": "48",
+                  "move": "Round",
+                  "move_id": "round",
+                  "reference_status": "resolved"
+                },
+                {
+                  "code": "53",
+                  "move": "Energy Ball",
+                  "move_id": "energy-ball",
+                  "reference_status": "resolved"
+                },
+                {
+                  "code": "68",
+                  "move": "Giga Impact",
+                  "move_id": "giga-impact",
+                  "reference_status": "resolved"
+                },
+                {
+                  "code": "77",
+                  "move": "Psych Up",
+                  "move_id": "psych-up",
+                  "reference_status": "resolved"
+                },
+                {
+                  "code": "83",
+                  "move": "Infestation",
+                  "move_id": "infestation",
+                  "reference_status": "resolved"
+                },
+                {
+                  "code": "85",
+                  "move": "Dream Eater",
+                  "move_id": "dream-eater",
+                  "reference_status": "resolved"
+                },
+                {
+                  "code": "86",
+                  "move": "Grass Knot",
+                  "move_id": "grass-knot",
+                  "reference_status": "resolved"
+                },
+                {
+                  "code": "87",
+                  "move": "Swagger",
+                  "move_id": "swagger",
+                  "reference_status": "resolved"
+                },
+                {
+                  "code": "88",
+                  "move": "Sleep Talk",
+                  "move_id": "sleep-talk",
+                  "reference_status": "resolved"
+                },
+                {
+                  "code": "90",
+                  "move": "Substitute",
+                  "move_id": "substitute",
+                  "reference_status": "resolved"
+                },
+                {
+                  "code": "100",
+                  "move": "Confide",
+                  "move_id": "confide",
+                  "reference_status": "resolved"
+                }
+              ]
+            },
+            "tutorMoves": {
+              "replace": [
+                {
+                  "move": "Ally Switch",
+                  "move_id": "ally-switch",
+                  "note": null,
+                  "reference_status": "resolved"
+                },
+                {
+                  "move": "Bug Bite",
+                  "move_id": "bug-bite",
+                  "note": "N",
+                  "reference_status": "resolved"
+                },
+                {
+                  "move": "Bullet Seed",
+                  "move_id": "bullet-seed",
+                  "note": null,
+                  "reference_status": "resolved"
+                },
+                {
+                  "move": "Electroweb",
+                  "move_id": "electroweb",
+                  "note": null,
+                  "reference_status": "resolved"
+                },
+                {
+                  "move": "Endeavor",
+                  "move_id": "endeavor",
+                  "note": null,
+                  "reference_status": "resolved"
+                },
+                {
+                  "move": "Giga Drain",
+                  "move_id": "giga-drain",
+                  "note": null,
+                  "reference_status": "resolved"
+                },
+                {
+                  "move": "Natural Gift",
+                  "move_id": "natural-gift",
+                  "note": null,
+                  "reference_status": "resolved"
+                },
+                {
+                  "move": "Seed Bomb",
+                  "move_id": "seed-bomb",
+                  "note": null,
+                  "reference_status": "resolved"
+                },
+                {
+                  "move": "Signal Beam",
+                  "move_id": "signal-beam",
+                  "note": null,
+                  "reference_status": "resolved"
+                },
+                {
+                  "move": "Skill Swap",
+                  "move_id": "skill-swap",
+                  "note": null,
+                  "reference_status": "resolved"
+                },
+                {
+                  "move": "Snore",
+                  "move_id": "snore",
+                  "note": null,
+                  "reference_status": "resolved"
+                },
+                {
+                  "move": "String Shot",
+                  "move_id": "string-shot",
+                  "note": null,
+                  "reference_status": "resolved"
+                },
+                {
+                  "move": "Sucker Punch",
+                  "move_id": "sucker-punch",
+                  "note": "N",
+                  "reference_status": "resolved"
+                },
+                {
+                  "move": "Synthesis",
+                  "move_id": "synthesis",
+                  "note": null,
+                  "reference_status": "resolved"
+                },
+                {
+                  "move": "Telekinesis",
+                  "move_id": "telekinesis",
+                  "note": null,
+                  "reference_status": "resolved"
+                },
+                {
+                  "move": "Uproar",
+                  "move_id": "uproar",
+                  "note": null,
+                  "reference_status": "resolved"
+                },
+                {
+                  "move": "Worry Seed",
+                  "move_id": "worry-seed",
+                  "note": null,
+                  "reference_status": "resolved"
+                }
+              ]
+            },
+            "eggMoves": {
+              "replace": []
             }
           },
           "sortOrder": 10
         },
         {
-          "id": "wormadam-sandy-cloak",
-          "name": "WORMADAM Sandy Cloak",
+          "id": "sandy-cloak",
+          "name": "Sandy Cloak",
           "mode": "permanent",
           "overrides": {
             "types": {
@@ -3324,13 +4039,531 @@
                 "special_defense": 9,
                 "speed": 4
               }
+            },
+            "abilities": {
+              "replace": [
+                {
+                  "slot": "Basic Ability 1",
+                  "name": "Anticipation",
+                  "ability_id": "anticipation",
+                  "slot_category": "basic",
+                  "slot_index": 1,
+                  "reference_status": "resolved"
+                },
+                {
+                  "slot": "Adv Ability 1",
+                  "name": "Overcoat",
+                  "ability_id": "overcoat",
+                  "slot_category": "advanced",
+                  "slot_index": 1,
+                  "reference_status": "resolved"
+                },
+                {
+                  "slot": "Adv Ability 2",
+                  "name": "Adaptability",
+                  "ability_id": "adaptability",
+                  "slot_category": "advanced",
+                  "slot_index": 2,
+                  "reference_status": "resolved"
+                },
+                {
+                  "slot": "Adv Ability 3",
+                  "name": "Tolerance",
+                  "ability_id": "tolerance",
+                  "slot_category": "advanced",
+                  "slot_index": 3,
+                  "reference_status": "resolved"
+                },
+                {
+                  "slot": "High Ability",
+                  "name": "Sand Veil",
+                  "ability_id": "sand-veil",
+                  "slot_category": "high",
+                  "slot_index": 1,
+                  "reference_status": "resolved"
+                }
+              ]
+            },
+            "capabilities": {
+              "replace": [
+                {
+                  "name": "Overland",
+                  "value": 4,
+                  "kind": "movement",
+                  "capability_id": "overland",
+                  "reference_status": "resolved_exact_normalized"
+                },
+                {
+                  "name": "Swim",
+                  "value": 1,
+                  "kind": "movement",
+                  "capability_id": "swim",
+                  "reference_status": "resolved_exact_normalized"
+                },
+                {
+                  "name": "Jump",
+                  "high": 1,
+                  "long": 2,
+                  "kind": "jump",
+                  "component_capability_ids": [
+                    "high-jump",
+                    "long-jump"
+                  ],
+                  "reference_status": "resolved_composite"
+                },
+                {
+                  "name": "Power",
+                  "value": 2,
+                  "kind": "power",
+                  "capability_id": "power",
+                  "reference_status": "resolved_exact_normalized"
+                },
+                {
+                  "name": "Naturewalk",
+                  "terrains": [
+                    "Desert"
+                  ],
+                  "kind": "special",
+                  "capability_id": "naturewalk",
+                  "reference_status": "resolved_exact_normalized"
+                },
+                {
+                  "name": "Threaded",
+                  "kind": "special",
+                  "capability_id": "threaded",
+                  "reference_status": "resolved_exact_normalized"
+                },
+                {
+                  "name": "Underdog",
+                  "kind": "special",
+                  "capability_id": "underdog",
+                  "reference_status": "resolved_exact_normalized"
+                }
+              ]
+            },
+            "skills": {
+              "replace": [
+                {
+                  "skill": "Athletics",
+                  "dice": 2,
+                  "modifier": 0
+                },
+                {
+                  "skill": "Acrobatics",
+                  "dice": 3,
+                  "modifier": -1
+                },
+                {
+                  "skill": "Combat",
+                  "dice": 2,
+                  "modifier": 0
+                },
+                {
+                  "skill": "Stealth",
+                  "dice": 4,
+                  "modifier": 0
+                },
+                {
+                  "skill": "Perception",
+                  "dice": 4,
+                  "modifier": 0
+                },
+                {
+                  "skill": "Focus",
+                  "dice": 3,
+                  "modifier": 0
+                }
+              ]
+            },
+            "levelUpMoves": {
+              "replace": [
+                {
+                  "level": "Evo",
+                  "move": "Quiver Dance",
+                  "type_hint": "Bug",
+                  "move_id": "quiver-dance",
+                  "reference_status": "resolved"
+                },
+                {
+                  "level": "10",
+                  "move": "Protect",
+                  "type_hint": "Normal",
+                  "move_id": "protect",
+                  "reference_status": "resolved"
+                },
+                {
+                  "level": "15",
+                  "move": "Bug Bite",
+                  "type_hint": "Bug",
+                  "move_id": "bug-bite",
+                  "reference_status": "resolved"
+                },
+                {
+                  "level": "20",
+                  "move": "Hidden Power",
+                  "type_hint": "Normal",
+                  "move_id": "hidden-power",
+                  "reference_status": "resolved"
+                },
+                {
+                  "level": "23",
+                  "move": "Confusion",
+                  "type_hint": "Psychic",
+                  "move_id": "confusion",
+                  "reference_status": "resolved"
+                },
+                {
+                  "level": "26",
+                  "move": "Rock Blast",
+                  "type_hint": "Rock",
+                  "move_id": "rock-blast",
+                  "reference_status": "resolved"
+                },
+                {
+                  "level": "29",
+                  "move": "Harden",
+                  "type_hint": "Normal",
+                  "move_id": "harden",
+                  "reference_status": "resolved"
+                },
+                {
+                  "level": "32",
+                  "move": "Psybeam",
+                  "type_hint": "Psychic",
+                  "move_id": "psybeam",
+                  "reference_status": "resolved"
+                },
+                {
+                  "level": "35",
+                  "move": "Captivate",
+                  "type_hint": "Normal",
+                  "move_id": "captivate",
+                  "reference_status": "resolved"
+                },
+                {
+                  "level": "38",
+                  "move": "Flail",
+                  "type_hint": "Normal",
+                  "move_id": "flail",
+                  "reference_status": "resolved"
+                },
+                {
+                  "level": "41",
+                  "move": "Attract",
+                  "type_hint": "Normal",
+                  "move_id": "attract",
+                  "reference_status": "resolved"
+                },
+                {
+                  "level": "44",
+                  "move": "Psychic",
+                  "type_hint": "Psychic",
+                  "move_id": "psychic",
+                  "reference_status": "resolved"
+                },
+                {
+                  "level": "47",
+                  "move": "Fissure",
+                  "type_hint": "Ground",
+                  "move_id": "fissure",
+                  "reference_status": "resolved"
+                },
+                {
+                  "level": "50",
+                  "move": "Bug Buzz",
+                  "type_hint": "Bug",
+                  "move_id": "bug-buzz",
+                  "reference_status": "resolved"
+                }
+              ]
+            },
+            "tmMoves": {
+              "replace": [
+                {
+                  "code": "06",
+                  "move": "Toxic",
+                  "move_id": "toxic",
+                  "reference_status": "resolved"
+                },
+                {
+                  "code": "09",
+                  "move": "Venoshock",
+                  "move_id": "venoshock",
+                  "reference_status": "resolved"
+                },
+                {
+                  "code": "10",
+                  "move": "Hidden Power",
+                  "move_id": "hidden-power",
+                  "reference_status": "resolved"
+                },
+                {
+                  "code": "11",
+                  "move": "Sunny Day",
+                  "move_id": "sunny-day",
+                  "reference_status": "resolved"
+                },
+                {
+                  "code": "15",
+                  "move": "Hyper Beam",
+                  "move_id": "hyper-beam",
+                  "reference_status": "resolved"
+                },
+                {
+                  "code": "17",
+                  "move": "Protect",
+                  "move_id": "protect",
+                  "reference_status": "resolved"
+                },
+                {
+                  "code": "18",
+                  "move": "Rain Dance",
+                  "move_id": "rain-dance",
+                  "reference_status": "resolved"
+                },
+                {
+                  "code": "20",
+                  "move": "Safeguard",
+                  "move_id": "safeguard",
+                  "reference_status": "resolved"
+                },
+                {
+                  "code": "21",
+                  "move": "Frustration",
+                  "move_id": "frustration",
+                  "reference_status": "resolved"
+                },
+                {
+                  "code": "26",
+                  "move": "Earthquake",
+                  "move_id": "earthquake",
+                  "reference_status": "resolved"
+                },
+                {
+                  "code": "27",
+                  "move": "Return",
+                  "move_id": "return",
+                  "reference_status": "resolved"
+                },
+                {
+                  "code": "29",
+                  "move": "Psychic",
+                  "move_id": "psychic",
+                  "reference_status": "resolved"
+                },
+                {
+                  "code": "30",
+                  "move": "Shadow Ball",
+                  "move_id": "shadow-ball",
+                  "reference_status": "resolved"
+                },
+                {
+                  "code": "32",
+                  "move": "Double Team",
+                  "move_id": "double-team",
+                  "reference_status": "resolved"
+                },
+                {
+                  "code": "37",
+                  "move": "Sandstorm",
+                  "move_id": "sandstorm",
+                  "reference_status": "resolved"
+                },
+                {
+                  "code": "39",
+                  "move": "Rock Tomb",
+                  "move_id": "rock-tomb",
+                  "reference_status": "resolved"
+                },
+                {
+                  "code": "42",
+                  "move": "Façade",
+                  "move_id": "facade",
+                  "reference_status": "resolved"
+                },
+                {
+                  "code": "44",
+                  "move": "Rest",
+                  "move_id": "rest",
+                  "reference_status": "resolved"
+                },
+                {
+                  "code": "45",
+                  "move": "Attract",
+                  "move_id": "attract",
+                  "reference_status": "resolved"
+                },
+                {
+                  "code": "46",
+                  "move": "Thief",
+                  "move_id": "thief",
+                  "reference_status": "resolved"
+                },
+                {
+                  "code": "48",
+                  "move": "Round",
+                  "move_id": "round",
+                  "reference_status": "resolved"
+                },
+                {
+                  "code": "68",
+                  "move": "Giga Impact",
+                  "move_id": "giga-impact",
+                  "reference_status": "resolved"
+                },
+                {
+                  "code": "77",
+                  "move": "Psych Up",
+                  "move_id": "psych-up",
+                  "reference_status": "resolved"
+                },
+                {
+                  "code": "78",
+                  "move": "Bulldoze",
+                  "move_id": "bulldoze",
+                  "reference_status": "resolved"
+                },
+                {
+                  "code": "83",
+                  "move": "Infestation",
+                  "move_id": "infestation",
+                  "reference_status": "resolved"
+                },
+                {
+                  "code": "85",
+                  "move": "Dream Eater",
+                  "move_id": "dream-eater",
+                  "reference_status": "resolved"
+                },
+                {
+                  "code": "87",
+                  "move": "Swagger",
+                  "move_id": "swagger",
+                  "reference_status": "resolved"
+                },
+                {
+                  "code": "88",
+                  "move": "Sleep Talk",
+                  "move_id": "sleep-talk",
+                  "reference_status": "resolved"
+                },
+                {
+                  "code": "90",
+                  "move": "Substitute",
+                  "move_id": "substitute",
+                  "reference_status": "resolved"
+                },
+                {
+                  "code": "100",
+                  "move": "Confide",
+                  "move_id": "confide",
+                  "reference_status": "resolved"
+                }
+              ]
+            },
+            "tutorMoves": {
+              "replace": [
+                {
+                  "move": "Ally Switch",
+                  "move_id": "ally-switch",
+                  "note": null,
+                  "reference_status": "resolved"
+                },
+                {
+                  "move": "Bug Bite",
+                  "move_id": "bug-bite",
+                  "note": "N",
+                  "reference_status": "resolved"
+                },
+                {
+                  "move": "Earth Power",
+                  "move_id": "earth-power",
+                  "note": null,
+                  "reference_status": "resolved"
+                },
+                {
+                  "move": "Electroweb",
+                  "move_id": "electroweb",
+                  "note": null,
+                  "reference_status": "resolved"
+                },
+                {
+                  "move": "Endeavor",
+                  "move_id": "endeavor",
+                  "note": null,
+                  "reference_status": "resolved"
+                },
+                {
+                  "move": "Mud-Slap",
+                  "move_id": "mud-slap",
+                  "note": null,
+                  "reference_status": "resolved"
+                },
+                {
+                  "move": "Natural Gift",
+                  "move_id": "natural-gift",
+                  "note": null,
+                  "reference_status": "resolved"
+                },
+                {
+                  "move": "Signal Beam",
+                  "move_id": "signal-beam",
+                  "note": null,
+                  "reference_status": "resolved"
+                },
+                {
+                  "move": "Skill Swap",
+                  "move_id": "skill-swap",
+                  "note": null,
+                  "reference_status": "resolved"
+                },
+                {
+                  "move": "Snore",
+                  "move_id": "snore",
+                  "note": null,
+                  "reference_status": "resolved"
+                },
+                {
+                  "move": "Stealth Rock",
+                  "move_id": "stealth-rock",
+                  "note": null,
+                  "reference_status": "resolved"
+                },
+                {
+                  "move": "String Shot",
+                  "move_id": "string-shot",
+                  "note": null,
+                  "reference_status": "resolved"
+                },
+                {
+                  "move": "Sucker Punch",
+                  "move_id": "sucker-punch",
+                  "note": "N",
+                  "reference_status": "resolved"
+                },
+                {
+                  "move": "Telekinesis",
+                  "move_id": "telekinesis",
+                  "note": null,
+                  "reference_status": "resolved"
+                },
+                {
+                  "move": "Uproar",
+                  "move_id": "uproar",
+                  "note": null,
+                  "reference_status": "resolved"
+                }
+              ]
+            },
+            "eggMoves": {
+              "replace": []
             }
           },
           "sortOrder": 20
         },
         {
-          "id": "wormadam-trash-cloak",
-          "name": "WORMADAM Trash Cloak",
+          "id": "trash-cloak",
+          "name": "Trash Cloak",
           "mode": "permanent",
           "overrides": {
             "types": {
@@ -3348,74 +4581,587 @@
                 "special_defense": 10,
                 "speed": 4
               }
+            },
+            "abilities": {
+              "replace": [
+                {
+                  "slot": "Basic Ability 1",
+                  "name": "Anticipation",
+                  "ability_id": "anticipation",
+                  "slot_category": "basic",
+                  "slot_index": 1,
+                  "reference_status": "resolved"
+                },
+                {
+                  "slot": "Adv Ability 1",
+                  "name": "Overcoat",
+                  "ability_id": "overcoat",
+                  "slot_category": "advanced",
+                  "slot_index": 1,
+                  "reference_status": "resolved"
+                },
+                {
+                  "slot": "Adv Ability 2",
+                  "name": "Adaptability",
+                  "ability_id": "adaptability",
+                  "slot_category": "advanced",
+                  "slot_index": 2,
+                  "reference_status": "resolved"
+                },
+                {
+                  "slot": "Adv Ability 3",
+                  "name": "Tolerance",
+                  "ability_id": "tolerance",
+                  "slot_category": "advanced",
+                  "slot_index": 3,
+                  "reference_status": "resolved"
+                },
+                {
+                  "slot": "High Ability",
+                  "name": "Clear Body",
+                  "ability_id": "clear-body",
+                  "slot_category": "high",
+                  "slot_index": 1,
+                  "reference_status": "resolved"
+                }
+              ]
+            },
+            "capabilities": {
+              "replace": [
+                {
+                  "name": "Overland",
+                  "value": 4,
+                  "kind": "movement",
+                  "capability_id": "overland",
+                  "reference_status": "resolved_exact_normalized"
+                },
+                {
+                  "name": "Swim",
+                  "value": 1,
+                  "kind": "movement",
+                  "capability_id": "swim",
+                  "reference_status": "resolved_exact_normalized"
+                },
+                {
+                  "name": "Jump",
+                  "high": 1,
+                  "long": 2,
+                  "kind": "jump",
+                  "component_capability_ids": [
+                    "high-jump",
+                    "long-jump"
+                  ],
+                  "reference_status": "resolved_composite"
+                },
+                {
+                  "name": "Power",
+                  "value": 2,
+                  "kind": "power",
+                  "capability_id": "power",
+                  "reference_status": "resolved_exact_normalized"
+                },
+                {
+                  "name": "Naturewalk",
+                  "terrains": [
+                    "Urban"
+                  ],
+                  "kind": "special",
+                  "capability_id": "naturewalk",
+                  "reference_status": "resolved_exact_normalized"
+                },
+                {
+                  "name": "Threaded",
+                  "kind": "special",
+                  "capability_id": "threaded",
+                  "reference_status": "resolved_exact_normalized"
+                },
+                {
+                  "name": "Underdog",
+                  "kind": "special",
+                  "capability_id": "underdog",
+                  "reference_status": "resolved_exact_normalized"
+                }
+              ]
+            },
+            "skills": {
+              "replace": [
+                {
+                  "skill": "Athletics",
+                  "dice": 2,
+                  "modifier": 0
+                },
+                {
+                  "skill": "Acrobatics",
+                  "dice": 3,
+                  "modifier": -1
+                },
+                {
+                  "skill": "Combat",
+                  "dice": 2,
+                  "modifier": 0
+                },
+                {
+                  "skill": "Stealth",
+                  "dice": 4,
+                  "modifier": 0
+                },
+                {
+                  "skill": "Perception",
+                  "dice": 4,
+                  "modifier": 0
+                },
+                {
+                  "skill": "Focus",
+                  "dice": 3,
+                  "modifier": 0
+                }
+              ]
+            },
+            "levelUpMoves": {
+              "replace": [
+                {
+                  "level": "Evo",
+                  "move": "Quiver Dance",
+                  "type_hint": "Bug",
+                  "move_id": "quiver-dance",
+                  "reference_status": "resolved"
+                },
+                {
+                  "level": "10",
+                  "move": "Protect",
+                  "type_hint": "Normal",
+                  "move_id": "protect",
+                  "reference_status": "resolved"
+                },
+                {
+                  "level": "15",
+                  "move": "Bug Bite",
+                  "type_hint": "Bug",
+                  "move_id": "bug-bite",
+                  "reference_status": "resolved"
+                },
+                {
+                  "level": "20",
+                  "move": "Hidden Power",
+                  "type_hint": "Normal",
+                  "move_id": "hidden-power",
+                  "reference_status": "resolved"
+                },
+                {
+                  "level": "23",
+                  "move": "Confusion",
+                  "type_hint": "Psychic",
+                  "move_id": "confusion",
+                  "reference_status": "resolved"
+                },
+                {
+                  "level": "26",
+                  "move": "Mirror Shot",
+                  "type_hint": "Steel",
+                  "move_id": "mirror-shot",
+                  "reference_status": "resolved"
+                },
+                {
+                  "level": "29",
+                  "move": "Metal Sound",
+                  "type_hint": "Steel",
+                  "move_id": "metal-sound",
+                  "reference_status": "resolved"
+                },
+                {
+                  "level": "32",
+                  "move": "Psybeam",
+                  "type_hint": "Psychic",
+                  "move_id": "psybeam",
+                  "reference_status": "resolved"
+                },
+                {
+                  "level": "35",
+                  "move": "Captivate",
+                  "type_hint": "Normal",
+                  "move_id": "captivate",
+                  "reference_status": "resolved"
+                },
+                {
+                  "level": "38",
+                  "move": "Flail",
+                  "type_hint": "Normal",
+                  "move_id": "flail",
+                  "reference_status": "resolved"
+                },
+                {
+                  "level": "41",
+                  "move": "Attract",
+                  "type_hint": "Normal",
+                  "move_id": "attract",
+                  "reference_status": "resolved"
+                },
+                {
+                  "level": "44",
+                  "move": "Psychic",
+                  "type_hint": "Psychic",
+                  "move_id": "psychic",
+                  "reference_status": "resolved"
+                },
+                {
+                  "level": "47",
+                  "move": "Iron Head",
+                  "type_hint": "Steel",
+                  "move_id": "iron-head",
+                  "reference_status": "resolved"
+                },
+                {
+                  "level": "50",
+                  "move": "Bug Buzz",
+                  "type_hint": "Bug",
+                  "move_id": "bug-buzz",
+                  "reference_status": "resolved"
+                }
+              ]
+            },
+            "tmMoves": {
+              "replace": [
+                {
+                  "code": "06",
+                  "move": "Toxic",
+                  "move_id": "toxic",
+                  "reference_status": "resolved"
+                },
+                {
+                  "code": "09",
+                  "move": "Venoshock",
+                  "move_id": "venoshock",
+                  "reference_status": "resolved"
+                },
+                {
+                  "code": "10",
+                  "move": "Hidden Power",
+                  "move_id": "hidden-power",
+                  "reference_status": "resolved"
+                },
+                {
+                  "code": "11",
+                  "move": "Sunny Day",
+                  "move_id": "sunny-day",
+                  "reference_status": "resolved"
+                },
+                {
+                  "code": "15",
+                  "move": "Hyper Beam",
+                  "move_id": "hyper-beam",
+                  "reference_status": "resolved"
+                },
+                {
+                  "code": "17",
+                  "move": "Protect",
+                  "move_id": "protect",
+                  "reference_status": "resolved"
+                },
+                {
+                  "code": "18",
+                  "move": "Rain Dance",
+                  "move_id": "rain-dance",
+                  "reference_status": "resolved"
+                },
+                {
+                  "code": "20",
+                  "move": "Safeguard",
+                  "move_id": "safeguard",
+                  "reference_status": "resolved"
+                },
+                {
+                  "code": "21",
+                  "move": "Frustration",
+                  "move_id": "frustration",
+                  "reference_status": "resolved"
+                },
+                {
+                  "code": "27",
+                  "move": "Return",
+                  "move_id": "return",
+                  "reference_status": "resolved"
+                },
+                {
+                  "code": "29",
+                  "move": "Psychic",
+                  "move_id": "psychic",
+                  "reference_status": "resolved"
+                },
+                {
+                  "code": "30",
+                  "move": "Shadow Ball",
+                  "move_id": "shadow-ball",
+                  "reference_status": "resolved"
+                },
+                {
+                  "code": "32",
+                  "move": "Double Team",
+                  "move_id": "double-team",
+                  "reference_status": "resolved"
+                },
+                {
+                  "code": "42",
+                  "move": "Façade",
+                  "move_id": "facade",
+                  "reference_status": "resolved"
+                },
+                {
+                  "code": "44",
+                  "move": "Rest",
+                  "move_id": "rest",
+                  "reference_status": "resolved"
+                },
+                {
+                  "code": "45",
+                  "move": "Attract",
+                  "move_id": "attract",
+                  "reference_status": "resolved"
+                },
+                {
+                  "code": "46",
+                  "move": "Thief",
+                  "move_id": "thief",
+                  "reference_status": "resolved"
+                },
+                {
+                  "code": "48",
+                  "move": "Round",
+                  "move_id": "round",
+                  "reference_status": "resolved"
+                },
+                {
+                  "code": "68",
+                  "move": "Giga Impact",
+                  "move_id": "giga-impact",
+                  "reference_status": "resolved"
+                },
+                {
+                  "code": "74",
+                  "move": "Gyro Ball",
+                  "move_id": "gyro-ball",
+                  "reference_status": "resolved"
+                },
+                {
+                  "code": "77",
+                  "move": "Psych Up",
+                  "move_id": "psych-up",
+                  "reference_status": "resolved"
+                },
+                {
+                  "code": "83",
+                  "move": "Infestation",
+                  "move_id": "infestation",
+                  "reference_status": "resolved"
+                },
+                {
+                  "code": "85",
+                  "move": "Dream Eater",
+                  "move_id": "dream-eater",
+                  "reference_status": "resolved"
+                },
+                {
+                  "code": "87",
+                  "move": "Swagger",
+                  "move_id": "swagger",
+                  "reference_status": "resolved"
+                },
+                {
+                  "code": "88",
+                  "move": "Sleep Talk",
+                  "move_id": "sleep-talk",
+                  "reference_status": "resolved"
+                },
+                {
+                  "code": "90",
+                  "move": "Substitute",
+                  "move_id": "substitute",
+                  "reference_status": "resolved"
+                },
+                {
+                  "code": "91",
+                  "move": "Flash Cannon",
+                  "move_id": "flash-cannon",
+                  "reference_status": "resolved"
+                },
+                {
+                  "code": "100",
+                  "move": "Confide",
+                  "move_id": "confide",
+                  "reference_status": "resolved"
+                }
+              ]
+            },
+            "tutorMoves": {
+              "replace": [
+                {
+                  "move": "Ally Switch",
+                  "move_id": "ally-switch",
+                  "note": null,
+                  "reference_status": "resolved"
+                },
+                {
+                  "move": "Bug Bite",
+                  "move_id": "bug-bite",
+                  "note": "N",
+                  "reference_status": "resolved"
+                },
+                {
+                  "move": "Electroweb",
+                  "move_id": "electroweb",
+                  "note": null,
+                  "reference_status": "resolved"
+                },
+                {
+                  "move": "Endeavor",
+                  "move_id": "endeavor",
+                  "note": null,
+                  "reference_status": "resolved"
+                },
+                {
+                  "move": "Gunk Shot",
+                  "move_id": "gunk-shot",
+                  "note": null,
+                  "reference_status": "resolved"
+                },
+                {
+                  "move": "Iron Defense",
+                  "move_id": "iron-defense",
+                  "note": null,
+                  "reference_status": "resolved"
+                },
+                {
+                  "move": "Iron Head",
+                  "move_id": "iron-head",
+                  "note": null,
+                  "reference_status": "resolved"
+                },
+                {
+                  "move": "Magnet Rise",
+                  "move_id": "magnet-rise",
+                  "note": null,
+                  "reference_status": "resolved"
+                },
+                {
+                  "move": "Metal Burst",
+                  "move_id": "metal-burst",
+                  "note": "N",
+                  "reference_status": "resolved"
+                },
+                {
+                  "move": "Natural Gift",
+                  "move_id": "natural-gift",
+                  "note": null,
+                  "reference_status": "resolved"
+                },
+                {
+                  "move": "Signal Beam",
+                  "move_id": "signal-beam",
+                  "note": null,
+                  "reference_status": "resolved"
+                },
+                {
+                  "move": "Skill Swap",
+                  "move_id": "skill-swap",
+                  "note": null,
+                  "reference_status": "resolved"
+                },
+                {
+                  "move": "Snore",
+                  "move_id": "snore",
+                  "note": null,
+                  "reference_status": "resolved"
+                },
+                {
+                  "move": "Stealth Rock",
+                  "move_id": "stealth-rock",
+                  "note": null,
+                  "reference_status": "resolved"
+                },
+                {
+                  "move": "String Shot",
+                  "move_id": "string-shot",
+                  "note": null,
+                  "reference_status": "resolved"
+                },
+                {
+                  "move": "Sucker Punch",
+                  "move_id": "sucker-punch",
+                  "note": "N",
+                  "reference_status": "resolved"
+                },
+                {
+                  "move": "Telekinesis",
+                  "move_id": "telekinesis",
+                  "note": null,
+                  "reference_status": "resolved"
+                },
+                {
+                  "move": "Uproar",
+                  "move_id": "uproar",
+                  "note": null,
+                  "reference_status": "resolved"
+                }
+              ]
+            },
+            "eggMoves": {
+              "replace": []
             }
           },
           "sortOrder": 30
         }
       ],
-      "source_snapshots": [
-        {
-          "id": "wormadam-plant-cloak",
-          "abilities": [
-            "adaptability",
-            "anticipation",
-            "grass-pelt",
-            "overcoat",
-            "tolerance"
-          ],
-          "capabilities": [
-            "jump",
-            "naturewalk",
-            "overland",
-            "power",
-            "swim",
-            "threaded",
-            "underdog"
-          ],
-          "source_page": 324
-        },
-        {
-          "id": "wormadam-sandy-cloak",
-          "abilities": [
-            "adaptability",
-            "anticipation",
-            "overcoat",
-            "sand-veil",
-            "tolerance"
-          ],
-          "capabilities": [
-            "jump",
-            "naturewalk",
-            "overland",
-            "power",
-            "swim",
-            "threaded",
-            "underdog"
-          ],
-          "source_page": 325
-        },
-        {
-          "id": "wormadam-trash-cloak",
-          "abilities": [
-            "adaptability",
-            "anticipation",
-            "clear-body",
-            "overcoat",
-            "tolerance"
-          ],
-          "capabilities": [
-            "jump",
-            "naturewalk",
-            "overland",
-            "power",
-            "swim",
-            "threaded",
-            "underdog"
-          ],
-          "source_page": 326
-        }
-      ],
-      "note": "forms[] contains Stage B-compatible type/base-stat overrides from separately parameterized Species rows. Ability/capability snapshots remain versioned beside it until a lossless definition-layer mapping is available."
+      "source_mechanics": {
+        "rule_source": "Pokemon Tabletop United 1.05 Core p.327",
+        "record_sources": [
+          {
+            "source_id": "wormadam-plant-cloak",
+            "source_page": 324,
+            "override_fields": [
+              "abilities",
+              "baseStats",
+              "capabilities",
+              "eggMoves",
+              "levelUpMoves",
+              "skills",
+              "tmMoves",
+              "tutorMoves",
+              "types"
+            ]
+          },
+          {
+            "source_id": "wormadam-sandy-cloak",
+            "source_page": 325,
+            "override_fields": [
+              "abilities",
+              "baseStats",
+              "capabilities",
+              "eggMoves",
+              "levelUpMoves",
+              "skills",
+              "tmMoves",
+              "tutorMoves",
+              "types"
+            ]
+          },
+          {
+            "source_id": "wormadam-trash-cloak",
+            "source_page": 326,
+            "override_fields": [
+              "abilities",
+              "baseStats",
+              "capabilities",
+              "eggMoves",
+              "levelUpMoves",
+              "skills",
+              "tmMoves",
+              "tutorMoves",
+              "types"
+            ]
+          }
+        ],
+        "persistence": "Quick Cloak states that Burmy cloak Typing becomes permanent upon evolution into Wormadam."
+      },
+      "note": "Each Wormadam cloak copies the complete supported structured mechanics from its supplied Gen 8ish Species record, including Type, Base Stats, Ability slots, Capabilities, Skills and Move lists. No cross-cloak mechanics are inferred."
     },
     {
       "family": "yamask",

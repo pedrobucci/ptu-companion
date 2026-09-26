@@ -4,9 +4,9 @@ This is the conversion gate between source discovery and default `.ptucp` mutati
 
 ## Summary
 
-- Candidate records classified: **104**
-- Candidate families classified: **67**
-- Permanent/base families: **34**
+- Candidate records classified: **106**
+- Candidate families classified: **69**
+- Permanent/base families: **36**
 - Persistent-form families: **2**
 - Transformation families: **5**
 - Runtime-state families: **6**
@@ -39,6 +39,7 @@ This is the conversion gate between source discovery and default `.ptucp` mutati
 | geodude | permanent | `baseFormId` | source_explicit_variant | 1 | The supplied Pokédex contains a separately parameterized regional variant. Preserve legacy Species IDs as aliases/import compatibility while moving selection to the generic base Form layer. |
 | giratina | defer | `none` | source_insufficient | 2 | Altered/Origin records exist, but the Origin switching requirement was not found. |
 | golem | permanent | `baseFormId` | source_explicit_variant | 1 | The supplied Pokédex contains a separately parameterized regional variant. Preserve legacy Species IDs as aliases/import compatibility while moving selection to the generic base Form layer. |
+| gourgeist | permanent | `baseFormId` | source_explicit_variant | 1 | The supplied Gen 8ish PokéDex entry embeds four explicit Small/Average/Large/Super Base Stat sets. Exact per-size height/weight values are not inferred from the aggregate source range. |
 | graveler | permanent | `baseFormId` | source_explicit_variant | 1 | The supplied Pokédex contains a separately parameterized regional variant. Preserve legacy Species IDs as aliases/import compatibility while moving selection to the generic base Form layer. |
 | grimer | permanent | `baseFormId` | source_explicit_variant | 1 | The supplied Pokédex contains a separately parameterized regional variant. Preserve legacy Species IDs as aliases/import compatibility while moving selection to the generic base Form layer. |
 | hoopa | defer | `none` | source_insufficient | 2 | Confined/Unbound records exist, but the switching requirement/duration was not found. |
@@ -63,6 +64,7 @@ This is the conversion gate between source discovery and default `.ptucp` mutati
 | oricorio | defer | `none` | source_insufficient | 1 | The Species references Nectar Dancer/Forme Change, but the switching rule was not found in the audited supplied sources. |
 | persian | permanent | `baseFormId` | source_explicit_variant | 1 | The supplied Pokédex contains a separately parameterized regional variant. Preserve legacy Species IDs as aliases/import compatibility while moving selection to the generic base Form layer. |
 | ponyta | permanent | `baseFormId` | source_explicit_variant | 1 | The supplied Pokédex contains a separately parameterized regional variant. Preserve legacy Species IDs as aliases/import compatibility while moving selection to the generic base Form layer. |
+| pumpkaboo | permanent | `baseFormId` | source_explicit_variant | 1 | The supplied Gen 8ish PokéDex entry embeds four explicit Small/Average/Large/Super Base Stat sets. Exact per-size height/weight values are not inferred from the aggregate source range. |
 | raichu | permanent | `baseFormId` | source_explicit_variant | 1 | The supplied Pokédex contains a separately parameterized regional variant. Preserve legacy Species IDs as aliases/import compatibility while moving selection to the generic base Form layer. |
 | rapidash | permanent | `baseFormId` | source_explicit_variant | 1 | The supplied Pokédex contains a separately parameterized regional variant. Preserve legacy Species IDs as aliases/import compatibility while moving selection to the generic base Form layer. |
 | raticate | permanent | `baseFormId` | source_explicit_variant | 1 | The supplied Pokédex contains a separately parameterized regional variant. Preserve legacy Species IDs as aliases/import compatibility while moving selection to the generic base Form layer. |

@@ -3,7 +3,7 @@
   "source": "PTU_Companion_Windows_Source/seed/content-packs/ptu-gen8ish-pokedex.ptucp",
   "species_count": 956,
   "previous_inventory_candidate_count": 81,
-  "expanded_candidate_count": 104,
+  "expanded_candidate_count": 106,
   "new_candidate_ids": [
     "aegislash",
     "arceus",
@@ -12,6 +12,7 @@
     "cramorant",
     "deerling",
     "furfrou",
+    "gourgeist",
     "indeedee-female",
     "indeedee-male",
     "lycanroc-dusk",
@@ -23,6 +24,7 @@
     "morpeko",
     "nidoran-f",
     "nidoran-m",
+    "pumpkaboo",
     "sawsbuck",
     "silvally",
     "wormadam-plant-cloak",
@@ -36,6 +38,7 @@
   "signal_counts": {
     "embedded_color_forms": 1,
     "embedded_form_section": 6,
+    "embedded_size_forms": 2,
     "existing_inventory": 81,
     "form_ability": 17,
     "form_capability": 49,
@@ -1286,6 +1289,52 @@
           "signals": [
             "existing_inventory",
             "regional_name:alola"
+          ]
+        }
+      ]
+    },
+    {
+      "family": "gourgeist",
+      "records": [
+        {
+          "id": "gourgeist",
+          "name": "Gourgeist",
+          "source_page": 438,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Ghost",
+            "Grass"
+          ],
+          "base_stats": {
+            "hp": 6,
+            "attack": 9,
+            "defense": 12,
+            "special_attack": 6,
+            "special_defense": 8,
+            "speed": 10
+          },
+          "abilities": [
+            "flash-fire",
+            "frisk",
+            "insomnia",
+            "pumpkingrab",
+            "regenerator"
+          ],
+          "capabilities": [
+            "darkvision",
+            "dead-silent",
+            "invisibility",
+            "jump",
+            "levitate",
+            "naturewalk",
+            "overland",
+            "phasing",
+            "power",
+            "swim"
+          ],
+          "signals": [
+            "embedded_size_forms:small,average,large,super"
           ]
         }
       ]
@@ -2893,6 +2942,53 @@
           "signals": [
             "existing_inventory",
             "regional_name:galar"
+          ]
+        }
+      ]
+    },
+    {
+      "family": "pumpkaboo",
+      "records": [
+        {
+          "id": "pumpkaboo",
+          "name": "Pumpkaboo",
+          "source_page": 437,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Ghost",
+            "Grass"
+          ],
+          "base_stats": {
+            "hp": 4,
+            "attack": 7,
+            "defense": 7,
+            "special_attack": 4,
+            "special_defense": 6,
+            "speed": 6
+          },
+          "abilities": [
+            "flash-fire",
+            "frisk",
+            "insomnia",
+            "life-force",
+            "pickup"
+          ],
+          "capabilities": [
+            "darkvision",
+            "dead-silent",
+            "invisibility",
+            "jump",
+            "levitate",
+            "naturewalk",
+            "overland",
+            "phasing",
+            "power",
+            "swim",
+            "underdog"
+          ],
+          "signals": [
+            "embedded_size_forms:small,average,large,super"
           ]
         }
       ]

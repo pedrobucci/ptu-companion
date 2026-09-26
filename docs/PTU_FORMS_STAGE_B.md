@@ -4,12 +4,12 @@ Generated deterministically from the versioned PTU classification/inventory. Thi
 
 ## Summary
 
-- Candidate-family form entries: **41**
-- Record-backed family entries: **33**
-- Rule-defined family entries: **8**
-- Candidate-record/derived Stage B forms emitted: **59**
-- Record-backed forms: **40**
-- Rule-defined forms: **19**
+- Candidate-family form entries: **43**
+- Record-backed family entries: **32**
+- Rule-defined family entries: **11**
+- Candidate-record/derived Stage B forms emitted: **67**
+- Record-backed forms: **37**
+- Rule-defined forms: **30**
 - Synthetic Stage B transforms emitted: **52**
 - Mega transforms: **48**
 - Primal transforms: **2**
@@ -21,8 +21,9 @@ Generated deterministically from the versioned PTU classification/inventory. Thi
 - Every emitted `forms[]` entry uses Stage B mode `permanent` or `transformation`.
 - Source-insufficient/event-driven requirements use Stage B `manual` review gates instead of guessed items/conditions.
 - No artwork URL is generated. Artwork remains governed by the separate asset audit and the existing Stage B fallback.
-- Rule-defined Ability builders clone the source Species Ability-slot array and replace only the explicitly dynamic slot.
-- Record-pair transformation builders copy every differing structured Stage B mechanical field from the supplied Species records.
+- Rule-defined Ability builders clone source Ability-slot arrays rather than inventing slot placement.
+- Wormadam cloak Forms copy complete supported structured mechanics from their supplied Species records.
+- Pumpkaboo/Gourgeist size Forms copy only their explicit Base Stat matrices; exact per-size measurements are not fabricated from source ranges.
 - No `.ptucp` file is written by this generator.
 
 ## Rule-defined builders
@@ -32,9 +33,12 @@ Generated deterministically from the versioned PTU classification/inventory. Thi
 - `burmy` / `rule_defined_quick_cloak` — Plant Cloak, Sandy Cloak, Trash Cloak
 - `eiscue` / `rule_defined_ice_face` — Noice Face
 - `furfrou` / `rule_defined_fabulous_trim` — Star Trim, Diamond Trim, Heart Trim, Pharaoh Trim, Kabuki Trim, La Reine Trim, Matron Trim, Dandy Trim, Debutante Trim
+- `gourgeist` / `embedded_size_base_stats` — Small, Average, Large, Super
 - `meloetta` / `rule_defined_relic_song` — Step Forme
 - `minior` / `rule_defined_shields_down` — Core Forme
+- `pumpkaboo` / `embedded_size_base_stats` — Small, Average, Large, Super
 - `wishiwashi` / `rule_defined_schooling` — Schooling Forme
+- `wormadam` / `source_record_cloak_forms` — Plant Cloak, Sandy Cloak, Trash Cloak
 
 ## Synthetic transformations
 
