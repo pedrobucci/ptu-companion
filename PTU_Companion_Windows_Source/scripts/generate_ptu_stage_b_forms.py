@@ -17,7 +17,21 @@ POKEDEX_PACK = ROOT / 'seed' / 'content-packs' / 'ptu-gen8ish-pokedex.ptucp'
 OUT_JSON = REPO / 'docs' / 'data' / 'PTU_FORMS_STAGE_B.json'
 OUT_MD = REPO / 'docs' / 'PTU_FORMS_STAGE_B.md'
 DIRECT_CLASSIFICATIONS = {'permanent', 'persistent_form', 'transformation'}
-RULE_DEFINED_BUILDERS = {'aegislash', 'basculin', 'burmy', 'furfrou'}
+RULE_DEFINED_BUILDERS = {
+    'aegislash', 'basculin', 'burmy', 'eiscue',
+    'furfrou', 'meloetta', 'minior', 'wishiwashi',
+}
+LOSSLESS_FIELDS = (
+    ('types', 'types'),
+    ('base_stats', 'baseStats'),
+    ('ability_slots', 'abilities'),
+    ('capabilities', 'capabilities'),
+    ('skills', 'skills'),
+    ('level_up_moves', 'levelUpMoves'),
+    ('tm_moves', 'tmMoves'),
+    ('tutor_moves', 'tutorMoves'),
+    ('egg_moves', 'eggMoves'),
+)
 
 
 def slug(value: str) -> str:
@@ -80,6 +94,44 @@ def replace_ability_slot(slots: list, predicate, new_name: str) -> list:
     else:
         output[index] = {'name': new_name, 'ability_id': slug(new_name)}
     return output
+
+
+def lossless_overrides(base: dict, target: dict) -> dict:
+    """Copy only structured Stage-B-supported mechanics that actually differ."""
+    overrides: dict = {}
+    for raw_key, stage_key in LOSSLESS_FIELDS:
+        base_value = base.get(raw_key)
+        target_value = target.get(raw_key)
+        if target_value is None:
+            continue
+        if base_value != target_value:
+            overrides[stage_key] = {'replace': copy.deepcopy(target_value)}
+    return overrides
+
+
+def transformation_form_from_rows(
+    rows: dict[str, dict],
+    *,
+    base_id: str,
+    target_id: str,
+    form_id: str,
+    form_name: str,
+    manual_key: str,
+    sort_order: int = 10,
+) -> tuple[dict, list[str]]:
+    base = source_row(rows, base_id)
+    target = source_row(rows, target_id)
+    overrides = lossless_overrides(base, target)
+    if not overrides:
+        raise SystemExit(f'No mechanical differences found between {base_id} and {target_id}')
+    return ({
+        'id': form_id,
+        'name': form_name,
+        'mode': 'transformation',
+        'requirements': manual_requirement(manual_key),
+        'overrides': overrides,
+        'sortOrder': sort_order,
+    }, sorted(overrides))
 
 
 def record_form(family: dict, record: dict, sort_order: int) -> dict:
@@ -300,13 +352,131 @@ def basculin_builder(family: dict, rows: dict[str, dict]) -> dict:
     }
 
 
+def wishiwashi_builder(family: dict, rows: dict[str, dict]) -> dict:
+    form, fields = transformation_form_from_rows(
+        rows,
+        base_id='wishiwashi-solo',
+        target_id='wishiwashi-schooling',
+        form_id='schooling',
+        form_name='Schooling Forme',
+        manual_key='wishiwashi:schooling',
+    )
+    return {
+        'family': 'wishiwashi',
+        'classification': family['classification'],
+        'target_layer': family['target_layer'],
+        'builder': 'rule_defined_schooling',
+        'forms': [form],
+        'source_mechanics': {
+            'rule_source': 'SuMo References p.4',
+            'record_sources': ['Gen 8ish PokeDex p.766', 'Gen 8ish PokeDex p.767'],
+            'base_state': 'Solo Forme',
+            'enter': 'Daily – Free Action: change to Schooling Forme and gain Temporary Hit Points equal to half of maximum Hit Points.',
+            'while_active': 'Cannot gain Temporary Hit Points from other sources while in Schooling Forme.',
+            'exit': 'When below half Maximum HP and no Temporary Hit Points remain, return to Solo Forme.',
+            'hp_invariant': 'Solo and Schooling must use the same HP Base Stat.',
+            'derived_override_fields': fields,
+        },
+        'note': 'Solo is the implicit base state. Schooling is emitted as the active transformation. The manual requirement is only a review gate because Stage B cannot yet encode the Ability action plus HP/Temporary-HP return condition.'
+    }
+
+
+def minior_builder(family: dict, rows: dict[str, dict]) -> dict:
+    form, fields = transformation_form_from_rows(
+        rows,
+        base_id='minior-meteor',
+        target_id='minior-core',
+        form_id='core',
+        form_name='Core Forme',
+        manual_key='minior:core',
+    )
+    return {
+        'family': 'minior',
+        'classification': family['classification'],
+        'target_layer': family['target_layer'],
+        'builder': 'rule_defined_shields_down',
+        'forms': [form],
+        'source_mechanics': {
+            'rule_source': 'SuMo References p.4',
+            'record_sources': ['Gen 8ish PokeDex p.752', 'Gen 8ish PokeDex p.753'],
+            'base_state': 'Meteor Forme',
+            'enter': 'While in Meteor Forme, at half Maximum HP or lower, change to Core Forme.',
+            'exit': 'Outside combat, if above half Maximum HP, return to Meteor Forme.',
+            'hp_invariant': 'Meteor and Core must use the same HP Base Stat.',
+            'derived_override_fields': fields,
+        },
+        'note': 'Meteor is the implicit base state. Core is emitted as the active transformation. The manual requirement is only a review gate because Stage B does not yet have an HP-threshold/out-of-combat requirement primitive.'
+    }
+
+
+def eiscue_builder(family: dict, rows: dict[str, dict]) -> dict:
+    form, fields = transformation_form_from_rows(
+        rows,
+        base_id='eiscue-ice-face',
+        target_id='eiscue-noice-face',
+        form_id='noice-face',
+        form_name='Noice Face',
+        manual_key='eiscue:noice-face',
+    )
+    return {
+        'family': 'eiscue',
+        'classification': family['classification'],
+        'target_layer': family['target_layer'],
+        'builder': 'rule_defined_ice_face',
+        'forms': [form],
+        'source_mechanics': {
+            'rule_source': 'New Abilities and Moves p.1',
+            'record_sources': ['Gen 8ish PokeDex p.723', 'Gen 8ish PokeDex p.724'],
+            'base_state': 'Ice Face',
+            'battle_start': 'Begins battle with two ticks of Temporary Hit Points from Ice Face.',
+            'enter': 'When no Temporary Hit Points from Ice Face remain, the user is in Noice Face.',
+            'exit': 'While Ice Face Temporary Hit Points exist, the user is in Ice Face; in Hail it may regain two ticks as a Standard Action.',
+            'additional_effect': 'Immune to damage from Hail.',
+            'derived_override_fields': fields,
+        },
+        'note': 'Ice Face is the implicit base state and Noice Face is the active transformation. The manual requirement is only a review gate because Stage B cannot yet bind Form state to Temporary HP provenance.'
+    }
+
+
+def meloetta_builder(family: dict, rows: dict[str, dict]) -> dict:
+    form, fields = transformation_form_from_rows(
+        rows,
+        base_id='meloetta-aria-forme',
+        target_id='meloetta-step-forme',
+        form_id='step-forme',
+        form_name='Step Forme',
+        manual_key='meloetta:step-forme',
+    )
+    return {
+        'family': 'meloetta',
+        'classification': family['classification'],
+        'target_layer': family['target_layer'],
+        'builder': 'rule_defined_relic_song',
+        'forms': [form],
+        'source_mechanics': {
+            'rule_source': 'Pokemon Tabletop United 1.05 Core p.405',
+            'record_sources': ['Gen 8ish PokeDex p.922', 'Gen 8ish PokeDex p.923'],
+            'base_state': 'Aria Forme',
+            'requirement': 'Meloetta must know Relic Song.',
+            'switch': 'May change between Aria Form and Step Form as a Swift Action when using Relic Song, or as a Standard Action otherwise.',
+            'hp_invariant': 'Aria and Step must be statted with the same HP Stat.',
+            'derived_override_fields': fields,
+        },
+        'note': 'Aria is the conversion base layer and Step is the active transformation layer. Clearing activeFormId returns to Aria. The manual requirement is only a review gate because Stage B cannot yet express known-Move plus action-trigger requirements.'
+    }
+
+
 def rule_defined_catalog(classification: dict, rows: dict[str, dict]) -> list[dict]:
     families = {entry['family']: entry for entry in classification.get('families', [])}
     expected = {
         'aegislash': 'transformation',
         'basculin': 'permanent',
         'burmy': 'persistent_form',
+        'eiscue': 'transformation',
         'furfrou': 'persistent_form',
+        'meloetta': 'transformation',
+        'minior': 'transformation',
+        'wishiwashi': 'transformation',
     }
     for family, kind in expected.items():
         actual = families.get(family, {}).get('classification')
@@ -316,7 +486,11 @@ def rule_defined_catalog(classification: dict, rows: dict[str, dict]) -> list[di
         aegislash_builder(families['aegislash'], rows),
         basculin_builder(families['basculin'], rows),
         burmy_builder(families['burmy'], rows),
+        eiscue_builder(families['eiscue'], rows),
         furfrou_builder(families['furfrou'], rows),
+        meloetta_builder(families['meloetta'], rows),
+        minior_builder(families['minior'], rows),
+        wishiwashi_builder(families['wishiwashi'], rows),
     ]
 
 
@@ -404,7 +578,7 @@ def main() -> None:
     candidate_forms = record_forms + builder_forms
     synthetic_forms = sum(len(row['forms']) for row in synthetic_entries)
     payload = {
-        'schema_version': 2,
+        'schema_version': 3,
         'stage_b_form_schema_version': 1,
         'applied_to_default_packs': False,
         'policy': {
@@ -457,6 +631,7 @@ def main() -> None:
         '- Source-insufficient/event-driven requirements use Stage B `manual` review gates instead of guessed items/conditions.',
         '- No artwork URL is generated. Artwork remains governed by the separate asset audit and the existing Stage B fallback.',
         '- Rule-defined Ability builders clone the source Species Ability-slot array and replace only the explicitly dynamic slot.',
+        '- Record-pair transformation builders copy every differing structured Stage B mechanical field from the supplied Species records.',
         '- No `.ptucp` file is written by this generator.', '',
         '## Rule-defined builders', ''
     ]
