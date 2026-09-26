@@ -31,6 +31,7 @@ KNOWN = {
     'indeedee': ('permanent', 'baseFormId', 'source_explicit_variant', 'Male and Female are separately parameterized Species records in the supplied Pokédex.'),
     'lycanroc': ('permanent', 'baseFormId', 'source_explicit_variant', 'Midday, Midnight, and Dusk are separately parameterized evolution forms.'),
     'meowstic': ('permanent', 'baseFormId', 'source_explicit_variant', 'Male and Female are separately parameterized Species records in the supplied Pokédex.'),
+    'meloetta': ('transformation', 'activeFormId', 'source_explicit', 'Relic Song lets Meloetta switch between Aria Form and Step Form as a Swift Action when using the Move, or as a Standard Action otherwise; both forms use the same HP Stat.'),
     'mimikyu': ('defer', 'none', 'source_insufficient', 'The supplied Species has Disguise, but the audited project sources do not yet define a separate PTU Form mechanic.'),
     'minior': ('transformation', 'activeFormId', 'source_explicit', 'Shields Down defines Meteor/Core switching by HP state.'),
     'morpeko': ('runtime_state', 'runtime_resolver', 'source_explicit', 'Hunger Switch defines per-turn Full Belly/Hangry bonuses but no separate stat block.'),
@@ -55,7 +56,6 @@ DEFER_FAMILIES = {
     'hoopa': 'Confined/Unbound records exist, but the switching requirement/duration was not found.',
     'kyurem': 'Normal/Black/White Fusion records exist, but Dragon Fusion rules were not found in the audited supplied sources.',
     'landorus': 'Incarnate/Therian records exist, but Therian Forme switching rules were not found.',
-    'meloetta': 'Aria/Step records exist, but the supplied audited sources did not establish the switching trigger/duration.',
     'rotom': 'Normal/appliance records exist and are mechanically distinct, but the Forme Change requirement was not found.',
     'shaymin': 'Land/Sky records exist, but the Sky Forme switching requirement/duration was not found.',
     'thundurus': 'Incarnate/Therian records exist, but Therian Forme switching rules were not found.',
@@ -150,7 +150,7 @@ def main() -> None:
     for family in ('cramorant', 'nidoran-f', 'nidoran-m', 'solosis'):
         if family in family_lookup and family_lookup[family]['classification'] != 'false_positive':
             raise SystemExit(f'{family} must remain a false positive until new supplied-source evidence exists')
-    for family in ('wishiwashi', 'minior', 'eiscue'):
+    for family in ('wishiwashi', 'minior', 'eiscue', 'meloetta'):
         if family in family_lookup and family_lookup[family]['classification'] != 'transformation':
             raise SystemExit(f'{family} must be a source-backed transformation')
     for family in ('silvally', 'morpeko', 'arceus', 'castform'):

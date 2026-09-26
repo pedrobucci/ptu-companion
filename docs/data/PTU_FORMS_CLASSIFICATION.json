@@ -5,13 +5,13 @@
     "candidate_records": 104,
     "candidate_families": 67,
     "classification_counts": {
-      "defer": 12,
+      "defer": 11,
       "false_positive": 4,
       "mixed": 5,
       "permanent": 34,
       "persistent_form": 4,
       "runtime_state": 4,
-      "transformation": 4
+      "transformation": 5
     },
     "deferred_families": [
       "deoxys",
@@ -19,7 +19,6 @@
       "hoopa",
       "kyurem",
       "landorus",
-      "meloetta",
       "mimikyu",
       "oricorio",
       "rotom",
@@ -2267,9 +2266,9 @@
     },
     {
       "family": "meloetta",
-      "classification": "defer",
-      "target_layer": "none",
-      "evidence_status": "source_insufficient",
+      "classification": "transformation",
+      "target_layer": "activeFormId",
+      "evidence_status": "source_explicit",
       "records": [
         {
           "id": "meloetta-aria-forme",
@@ -2353,7 +2352,7 @@
         "form_capability:forme-change",
         "name_descriptor:forme"
       ],
-      "reason": "Aria/Step records exist, but the supplied audited sources did not establish the switching trigger/duration.",
+      "reason": "Relic Song lets Meloetta switch between Aria Form and Step Form as a Swift Action when using the Move, or as a Standard Action otherwise; both forms use the same HP Stat.",
       "preserve_legacy_ids": false
     },
     {

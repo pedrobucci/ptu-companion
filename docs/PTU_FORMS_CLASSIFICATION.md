@@ -8,10 +8,10 @@ This is the conversion gate between source discovery and default `.ptucp` mutati
 - Candidate families classified: **67**
 - Permanent/base families: **34**
 - Persistent-form families: **4**
-- Transformation families: **4**
+- Transformation families: **5**
 - Runtime-state families: **4**
 - Mixed base + transformation families: **5**
-- Deferred/source-insufficient families: **12**
+- Deferred/source-insufficient families: **11**
 - False-positive families: **4**
 - Synthetic transform inventory: **48 Mega + 2 Primal + 2 Ultra Burst source blocks**.
 
@@ -48,7 +48,7 @@ This is the conversion gate between source discovery and default `.ptucp` mutati
 | linoone | permanent | `baseFormId` | source_explicit_variant | 1 | The supplied Pokédex contains a separately parameterized regional variant. Preserve legacy Species IDs as aliases/import compatibility while moving selection to the generic base Form layer. |
 | lycanroc | permanent | `baseFormId` | source_explicit_variant | 3 | Midday, Midnight, and Dusk are separately parameterized evolution forms. |
 | marowak | permanent | `baseFormId` | source_explicit_variant | 1 | The supplied Pokédex contains a separately parameterized regional variant. Preserve legacy Species IDs as aliases/import compatibility while moving selection to the generic base Form layer. |
-| meloetta | defer | `none` | source_insufficient | 2 | Aria/Step records exist, but the supplied audited sources did not establish the switching trigger/duration. |
+| meloetta | transformation | `activeFormId` | source_explicit | 2 | Relic Song lets Meloetta switch between Aria Form and Step Form as a Swift Action when using the Move, or as a Standard Action otherwise; both forms use the same HP Stat. |
 | meowstic | permanent | `baseFormId` | source_explicit_variant | 2 | Male and Female are separately parameterized Species records in the supplied Pokédex. |
 | meowth | permanent | `baseFormId` | source_explicit_variant | 2 | The supplied Pokédex contains a separately parameterized regional variant. Preserve legacy Species IDs as aliases/import compatibility while moving selection to the generic base Form layer. |
 | mimikyu | defer | `none` | source_insufficient | 1 | The supplied Species has Disguise, but the audited project sources do not yet define a separate PTU Form mechanic. |
@@ -100,7 +100,6 @@ This is the conversion gate between source discovery and default `.ptucp` mutati
 - `hoopa` — requires additional supplied-source evidence before automatic conversion/runtime switching.
 - `kyurem` — requires additional supplied-source evidence before automatic conversion/runtime switching.
 - `landorus` — requires additional supplied-source evidence before automatic conversion/runtime switching.
-- `meloetta` — requires additional supplied-source evidence before automatic conversion/runtime switching.
 - `mimikyu` — requires additional supplied-source evidence before automatic conversion/runtime switching.
 - `oricorio` — requires additional supplied-source evidence before automatic conversion/runtime switching.
 - `rotom` — requires additional supplied-source evidence before automatic conversion/runtime switching.
