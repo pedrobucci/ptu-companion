@@ -1,0 +1,5321 @@
+{
+  "schema_version": 1,
+  "policy": "Conservative source-backed classification. Deferred families are not converted into automatic runtime Forms until supplied sources establish the missing semantics.",
+  "summary": {
+    "candidate_records": 104,
+    "candidate_families": 67,
+    "classification_counts": {
+      "defer": 10,
+      "false_positive": 5,
+      "mixed": 5,
+      "permanent": 34,
+      "persistent_form": 4,
+      "runtime_state": 4,
+      "transformation": 5
+    },
+    "deferred_families": [
+      "deoxys",
+      "giratina",
+      "hoopa",
+      "kyurem",
+      "landorus",
+      "oricorio",
+      "rotom",
+      "shaymin",
+      "thundurus",
+      "tornadus"
+    ],
+    "false_positive_families": [
+      "cramorant",
+      "mimikyu",
+      "nidoran-f",
+      "nidoran-m",
+      "solosis"
+    ],
+    "mega_forms": 48,
+    "primal_forms": 2,
+    "ultra_burst_forms": 2,
+    "supplemental_rules": 13
+  },
+  "families": [
+    {
+      "family": "aegislash",
+      "classification": "transformation",
+      "target_layer": "activeFormId",
+      "evidence_status": "source_explicit",
+      "records": [
+        {
+          "id": "aegislash",
+          "name": "Aegislash",
+          "source_page": 285,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Steel",
+            "Ghost"
+          ],
+          "base_stats": {
+            "hp": 6,
+            "attack": 5,
+            "defense": 15,
+            "special_attack": 5,
+            "special_defense": 15,
+            "speed": 6
+          },
+          "abilities": [
+            "hyper-cutter",
+            "soulstealer",
+            "stall",
+            "stance-change",
+            "weaponize"
+          ],
+          "capabilities": [
+            "breathless",
+            "dead-silent",
+            "invisibility",
+            "jump",
+            "levitate",
+            "living-weapon",
+            "overland",
+            "phasing",
+            "power",
+            "swim"
+          ],
+          "signals": [
+            "form_ability:stance-change"
+          ]
+        }
+      ],
+      "signals": [
+        "form_ability:stance-change"
+      ],
+      "reason": "Stance Change defines Shield/Sword switching and stat swaps.",
+      "preserve_legacy_ids": false
+    },
+    {
+      "family": "arceus",
+      "classification": "runtime_state",
+      "target_layer": "runtime_resolver",
+      "evidence_status": "source_explicit",
+      "records": [
+        {
+          "id": "arceus",
+          "name": "Arceus",
+          "source_page": 905,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Normal"
+          ],
+          "base_stats": {
+            "hp": 12,
+            "attack": 12,
+            "defense": 12,
+            "special_attack": 12,
+            "special_defense": 12,
+            "speed": 12
+          },
+          "abilities": [
+            "adaptability",
+            "magic-guard",
+            "multitype",
+            "pressure",
+            "regenerator"
+          ],
+          "capabilities": [
+            "aura-reader",
+            "darkvision",
+            "glow",
+            "invisibility",
+            "jump",
+            "mountable",
+            "overland",
+            "power",
+            "sky",
+            "swim",
+            "telekinetic",
+            "telepath"
+          ],
+          "signals": [
+            "form_ability:multitype"
+          ]
+        }
+      ],
+      "signals": [
+        "form_ability:multitype"
+      ],
+      "reason": "Multitype changes Elemental Type directly; no separate Species record is needed.",
+      "preserve_legacy_ids": false
+    },
+    {
+      "family": "basculin",
+      "classification": "permanent",
+      "target_layer": "baseFormId",
+      "evidence_status": "source_explicit_variant",
+      "records": [
+        {
+          "id": "basculin",
+          "name": "Basculin",
+          "source_page": 764,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Water"
+          ],
+          "base_stats": {
+            "hp": 7,
+            "attack": 9,
+            "defense": 7,
+            "special_attack": 8,
+            "special_defense": 6,
+            "speed": 10
+          },
+          "abilities": [
+            "adaptability",
+            "mold-breaker",
+            "reckless-red-rock-head-blue",
+            "torrent",
+            "water-absorb"
+          ],
+          "capabilities": [
+            "fountain",
+            "gilled",
+            "jump",
+            "naturewalk",
+            "overland",
+            "power",
+            "swim"
+          ],
+          "signals": [
+            "embedded_color_forms:red,blue"
+          ]
+        }
+      ],
+      "signals": [
+        "embedded_color_forms:red,blue"
+      ],
+      "reason": "The supplied Species entry embeds Red/Blue Ability variants.",
+      "preserve_legacy_ids": true
+    },
+    {
+      "family": "burmy",
+      "classification": "persistent_form",
+      "target_layer": "baseFormId",
+      "evidence_status": "source_explicit",
+      "records": [
+        {
+          "id": "burmy",
+          "name": "Burmy",
+          "source_page": 323,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Bug"
+          ],
+          "base_stats": {
+            "hp": 4,
+            "attack": 3,
+            "defense": 5,
+            "special_attack": 3,
+            "special_defense": 5,
+            "speed": 4
+          },
+          "abilities": [
+            "overcoat",
+            "quick-cloak",
+            "shed-skin",
+            "sturdy",
+            "tolerance"
+          ],
+          "capabilities": [
+            "jump",
+            "naturewalk",
+            "overland",
+            "power",
+            "split-evolution",
+            "swim",
+            "threaded",
+            "underdog"
+          ],
+          "signals": [
+            "form_ability:quick-cloak"
+          ]
+        }
+      ],
+      "signals": [
+        "form_ability:quick-cloak"
+      ],
+      "reason": "Quick Cloak creates Plant/Sandy/Trash cloaks; the cloak Typing becomes permanent on evolution to Wormadam.",
+      "preserve_legacy_ids": true
+    },
+    {
+      "family": "castform",
+      "classification": "runtime_state",
+      "target_layer": "runtime_resolver",
+      "evidence_status": "source_explicit",
+      "records": [
+        {
+          "id": "castform",
+          "name": "Castform",
+          "source_page": 735,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Normal"
+          ],
+          "base_stats": {
+            "hp": 7,
+            "attack": 7,
+            "defense": 7,
+            "special_attack": 7,
+            "special_defense": 7,
+            "speed": 7
+          },
+          "abilities": [
+            "cloud-nine",
+            "drought-or-drizzle",
+            "forecast",
+            "levitate",
+            "sand-stream-or-snow-warning"
+          ],
+          "capabilities": [
+            "guster",
+            "jump",
+            "overland",
+            "power",
+            "sky",
+            "swim",
+            "underdog",
+            "weathershape"
+          ],
+          "signals": [
+            "existing_inventory",
+            "form_ability:forecast"
+          ]
+        }
+      ],
+      "signals": [
+        "existing_inventory",
+        "form_ability:forecast"
+      ],
+      "reason": "Forecast changes Type according to current weather.",
+      "preserve_legacy_ids": false
+    },
+    {
+      "family": "corsola",
+      "classification": "permanent",
+      "target_layer": "baseFormId",
+      "evidence_status": "source_explicit_variant",
+      "records": [
+        {
+          "id": "corsola-galar",
+          "name": "CORSOLA Galar",
+          "source_page": 802,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Ghost"
+          ],
+          "base_stats": {
+            "hp": 6,
+            "attack": 6,
+            "defense": 10,
+            "special_attack": 7,
+            "special_defense": 10,
+            "speed": 3
+          },
+          "abilities": [
+            "cursed-body",
+            "omen",
+            "perish-body",
+            "spiteful-intervention",
+            "weak-armor"
+          ],
+          "capabilities": [
+            "darkvision",
+            "dead-silent",
+            "gilled",
+            "invisibility",
+            "jump",
+            "levitate",
+            "naturewalk",
+            "overland",
+            "phasing",
+            "power",
+            "swim",
+            "underdog"
+          ],
+          "signals": [
+            "existing_inventory",
+            "regional_name:galar"
+          ]
+        }
+      ],
+      "signals": [
+        "existing_inventory",
+        "regional_name:galar"
+      ],
+      "reason": "The supplied Pokédex contains a separately parameterized regional variant. Preserve legacy Species IDs as aliases/import compatibility while moving selection to the generic base Form layer.",
+      "preserve_legacy_ids": true
+    },
+    {
+      "family": "cramorant",
+      "classification": "false_positive",
+      "target_layer": "none",
+      "evidence_status": "source_explicit_non_form",
+      "records": [
+        {
+          "id": "cramorant",
+          "name": "Cramorant",
+          "source_page": 713,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Flying",
+            "Water"
+          ],
+          "base_stats": {
+            "hp": 7,
+            "attack": 9,
+            "defense": 6,
+            "special_attack": 9,
+            "special_defense": 10,
+            "speed": 9
+          },
+          "abilities": [
+            "early-bird",
+            "gluttony",
+            "gulp-missile",
+            "oblivious",
+            "strange-tempo"
+          ],
+          "capabilities": [
+            "guster",
+            "jump",
+            "overland",
+            "power",
+            "sky",
+            "swim"
+          ],
+          "signals": [
+            "form_ability:gulp-missile"
+          ]
+        }
+      ],
+      "signals": [
+        "form_ability:gulp-missile"
+      ],
+      "reason": "The supplied Gulp Missile rule is a reaction effect and does not define a PTU Form state.",
+      "preserve_legacy_ids": false
+    },
+    {
+      "family": "darmanitan",
+      "classification": "mixed",
+      "target_layer": "baseFormId+activeFormId",
+      "evidence_status": "source_explicit",
+      "records": [
+        {
+          "id": "darmanitan-standard-mode",
+          "name": "DARMANITAN Standard Mode",
+          "source_page": 419,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Fire"
+          ],
+          "base_stats": {
+            "hp": 11,
+            "attack": 14,
+            "defense": 6,
+            "special_attack": 3,
+            "special_defense": 6,
+            "speed": 10
+          },
+          "abilities": [
+            "flame-body",
+            "flash-fire",
+            "inner-focus",
+            "sheer-force",
+            "zen-mode"
+          ],
+          "capabilities": [
+            "egg-warmer",
+            "firestarter",
+            "forme-change",
+            "heater",
+            "jump",
+            "naturewalk",
+            "overland",
+            "power",
+            "swim"
+          ],
+          "signals": [
+            "existing_inventory",
+            "name_descriptor:mode",
+            "name_phrase:standard mode",
+            "form_ability:zen-mode",
+            "form_capability:forme-change"
+          ]
+        },
+        {
+          "id": "darmanitan-zen-mode",
+          "name": "DARMANITAN Zen Mode",
+          "source_page": 420,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Fire",
+            "Psychic"
+          ],
+          "base_stats": {
+            "hp": 11,
+            "attack": 3,
+            "defense": 11,
+            "special_attack": 14,
+            "special_defense": 11,
+            "speed": 6
+          },
+          "abilities": [
+            "flame-body",
+            "flash-fire",
+            "inner-focus",
+            "sheer-force",
+            "zen-mode"
+          ],
+          "capabilities": [
+            "firestarter",
+            "forme-change",
+            "jump",
+            "levitate",
+            "overland",
+            "power",
+            "swim",
+            "telekinetic",
+            "telepath"
+          ],
+          "signals": [
+            "existing_inventory",
+            "name_descriptor:mode",
+            "name_phrase:zen mode",
+            "form_ability:zen-mode",
+            "form_capability:forme-change"
+          ]
+        },
+        {
+          "id": "darmanitan-galar-standard-mode",
+          "name": "DARMANITAN Galar, Standard Mode",
+          "source_page": 808,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Ice"
+          ],
+          "base_stats": {
+            "hp": 11,
+            "attack": 14,
+            "defense": 6,
+            "special_attack": 3,
+            "special_defense": 6,
+            "speed": 10
+          },
+          "abilities": [
+            "gorilla-tactics",
+            "ice-body",
+            "inner-focus",
+            "winter-s-kiss",
+            "zen-snowed"
+          ],
+          "capabilities": [
+            "chilled",
+            "forme-change",
+            "freezer",
+            "jump",
+            "naturewalk",
+            "overland",
+            "power",
+            "swim"
+          ],
+          "signals": [
+            "existing_inventory",
+            "regional_name:galar",
+            "name_descriptor:mode",
+            "name_phrase:standard mode",
+            "form_capability:forme-change"
+          ]
+        },
+        {
+          "id": "darmanitan-galar-zen-mode",
+          "name": "DARMANITAN Galar, Zen Mode",
+          "source_page": 809,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Ice",
+            "Fire"
+          ],
+          "base_stats": {
+            "hp": 11,
+            "attack": 16,
+            "defense": 6,
+            "special_attack": 3,
+            "special_defense": 6,
+            "speed": 14
+          },
+          "abilities": [
+            "gorilla-tactics",
+            "ice-body",
+            "inner-focus",
+            "winter-s-kiss",
+            "zen-snowed"
+          ],
+          "capabilities": [
+            "chilled",
+            "firestarter",
+            "forme-change",
+            "freezer",
+            "jump",
+            "naturewalk",
+            "overland",
+            "power",
+            "swim"
+          ],
+          "signals": [
+            "existing_inventory",
+            "regional_name:galar",
+            "name_descriptor:mode",
+            "name_phrase:zen mode",
+            "form_capability:forme-change"
+          ]
+        }
+      ],
+      "signals": [
+        "existing_inventory",
+        "form_ability:zen-mode",
+        "form_capability:forme-change",
+        "name_descriptor:mode",
+        "name_phrase:standard mode",
+        "name_phrase:zen mode",
+        "regional_name:galar"
+      ],
+      "reason": "Standard is the base state; Zen Mode is an active transformation. Galarian Zen Snowed uses its own source action/duration.",
+      "preserve_legacy_ids": true
+    },
+    {
+      "family": "darumaka",
+      "classification": "permanent",
+      "target_layer": "baseFormId",
+      "evidence_status": "source_explicit_variant",
+      "records": [
+        {
+          "id": "darumaka-galar",
+          "name": "DARUMAKA Galar",
+          "source_page": 807,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Ice"
+          ],
+          "base_stats": {
+            "hp": 7,
+            "attack": 9,
+            "defense": 5,
+            "special_attack": 2,
+            "special_defense": 5,
+            "speed": 5
+          },
+          "abilities": [
+            "celebrate",
+            "hustle",
+            "ice-body",
+            "inner-focus",
+            "winter-s-kiss"
+          ],
+          "capabilities": [
+            "chilled",
+            "freezer",
+            "jump",
+            "naturewalk",
+            "overland",
+            "power",
+            "swim",
+            "underdog"
+          ],
+          "signals": [
+            "existing_inventory",
+            "regional_name:galar"
+          ]
+        }
+      ],
+      "signals": [
+        "existing_inventory",
+        "regional_name:galar"
+      ],
+      "reason": "The supplied Pokédex contains a separately parameterized regional variant. Preserve legacy Species IDs as aliases/import compatibility while moving selection to the generic base Form layer.",
+      "preserve_legacy_ids": true
+    },
+    {
+      "family": "deerling",
+      "classification": "persistent_form",
+      "target_layer": "baseFormId",
+      "evidence_status": "source_explicit",
+      "records": [
+        {
+          "id": "deerling",
+          "name": "Deerling",
+          "source_page": 551,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Normal",
+            "Grass"
+          ],
+          "base_stats": {
+            "hp": 6,
+            "attack": 6,
+            "defense": 5,
+            "special_attack": 4,
+            "special_defense": 5,
+            "speed": 8
+          },
+          "abilities": [
+            "chlorophyll",
+            "ragelope",
+            "sap-sipper",
+            "seasonal",
+            "serene-grace"
+          ],
+          "capabilities": [
+            "jump",
+            "naturewalk",
+            "overland",
+            "pack-mon",
+            "power",
+            "swim",
+            "underdog"
+          ],
+          "signals": [
+            "form_ability:seasonal"
+          ]
+        }
+      ],
+      "signals": [
+        "form_ability:seasonal"
+      ],
+      "reason": "Seasonal defines four source-backed seasonal states and a change action.",
+      "preserve_legacy_ids": true
+    },
+    {
+      "family": "deoxys",
+      "classification": "defer",
+      "target_layer": "none",
+      "evidence_status": "source_insufficient",
+      "records": [
+        {
+          "id": "deoxys-normal-forme",
+          "name": "DEOXYS Normal Forme",
+          "source_page": 887,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Psychic"
+          ],
+          "base_stats": {
+            "hp": 5,
+            "attack": 15,
+            "defense": 5,
+            "special_attack": 15,
+            "special_defense": 5,
+            "speed": 15
+          },
+          "abilities": [
+            "download",
+            "perception",
+            "pressure",
+            "symbiosis",
+            "transporter"
+          ],
+          "capabilities": [
+            "breathless",
+            "forme-change",
+            "jump",
+            "multiform",
+            "overland",
+            "power",
+            "sky",
+            "swim",
+            "telekinetic",
+            "telepath"
+          ],
+          "signals": [
+            "existing_inventory",
+            "name_descriptor:forme",
+            "name_phrase:normal forme",
+            "form_capability:forme-change,multiform"
+          ]
+        },
+        {
+          "id": "deoxys-attack-forme",
+          "name": "DEOXYS Attack Forme",
+          "source_page": 888,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Psychic"
+          ],
+          "base_stats": {
+            "hp": 5,
+            "attack": 18,
+            "defense": 2,
+            "special_attack": 18,
+            "special_defense": 2,
+            "speed": 15
+          },
+          "abilities": [
+            "download",
+            "perception",
+            "symbiosis",
+            "transporter",
+            "weird-power"
+          ],
+          "capabilities": [
+            "breathless",
+            "forme-change",
+            "jump",
+            "multiform",
+            "overland",
+            "power",
+            "sky",
+            "swim",
+            "telekinetic",
+            "telepath"
+          ],
+          "signals": [
+            "existing_inventory",
+            "name_descriptor:forme",
+            "name_phrase:attack forme",
+            "form_capability:forme-change,multiform"
+          ]
+        },
+        {
+          "id": "deoxys-defense-forme",
+          "name": "DEOXYS Defense Forme",
+          "source_page": 889,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Psychic"
+          ],
+          "base_stats": {
+            "hp": 5,
+            "attack": 7,
+            "defense": 16,
+            "special_attack": 7,
+            "special_defense": 16,
+            "speed": 9
+          },
+          "abilities": [
+            "download",
+            "perception",
+            "sturdy",
+            "symbiosis",
+            "transporter"
+          ],
+          "capabilities": [
+            "breathless",
+            "forme-change",
+            "jump",
+            "multiform",
+            "overland",
+            "power",
+            "sky",
+            "swim",
+            "telekinetic",
+            "telepath"
+          ],
+          "signals": [
+            "existing_inventory",
+            "name_descriptor:forme",
+            "name_phrase:defense forme",
+            "form_capability:forme-change,multiform"
+          ]
+        },
+        {
+          "id": "deoxys-speed-forme",
+          "name": "DEOXYS Speed Forme",
+          "source_page": 890,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Psychic"
+          ],
+          "base_stats": {
+            "hp": 5,
+            "attack": 10,
+            "defense": 9,
+            "special_attack": 10,
+            "special_defense": 9,
+            "speed": 18
+          },
+          "abilities": [
+            "download",
+            "perception",
+            "speed-boost",
+            "symbiosis",
+            "transporter"
+          ],
+          "capabilities": [
+            "breathless",
+            "forme-change",
+            "jump",
+            "multiform",
+            "overland",
+            "power",
+            "sky",
+            "swim",
+            "telekinetic",
+            "telepath"
+          ],
+          "signals": [
+            "existing_inventory",
+            "name_descriptor:forme",
+            "name_phrase:speed forme",
+            "form_capability:forme-change,multiform"
+          ]
+        }
+      ],
+      "signals": [
+        "existing_inventory",
+        "form_capability:forme-change,multiform",
+        "name_descriptor:forme",
+        "name_phrase:attack forme",
+        "name_phrase:defense forme",
+        "name_phrase:normal forme",
+        "name_phrase:speed forme"
+      ],
+      "reason": "Forme Change/Multiform records exist, but the switching rule/duration was not found.",
+      "preserve_legacy_ids": false
+    },
+    {
+      "family": "diglett",
+      "classification": "permanent",
+      "target_layer": "baseFormId",
+      "evidence_status": "source_explicit_variant",
+      "records": [
+        {
+          "id": "diglett-alola",
+          "name": "DIGLETT Alola",
+          "source_page": 787,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Ground",
+            "Steel"
+          ],
+          "base_stats": {
+            "hp": 1,
+            "attack": 6,
+            "defense": 3,
+            "special_attack": 4,
+            "special_defense": 5,
+            "speed": 9
+          },
+          "abilities": [
+            "celebrate",
+            "dig-away",
+            "sand-force",
+            "sand-veil",
+            "tangling-hair"
+          ],
+          "capabilities": [
+            "burrow",
+            "jump",
+            "overland",
+            "power",
+            "swim",
+            "tremorsense",
+            "underdog"
+          ],
+          "signals": [
+            "existing_inventory",
+            "regional_name:alola"
+          ]
+        }
+      ],
+      "signals": [
+        "existing_inventory",
+        "regional_name:alola"
+      ],
+      "reason": "The supplied Pokédex contains a separately parameterized regional variant. Preserve legacy Species IDs as aliases/import compatibility while moving selection to the generic base Form layer.",
+      "preserve_legacy_ids": true
+    },
+    {
+      "family": "dugtrio",
+      "classification": "permanent",
+      "target_layer": "baseFormId",
+      "evidence_status": "source_explicit_variant",
+      "records": [
+        {
+          "id": "dugtrio-alola",
+          "name": "DUGTRIO Alola",
+          "source_page": 788,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Ground",
+            "Steel"
+          ],
+          "base_stats": {
+            "hp": 4,
+            "attack": 10,
+            "defense": 6,
+            "special_attack": 5,
+            "special_defense": 7,
+            "speed": 11
+          },
+          "abilities": [
+            "dig-away",
+            "polycephaly",
+            "sand-force",
+            "sand-veil",
+            "tangling-hair"
+          ],
+          "capabilities": [
+            "burrow",
+            "groundshaper",
+            "jump",
+            "overland",
+            "power",
+            "swim",
+            "tremorsense",
+            "underdog"
+          ],
+          "signals": [
+            "existing_inventory",
+            "regional_name:alola"
+          ]
+        }
+      ],
+      "signals": [
+        "existing_inventory",
+        "regional_name:alola"
+      ],
+      "reason": "The supplied Pokédex contains a separately parameterized regional variant. Preserve legacy Species IDs as aliases/import compatibility while moving selection to the generic base Form layer.",
+      "preserve_legacy_ids": true
+    },
+    {
+      "family": "eiscue",
+      "classification": "transformation",
+      "target_layer": "activeFormId",
+      "evidence_status": "source_explicit",
+      "records": [
+        {
+          "id": "eiscue-ice-face",
+          "name": "EISCUE Ice Face",
+          "source_page": 723,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Ice"
+          ],
+          "base_stats": {
+            "hp": 8,
+            "attack": 8,
+            "defense": 11,
+            "special_attack": 7,
+            "special_defense": 9,
+            "speed": 5
+          },
+          "abilities": [
+            "dry-skin",
+            "ice-body",
+            "ice-face",
+            "snow-cloak",
+            "snow-warning"
+          ],
+          "capabilities": [
+            "chilled",
+            "forme-change",
+            "jump",
+            "naturewalk",
+            "overland",
+            "power",
+            "swim"
+          ],
+          "signals": [
+            "existing_inventory",
+            "name_phrase:ice face",
+            "form_capability:forme-change"
+          ]
+        },
+        {
+          "id": "eiscue-noice-face",
+          "name": "EISCUE Noice Face",
+          "source_page": 724,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Ice"
+          ],
+          "base_stats": {
+            "hp": 8,
+            "attack": 8,
+            "defense": 7,
+            "special_attack": 7,
+            "special_defense": 5,
+            "speed": 13
+          },
+          "abilities": [
+            "dry-skin",
+            "ice-body",
+            "ice-face",
+            "snow-cloak",
+            "snow-warning"
+          ],
+          "capabilities": [
+            "chilled",
+            "forme-change",
+            "jump",
+            "naturewalk",
+            "overland",
+            "power",
+            "swim"
+          ],
+          "signals": [
+            "existing_inventory",
+            "name_descriptor:noice",
+            "name_phrase:ice face",
+            "form_capability:forme-change"
+          ]
+        }
+      ],
+      "signals": [
+        "existing_inventory",
+        "form_capability:forme-change",
+        "name_descriptor:noice",
+        "name_phrase:ice face"
+      ],
+      "reason": "Ice Face/Noice Face is controlled by Temporary HP from Ice Face.",
+      "preserve_legacy_ids": false
+    },
+    {
+      "family": "exeggutor",
+      "classification": "permanent",
+      "target_layer": "baseFormId",
+      "evidence_status": "source_explicit_variant",
+      "records": [
+        {
+          "id": "exeggutor-alola",
+          "name": "EXEGGUTOR Alola",
+          "source_page": 445,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Grass",
+            "Dragon"
+          ],
+          "base_stats": {
+            "hp": 10,
+            "attack": 11,
+            "defense": 9,
+            "special_attack": 13,
+            "special_defense": 8,
+            "speed": 5
+          },
+          "abilities": [
+            "cluster-mind",
+            "eggscellence",
+            "filter",
+            "frisk",
+            "harvest"
+          ],
+          "capabilities": [
+            "jump",
+            "naturewalk",
+            "overland",
+            "power",
+            "reach",
+            "swim"
+          ],
+          "signals": [
+            "existing_inventory",
+            "regional_name:alola"
+          ]
+        }
+      ],
+      "signals": [
+        "existing_inventory",
+        "regional_name:alola"
+      ],
+      "reason": "The supplied Pokédex contains a separately parameterized regional variant. Preserve legacy Species IDs as aliases/import compatibility while moving selection to the generic base Form layer.",
+      "preserve_legacy_ids": true
+    },
+    {
+      "family": "farfetchd",
+      "classification": "permanent",
+      "target_layer": "baseFormId",
+      "evidence_status": "source_explicit_variant",
+      "records": [
+        {
+          "id": "farfetchd-galar",
+          "name": "FARFETCH’D Galar",
+          "source_page": 800,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Fighting"
+          ],
+          "base_stats": {
+            "hp": 5,
+            "attack": 10,
+            "defense": 6,
+            "special_attack": 6,
+            "special_defense": 6,
+            "speed": 6
+          },
+          "abilities": [
+            "defiant",
+            "scrappy",
+            "steadfast",
+            "super-luck",
+            "thrust"
+          ],
+          "capabilities": [
+            "jump",
+            "overland",
+            "power",
+            "sky",
+            "swim",
+            "underdog",
+            "wielder"
+          ],
+          "signals": [
+            "existing_inventory",
+            "regional_name:galar"
+          ]
+        }
+      ],
+      "signals": [
+        "existing_inventory",
+        "regional_name:galar"
+      ],
+      "reason": "The supplied Pokédex contains a separately parameterized regional variant. Preserve legacy Species IDs as aliases/import compatibility while moving selection to the generic base Form layer.",
+      "preserve_legacy_ids": true
+    },
+    {
+      "family": "furfrou",
+      "classification": "persistent_form",
+      "target_layer": "baseFormId",
+      "evidence_status": "source_explicit",
+      "records": [
+        {
+          "id": "furfrou",
+          "name": "Furfrou",
+          "source_page": 740,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Normal"
+          ],
+          "base_stats": {
+            "hp": 8,
+            "attack": 8,
+            "defense": 6,
+            "special_attack": 7,
+            "special_defense": 9,
+            "speed": 10
+          },
+          "abilities": [
+            "beautiful",
+            "bodyguard",
+            "fabulous-trim",
+            "fur-coat",
+            "intimidate"
+          ],
+          "capabilities": [
+            "jump",
+            "overland",
+            "power",
+            "swim",
+            "tracker"
+          ],
+          "signals": [
+            "form_ability:fabulous-trim"
+          ]
+        }
+      ],
+      "signals": [
+        "form_ability:fabulous-trim"
+      ],
+      "reason": "Fabulous Trim defines persistent hairstyle states changed at a hair parlor.",
+      "preserve_legacy_ids": true
+    },
+    {
+      "family": "geodude",
+      "classification": "permanent",
+      "target_layer": "baseFormId",
+      "evidence_status": "source_explicit_variant",
+      "records": [
+        {
+          "id": "geodude-alola",
+          "name": "GEODUDE Alola",
+          "source_page": 791,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Rock",
+            "Electric"
+          ],
+          "base_stats": {
+            "hp": 4,
+            "attack": 8,
+            "defense": 10,
+            "special_attack": 3,
+            "special_defense": 3,
+            "speed": 2
+          },
+          "abilities": [
+            "galvanize",
+            "levitate",
+            "magnet-pull",
+            "rock-head",
+            "sturdy"
+          ],
+          "capabilities": [
+            "jump",
+            "levitate",
+            "magnetic",
+            "overland",
+            "power",
+            "swim",
+            "underdog",
+            "volatile-bomb",
+            "zapper"
+          ],
+          "signals": [
+            "existing_inventory",
+            "regional_name:alola"
+          ]
+        }
+      ],
+      "signals": [
+        "existing_inventory",
+        "regional_name:alola"
+      ],
+      "reason": "The supplied Pokédex contains a separately parameterized regional variant. Preserve legacy Species IDs as aliases/import compatibility while moving selection to the generic base Form layer.",
+      "preserve_legacy_ids": true
+    },
+    {
+      "family": "giratina",
+      "classification": "defer",
+      "target_layer": "none",
+      "evidence_status": "source_insufficient",
+      "records": [
+        {
+          "id": "giratina-origin-forme",
+          "name": "GIRATINA Origin Forme",
+          "source_page": 896,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Ghost",
+            "Dragon"
+          ],
+          "base_stats": {
+            "hp": 15,
+            "attack": 12,
+            "defense": 10,
+            "special_attack": 12,
+            "special_defense": 10,
+            "speed": 9
+          },
+          "abilities": [
+            "bully",
+            "levitate",
+            "prime-fury",
+            "soulstealer",
+            "telepathy"
+          ],
+          "capabilities": [
+            "aura-reader",
+            "burrow",
+            "darkvision",
+            "forme-change",
+            "jump",
+            "mountable",
+            "origin-forme",
+            "overland",
+            "power",
+            "sky",
+            "swim",
+            "telekinetic",
+            "telepath"
+          ],
+          "signals": [
+            "existing_inventory",
+            "name_descriptor:forme",
+            "name_phrase:origin forme",
+            "form_capability:forme-change,origin-forme"
+          ]
+        },
+        {
+          "id": "giratina-altered-forme",
+          "name": "GIRATINA Altered Forme",
+          "source_page": 897,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Ghost",
+            "Dragon"
+          ],
+          "base_stats": {
+            "hp": 15,
+            "attack": 10,
+            "defense": 12,
+            "special_attack": 10,
+            "special_defense": 12,
+            "speed": 9
+          },
+          "abilities": [
+            "bully",
+            "pressure",
+            "prime-fury",
+            "soulstealer",
+            "telepathy"
+          ],
+          "capabilities": [
+            "aura-reader",
+            "burrow",
+            "darkvision",
+            "forme-change",
+            "jump",
+            "mountable",
+            "origin-forme",
+            "overland",
+            "power",
+            "sky",
+            "swim",
+            "telekinetic",
+            "telepath"
+          ],
+          "signals": [
+            "existing_inventory",
+            "name_descriptor:forme",
+            "name_phrase:altered forme",
+            "form_capability:forme-change,origin-forme"
+          ]
+        }
+      ],
+      "signals": [
+        "existing_inventory",
+        "form_capability:forme-change,origin-forme",
+        "name_descriptor:forme",
+        "name_phrase:altered forme",
+        "name_phrase:origin forme"
+      ],
+      "reason": "Altered/Origin records exist, but the Origin switching requirement was not found.",
+      "preserve_legacy_ids": false
+    },
+    {
+      "family": "golem",
+      "classification": "permanent",
+      "target_layer": "baseFormId",
+      "evidence_status": "source_explicit_variant",
+      "records": [
+        {
+          "id": "golem-alola",
+          "name": "GOLEM Alola",
+          "source_page": 793,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Rock",
+            "Electric"
+          ],
+          "base_stats": {
+            "hp": 8,
+            "attack": 12,
+            "defense": 13,
+            "special_attack": 6,
+            "special_defense": 7,
+            "speed": 5
+          },
+          "abilities": [
+            "full-guard",
+            "galvanize",
+            "magnet-pull",
+            "rock-head",
+            "sturdy"
+          ],
+          "capabilities": [
+            "groundshaper",
+            "jump",
+            "magnetic",
+            "naturewalk",
+            "overland",
+            "power",
+            "swim",
+            "volatile-bomb",
+            "zapper"
+          ],
+          "signals": [
+            "existing_inventory",
+            "regional_name:alola"
+          ]
+        }
+      ],
+      "signals": [
+        "existing_inventory",
+        "regional_name:alola"
+      ],
+      "reason": "The supplied Pokédex contains a separately parameterized regional variant. Preserve legacy Species IDs as aliases/import compatibility while moving selection to the generic base Form layer.",
+      "preserve_legacy_ids": true
+    },
+    {
+      "family": "graveler",
+      "classification": "permanent",
+      "target_layer": "baseFormId",
+      "evidence_status": "source_explicit_variant",
+      "records": [
+        {
+          "id": "graveler-alola",
+          "name": "GRAVELER Alola",
+          "source_page": 792,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Rock",
+            "Electric"
+          ],
+          "base_stats": {
+            "hp": 6,
+            "attack": 10,
+            "defense": 12,
+            "special_attack": 5,
+            "special_defense": 5,
+            "speed": 4
+          },
+          "abilities": [
+            "full-guard",
+            "galvanize",
+            "magnet-pull",
+            "rock-head",
+            "sturdy"
+          ],
+          "capabilities": [
+            "burrow",
+            "jump",
+            "magnetic",
+            "naturewalk",
+            "overland",
+            "power",
+            "swim",
+            "underdog",
+            "volatile-bomb",
+            "zapper"
+          ],
+          "signals": [
+            "existing_inventory",
+            "regional_name:alola"
+          ]
+        }
+      ],
+      "signals": [
+        "existing_inventory",
+        "regional_name:alola"
+      ],
+      "reason": "The supplied Pokédex contains a separately parameterized regional variant. Preserve legacy Species IDs as aliases/import compatibility while moving selection to the generic base Form layer.",
+      "preserve_legacy_ids": true
+    },
+    {
+      "family": "grimer",
+      "classification": "permanent",
+      "target_layer": "baseFormId",
+      "evidence_status": "source_explicit_variant",
+      "records": [
+        {
+          "id": "grimer-alola",
+          "name": "GRIMER Alola",
+          "source_page": 794,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Poison",
+            "Dark"
+          ],
+          "base_stats": {
+            "hp": 8,
+            "attack": 8,
+            "defense": 5,
+            "special_attack": 4,
+            "special_defense": 3,
+            "speed": 5
+          },
+          "abilities": [
+            "defy-death",
+            "gluttony",
+            "poison-touch",
+            "power-of-alchemy",
+            "weird-power"
+          ],
+          "capabilities": [
+            "amorphous",
+            "darkvision",
+            "dead-silent",
+            "jump",
+            "overland",
+            "power",
+            "sticky-hold",
+            "swim",
+            "underdog",
+            "wallclimber"
+          ],
+          "signals": [
+            "existing_inventory",
+            "regional_name:alola"
+          ]
+        }
+      ],
+      "signals": [
+        "existing_inventory",
+        "regional_name:alola"
+      ],
+      "reason": "The supplied Pokédex contains a separately parameterized regional variant. Preserve legacy Species IDs as aliases/import compatibility while moving selection to the generic base Form layer.",
+      "preserve_legacy_ids": true
+    },
+    {
+      "family": "hoopa",
+      "classification": "defer",
+      "target_layer": "none",
+      "evidence_status": "source_insufficient",
+      "records": [
+        {
+          "id": "hoopa-confined",
+          "name": "HOOPA Confined",
+          "source_page": 931,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Psychic",
+            "Ghost"
+          ],
+          "base_stats": {
+            "hp": 8,
+            "attack": 11,
+            "defense": 6,
+            "special_attack": 15,
+            "special_defense": 13,
+            "speed": 7
+          },
+          "abilities": [
+            "bully",
+            "handyman",
+            "magician",
+            "prankster",
+            "run-away"
+          ],
+          "capabilities": [
+            "confined",
+            "darkvision",
+            "forme-change",
+            "jump",
+            "levitate",
+            "overland",
+            "power",
+            "swim",
+            "teleporter"
+          ],
+          "signals": [
+            "existing_inventory",
+            "name_descriptor:confined",
+            "form_capability:forme-change"
+          ]
+        },
+        {
+          "id": "hoopa-unbound",
+          "name": "HOOPA Unbound",
+          "source_page": 932,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Psychic",
+            "Dark"
+          ],
+          "base_stats": {
+            "hp": 8,
+            "attack": 16,
+            "defense": 6,
+            "special_attack": 17,
+            "special_defense": 13,
+            "speed": 8
+          },
+          "abilities": [
+            "bully",
+            "cruelty",
+            "enduring-rage",
+            "magician",
+            "weird-power"
+          ],
+          "capabilities": [
+            "confined",
+            "darkvision",
+            "forme-change",
+            "jump",
+            "overland",
+            "power",
+            "reach",
+            "swim",
+            "teleporter"
+          ],
+          "signals": [
+            "existing_inventory",
+            "name_descriptor:unbound",
+            "form_capability:forme-change"
+          ]
+        }
+      ],
+      "signals": [
+        "existing_inventory",
+        "form_capability:forme-change",
+        "name_descriptor:confined",
+        "name_descriptor:unbound"
+      ],
+      "reason": "Confined/Unbound records exist, but the switching requirement/duration was not found.",
+      "preserve_legacy_ids": false
+    },
+    {
+      "family": "indeedee",
+      "classification": "permanent",
+      "target_layer": "baseFormId",
+      "evidence_status": "source_explicit_variant",
+      "records": [
+        {
+          "id": "indeedee-male",
+          "name": "INDEEDEE Male",
+          "source_page": 747,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Psychic",
+            "Normal"
+          ],
+          "base_stats": {
+            "hp": 6,
+            "attack": 7,
+            "defense": 6,
+            "special_attack": 11,
+            "special_defense": 10,
+            "speed": 10
+          },
+          "abilities": [
+            "bodyguard",
+            "helper",
+            "inner-focus",
+            "psychic-surge",
+            "synchronize"
+          ],
+          "capabilities": [
+            "jump",
+            "naturewalk",
+            "overland",
+            "power",
+            "swim",
+            "telekinetic",
+            "telepath"
+          ],
+          "signals": [
+            "name_descriptor:male"
+          ]
+        },
+        {
+          "id": "indeedee-female",
+          "name": "INDEEDEE Female",
+          "source_page": 748,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Psychic",
+            "Normal"
+          ],
+          "base_stats": {
+            "hp": 7,
+            "attack": 6,
+            "defense": 7,
+            "special_attack": 10,
+            "special_defense": 11,
+            "speed": 9
+          },
+          "abilities": [
+            "friend-guard",
+            "helper",
+            "own-tempo",
+            "psychic-surge",
+            "synchronize"
+          ],
+          "capabilities": [
+            "jump",
+            "naturewalk",
+            "overland",
+            "power",
+            "swim",
+            "telekinetic",
+            "telepath"
+          ],
+          "signals": [
+            "name_descriptor:female"
+          ]
+        }
+      ],
+      "signals": [
+        "name_descriptor:female",
+        "name_descriptor:male"
+      ],
+      "reason": "Male and Female are separately parameterized Species records in the supplied Pokédex.",
+      "preserve_legacy_ids": true
+    },
+    {
+      "family": "kyurem",
+      "classification": "defer",
+      "target_layer": "none",
+      "evidence_status": "source_insufficient",
+      "records": [
+        {
+          "id": "kyurem-normal-forme",
+          "name": "KYUREM Normal Forme",
+          "source_page": 919,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Dragon",
+            "Ice"
+          ],
+          "base_stats": {
+            "hp": 13,
+            "attack": 13,
+            "defense": 9,
+            "special_attack": 13,
+            "special_defense": 9,
+            "speed": 10
+          },
+          "abilities": [
+            "inner-focus",
+            "pressure",
+            "snow-cloak",
+            "trace",
+            "winter-s-kiss"
+          ],
+          "capabilities": [
+            "aura-reader",
+            "chilled",
+            "dragon-fusion",
+            "forme-change",
+            "freezer",
+            "jump",
+            "mountable",
+            "overland",
+            "power",
+            "sky",
+            "swim",
+            "telepath"
+          ],
+          "signals": [
+            "existing_inventory",
+            "name_descriptor:forme",
+            "name_phrase:normal forme",
+            "form_capability:dragon-fusion,forme-change"
+          ]
+        },
+        {
+          "id": "kyurem-white-fusion-forme",
+          "name": "KYUREM White Fusion Forme",
+          "source_page": 920,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Dragon",
+            "Ice"
+          ],
+          "base_stats": {
+            "hp": 13,
+            "attack": 12,
+            "defense": 9,
+            "special_attack": 17,
+            "special_defense": 10,
+            "speed": 10
+          },
+          "abilities": [
+            "discipline",
+            "flash-fire",
+            "inner-focus",
+            "sun-blanket",
+            "turboblaze"
+          ],
+          "capabilities": [
+            "aura-reader",
+            "chilled",
+            "dragon-fusion",
+            "forme-change",
+            "freezer",
+            "jump",
+            "mountable",
+            "overland",
+            "power",
+            "sky",
+            "swim",
+            "telepath"
+          ],
+          "signals": [
+            "existing_inventory",
+            "name_descriptor:forme",
+            "name_phrase:fusion forme",
+            "form_capability:dragon-fusion,forme-change"
+          ]
+        },
+        {
+          "id": "kyurem-black-fusion-forme",
+          "name": "KYUREM Black Fusion Forme",
+          "source_page": 921,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Dragon",
+            "Ice"
+          ],
+          "base_stats": {
+            "hp": 13,
+            "attack": 17,
+            "defense": 10,
+            "special_attack": 12,
+            "special_defense": 9,
+            "speed": 10
+          },
+          "abilities": [
+            "discipline",
+            "hydration",
+            "inner-focus",
+            "motor-drive",
+            "teravolt"
+          ],
+          "capabilities": [
+            "aura-reader",
+            "chilled",
+            "dragon-fusion",
+            "forme-change",
+            "freezer",
+            "jump",
+            "mountable",
+            "overland",
+            "power",
+            "sky",
+            "swim",
+            "telepath"
+          ],
+          "signals": [
+            "existing_inventory",
+            "name_descriptor:forme",
+            "name_phrase:fusion forme",
+            "form_capability:dragon-fusion,forme-change"
+          ]
+        }
+      ],
+      "signals": [
+        "existing_inventory",
+        "form_capability:dragon-fusion,forme-change",
+        "name_descriptor:forme",
+        "name_phrase:fusion forme",
+        "name_phrase:normal forme"
+      ],
+      "reason": "Normal/Black/White Fusion records exist, but Dragon Fusion rules were not found in the audited supplied sources.",
+      "preserve_legacy_ids": false
+    },
+    {
+      "family": "landorus",
+      "classification": "defer",
+      "target_layer": "none",
+      "evidence_status": "source_insufficient",
+      "records": [
+        {
+          "id": "landorus-incarnate-forme",
+          "name": "LANDORUS Incarnate Forme",
+          "source_page": 915,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Ground",
+            "Flying"
+          ],
+          "base_stats": {
+            "hp": 9,
+            "attack": 13,
+            "defense": 9,
+            "special_attack": 12,
+            "special_defense": 8,
+            "speed": 10
+          },
+          "abilities": [
+            "defiant",
+            "frisk",
+            "sand-force",
+            "sand-stream",
+            "sheer-force"
+          ],
+          "capabilities": [
+            "forme-change",
+            "groundshaper",
+            "guster",
+            "jump",
+            "overland",
+            "power",
+            "sky",
+            "swim",
+            "therian-forme"
+          ],
+          "signals": [
+            "existing_inventory",
+            "name_descriptor:forme",
+            "name_phrase:incarnate forme",
+            "form_capability:forme-change,therian-forme"
+          ]
+        },
+        {
+          "id": "landorus-therian-forme",
+          "name": "LANDORUS Therian Forme",
+          "source_page": 916,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Ground",
+            "Flying"
+          ],
+          "base_stats": {
+            "hp": 9,
+            "attack": 15,
+            "defense": 9,
+            "special_attack": 11,
+            "special_defense": 8,
+            "speed": 9
+          },
+          "abilities": [
+            "defiant",
+            "frisk",
+            "intimidate",
+            "sand-stream",
+            "sheer-force"
+          ],
+          "capabilities": [
+            "forme-change",
+            "groundshaper",
+            "jump",
+            "mountable",
+            "overland",
+            "power",
+            "sky",
+            "swim",
+            "therian-forme",
+            "tremorsense"
+          ],
+          "signals": [
+            "existing_inventory",
+            "name_descriptor:forme",
+            "name_phrase:therian forme",
+            "form_capability:forme-change,therian-forme"
+          ]
+        }
+      ],
+      "signals": [
+        "existing_inventory",
+        "form_capability:forme-change,therian-forme",
+        "name_descriptor:forme",
+        "name_phrase:incarnate forme",
+        "name_phrase:therian forme"
+      ],
+      "reason": "Incarnate/Therian records exist, but Therian Forme switching rules were not found.",
+      "preserve_legacy_ids": false
+    },
+    {
+      "family": "linoone",
+      "classification": "permanent",
+      "target_layer": "baseFormId",
+      "evidence_status": "source_explicit_variant",
+      "records": [
+        {
+          "id": "linoone-galar",
+          "name": "LINOONE Galar",
+          "source_page": 805,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Dark",
+            "Normal"
+          ],
+          "base_stats": {
+            "hp": 8,
+            "attack": 7,
+            "defense": 6,
+            "special_attack": 5,
+            "special_defense": 6,
+            "speed": 10
+          },
+          "abilities": [
+            "gluttony",
+            "pickup",
+            "quick-feet",
+            "sprint",
+            "tough-claws"
+          ],
+          "capabilities": [
+            "darkvision",
+            "jump",
+            "naturewalk",
+            "overland",
+            "power",
+            "swim",
+            "tracker",
+            "underdog"
+          ],
+          "signals": [
+            "existing_inventory",
+            "regional_name:galar"
+          ]
+        }
+      ],
+      "signals": [
+        "existing_inventory",
+        "regional_name:galar"
+      ],
+      "reason": "The supplied Pokédex contains a separately parameterized regional variant. Preserve legacy Species IDs as aliases/import compatibility while moving selection to the generic base Form layer.",
+      "preserve_legacy_ids": true
+    },
+    {
+      "family": "lycanroc",
+      "classification": "permanent",
+      "target_layer": "baseFormId",
+      "evidence_status": "source_explicit_variant",
+      "records": [
+        {
+          "id": "lycanroc-midday",
+          "name": "LYCANROC Midday",
+          "source_page": 616,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Rock"
+          ],
+          "base_stats": {
+            "hp": 8,
+            "attack": 12,
+            "defense": 7,
+            "special_attack": 6,
+            "special_defense": 7,
+            "speed": 11
+          },
+          "abilities": [
+            "accelerate",
+            "keen-eye",
+            "sand-rush",
+            "steadfast",
+            "vital-spirit"
+          ],
+          "capabilities": [
+            "jump",
+            "naturewalk",
+            "overland",
+            "power",
+            "swim",
+            "tracker"
+          ],
+          "signals": [
+            "name_descriptor:midday"
+          ]
+        },
+        {
+          "id": "lycanroc-midnight",
+          "name": "LYCANROC Midnight",
+          "source_page": 617,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Rock"
+          ],
+          "base_stats": {
+            "hp": 9,
+            "attack": 12,
+            "defense": 8,
+            "special_attack": 6,
+            "special_defense": 8,
+            "speed": 8
+          },
+          "abilities": [
+            "keen-eye",
+            "no-guard",
+            "steadfast",
+            "super-luck",
+            "vital-spirit"
+          ],
+          "capabilities": [
+            "darkvision",
+            "jump",
+            "naturewalk",
+            "overland",
+            "power",
+            "swim",
+            "tracker"
+          ],
+          "signals": [
+            "name_descriptor:midnight"
+          ]
+        },
+        {
+          "id": "lycanroc-dusk",
+          "name": "LYCANROC Dusk",
+          "source_page": 618,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Rock"
+          ],
+          "base_stats": {
+            "hp": 8,
+            "attack": 12,
+            "defense": 7,
+            "special_attack": 6,
+            "special_defense": 7,
+            "speed": 11
+          },
+          "abilities": [
+            "keen-eye",
+            "own-tempo",
+            "steadfast",
+            "tough-claws",
+            "vital-spirit"
+          ],
+          "capabilities": [
+            "jump",
+            "naturewalk",
+            "overland",
+            "power",
+            "swim",
+            "tracker"
+          ],
+          "signals": [
+            "name_descriptor:dusk"
+          ]
+        }
+      ],
+      "signals": [
+        "name_descriptor:dusk",
+        "name_descriptor:midday",
+        "name_descriptor:midnight"
+      ],
+      "reason": "Midday, Midnight, and Dusk are separately parameterized evolution forms.",
+      "preserve_legacy_ids": true
+    },
+    {
+      "family": "marowak",
+      "classification": "permanent",
+      "target_layer": "baseFormId",
+      "evidence_status": "source_explicit_variant",
+      "records": [
+        {
+          "id": "marowak-alola",
+          "name": "MAROWAK Alola",
+          "source_page": 485,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Fire",
+            "Ghost"
+          ],
+          "base_stats": {
+            "hp": 6,
+            "attack": 8,
+            "defense": 11,
+            "special_attack": 5,
+            "special_defense": 8,
+            "speed": 5
+          },
+          "abilities": [
+            "bone-wielder",
+            "cursed-body",
+            "dancer",
+            "lightning-rod",
+            "rock-head"
+          ],
+          "capabilities": [
+            "darkvision",
+            "glow",
+            "jump",
+            "naturewalk",
+            "overland",
+            "power",
+            "swim",
+            "underdog",
+            "wielder"
+          ],
+          "signals": [
+            "existing_inventory",
+            "regional_name:alola"
+          ]
+        }
+      ],
+      "signals": [
+        "existing_inventory",
+        "regional_name:alola"
+      ],
+      "reason": "The supplied Pokédex contains a separately parameterized regional variant. Preserve legacy Species IDs as aliases/import compatibility while moving selection to the generic base Form layer.",
+      "preserve_legacy_ids": true
+    },
+    {
+      "family": "meloetta",
+      "classification": "transformation",
+      "target_layer": "activeFormId",
+      "evidence_status": "source_explicit",
+      "records": [
+        {
+          "id": "meloetta-aria-forme",
+          "name": "MELOETTA Aria Forme",
+          "source_page": 922,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Normal",
+            "Psychic"
+          ],
+          "base_stats": {
+            "hp": 10,
+            "attack": 8,
+            "defense": 8,
+            "special_attack": 13,
+            "special_defense": 13,
+            "speed": 9
+          },
+          "abilities": [
+            "drown-out",
+            "lullaby",
+            "own-tempo",
+            "serene-grace",
+            "soundproof"
+          ],
+          "capabilities": [
+            "forme-change",
+            "jump",
+            "overland",
+            "power",
+            "swim"
+          ],
+          "signals": [
+            "existing_inventory",
+            "name_descriptor:forme",
+            "form_capability:forme-change"
+          ]
+        },
+        {
+          "id": "meloetta-step-forme",
+          "name": "MELOETTA Step Forme",
+          "source_page": 923,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Normal",
+            "Fighting"
+          ],
+          "base_stats": {
+            "hp": 10,
+            "attack": 13,
+            "defense": 9,
+            "special_attack": 8,
+            "special_defense": 8,
+            "speed": 13
+          },
+          "abilities": [
+            "lullaby",
+            "own-tempo",
+            "serene-grace",
+            "soundproof",
+            "spinning-dance"
+          ],
+          "capabilities": [
+            "forme-change",
+            "jump",
+            "overland",
+            "power",
+            "swim"
+          ],
+          "signals": [
+            "existing_inventory",
+            "name_descriptor:forme",
+            "form_capability:forme-change"
+          ]
+        }
+      ],
+      "signals": [
+        "existing_inventory",
+        "form_capability:forme-change",
+        "name_descriptor:forme"
+      ],
+      "reason": "Relic Song lets Meloetta switch between Aria Form and Step Form as a Swift Action when using the Move, or as a Standard Action otherwise; both forms use the same HP Stat.",
+      "preserve_legacy_ids": false
+    },
+    {
+      "family": "meowstic",
+      "classification": "permanent",
+      "target_layer": "baseFormId",
+      "evidence_status": "source_explicit_variant",
+      "records": [
+        {
+          "id": "meowstic-m",
+          "name": "MEOWSTIC (M)",
+          "source_page": 605,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Psychic"
+          ],
+          "base_stats": {
+            "hp": 7,
+            "attack": 5,
+            "defense": 8,
+            "special_attack": 8,
+            "special_defense": 8,
+            "speed": 10
+          },
+          "abilities": [
+            "infiltrator",
+            "keen-eye",
+            "magic-guard",
+            "own-tempo",
+            "prankster"
+          ],
+          "capabilities": [
+            "jump",
+            "naturewalk",
+            "overland",
+            "power",
+            "swim",
+            "telekinetic",
+            "telepath"
+          ],
+          "signals": [
+            "gender_form:male"
+          ]
+        },
+        {
+          "id": "meowstic-f",
+          "name": "MEOWSTIC (F)",
+          "source_page": 606,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Psychic"
+          ],
+          "base_stats": {
+            "hp": 7,
+            "attack": 5,
+            "defense": 8,
+            "special_attack": 8,
+            "special_defense": 8,
+            "speed": 10
+          },
+          "abilities": [
+            "competitive",
+            "infiltrator",
+            "keen-eye",
+            "own-tempo",
+            "sorcery"
+          ],
+          "capabilities": [
+            "jump",
+            "naturewalk",
+            "overland",
+            "power",
+            "swim",
+            "telekinetic",
+            "telepath"
+          ],
+          "signals": [
+            "gender_form:female"
+          ]
+        }
+      ],
+      "signals": [
+        "gender_form:female",
+        "gender_form:male"
+      ],
+      "reason": "Male and Female are separately parameterized Species records in the supplied Pokédex.",
+      "preserve_legacy_ids": true
+    },
+    {
+      "family": "meowth",
+      "classification": "permanent",
+      "target_layer": "baseFormId",
+      "evidence_status": "source_explicit_variant",
+      "records": [
+        {
+          "id": "meowth-alola",
+          "name": "MEOWTH Alola",
+          "source_page": 789,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Dark"
+          ],
+          "base_stats": {
+            "hp": 4,
+            "attack": 4,
+            "defense": 4,
+            "special_attack": 5,
+            "special_defense": 4,
+            "speed": 9
+          },
+          "abilities": [
+            "defiant",
+            "limber",
+            "pickup",
+            "rattled",
+            "technician"
+          ],
+          "capabilities": [
+            "darkvision",
+            "fortune",
+            "jump",
+            "naturewalk",
+            "overland",
+            "power",
+            "stealth",
+            "swim",
+            "underdog"
+          ],
+          "signals": [
+            "existing_inventory",
+            "regional_name:alola"
+          ]
+        },
+        {
+          "id": "meowth-galar",
+          "name": "MEOWTH Galar",
+          "source_page": 796,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Steel"
+          ],
+          "base_stats": {
+            "hp": 5,
+            "attack": 7,
+            "defense": 6,
+            "special_attack": 4,
+            "special_defense": 4,
+            "speed": 4
+          },
+          "abilities": [
+            "defiant",
+            "limber",
+            "pickup",
+            "tough-claws",
+            "unnerve"
+          ],
+          "capabilities": [
+            "fortune",
+            "jump",
+            "naturewalk",
+            "overland",
+            "power",
+            "swim",
+            "tracker",
+            "underdog"
+          ],
+          "signals": [
+            "existing_inventory",
+            "regional_name:galar"
+          ]
+        }
+      ],
+      "signals": [
+        "existing_inventory",
+        "regional_name:alola",
+        "regional_name:galar"
+      ],
+      "reason": "The supplied Pokédex contains a separately parameterized regional variant. Preserve legacy Species IDs as aliases/import compatibility while moving selection to the generic base Form layer.",
+      "preserve_legacy_ids": true
+    },
+    {
+      "family": "mimikyu",
+      "classification": "false_positive",
+      "target_layer": "none",
+      "evidence_status": "source_explicit_non_form",
+      "records": [
+        {
+          "id": "mimikyu",
+          "name": "Mimikyu",
+          "source_page": 715,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Ghost",
+            "Fairy"
+          ],
+          "base_stats": {
+            "hp": 6,
+            "attack": 9,
+            "defense": 8,
+            "special_attack": 5,
+            "special_defense": 11,
+            "speed": 10
+          },
+          "abilities": [
+            "copy-master",
+            "decoy",
+            "disguise",
+            "moody",
+            "technician"
+          ],
+          "capabilities": [
+            "amorphous",
+            "darkvision",
+            "dead-silent",
+            "jump",
+            "overland",
+            "power",
+            "reach",
+            "swim"
+          ],
+          "signals": [
+            "form_ability:disguise"
+          ]
+        }
+      ],
+      "signals": [
+        "form_ability:disguise"
+      ],
+      "reason": "The supplied PTU Species has Disguise as an Ability effect: a triggering damaging attack misses and the user gains +1 CS. The supplied PTU sources do not define Disguised/Busted as separate Form states.",
+      "preserve_legacy_ids": false
+    },
+    {
+      "family": "minior",
+      "classification": "transformation",
+      "target_layer": "activeFormId",
+      "evidence_status": "source_explicit",
+      "records": [
+        {
+          "id": "minior-meteor",
+          "name": "MINIOR Meteor",
+          "source_page": 752,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Rock",
+            "Flying"
+          ],
+          "base_stats": {
+            "hp": 6,
+            "attack": 6,
+            "defense": 10,
+            "special_attack": 6,
+            "special_defense": 10,
+            "speed": 6
+          },
+          "abilities": [
+            "illuminate",
+            "rock-head",
+            "shields-down",
+            "sturdy",
+            "weak-armor"
+          ],
+          "capabilities": [
+            "breathless",
+            "forme-change",
+            "glow",
+            "jump",
+            "overland",
+            "power",
+            "sky",
+            "swim"
+          ],
+          "signals": [
+            "existing_inventory",
+            "name_descriptor:meteor",
+            "form_ability:shields-down",
+            "form_capability:forme-change"
+          ]
+        },
+        {
+          "id": "minior-core",
+          "name": "MINIOR Core",
+          "source_page": 753,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Rock",
+            "Flying"
+          ],
+          "base_stats": {
+            "hp": 6,
+            "attack": 10,
+            "defense": 6,
+            "special_attack": 10,
+            "special_defense": 6,
+            "speed": 12
+          },
+          "abilities": [
+            "illuminate",
+            "rock-head",
+            "shields-down",
+            "sturdy",
+            "weak-armor"
+          ],
+          "capabilities": [
+            "breathless",
+            "forme-change",
+            "glow",
+            "jump",
+            "overland",
+            "power",
+            "sky",
+            "swim"
+          ],
+          "signals": [
+            "existing_inventory",
+            "name_descriptor:core",
+            "form_ability:shields-down",
+            "form_capability:forme-change"
+          ]
+        }
+      ],
+      "signals": [
+        "existing_inventory",
+        "form_ability:shields-down",
+        "form_capability:forme-change",
+        "name_descriptor:core",
+        "name_descriptor:meteor"
+      ],
+      "reason": "Shields Down defines Meteor/Core switching by HP state.",
+      "preserve_legacy_ids": false
+    },
+    {
+      "family": "morpeko",
+      "classification": "runtime_state",
+      "target_layer": "runtime_resolver",
+      "evidence_status": "source_explicit",
+      "records": [
+        {
+          "id": "morpeko",
+          "name": "Morpeko",
+          "source_page": 703,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Electric",
+            "Dark"
+          ],
+          "base_stats": {
+            "hp": 6,
+            "attack": 10,
+            "defense": 6,
+            "special_attack": 7,
+            "special_defense": 6,
+            "speed": 10
+          },
+          "abilities": [
+            "aura-storm",
+            "cruelty",
+            "gluttony",
+            "hunger-switch",
+            "static"
+          ],
+          "capabilities": [
+            "darkvision",
+            "jump",
+            "naturewalk",
+            "overland",
+            "power",
+            "swim",
+            "underdog",
+            "zapper"
+          ],
+          "signals": [
+            "form_ability:hunger-switch"
+          ]
+        }
+      ],
+      "signals": [
+        "form_ability:hunger-switch"
+      ],
+      "reason": "Hunger Switch defines per-turn Full Belly/Hangry bonuses but no separate stat block.",
+      "preserve_legacy_ids": false
+    },
+    {
+      "family": "mr-mime",
+      "classification": "permanent",
+      "target_layer": "baseFormId",
+      "evidence_status": "source_explicit_variant",
+      "records": [
+        {
+          "id": "mr-mime-galar",
+          "name": "MR. MIME Galar",
+          "source_page": 253,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Ice",
+            "Psychic"
+          ],
+          "base_stats": {
+            "hp": 5,
+            "attack": 7,
+            "defense": 7,
+            "special_attack": 9,
+            "special_defense": 9,
+            "speed": 10
+          },
+          "abilities": [
+            "filter",
+            "ice-body",
+            "ice-shield",
+            "screen-cleaner",
+            "vital-spirit"
+          ],
+          "capabilities": [
+            "chilled",
+            "freezer",
+            "jump",
+            "naturewalk",
+            "overland",
+            "power",
+            "swim",
+            "telekinetic",
+            "telepath"
+          ],
+          "signals": [
+            "existing_inventory",
+            "regional_name:galar"
+          ]
+        }
+      ],
+      "signals": [
+        "existing_inventory",
+        "regional_name:galar"
+      ],
+      "reason": "The supplied Pokédex contains a separately parameterized regional variant. Preserve legacy Species IDs as aliases/import compatibility while moving selection to the generic base Form layer.",
+      "preserve_legacy_ids": true
+    },
+    {
+      "family": "muk",
+      "classification": "permanent",
+      "target_layer": "baseFormId",
+      "evidence_status": "source_explicit_variant",
+      "records": [
+        {
+          "id": "muk-alola",
+          "name": "MUK Alola",
+          "source_page": 795,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Poison",
+            "Dark"
+          ],
+          "base_stats": {
+            "hp": 11,
+            "attack": 11,
+            "defense": 8,
+            "special_attack": 7,
+            "special_defense": 10,
+            "speed": 5
+          },
+          "abilities": [
+            "defy-death",
+            "gluttony",
+            "poison-touch",
+            "power-of-alchemy",
+            "weird-power"
+          ],
+          "capabilities": [
+            "amorphous",
+            "darkvision",
+            "dead-silent",
+            "jump",
+            "overland",
+            "power",
+            "sticky-hold",
+            "swim",
+            "wallclimber"
+          ],
+          "signals": [
+            "existing_inventory",
+            "regional_name:alola"
+          ]
+        }
+      ],
+      "signals": [
+        "existing_inventory",
+        "regional_name:alola"
+      ],
+      "reason": "The supplied Pokédex contains a separately parameterized regional variant. Preserve legacy Species IDs as aliases/import compatibility while moving selection to the generic base Form layer.",
+      "preserve_legacy_ids": true
+    },
+    {
+      "family": "necrozma",
+      "classification": "mixed",
+      "target_layer": "baseFormId+activeFormId",
+      "evidence_status": "source_explicit_effects",
+      "records": [
+        {
+          "id": "necrozma",
+          "name": "Necrozma",
+          "source_page": 944,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Psychic"
+          ],
+          "base_stats": {
+            "hp": 10,
+            "attack": 11,
+            "defense": 10,
+            "special_attack": 13,
+            "special_defense": 9,
+            "speed": 8
+          },
+          "abilities": [
+            "beam-cannon",
+            "chlorophyll",
+            "prism-armor",
+            "solar-power",
+            "sunglow-or-starlight"
+          ],
+          "capabilities": [
+            "darkvision",
+            "dead-silent",
+            "jump",
+            "mindlock",
+            "overland",
+            "power",
+            "sky",
+            "swim",
+            "viral-fusion"
+          ],
+          "signals": [
+            "existing_inventory",
+            "form_capability:viral-fusion"
+          ]
+        },
+        {
+          "id": "necrozma-dusk-mane",
+          "name": "NECROZMA Dusk Mane",
+          "source_page": 945,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Psychic",
+            "Steel"
+          ],
+          "base_stats": {
+            "hp": 10,
+            "attack": 16,
+            "defense": 13,
+            "special_attack": 11,
+            "special_defense": 11,
+            "speed": 8
+          },
+          "abilities": [
+            "beam-cannon",
+            "chlorophyll",
+            "prism-armor",
+            "solar-power",
+            "sunglow-or-starlight"
+          ],
+          "capabilities": [
+            "darkvision",
+            "dead-silent",
+            "jump",
+            "mindlock",
+            "overland",
+            "power",
+            "swim",
+            "viral-fusion"
+          ],
+          "signals": [
+            "existing_inventory",
+            "name_descriptor:dusk",
+            "name_phrase:dusk mane",
+            "form_capability:viral-fusion"
+          ]
+        },
+        {
+          "id": "necrozma-dawn-wings",
+          "name": "NECROZMA Dawn Wings",
+          "source_page": 946,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Psychic",
+            "Ghost"
+          ],
+          "base_stats": {
+            "hp": 10,
+            "attack": 11,
+            "defense": 11,
+            "special_attack": 16,
+            "special_defense": 13,
+            "speed": 8
+          },
+          "abilities": [
+            "beam-cannon",
+            "chlorophyll",
+            "prism-armor",
+            "solar-power",
+            "sunglow-or-starlight"
+          ],
+          "capabilities": [
+            "darkvision",
+            "dead-silent",
+            "jump",
+            "mindlock",
+            "overland",
+            "power",
+            "sky",
+            "swim",
+            "viral-fusion"
+          ],
+          "signals": [
+            "existing_inventory",
+            "name_phrase:dawn wings",
+            "form_capability:viral-fusion"
+          ]
+        }
+      ],
+      "signals": [
+        "existing_inventory",
+        "form_capability:viral-fusion",
+        "name_descriptor:dusk",
+        "name_phrase:dawn wings",
+        "name_phrase:dusk mane"
+      ],
+      "reason": "Base/Dusk Mane/Dawn Wings are persistent Viral Fusion states; Ultra Burst is a separate active transformation whose activation requirement is still source-insufficient.",
+      "preserve_legacy_ids": true
+    },
+    {
+      "family": "nidoran-f",
+      "classification": "false_positive",
+      "target_layer": "none",
+      "evidence_status": "distinct_species",
+      "records": [
+        {
+          "id": "nidoran-f",
+          "name": "NIDORAN (F)",
+          "source_page": 239,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Poison"
+          ],
+          "base_stats": {
+            "hp": 6,
+            "attack": 5,
+            "defense": 5,
+            "special_attack": 4,
+            "special_defense": 4,
+            "speed": 4
+          },
+          "abilities": [
+            "bodyguard",
+            "celebrate",
+            "hustle",
+            "poison-point",
+            "rivalry"
+          ],
+          "capabilities": [
+            "burrow",
+            "jump",
+            "naturewalk",
+            "overland",
+            "power",
+            "swim",
+            "underdog"
+          ],
+          "signals": [
+            "gender_form:female"
+          ]
+        }
+      ],
+      "signals": [
+        "gender_form:female"
+      ],
+      "reason": "Nidoran Female is already a distinct Species record, not a Form of Nidoran Male.",
+      "preserve_legacy_ids": false
+    },
+    {
+      "family": "nidoran-m",
+      "classification": "false_positive",
+      "target_layer": "none",
+      "evidence_status": "distinct_species",
+      "records": [
+        {
+          "id": "nidoran-m",
+          "name": "NIDORAN (M)",
+          "source_page": 242,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Poison"
+          ],
+          "base_stats": {
+            "hp": 5,
+            "attack": 6,
+            "defense": 4,
+            "special_attack": 4,
+            "special_defense": 4,
+            "speed": 5
+          },
+          "abilities": [
+            "bodyguard",
+            "celebrate",
+            "hustle",
+            "poison-point",
+            "rivalry"
+          ],
+          "capabilities": [
+            "burrow",
+            "jump",
+            "naturewalk",
+            "overland",
+            "power",
+            "swim",
+            "underdog"
+          ],
+          "signals": [
+            "gender_form:male"
+          ]
+        }
+      ],
+      "signals": [
+        "gender_form:male"
+      ],
+      "reason": "Nidoran Male is already a distinct Species record, not a Form of Nidoran Female.",
+      "preserve_legacy_ids": false
+    },
+    {
+      "family": "ninetales",
+      "classification": "permanent",
+      "target_layer": "baseFormId",
+      "evidence_status": "source_explicit_variant",
+      "records": [
+        {
+          "id": "ninetales-alola",
+          "name": "NINETALES Alola",
+          "source_page": 786,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Ice",
+            "Fairy"
+          ],
+          "base_stats": {
+            "hp": 7,
+            "attack": 7,
+            "defense": 8,
+            "special_attack": 8,
+            "special_defense": 10,
+            "speed": 11
+          },
+          "abilities": [
+            "cute-charm",
+            "glisten",
+            "snow-cloak",
+            "snow-warning",
+            "winter-s-kiss"
+          ],
+          "capabilities": [
+            "freezer",
+            "jump",
+            "naturewalk",
+            "overland",
+            "power",
+            "swim",
+            "tracker"
+          ],
+          "signals": [
+            "existing_inventory",
+            "regional_name:alola"
+          ]
+        }
+      ],
+      "signals": [
+        "existing_inventory",
+        "regional_name:alola"
+      ],
+      "reason": "The supplied Pokédex contains a separately parameterized regional variant. Preserve legacy Species IDs as aliases/import compatibility while moving selection to the generic base Form layer.",
+      "preserve_legacy_ids": true
+    },
+    {
+      "family": "oricorio",
+      "classification": "defer",
+      "target_layer": "none",
+      "evidence_status": "source_insufficient",
+      "records": [
+        {
+          "id": "oricorio",
+          "name": "Oricorio",
+          "source_page": 780,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Special",
+            "Flying (see Nectar Dancer)"
+          ],
+          "base_stats": {
+            "hp": 8,
+            "attack": 7,
+            "defense": 7,
+            "special_attack": 10,
+            "special_defense": 7,
+            "speed": 9
+          },
+          "abilities": [
+            "adaptability",
+            "competitive",
+            "dancer",
+            "revelation",
+            "spinning-dance"
+          ],
+          "capabilities": [
+            "forme-change",
+            "jump",
+            "nectar-dancer",
+            "overland",
+            "power",
+            "sky",
+            "swim"
+          ],
+          "signals": [
+            "existing_inventory",
+            "form_capability:forme-change,nectar-dancer"
+          ]
+        }
+      ],
+      "signals": [
+        "existing_inventory",
+        "form_capability:forme-change,nectar-dancer"
+      ],
+      "reason": "The Species references Nectar Dancer/Forme Change, but the switching rule was not found in the audited supplied sources.",
+      "preserve_legacy_ids": false
+    },
+    {
+      "family": "persian",
+      "classification": "permanent",
+      "target_layer": "baseFormId",
+      "evidence_status": "source_explicit_variant",
+      "records": [
+        {
+          "id": "persian-alola",
+          "name": "PERSIAN Alola",
+          "source_page": 790,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Dark"
+          ],
+          "base_stats": {
+            "hp": 7,
+            "attack": 6,
+            "defense": 6,
+            "special_attack": 8,
+            "special_defense": 7,
+            "speed": 12
+          },
+          "abilities": [
+            "defiant",
+            "fur-coat",
+            "limber",
+            "rattled",
+            "technician"
+          ],
+          "capabilities": [
+            "darkvision",
+            "jump",
+            "naturewalk",
+            "overland",
+            "pack-mon",
+            "power",
+            "stealth",
+            "swim",
+            "tracker"
+          ],
+          "signals": [
+            "existing_inventory",
+            "regional_name:alola"
+          ]
+        }
+      ],
+      "signals": [
+        "existing_inventory",
+        "regional_name:alola"
+      ],
+      "reason": "The supplied Pokédex contains a separately parameterized regional variant. Preserve legacy Species IDs as aliases/import compatibility while moving selection to the generic base Form layer.",
+      "preserve_legacy_ids": true
+    },
+    {
+      "family": "ponyta",
+      "classification": "permanent",
+      "target_layer": "baseFormId",
+      "evidence_status": "source_explicit_variant",
+      "records": [
+        {
+          "id": "ponyta-galar",
+          "name": "PONYTA Galar",
+          "source_page": 798,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Psychic"
+          ],
+          "base_stats": {
+            "hp": 5,
+            "attack": 9,
+            "defense": 6,
+            "special_attack": 7,
+            "special_defense": 7,
+            "speed": 9
+          },
+          "abilities": [
+            "anticipation",
+            "blessed-touch",
+            "healer",
+            "pastel-veil",
+            "run-away"
+          ],
+          "capabilities": [
+            "jump",
+            "naturewalk",
+            "overland",
+            "power",
+            "swim",
+            "telekinetic",
+            "telepath",
+            "underdog"
+          ],
+          "signals": [
+            "existing_inventory",
+            "regional_name:galar"
+          ]
+        }
+      ],
+      "signals": [
+        "existing_inventory",
+        "regional_name:galar"
+      ],
+      "reason": "The supplied Pokédex contains a separately parameterized regional variant. Preserve legacy Species IDs as aliases/import compatibility while moving selection to the generic base Form layer.",
+      "preserve_legacy_ids": true
+    },
+    {
+      "family": "raichu",
+      "classification": "permanent",
+      "target_layer": "baseFormId",
+      "evidence_status": "source_explicit_variant",
+      "records": [
+        {
+          "id": "raichu-alola",
+          "name": "RAICHU Alola",
+          "source_page": 123,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Electric",
+            "Psychic"
+          ],
+          "base_stats": {
+            "hp": 6,
+            "attack": 9,
+            "defense": 5,
+            "special_attack": 10,
+            "special_defense": 9,
+            "speed": 11
+          },
+          "abilities": [
+            "levitate",
+            "lightning-rod",
+            "motor-drive",
+            "static",
+            "surge-surfer"
+          ],
+          "capabilities": [
+            "jump",
+            "levitate",
+            "naturewalk",
+            "overland",
+            "power",
+            "swim",
+            "telekinetic"
+          ],
+          "signals": [
+            "existing_inventory",
+            "regional_name:alola"
+          ]
+        }
+      ],
+      "signals": [
+        "existing_inventory",
+        "regional_name:alola"
+      ],
+      "reason": "The supplied Pokédex contains a separately parameterized regional variant. Preserve legacy Species IDs as aliases/import compatibility while moving selection to the generic base Form layer.",
+      "preserve_legacy_ids": true
+    },
+    {
+      "family": "rapidash",
+      "classification": "permanent",
+      "target_layer": "baseFormId",
+      "evidence_status": "source_explicit_variant",
+      "records": [
+        {
+          "id": "rapidash-galar",
+          "name": "RAPIDASH Galar",
+          "source_page": 799,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Psychic",
+            "Fairy"
+          ],
+          "base_stats": {
+            "hp": 7,
+            "attack": 10,
+            "defense": 7,
+            "special_attack": 8,
+            "special_defense": 8,
+            "speed": 11
+          },
+          "abilities": [
+            "anticipation",
+            "blessed-touch",
+            "healer",
+            "pastel-veil",
+            "run-away"
+          ],
+          "capabilities": [
+            "jump",
+            "mountable",
+            "naturewalk",
+            "overland",
+            "power",
+            "swim",
+            "telekinetic",
+            "telepath"
+          ],
+          "signals": [
+            "existing_inventory",
+            "regional_name:galar"
+          ]
+        }
+      ],
+      "signals": [
+        "existing_inventory",
+        "regional_name:galar"
+      ],
+      "reason": "The supplied Pokédex contains a separately parameterized regional variant. Preserve legacy Species IDs as aliases/import compatibility while moving selection to the generic base Form layer.",
+      "preserve_legacy_ids": true
+    },
+    {
+      "family": "raticate",
+      "classification": "permanent",
+      "target_layer": "baseFormId",
+      "evidence_status": "source_explicit_variant",
+      "records": [
+        {
+          "id": "raticate-alola",
+          "name": "RATICATE Alola",
+          "source_page": 782,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Dark",
+            "Normal"
+          ],
+          "base_stats": {
+            "hp": 6,
+            "attack": 8,
+            "defense": 6,
+            "special_attack": 5,
+            "special_defense": 7,
+            "speed": 10
+          },
+          "abilities": [
+            "gluttony",
+            "hustle",
+            "nimble-strikes",
+            "pickup",
+            "thick-fat"
+          ],
+          "capabilities": [
+            "darkvision",
+            "jump",
+            "naturewalk",
+            "overland",
+            "power",
+            "stealth",
+            "swim",
+            "tracker-underdog"
+          ],
+          "signals": [
+            "existing_inventory",
+            "regional_name:alola"
+          ]
+        }
+      ],
+      "signals": [
+        "existing_inventory",
+        "regional_name:alola"
+      ],
+      "reason": "The supplied Pokédex contains a separately parameterized regional variant. Preserve legacy Species IDs as aliases/import compatibility while moving selection to the generic base Form layer.",
+      "preserve_legacy_ids": true
+    },
+    {
+      "family": "rattata",
+      "classification": "permanent",
+      "target_layer": "baseFormId",
+      "evidence_status": "source_explicit_variant",
+      "records": [
+        {
+          "id": "rattata-alola",
+          "name": "RATTATA Alola",
+          "source_page": 781,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Dark",
+            "Normal"
+          ],
+          "base_stats": {
+            "hp": 3,
+            "attack": 6,
+            "defense": 4,
+            "special_attack": 3,
+            "special_defense": 4,
+            "speed": 7
+          },
+          "abilities": [
+            "gluttony",
+            "hustle",
+            "nimble-strikes",
+            "pickup",
+            "thick-fat"
+          ],
+          "capabilities": [
+            "darkvision",
+            "jump",
+            "naturewalk",
+            "overland",
+            "power",
+            "stealth",
+            "swim",
+            "underdog"
+          ],
+          "signals": [
+            "existing_inventory",
+            "regional_name:alola"
+          ]
+        }
+      ],
+      "signals": [
+        "existing_inventory",
+        "regional_name:alola"
+      ],
+      "reason": "The supplied Pokédex contains a separately parameterized regional variant. Preserve legacy Species IDs as aliases/import compatibility while moving selection to the generic base Form layer.",
+      "preserve_legacy_ids": true
+    },
+    {
+      "family": "rotom",
+      "classification": "defer",
+      "target_layer": "none",
+      "evidence_status": "source_insufficient",
+      "records": [
+        {
+          "id": "rotom-normal-form",
+          "name": "ROTOM Normal Form",
+          "source_page": 697,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Electric",
+            "Ghost"
+          ],
+          "base_stats": {
+            "hp": 5,
+            "attack": 5,
+            "defense": 8,
+            "special_attack": 10,
+            "special_defense": 8,
+            "speed": 9
+          },
+          "abilities": [
+            "motor-drive",
+            "poltergeist",
+            "sequence",
+            "static",
+            "volt-absorb"
+          ],
+          "capabilities": [
+            "darkvision",
+            "dead-silent",
+            "forme-change",
+            "glow",
+            "invisibility",
+            "jump",
+            "levitate",
+            "overland",
+            "phasing",
+            "power",
+            "swim",
+            "wired",
+            "zapper"
+          ],
+          "signals": [
+            "existing_inventory",
+            "name_descriptor:form",
+            "form_capability:forme-change"
+          ]
+        },
+        {
+          "id": "rotom-appliance-forms",
+          "name": "ROTOM Appliance Forms",
+          "source_page": 698,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [],
+          "base_stats": {
+            "hp": 5,
+            "attack": 7,
+            "defense": 11,
+            "special_attack": 11,
+            "special_defense": 11,
+            "speed": 9
+          },
+          "abilities": [],
+          "capabilities": [
+            "darkvision",
+            "firestarter",
+            "forme-change",
+            "fountain",
+            "freezer",
+            "glow",
+            "heat-rotom-overland",
+            "invisibility",
+            "jump",
+            "levitate",
+            "naturewalk",
+            "phasing",
+            "power",
+            "swim",
+            "wired",
+            "zapper",
+            "zapper-frost-rotom-overland",
+            "zapper-wash-rotom-overland"
+          ],
+          "signals": [
+            "existing_inventory",
+            "name_descriptor:appliance,forms",
+            "form_capability:forme-change",
+            "embedded_form_section"
+          ]
+        },
+        {
+          "id": "rotom-fan",
+          "name": "Fan Rotom",
+          "source_page": 698,
+          "variant_of": "rotom-normal-form",
+          "variant_kind": "form",
+          "types": [
+            "Electric",
+            "Flying"
+          ],
+          "base_stats": {
+            "hp": 5,
+            "attack": 7,
+            "defense": 11,
+            "special_attack": 11,
+            "special_defense": 11,
+            "speed": 9
+          },
+          "abilities": [
+            "motor-drive",
+            "poltergeist",
+            "sequence",
+            "static",
+            "volt-absorb"
+          ],
+          "capabilities": [
+            "darkvision",
+            "forme-change",
+            "glow",
+            "guster",
+            "invisibility",
+            "jump",
+            "levitate",
+            "overland",
+            "phasing",
+            "power",
+            "sky",
+            "swim",
+            "wired",
+            "zapper"
+          ],
+          "signals": [
+            "existing_inventory",
+            "structured_variant_metadata",
+            "form_capability:forme-change",
+            "embedded_form_section"
+          ]
+        },
+        {
+          "id": "rotom-frost",
+          "name": "Frost Rotom",
+          "source_page": 698,
+          "variant_of": "rotom-normal-form",
+          "variant_kind": "form",
+          "types": [
+            "Electric",
+            "Ice"
+          ],
+          "base_stats": {
+            "hp": 5,
+            "attack": 7,
+            "defense": 11,
+            "special_attack": 11,
+            "special_defense": 11,
+            "speed": 9
+          },
+          "abilities": [
+            "motor-drive",
+            "poltergeist",
+            "sequence",
+            "static",
+            "volt-absorb"
+          ],
+          "capabilities": [
+            "darkvision",
+            "forme-change",
+            "freezer",
+            "glow",
+            "invisibility",
+            "jump",
+            "levitate",
+            "naturewalk-tundra",
+            "overland",
+            "phasing",
+            "power",
+            "swim",
+            "wired",
+            "zapper"
+          ],
+          "signals": [
+            "existing_inventory",
+            "structured_variant_metadata",
+            "form_capability:forme-change",
+            "embedded_form_section"
+          ]
+        },
+        {
+          "id": "rotom-heat",
+          "name": "Heat Rotom",
+          "source_page": 698,
+          "variant_of": "rotom-normal-form",
+          "variant_kind": "form",
+          "types": [
+            "Electric",
+            "Fire"
+          ],
+          "base_stats": {
+            "hp": 5,
+            "attack": 7,
+            "defense": 11,
+            "special_attack": 11,
+            "special_defense": 11,
+            "speed": 9
+          },
+          "abilities": [
+            "motor-drive",
+            "poltergeist",
+            "sequence",
+            "static",
+            "volt-absorb"
+          ],
+          "capabilities": [
+            "darkvision",
+            "firestarter",
+            "forme-change",
+            "glow",
+            "invisibility",
+            "jump",
+            "levitate",
+            "overland",
+            "phasing",
+            "power",
+            "swim",
+            "wired",
+            "zapper"
+          ],
+          "signals": [
+            "existing_inventory",
+            "structured_variant_metadata",
+            "form_capability:forme-change",
+            "embedded_form_section"
+          ]
+        },
+        {
+          "id": "rotom-mow",
+          "name": "Mow Rotom",
+          "source_page": 698,
+          "variant_of": "rotom-normal-form",
+          "variant_kind": "form",
+          "types": [
+            "Electric",
+            "Grass"
+          ],
+          "base_stats": {
+            "hp": 5,
+            "attack": 7,
+            "defense": 11,
+            "special_attack": 11,
+            "special_defense": 11,
+            "speed": 9
+          },
+          "abilities": [
+            "motor-drive",
+            "poltergeist",
+            "sequence",
+            "static",
+            "volt-absorb"
+          ],
+          "capabilities": [
+            "darkvision",
+            "forme-change",
+            "glow",
+            "invisibility",
+            "jump",
+            "levitate",
+            "naturewalk-forest-grassland",
+            "overland",
+            "phasing",
+            "power",
+            "swim",
+            "wired",
+            "zapper"
+          ],
+          "signals": [
+            "existing_inventory",
+            "structured_variant_metadata",
+            "form_capability:forme-change",
+            "embedded_form_section"
+          ]
+        },
+        {
+          "id": "rotom-wash",
+          "name": "Wash Rotom",
+          "source_page": 698,
+          "variant_of": "rotom-normal-form",
+          "variant_kind": "form",
+          "types": [
+            "Electric",
+            "Water"
+          ],
+          "base_stats": {
+            "hp": 5,
+            "attack": 7,
+            "defense": 11,
+            "special_attack": 11,
+            "special_defense": 11,
+            "speed": 9
+          },
+          "abilities": [
+            "motor-drive",
+            "poltergeist",
+            "sequence",
+            "static",
+            "volt-absorb"
+          ],
+          "capabilities": [
+            "darkvision",
+            "forme-change",
+            "fountain",
+            "glow",
+            "invisibility",
+            "jump",
+            "levitate",
+            "overland",
+            "phasing",
+            "power",
+            "swim",
+            "wired",
+            "zapper"
+          ],
+          "signals": [
+            "existing_inventory",
+            "structured_variant_metadata",
+            "form_capability:forme-change",
+            "embedded_form_section"
+          ]
+        }
+      ],
+      "signals": [
+        "embedded_form_section",
+        "existing_inventory",
+        "form_capability:forme-change",
+        "name_descriptor:appliance,forms",
+        "name_descriptor:form",
+        "structured_variant_metadata"
+      ],
+      "reason": "Normal/appliance records exist and are mechanically distinct, but the Forme Change requirement was not found.",
+      "preserve_legacy_ids": true
+    },
+    {
+      "family": "sandshrew",
+      "classification": "permanent",
+      "target_layer": "baseFormId",
+      "evidence_status": "source_explicit_variant",
+      "records": [
+        {
+          "id": "sandshrew-alola",
+          "name": "SANDSHREW Alola",
+          "source_page": 783,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Ice",
+            "Steel"
+          ],
+          "base_stats": {
+            "hp": 5,
+            "attack": 8,
+            "defense": 9,
+            "special_attack": 1,
+            "special_defense": 4,
+            "speed": 4
+          },
+          "abilities": [
+            "dig-away",
+            "pickup",
+            "quick-curl",
+            "slush-rush",
+            "snow-cloak"
+          ],
+          "capabilities": [
+            "burrow",
+            "chilled",
+            "jump",
+            "naturewalk",
+            "overland",
+            "power",
+            "swim",
+            "tremorsense",
+            "underdog"
+          ],
+          "signals": [
+            "existing_inventory",
+            "regional_name:alola"
+          ]
+        }
+      ],
+      "signals": [
+        "existing_inventory",
+        "regional_name:alola"
+      ],
+      "reason": "The supplied Pokédex contains a separately parameterized regional variant. Preserve legacy Species IDs as aliases/import compatibility while moving selection to the generic base Form layer.",
+      "preserve_legacy_ids": true
+    },
+    {
+      "family": "sandslash",
+      "classification": "permanent",
+      "target_layer": "baseFormId",
+      "evidence_status": "source_explicit_variant",
+      "records": [
+        {
+          "id": "sandslash-alola",
+          "name": "SANDSLASH Alola",
+          "source_page": 784,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Ice",
+            "Steel"
+          ],
+          "base_stats": {
+            "hp": 8,
+            "attack": 10,
+            "defense": 12,
+            "special_attack": 3,
+            "special_defense": 7,
+            "speed": 7
+          },
+          "abilities": [
+            "dig-away",
+            "pickup",
+            "quick-curl",
+            "slush-rush",
+            "snow-cloak"
+          ],
+          "capabilities": [
+            "burrow",
+            "chilled",
+            "jump",
+            "naturewalk",
+            "overland",
+            "power",
+            "swim",
+            "tremorsense"
+          ],
+          "signals": [
+            "existing_inventory",
+            "regional_name:alola"
+          ]
+        }
+      ],
+      "signals": [
+        "existing_inventory",
+        "regional_name:alola"
+      ],
+      "reason": "The supplied Pokédex contains a separately parameterized regional variant. Preserve legacy Species IDs as aliases/import compatibility while moving selection to the generic base Form layer.",
+      "preserve_legacy_ids": true
+    },
+    {
+      "family": "sawsbuck",
+      "classification": "persistent_form",
+      "target_layer": "baseFormId",
+      "evidence_status": "source_explicit",
+      "records": [
+        {
+          "id": "sawsbuck",
+          "name": "Sawsbuck",
+          "source_page": 552,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Normal",
+            "Grass"
+          ],
+          "base_stats": {
+            "hp": 8,
+            "attack": 10,
+            "defense": 7,
+            "special_attack": 6,
+            "special_defense": 7,
+            "speed": 10
+          },
+          "abilities": [
+            "chlorophyll",
+            "ragelope",
+            "sap-sipper",
+            "seasonal",
+            "serene-grace"
+          ],
+          "capabilities": [
+            "jump",
+            "mountable",
+            "naturewalk",
+            "overland",
+            "pack-mon",
+            "power",
+            "swim"
+          ],
+          "signals": [
+            "form_ability:seasonal"
+          ]
+        }
+      ],
+      "signals": [
+        "form_ability:seasonal"
+      ],
+      "reason": "Seasonal defines four source-backed seasonal states and a change action.",
+      "preserve_legacy_ids": true
+    },
+    {
+      "family": "shaymin",
+      "classification": "defer",
+      "target_layer": "none",
+      "evidence_status": "source_insufficient",
+      "records": [
+        {
+          "id": "shaymin-land-forme",
+          "name": "SHAYMIN Land Forme",
+          "source_page": 903,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Grass"
+          ],
+          "base_stats": {
+            "hp": 10,
+            "attack": 10,
+            "defense": 10,
+            "special_attack": 10,
+            "special_defense": 10,
+            "speed": 10
+          },
+          "abilities": [
+            "flower-veil",
+            "leaf-guard",
+            "magic-guard",
+            "natural-cure",
+            "sol-veil"
+          ],
+          "capabilities": [
+            "burrow",
+            "forme-change",
+            "gardener",
+            "jump",
+            "naturewalk",
+            "overland",
+            "power",
+            "sky-forme",
+            "sprouter",
+            "swim",
+            "telepath"
+          ],
+          "signals": [
+            "existing_inventory",
+            "name_descriptor:forme",
+            "name_phrase:land forme",
+            "form_capability:forme-change,sky-forme"
+          ]
+        },
+        {
+          "id": "shaymin-sky-forme",
+          "name": "SHAYMIN Sky Forme",
+          "source_page": 904,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Grass",
+            "Flying"
+          ],
+          "base_stats": {
+            "hp": 10,
+            "attack": 10,
+            "defense": 8,
+            "special_attack": 12,
+            "special_defense": 8,
+            "speed": 13
+          },
+          "abilities": [
+            "accelerate",
+            "leaf-guard",
+            "rocket",
+            "serene-grace",
+            "sol-veil"
+          ],
+          "capabilities": [
+            "forme-change",
+            "gardener",
+            "jump",
+            "naturewalk",
+            "overland",
+            "power",
+            "sky",
+            "sky-forme",
+            "sprouter",
+            "swim",
+            "telepath"
+          ],
+          "signals": [
+            "existing_inventory",
+            "name_descriptor:forme",
+            "name_phrase:sky forme",
+            "form_capability:forme-change,sky-forme"
+          ]
+        }
+      ],
+      "signals": [
+        "existing_inventory",
+        "form_capability:forme-change,sky-forme",
+        "name_descriptor:forme",
+        "name_phrase:land forme",
+        "name_phrase:sky forme"
+      ],
+      "reason": "Land/Sky records exist, but the Sky Forme switching requirement/duration was not found.",
+      "preserve_legacy_ids": false
+    },
+    {
+      "family": "silvally",
+      "classification": "runtime_state",
+      "target_layer": "runtime_resolver",
+      "evidence_status": "source_explicit",
+      "records": [
+        {
+          "id": "silvally",
+          "name": "Silvally",
+          "source_page": 935,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Normal"
+          ],
+          "base_stats": {
+            "hp": 10,
+            "attack": 10,
+            "defense": 10,
+            "special_attack": 10,
+            "special_defense": 10,
+            "speed": 10
+          },
+          "abilities": [
+            "adaptability",
+            "download",
+            "rks-system",
+            "strong-jaw",
+            "trinity"
+          ],
+          "capabilities": [
+            "jump",
+            "mountable",
+            "overland",
+            "power",
+            "swim",
+            "tracker"
+          ],
+          "signals": [
+            "form_ability:rks-system"
+          ]
+        }
+      ],
+      "signals": [
+        "form_ability:rks-system"
+      ],
+      "reason": "RKS System changes Type to the held Memory Disc Type.",
+      "preserve_legacy_ids": false
+    },
+    {
+      "family": "solosis",
+      "classification": "false_positive",
+      "target_layer": "none",
+      "evidence_status": "no_independent_form_signal",
+      "records": [
+        {
+          "id": "solosis",
+          "name": "Solosis",
+          "source_page": 262,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Psychic"
+          ],
+          "base_stats": {
+            "hp": 5,
+            "attack": 3,
+            "defense": 4,
+            "special_attack": 11,
+            "special_defense": 5,
+            "speed": 2
+          },
+          "abilities": [
+            "cluster-mind",
+            "defy-death",
+            "levitate",
+            "overcoat",
+            "regenerator"
+          ],
+          "capabilities": [
+            "jump",
+            "levitate",
+            "overland",
+            "power",
+            "swim",
+            "telekinetic",
+            "underdog"
+          ],
+          "signals": [
+            "existing_inventory"
+          ]
+        }
+      ],
+      "signals": [
+        "existing_inventory"
+      ],
+      "reason": "The hardened audit found no independent Form signal beyond the first heuristic census.",
+      "preserve_legacy_ids": false
+    },
+    {
+      "family": "stunfisk",
+      "classification": "permanent",
+      "target_layer": "baseFormId",
+      "evidence_status": "source_explicit_variant",
+      "records": [
+        {
+          "id": "stunfisk-galar",
+          "name": "STUNFISK Galar",
+          "source_page": 812,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Ground",
+            "Steel"
+          ],
+          "base_stats": {
+            "hp": 11,
+            "attack": 8,
+            "defense": 10,
+            "special_attack": 7,
+            "special_defense": 8,
+            "speed": 3
+          },
+          "abilities": [
+            "arena-trap",
+            "decoy",
+            "limber",
+            "mimicry",
+            "mud-dweller"
+          ],
+          "capabilities": [
+            "burrow",
+            "jump",
+            "overland",
+            "power",
+            "swim",
+            "tremorsense"
+          ],
+          "signals": [
+            "existing_inventory",
+            "regional_name:galar"
+          ]
+        }
+      ],
+      "signals": [
+        "existing_inventory",
+        "regional_name:galar"
+      ],
+      "reason": "The supplied Pokédex contains a separately parameterized regional variant. Preserve legacy Species IDs as aliases/import compatibility while moving selection to the generic base Form layer.",
+      "preserve_legacy_ids": true
+    },
+    {
+      "family": "thundurus",
+      "classification": "defer",
+      "target_layer": "none",
+      "evidence_status": "source_insufficient",
+      "records": [
+        {
+          "id": "thundurus-incarnate-forme",
+          "name": "THUNDURUS Incarnate Forme",
+          "source_page": 913,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Electric",
+            "Flying"
+          ],
+          "base_stats": {
+            "hp": 8,
+            "attack": 12,
+            "defense": 7,
+            "special_attack": 13,
+            "special_defense": 8,
+            "speed": 11
+          },
+          "abilities": [
+            "drizzle",
+            "frisk",
+            "lightning-rod",
+            "prankster",
+            "pride"
+          ],
+          "capabilities": [
+            "forme-change",
+            "guster",
+            "jump",
+            "overland",
+            "power",
+            "sky",
+            "swim",
+            "therian-forme",
+            "zapper"
+          ],
+          "signals": [
+            "existing_inventory",
+            "name_descriptor:forme",
+            "name_phrase:incarnate forme",
+            "form_capability:forme-change,therian-forme"
+          ]
+        },
+        {
+          "id": "thundurus-therian-forme",
+          "name": "THUNDURUS Therian Forme",
+          "source_page": 914,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Electric",
+            "Flying"
+          ],
+          "base_stats": {
+            "hp": 8,
+            "attack": 11,
+            "defense": 7,
+            "special_attack": 15,
+            "special_defense": 8,
+            "speed": 10
+          },
+          "abilities": [
+            "drizzle",
+            "frisk",
+            "lightning-rod",
+            "pride",
+            "volt-absorb"
+          ],
+          "capabilities": [
+            "forme-change",
+            "guster",
+            "jump",
+            "mountable",
+            "naturewalk",
+            "overland",
+            "power",
+            "sky",
+            "swim",
+            "therian-forme",
+            "zapper"
+          ],
+          "signals": [
+            "existing_inventory",
+            "name_descriptor:forme",
+            "name_phrase:therian forme",
+            "form_capability:forme-change,therian-forme"
+          ]
+        }
+      ],
+      "signals": [
+        "existing_inventory",
+        "form_capability:forme-change,therian-forme",
+        "name_descriptor:forme",
+        "name_phrase:incarnate forme",
+        "name_phrase:therian forme"
+      ],
+      "reason": "Incarnate/Therian records exist, but Therian Forme switching rules were not found.",
+      "preserve_legacy_ids": false
+    },
+    {
+      "family": "tornadus",
+      "classification": "defer",
+      "target_layer": "none",
+      "evidence_status": "source_insufficient",
+      "records": [
+        {
+          "id": "tornadus-incarnate-forme",
+          "name": "TORNADUS Incarnate Forme",
+          "source_page": 911,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Flying"
+          ],
+          "base_stats": {
+            "hp": 8,
+            "attack": 12,
+            "defense": 7,
+            "special_attack": 13,
+            "special_defense": 8,
+            "speed": 11
+          },
+          "abilities": [
+            "drizzle",
+            "frisk",
+            "prankster",
+            "pride",
+            "windveiled"
+          ],
+          "capabilities": [
+            "forme-change",
+            "guster",
+            "jump",
+            "overland",
+            "power",
+            "sky",
+            "swim",
+            "therian-forme",
+            "zapper"
+          ],
+          "signals": [
+            "existing_inventory",
+            "name_descriptor:forme",
+            "name_phrase:incarnate forme",
+            "form_capability:forme-change,therian-forme"
+          ]
+        },
+        {
+          "id": "tornadus-therian-forme",
+          "name": "TORNADUS Therian Forme",
+          "source_page": 912,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Flying"
+          ],
+          "base_stats": {
+            "hp": 8,
+            "attack": 10,
+            "defense": 8,
+            "special_attack": 11,
+            "special_defense": 9,
+            "speed": 12
+          },
+          "abilities": [
+            "drizzle",
+            "frisk",
+            "pride",
+            "regenerator",
+            "windveiled"
+          ],
+          "capabilities": [
+            "forme-change",
+            "guster",
+            "jump",
+            "mountable",
+            "naturewalk",
+            "overland",
+            "power",
+            "sky",
+            "swim",
+            "therian-forme",
+            "zapper"
+          ],
+          "signals": [
+            "existing_inventory",
+            "name_descriptor:forme",
+            "name_phrase:therian forme",
+            "form_capability:forme-change,therian-forme"
+          ]
+        }
+      ],
+      "signals": [
+        "existing_inventory",
+        "form_capability:forme-change,therian-forme",
+        "name_descriptor:forme",
+        "name_phrase:incarnate forme",
+        "name_phrase:therian forme"
+      ],
+      "reason": "Incarnate/Therian records exist, but Therian Forme switching rules were not found.",
+      "preserve_legacy_ids": false
+    },
+    {
+      "family": "vulpix",
+      "classification": "permanent",
+      "target_layer": "baseFormId",
+      "evidence_status": "source_explicit_variant",
+      "records": [
+        {
+          "id": "vulpix-alola",
+          "name": "VULPIX Alola",
+          "source_page": 785,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Ice"
+          ],
+          "base_stats": {
+            "hp": 4,
+            "attack": 4,
+            "defense": 4,
+            "special_attack": 5,
+            "special_defense": 7,
+            "speed": 7
+          },
+          "abilities": [
+            "cute-charm",
+            "glisten",
+            "snow-cloak",
+            "snow-warning",
+            "winter-s-kiss"
+          ],
+          "capabilities": [
+            "freezer",
+            "jump",
+            "naturewalk",
+            "overland",
+            "power",
+            "swim",
+            "tracker",
+            "underdog"
+          ],
+          "signals": [
+            "existing_inventory",
+            "regional_name:alola"
+          ]
+        }
+      ],
+      "signals": [
+        "existing_inventory",
+        "regional_name:alola"
+      ],
+      "reason": "The supplied Pokédex contains a separately parameterized regional variant. Preserve legacy Species IDs as aliases/import compatibility while moving selection to the generic base Form layer.",
+      "preserve_legacy_ids": true
+    },
+    {
+      "family": "weezing",
+      "classification": "permanent",
+      "target_layer": "baseFormId",
+      "evidence_status": "source_explicit_variant",
+      "records": [
+        {
+          "id": "weezing-galar",
+          "name": "WEEZING Galar",
+          "source_page": 571,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Poison",
+            "Fairy"
+          ],
+          "base_stats": {
+            "hp": 7,
+            "attack": 9,
+            "defense": 12,
+            "special_attack": 9,
+            "special_defense": 7,
+            "speed": 6
+          },
+          "abilities": [
+            "aftermath",
+            "levitate",
+            "misty-surge",
+            "neutralizing-gas",
+            "sticky-smoke"
+          ],
+          "capabilities": [
+            "jump",
+            "levitate",
+            "overland",
+            "power",
+            "swim",
+            "volatile-bomb"
+          ],
+          "signals": [
+            "existing_inventory",
+            "regional_name:galar"
+          ]
+        }
+      ],
+      "signals": [
+        "existing_inventory",
+        "regional_name:galar"
+      ],
+      "reason": "The supplied Pokédex contains a separately parameterized regional variant. Preserve legacy Species IDs as aliases/import compatibility while moving selection to the generic base Form layer.",
+      "preserve_legacy_ids": true
+    },
+    {
+      "family": "wishiwashi",
+      "classification": "transformation",
+      "target_layer": "activeFormId",
+      "evidence_status": "source_explicit",
+      "records": [
+        {
+          "id": "wishiwashi-solo",
+          "name": "WISHIWASHI Solo",
+          "source_page": 766,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Water"
+          ],
+          "base_stats": {
+            "hp": 5,
+            "attack": 2,
+            "defense": 2,
+            "special_attack": 3,
+            "special_defense": 4,
+            "speed": 4
+          },
+          "abilities": [
+            "defeatist",
+            "horde-break",
+            "multiscale",
+            "schooling",
+            "water-veil"
+          ],
+          "capabilities": [
+            "forme-change",
+            "gilled",
+            "glow",
+            "jump",
+            "naturewalk",
+            "overland",
+            "power",
+            "swim"
+          ],
+          "signals": [
+            "existing_inventory",
+            "name_descriptor:solo",
+            "form_ability:schooling",
+            "form_capability:forme-change"
+          ]
+        },
+        {
+          "id": "wishiwashi-schooling",
+          "name": "WISHIWASHI Schooling",
+          "source_page": 767,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Water"
+          ],
+          "base_stats": {
+            "hp": 5,
+            "attack": 14,
+            "defense": 13,
+            "special_attack": 14,
+            "special_defense": 14,
+            "speed": 3
+          },
+          "abilities": [
+            "defeatist",
+            "horde-break",
+            "multiscale",
+            "schooling",
+            "water-veil"
+          ],
+          "capabilities": [
+            "forme-change",
+            "gilled",
+            "glow",
+            "jump",
+            "mindlock",
+            "naturewalk",
+            "overland",
+            "power",
+            "swim"
+          ],
+          "signals": [
+            "existing_inventory",
+            "name_descriptor:schooling",
+            "form_ability:schooling",
+            "form_capability:forme-change"
+          ]
+        }
+      ],
+      "signals": [
+        "existing_inventory",
+        "form_ability:schooling",
+        "form_capability:forme-change",
+        "name_descriptor:schooling",
+        "name_descriptor:solo"
+      ],
+      "reason": "Schooling defines Solo/Schooling states with HP/Temporary HP rules.",
+      "preserve_legacy_ids": false
+    },
+    {
+      "family": "wormadam",
+      "classification": "permanent",
+      "target_layer": "baseFormId",
+      "evidence_status": "source_explicit",
+      "records": [
+        {
+          "id": "wormadam-plant-cloak",
+          "name": "WORMADAM Plant Cloak",
+          "source_page": 324,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Bug",
+            "Grass"
+          ],
+          "base_stats": {
+            "hp": 6,
+            "attack": 6,
+            "defense": 9,
+            "special_attack": 8,
+            "special_defense": 11,
+            "speed": 4
+          },
+          "abilities": [
+            "adaptability",
+            "anticipation",
+            "grass-pelt",
+            "overcoat",
+            "tolerance"
+          ],
+          "capabilities": [
+            "jump",
+            "naturewalk",
+            "overland",
+            "power",
+            "swim",
+            "threaded",
+            "underdog"
+          ],
+          "signals": [
+            "name_descriptor:cloak",
+            "name_phrase:plant cloak"
+          ]
+        },
+        {
+          "id": "wormadam-sandy-cloak",
+          "name": "WORMADAM Sandy Cloak",
+          "source_page": 325,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Bug",
+            "Ground"
+          ],
+          "base_stats": {
+            "hp": 6,
+            "attack": 8,
+            "defense": 11,
+            "special_attack": 6,
+            "special_defense": 9,
+            "speed": 4
+          },
+          "abilities": [
+            "adaptability",
+            "anticipation",
+            "overcoat",
+            "sand-veil",
+            "tolerance"
+          ],
+          "capabilities": [
+            "jump",
+            "naturewalk",
+            "overland",
+            "power",
+            "swim",
+            "threaded",
+            "underdog"
+          ],
+          "signals": [
+            "name_descriptor:cloak",
+            "name_phrase:sandy cloak"
+          ]
+        },
+        {
+          "id": "wormadam-trash-cloak",
+          "name": "WORMADAM Trash Cloak",
+          "source_page": 326,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Bug",
+            "Steel"
+          ],
+          "base_stats": {
+            "hp": 6,
+            "attack": 7,
+            "defense": 10,
+            "special_attack": 7,
+            "special_defense": 10,
+            "speed": 4
+          },
+          "abilities": [
+            "adaptability",
+            "anticipation",
+            "clear-body",
+            "overcoat",
+            "tolerance"
+          ],
+          "capabilities": [
+            "jump",
+            "naturewalk",
+            "overland",
+            "power",
+            "swim",
+            "threaded",
+            "underdog"
+          ],
+          "signals": [
+            "name_descriptor:cloak",
+            "name_phrase:trash cloak"
+          ]
+        }
+      ],
+      "signals": [
+        "name_descriptor:cloak",
+        "name_phrase:plant cloak",
+        "name_phrase:sandy cloak",
+        "name_phrase:trash cloak"
+      ],
+      "reason": "Plant/Sandy/Trash cloak Typing is permanent after Burmy evolves into Wormadam.",
+      "preserve_legacy_ids": true
+    },
+    {
+      "family": "yamask",
+      "classification": "permanent",
+      "target_layer": "baseFormId",
+      "evidence_status": "source_explicit_variant",
+      "records": [
+        {
+          "id": "yamask-galar",
+          "name": "YAMASK Galar",
+          "source_page": 810,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Ground",
+            "Ghost"
+          ],
+          "base_stats": {
+            "hp": 4,
+            "attack": 6,
+            "defense": 9,
+            "special_attack": 3,
+            "special_defense": 7,
+            "speed": 3
+          },
+          "abilities": [
+            "cursed-body",
+            "interference",
+            "sand-force",
+            "sturdy",
+            "wandering-spirit"
+          ],
+          "capabilities": [
+            "darkvision",
+            "dead-silent",
+            "invisibility",
+            "jump",
+            "levitate",
+            "overland",
+            "phasing",
+            "power",
+            "swim",
+            "underdog"
+          ],
+          "signals": [
+            "existing_inventory",
+            "regional_name:galar"
+          ]
+        }
+      ],
+      "signals": [
+        "existing_inventory",
+        "regional_name:galar"
+      ],
+      "reason": "The supplied Pokédex contains a separately parameterized regional variant. Preserve legacy Species IDs as aliases/import compatibility while moving selection to the generic base Form layer.",
+      "preserve_legacy_ids": true
+    },
+    {
+      "family": "zacian",
+      "classification": "mixed",
+      "target_layer": "baseFormId+activeFormId",
+      "evidence_status": "source_explicit",
+      "records": [
+        {
+          "id": "zacian-hero-of-many-battles-forme",
+          "name": "ZACIAN Hero of Many Battles Forme",
+          "source_page": 963,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Fairy"
+          ],
+          "base_stats": {
+            "hp": 9,
+            "attack": 13,
+            "defense": 12,
+            "special_attack": 8,
+            "special_defense": 12,
+            "speed": 14
+          },
+          "abilities": [
+            "defiant",
+            "fade-away",
+            "intrepid-sword",
+            "mold-breaker",
+            "tough-claws"
+          ],
+          "capabilities": [
+            "aura-reader",
+            "forme-change",
+            "invisibility",
+            "jump",
+            "mountable",
+            "overland",
+            "phasing",
+            "power",
+            "swim",
+            "weapon-bond"
+          ],
+          "signals": [
+            "existing_inventory",
+            "name_descriptor:forme",
+            "name_phrase:hero of many battles",
+            "form_capability:forme-change,weapon-bond"
+          ]
+        },
+        {
+          "id": "zacian-crowned-sword-forme",
+          "name": "ZACIAN Crowned Sword Forme",
+          "source_page": 964,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Fairy",
+            "Steel"
+          ],
+          "base_stats": {
+            "hp": 9,
+            "attack": 17,
+            "defense": 12,
+            "special_attack": 8,
+            "special_defense": 12,
+            "speed": 15
+          },
+          "abilities": [
+            "defiant",
+            "intrepid-sword",
+            "mold-breaker",
+            "sprint",
+            "tough-claws"
+          ],
+          "capabilities": [
+            "aura-pulse",
+            "aura-reader",
+            "forme-change",
+            "jump",
+            "mountable",
+            "overland",
+            "power",
+            "swim",
+            "weapon-bond"
+          ],
+          "signals": [
+            "existing_inventory",
+            "name_descriptor:crowned,forme",
+            "form_capability:forme-change,weapon-bond"
+          ]
+        }
+      ],
+      "signals": [
+        "existing_inventory",
+        "form_capability:forme-change,weapon-bond",
+        "name_descriptor:crowned,forme",
+        "name_descriptor:forme",
+        "name_phrase:hero of many battles"
+      ],
+      "reason": "Hero is the base state; Weapon Bond with Ancestral Sword enters Crowned Sword until its source-defined end condition.",
+      "preserve_legacy_ids": true
+    },
+    {
+      "family": "zamazenta",
+      "classification": "mixed",
+      "target_layer": "baseFormId+activeFormId",
+      "evidence_status": "source_explicit",
+      "records": [
+        {
+          "id": "zamazenta-hero-of-many-battles-forme",
+          "name": "ZAMAZENTA Hero of Many Battles Forme",
+          "source_page": 965,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Fighting"
+          ],
+          "base_stats": {
+            "hp": 9,
+            "attack": 13,
+            "defense": 12,
+            "special_attack": 8,
+            "special_defense": 12,
+            "speed": 14
+          },
+          "abilities": [
+            "bulletproof",
+            "dauntless-shield",
+            "fade-away",
+            "friend-guard",
+            "stamina"
+          ],
+          "capabilities": [
+            "aura-reader",
+            "forme-change",
+            "invisibility",
+            "jump",
+            "mountable",
+            "overland",
+            "phasing",
+            "power",
+            "swim",
+            "weapon-bond"
+          ],
+          "signals": [
+            "existing_inventory",
+            "name_descriptor:forme",
+            "name_phrase:hero of many battles",
+            "form_capability:forme-change,weapon-bond"
+          ]
+        },
+        {
+          "id": "zamazenta-crowned-shield-forme",
+          "name": "ZAMAZENTA Crowned Shield Forme",
+          "source_page": 966,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Fighting",
+            "Steel"
+          ],
+          "base_stats": {
+            "hp": 9,
+            "attack": 13,
+            "defense": 15,
+            "special_attack": 8,
+            "special_defense": 15,
+            "speed": 14
+          },
+          "abilities": [
+            "bulletproof",
+            "dauntless-shield",
+            "friend-guard",
+            "sprint",
+            "stamina"
+          ],
+          "capabilities": [
+            "aura-pulse",
+            "aura-reader",
+            "forme-change",
+            "jump",
+            "mountable",
+            "overland",
+            "power",
+            "swim",
+            "weapon-bond"
+          ],
+          "signals": [
+            "existing_inventory",
+            "name_descriptor:crowned,forme",
+            "form_capability:forme-change,weapon-bond"
+          ]
+        }
+      ],
+      "signals": [
+        "existing_inventory",
+        "form_capability:forme-change,weapon-bond",
+        "name_descriptor:crowned,forme",
+        "name_descriptor:forme",
+        "name_phrase:hero of many battles"
+      ],
+      "reason": "Hero is the base state; Weapon Bond with Ancestral Shield enters Crowned Shield until its source-defined end condition.",
+      "preserve_legacy_ids": true
+    },
+    {
+      "family": "zigzagoon",
+      "classification": "permanent",
+      "target_layer": "baseFormId",
+      "evidence_status": "source_explicit_variant",
+      "records": [
+        {
+          "id": "zigzagoon-galar",
+          "name": "ZIGZAGOON Galar",
+          "source_page": 804,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Dark",
+            "Normal"
+          ],
+          "base_stats": {
+            "hp": 4,
+            "attack": 3,
+            "defense": 4,
+            "special_attack": 3,
+            "special_defense": 4,
+            "speed": 6
+          },
+          "abilities": [
+            "gluttony",
+            "pickup",
+            "quick-feet",
+            "sprint",
+            "tough-claws"
+          ],
+          "capabilities": [
+            "darkvision",
+            "jump",
+            "naturewalk",
+            "overland",
+            "power",
+            "swim",
+            "underdog"
+          ],
+          "signals": [
+            "existing_inventory",
+            "regional_name:galar"
+          ]
+        }
+      ],
+      "signals": [
+        "existing_inventory",
+        "regional_name:galar"
+      ],
+      "reason": "The supplied Pokédex contains a separately parameterized regional variant. Preserve legacy Species IDs as aliases/import compatibility while moving selection to the generic base Form layer.",
+      "preserve_legacy_ids": true
+    },
+    {
+      "family": "zygarde",
+      "classification": "mixed",
+      "target_layer": "baseFormId+activeFormId",
+      "evidence_status": "source_explicit",
+      "records": [
+        {
+          "id": "zygarde-10-forme",
+          "name": "ZYGARDE 10% Forme",
+          "source_page": 927,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Dragon",
+            "Ground"
+          ],
+          "base_stats": {
+            "hp": 5,
+            "attack": 10,
+            "defense": 7,
+            "special_attack": 6,
+            "special_defense": 9,
+            "speed": 12
+          },
+          "abilities": [
+            "air-lock",
+            "aura-break",
+            "filter",
+            "interference",
+            "pressure"
+          ],
+          "capabilities": [
+            "burrow",
+            "darkvision",
+            "forme-change",
+            "groundshaper",
+            "jump",
+            "overland",
+            "power",
+            "swim",
+            "tremorsense",
+            "zygarde-cells"
+          ],
+          "signals": [
+            "existing_inventory",
+            "name_descriptor:forme",
+            "form_capability:forme-change,zygarde-cells"
+          ]
+        },
+        {
+          "id": "zygarde-50-forme",
+          "name": "ZYGARDE 50% Forme",
+          "source_page": 928,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Dragon",
+            "Ground"
+          ],
+          "base_stats": {
+            "hp": 11,
+            "attack": 10,
+            "defense": 12,
+            "special_attack": 8,
+            "special_defense": 10,
+            "speed": 10
+          },
+          "abilities": [
+            "air-lock",
+            "aura-break",
+            "filter",
+            "interference",
+            "pressure"
+          ],
+          "capabilities": [
+            "burrow",
+            "darkvision",
+            "forme-change",
+            "groundshaper",
+            "jump",
+            "mountable",
+            "overland",
+            "power",
+            "swim",
+            "tremorsense",
+            "zygarde-cells"
+          ],
+          "signals": [
+            "existing_inventory",
+            "name_descriptor:forme",
+            "form_capability:forme-change,zygarde-cells"
+          ]
+        },
+        {
+          "id": "zygarde-complete-forme",
+          "name": "ZYGARDE Complete Forme",
+          "source_page": 929,
+          "variant_of": null,
+          "variant_kind": null,
+          "types": [
+            "Dragon",
+            "Ground"
+          ],
+          "base_stats": {
+            "hp": 22,
+            "attack": 10,
+            "defense": 12,
+            "special_attack": 9,
+            "special_defense": 10,
+            "speed": 9
+          },
+          "abilities": [
+            "air-lock",
+            "aura-break",
+            "filter",
+            "interference",
+            "pressure"
+          ],
+          "capabilities": [
+            "burrow",
+            "darkvision",
+            "forme-change",
+            "groundshaper",
+            "jump",
+            "overland",
+            "power",
+            "reach",
+            "swim",
+            "tremorsense",
+            "zygarde-cells"
+          ],
+          "signals": [
+            "existing_inventory",
+            "name_descriptor:forme",
+            "form_capability:forme-change,zygarde-cells"
+          ]
+        }
+      ],
+      "signals": [
+        "existing_inventory",
+        "form_capability:forme-change,zygarde-cells",
+        "name_descriptor:forme"
+      ],
+      "reason": "Zygarde Cube manages persistent 10%/50% states; Power Construct creates Complete Forme as an active transformation.",
+      "preserve_legacy_ids": true
+    }
+  ],
+  "synthetic_transform_families": [
+    {
+      "family": "mega-evolution",
+      "classification": "transformation",
+      "target_layer": "activeFormId",
+      "evidence_status": "source_explicit_effects",
+      "form_count": 48,
+      "species_count": 46,
+      "requirement_status": "generic_rule_explicit_specific_item_ids_incomplete",
+      "reason": "PTU Core defines Mega Evolution as a temporary transformation. Generic Form requirements should represent Mega Ring + species/form-specific Mega Stone without hardcoding Mega logic; missing stable item IDs are not fabricated."
+    },
+    {
+      "family": "primal-reversion",
+      "classification": "transformation",
+      "target_layer": "activeFormId",
+      "evidence_status": "source_explicit_effects",
+      "form_count": 2,
+      "requirement_status": "source_insufficient",
+      "reason": "Kyogre and Groudon have explicit Primal Reversion transformation blocks, but this audit does not invent an activation requirement not present in the supplied structured sources."
+    },
+    {
+      "family": "ultra-burst",
+      "classification": "transformation",
+      "target_layer": "activeFormId",
+      "evidence_status": "source_explicit_effects_activation_missing",
+      "form_count": 2,
+      "requirement_status": "source_insufficient",
+      "reason": "Dusk Mane and Dawn Wings both have explicit Ultra Burst effects; no activation requirement was found in the supplied project sources, so none is inferred."
+    }
+  ]
+}

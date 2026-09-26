@@ -1,0 +1,136 @@
+{
+  "schema_version": 1,
+  "policy": "Only mechanics explicitly supported by supplied project sources are recorded. Missing activation requirements stay source_insufficient and are not inferred from main-series game rules.",
+  "rules": [
+    {
+      "id": "rks-system",
+      "family": "silvally",
+      "source_title": "SuMo References",
+      "source_page": 4,
+      "kind": "runtime_state",
+      "activation": "held_item",
+      "summary": "RKS System changes the user's Type to match the Type of its held Memory Disc.",
+      "confidence": "source_explicit"
+    },
+    {
+      "id": "schooling",
+      "family": "wishiwashi",
+      "source_title": "SuMo References",
+      "source_page": 4,
+      "kind": "transformation",
+      "activation": "ability_action_and_hp_state",
+      "summary": "Schooling changes Wishiwashi to Schooling Forme and grants Temporary HP; it returns to Solo Forme when below half maximum HP and no Schooling Temporary HP remains. The two forms have separate Base Stats with the same HP stat.",
+      "confidence": "source_explicit"
+    },
+    {
+      "id": "shields-down",
+      "family": "minior",
+      "source_title": "SuMo References",
+      "source_page": 4,
+      "kind": "transformation",
+      "activation": "hp_state",
+      "summary": "Minior uses separate Meteor and Core Base Stats with the same HP stat; at half maximum HP or lower it changes from Meteor to Core, and outside combat it returns to Meteor when above half HP.",
+      "confidence": "source_explicit"
+    },
+    {
+      "id": "power-construct",
+      "family": "zygarde",
+      "source_title": "SuMo References",
+      "source_page": 3,
+      "kind": "transformation",
+      "activation": "ability_action_below_half_hp",
+      "summary": "Power Construct may be used below 50% HP to enter Complete Forme until the end of the Scene, granting Temporary HP while retaining the HP total and maximum of the prior 10% or 50% Forme.",
+      "confidence": "source_explicit"
+    },
+    {
+      "id": "zygarde-cells",
+      "family": "zygarde",
+      "source_title": "SuMo References",
+      "source_page": 1,
+      "kind": "persistent_form",
+      "activation": "extended_action_with_zygarde_cube",
+      "summary": "A Zygarde Cube forms 10% or 50% Zygarde from cells. A 100-cell Zygarde with Power Construct may switch between 10% and 50% Formes as an Extended Action and cannot be disassembled.",
+      "confidence": "source_explicit"
+    },
+    {
+      "id": "viral-fusion",
+      "family": "necrozma",
+      "source_title": "SuMo References",
+      "source_page": 1,
+      "kind": "persistent_form",
+      "activation": "extended_action_bond",
+      "summary": "Viral Fusion bonds the user with a willing or helpless Pokemon and applies source-defined combined traits; Solgaleo and Lunala have specific forms while bonded.",
+      "confidence": "source_explicit"
+    },
+    {
+      "id": "weapon-bond",
+      "family": "zacian-zamazenta",
+      "source_title": "New Abilities and Moves",
+      "source_page": null,
+      "kind": "transformation",
+      "activation": "extended_action_with_ancestral_weapon",
+      "summary": "Zacian with an Ancestral Sword and Zamazenta with an Ancestral Shield may enter their Crowned Formes as an Extended Action. The form lasts until Fainted or voluntarily relinquished as an Extended Action and grants the corresponding Behemoth Move.",
+      "confidence": "source_explicit"
+    },
+    {
+      "id": "hunger-switch",
+      "family": "morpeko",
+      "source_title": "New Abilities and Moves",
+      "source_page": null,
+      "kind": "runtime_state",
+      "activation": "turn_choice",
+      "summary": "At the beginning of each turn Morpeko chooses Full Belly Mode or Hangry Mode until its next turn; Full Belly grants an Accuracy bonus and Hangry grants a Damage bonus.",
+      "confidence": "source_explicit"
+    },
+    {
+      "id": "ice-face",
+      "family": "eiscue",
+      "source_title": "New Abilities and Moves",
+      "source_page": null,
+      "kind": "transformation",
+      "activation": "temporary_hp_state",
+      "summary": "Eiscue is in Ice Face while it has Temporary HP granted by Ice Face and otherwise is in Noice Face; Hail can restore that Temporary HP with the source-defined action.",
+      "confidence": "source_explicit"
+    },
+    {
+      "id": "zen-snowed",
+      "family": "darmanitan-galar",
+      "source_title": "New Abilities and Moves",
+      "source_page": null,
+      "kind": "transformation",
+      "activation": "scene_swift_action",
+      "summary": "Zen Snowed changes Galarian Darmanitan into Zen Mode for the rest of the Scene and grants access to Ice Punch and Fire Punch as if on its Move List.",
+      "confidence": "source_explicit"
+    },
+    {
+      "id": "seasonal",
+      "family": "deerling-sawsbuck",
+      "source_title": "February 2016 Playtest Packet",
+      "source_page": null,
+      "kind": "persistent_form",
+      "activation": "extended_action_or_source_environment",
+      "summary": "Seasonal represents Spring, Summer, Fall, and Winter states with source-defined Combat Stage benefits and permits changing season as an Extended Action, with additional source-specific environmental rules.",
+      "confidence": "source_explicit"
+    },
+    {
+      "id": "relic-song",
+      "family": "meloetta",
+      "source_title": "Pokemon Tabletop United 1.05 Core",
+      "source_page": 405,
+      "kind": "transformation",
+      "activation": "move_known_swift_on_use_or_standard_action",
+      "summary": "As long as Meloetta knows Relic Song, it may switch between Aria Form and Step Form as a Swift Action when using Relic Song, or as a Standard Action otherwise. Both forms must use the same HP Stat.",
+      "confidence": "source_explicit"
+    },
+    {
+      "id": "ultra-burst",
+      "family": "necrozma",
+      "source_title": "Gen 8ish PokeDex",
+      "source_page": [945, 946],
+      "kind": "transformation",
+      "activation": "source_insufficient",
+      "summary": "Dusk Mane and Dawn Wings each contain an Ultra Burst block that becomes Psychic/Dragon with Neuroforce, changes Advanced Ability 1 to Illuminate, gains Glow, and applies source-form-specific Stat deltas. No activation requirement has been found in the supplied project sources.",
+      "confidence": "transform_effects_explicit_activation_missing"
+    }
+  ]
+}
