@@ -63,7 +63,7 @@ for(const name of ['pokemonCombatDefaultUi','normalizePokemonCombatUiState','pok
 
 const repository=await readFile(repositoryPath,'utf8');assert.match(repository,/combat:\s*semanticState\.ui\?\.combat \?\? null/);assert.match(repository,/inCombat:\s*!!semanticState\.ui\?\.inCombat/);
 const doc=JSON.parse(await readFile(docJson,'utf8'));assert.equal(doc.schema_version,1);assert.equal(doc.menu,'Combat');assert.deepEqual(doc.platforms,['windows','android']);assert.equal(doc.roll_resolution.automatic_hit_miss,true);assert.equal(doc.persistence.revision_hash_includes_combat,true);assert.deepEqual(doc.first_complex_interaction.moves,['Defense Curl','Rollout']);
-const md=await readFile(docMd,'utf8');assert.match(md,/Combat Session Ledger/);assert.match(md,/Rollout starts at DB 3/);assert.match(md,/Full Actions consume Standard \+ Shift/);assert.match(md,/natural d20/i);
+const md=await readFile(docMd,'utf8');assert.match(md,/Combat Session Ledger/);assert.match(md,/Rollout starts at DB 3/);assert.match(md,/Full Actions consume both Standard and Shift Actions/);assert.match(md,/natural d20/i);
 const previous=JSON.parse(await readFile(oldAudit,'utf8'));assert.equal(previous.status,'historical_pre_ledger_snapshot');assert.equal(previous.superseded_by,'docs/PTU_COMBAT_SESSION_LEDGER.md');
 
 console.log(JSON.stringify({combatLedger:1,platforms:['windows','android'],menu:'Combat',realDice:true,actionLedger:true,frequencyLedger:true,rolloutDefenseCurl:true,formSpending:false},null,2));
