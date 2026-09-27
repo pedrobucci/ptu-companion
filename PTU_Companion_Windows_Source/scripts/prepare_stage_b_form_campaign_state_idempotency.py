@@ -5,20 +5,18 @@ from pathlib import Path
 
 TARGET = Path(__file__).resolve().parent / 'apply_stage_b_form_campaign_state.py'
 
-OLD = '''    old_scene = """async function endScene(){ state.ui.scene+=1; state.ui.round=1; state.pokemon.forEach(p=>Object.keys(p.combatStages).forEach(k=>p.combatStages[k]=0)); commit(`Scene ${state.ui.scene}. Combat stages reset.`); }"""
-    new_scene = """async function endScene(){ state.ui.scene+=1; state.ui.round=1; for(const p of state.pokemon){Object.keys(p.combatStages).forEach(k=>p.combatStages[k]=0);if(p?.details?.speciesDefinitionId)await applyPokemonFormGameEventUi(p.id,{kind:'scene-end'},{silent:true,commitAfter:false});} commit(`Scene ${state.ui.scene}. Combat stages reset; Form scene-end hooks applied.`); }"""
+OLD = '''    old_scene = "function endScene(){ state.ui.scene+=1; state.ui.round=1; state.pokemon.forEach(p=>Object.keys(p.combatStages).forEach(k=>p.combatStages[k]=0)); commit(`Scene ${state.ui.scene}. Combat stages reset.`); }"
+    new_scene = "async function endScene(){ state.ui.scene+=1; state.ui.round=1; for(const p of state.pokemon){Object.keys(p.combatStages).forEach(k=>p.combatStages[k]=0);if(p?.details?.speciesDefinitionId)await applyPokemonFormGameEventUi(p.id,{kind:'scene-end'},{silent:true,commitAfter:false});} commit(`Scene ${state.ui.scene}. Combat stages reset; Form scene-end hooks applied.`); }"
     if new_scene not in text:
-        if old_scene not in text:
-            raise SystemExit(f'{label}: endScene anchor drifted')
+        if old_scene not in text: raise SystemExit(f'endScene anchor drifted: {path}')
         text = text.replace(old_scene, new_scene, 1)
 '''
 
-NEW = '''    old_scene = """async function endScene(){ state.ui.scene+=1; state.ui.round=1; state.pokemon.forEach(p=>Object.keys(p.combatStages).forEach(k=>p.combatStages[k]=0)); commit(`Scene ${state.ui.scene}. Combat stages reset.`); }"""
-    new_scene = """async function endScene(){ state.ui.scene+=1; state.ui.round=1; for(const p of state.pokemon){Object.keys(p.combatStages).forEach(k=>p.combatStages[k]=0);if(p?.details?.speciesDefinitionId)await applyPokemonFormGameEventUi(p.id,{kind:'scene-end'},{silent:true,commitAfter:false});} commit(`Scene ${state.ui.scene}. Combat stages reset; Form scene-end hooks applied.`); }"""
-    combat_scene = """async function endScene(){ state.ui.scene+=1; state.ui.round=1; for(const p of state.pokemon){Object.keys(p.combatStages).forEach(k=>p.combatStages[k]=0);if(p?.details?.speciesDefinitionId)await applyPokemonFormGameEventUi(p.id,{kind:'scene-end'},{silent:true,commitAfter:false});} pokemonCombatOnSceneAdvance(); commit(`Scene ${state.ui.scene}. Combat stages reset; Form scene-end hooks applied.`); }"""
+NEW = '''    old_scene = "function endScene(){ state.ui.scene+=1; state.ui.round=1; state.pokemon.forEach(p=>Object.keys(p.combatStages).forEach(k=>p.combatStages[k]=0)); commit(`Scene ${state.ui.scene}. Combat stages reset.`); }"
+    new_scene = "async function endScene(){ state.ui.scene+=1; state.ui.round=1; for(const p of state.pokemon){Object.keys(p.combatStages).forEach(k=>p.combatStages[k]=0);if(p?.details?.speciesDefinitionId)await applyPokemonFormGameEventUi(p.id,{kind:'scene-end'},{silent:true,commitAfter:false});} commit(`Scene ${state.ui.scene}. Combat stages reset; Form scene-end hooks applied.`); }"
+    combat_scene = "async function endScene(){ state.ui.scene+=1; state.ui.round=1; for(const p of state.pokemon){Object.keys(p.combatStages).forEach(k=>p.combatStages[k]=0);if(p?.details?.speciesDefinitionId)await applyPokemonFormGameEventUi(p.id,{kind:'scene-end'},{silent:true,commitAfter:false});} pokemonCombatOnSceneAdvance(); commit(`Scene ${state.ui.scene}. Combat stages reset; Form scene-end hooks applied.`); }"
     if new_scene not in text and combat_scene not in text:
-        if old_scene not in text:
-            raise SystemExit(f'{label}: endScene anchor drifted')
+        if old_scene not in text: raise SystemExit(f'endScene anchor drifted: {path}')
         text = text.replace(old_scene, new_scene, 1)
 '''
 
