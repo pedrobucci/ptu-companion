@@ -2,7 +2,7 @@ import {applyPokemonFormTransitionEvent,normalizePokemonFormEvent} from './pokem
 
 const clone=value=>value==null?value:JSON.parse(JSON.stringify(value));
 const slug=value=>String(value||'').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
-const finite=value=>{const number=Number(value);return Number.isFinite(number)?number:null;};
+const finite=value=>{if(value==null||value==='')return null;const number=Number(value);return Number.isFinite(number)?number:null;};
 
 export const FORM_CAMPAIGN_STATE_MODEL_VERSION=1;
 
