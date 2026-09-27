@@ -7,6 +7,10 @@ TARGETS = [
     ROOT / 'server.mjs',
     REPO / 'PTU_Companion_Android_Tauri' / 'www' / 'mobile-api.mjs',
 ]
+EVENT_MODULES = [
+    ROOT / 'rules' / 'pokemon-form-events.mjs',
+    REPO / 'PTU_Companion_Android_Tauri' / 'www' / 'rules' / 'pokemon-form-events.mjs',
+]
 
 IMPORT_ANCHOR = "import {normalizePokemonFormState,resolvePokemonForms,resolvePokemonPresentation} from './rules/pokemon-forms.mjs';"
 EVENT_IMPORT = "import {applyPokemonFormTransitionEvent} from './rules/pokemon-form-events.mjs';"
@@ -30,9 +34,13 @@ ROUTE = r"""  if(req.method==='POST' && url.pathname==='/api/pokemon/forms/trans
     return json(res,result.valid?200:400,{rulesetId,baseSpecies:{id:baseSpecies.id,name:baseSpecies.name,forms:baseSpecies.forms||[]},...result});
   }
 """
+OLD_CONTEXT = """    previousBaseFormId:context?.previousBaseFormId??state.baseFormId,
+    previousActiveFormId:context?.previousActiveFormId??state.activeFormId,"""
+NEW_CONTEXT = """    previousBaseFormId:context?.previousBaseFormId!==undefined?context.previousBaseFormId:state.baseFormId,
+    previousActiveFormId:context&&Object.prototype.hasOwnProperty.call(context,'previousActiveFormId')?context.previousActiveFormId:state.activeFormId,"""
 
 
-def patch(path: Path) -> bool:
+def patch_api(path: Path) -> bool:
     text = path.read_text(encoding='utf-8')
     original = text
     if EVENT_IMPORT not in text:
@@ -49,12 +57,28 @@ def patch(path: Path) -> bool:
     return False
 
 
+def patch_event_module(path: Path) -> bool:
+    text = path.read_text(encoding='utf-8')
+    original = text
+    if OLD_CONTEXT in text:
+        text = text.replace(OLD_CONTEXT, NEW_CONTEXT, 1)
+    elif NEW_CONTEXT not in text:
+        raise SystemExit(f'Form event previous-state anchor missing in {path}')
+    if text != original:
+        path.write_text(text, encoding='utf-8')
+        return True
+    return False
+
+
 def main() -> None:
     changed = []
     for target in TARGETS:
-        if patch(target):
+        if patch_api(target):
             changed.append(str(target.relative_to(REPO)))
-    print({'changed': changed, 'targets': len(TARGETS)})
+    for target in EVENT_MODULES:
+        if patch_event_module(target):
+            changed.append(str(target.relative_to(REPO)))
+    print({'changed': changed, 'api_targets': len(TARGETS), 'event_modules': len(EVENT_MODULES)})
 
 
 if __name__ == '__main__':
