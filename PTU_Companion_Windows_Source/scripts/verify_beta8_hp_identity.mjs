@@ -33,7 +33,7 @@ const ctx={
   console,
 };
 vm.createContext(ctx);
-vm.runInContext(extract('changeHp'),ctx);
+vm.runInContext(extract('changeHp',true),ctx);
 vm.runInContext(extract('changeTrainerHp'),ctx);
 vm.runInContext(extract('editPokemonIdentity',true),ctx);
 
