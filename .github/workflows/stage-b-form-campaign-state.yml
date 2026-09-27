@@ -14,9 +14,11 @@ on:
       - 'PTU_Companion_Windows_Source/scripts/apply_stage_b_form_campaign_state.py'
       - 'PTU_Companion_Windows_Source/scripts/apply_stage_b_form_campaign_hardening.py'
       - 'PTU_Companion_Windows_Source/scripts/apply_stage_b_form_persistence_feedback.py'
+      - 'PTU_Companion_Windows_Source/scripts/apply_stage_b_form_combat_ergonomics.py'
       - 'PTU_Companion_Windows_Source/scripts/verify_stage_b_form_campaign_state.mjs'
       - 'PTU_Companion_Windows_Source/scripts/verify_stage_b_form_campaign_hardening.mjs'
       - 'PTU_Companion_Windows_Source/scripts/verify_stage_b_form_persistence_feedback.mjs'
+      - 'PTU_Companion_Windows_Source/scripts/verify_stage_b_form_combat_ergonomics.mjs'
       - 'PTU_Companion_Windows_Source/scripts/verify_beta8_hp_identity.mjs'
       - 'PTU_Companion_Android_Tauri/scripts/verify-beta8-hp-identity.mjs'
       - 'PTU_Companion_Windows_Source/scripts/augment_ptu_form_lifecycle_events.py'
@@ -27,6 +29,8 @@ on:
       - 'PTU_Companion_Windows_Source/persistence/repository.mjs'
       - 'docs/PTU_FORMS_HP_MUTATION_AUDIT.md'
       - 'docs/data/PTU_FORMS_HP_MUTATION_AUDIT.json'
+      - 'docs/PTU_FORMS_COMBAT_RESOURCE_AUDIT.md'
+      - 'docs/data/PTU_FORMS_COMBAT_RESOURCE_AUDIT.json'
 
 permissions:
   contents: write
@@ -51,6 +55,8 @@ jobs:
         run: python PTU_Companion_Windows_Source/scripts/apply_stage_b_form_campaign_hardening.py
       - name: Close HP mutation audit and readable Form feedback
         run: python PTU_Companion_Windows_Source/scripts/apply_stage_b_form_persistence_feedback.py
+      - name: Audit combat resources and expose compact Form state
+        run: python PTU_Companion_Windows_Source/scripts/apply_stage_b_form_combat_ergonomics.py
       - name: Refresh source lifecycle metadata
         run: python PTU_Companion_Windows_Source/scripts/augment_ptu_form_lifecycle_events.py
       - name: Verify campaign-state lifecycle model
@@ -59,6 +65,8 @@ jobs:
         run: node PTU_Companion_Windows_Source/scripts/verify_stage_b_form_campaign_hardening.mjs
       - name: Verify Form persistence/readable feedback model
         run: node PTU_Companion_Windows_Source/scripts/verify_stage_b_form_persistence_feedback.mjs
+      - name: Verify combat resource audit and compact Form feedback
+        run: node PTU_Companion_Windows_Source/scripts/verify_stage_b_form_combat_ergonomics.mjs
       - name: Verify Windows regressions
         working-directory: PTU_Companion_Windows_Source
         run: npm run verify
@@ -79,6 +87,8 @@ jobs:
           grep -q "title:'Pokémon Form changed'" PTU_Companion_Android_Tauri/www/app.js
           grep -q 'function pokemonFormStateLabel(formState={},forms=\[\])' PTU_Companion_Windows_Source/static-preview/app.js
           grep -q 'function pokemonFormStateLabel(formState={},forms=\[\])' PTU_Companion_Android_Tauri/www/app.js
+          grep -q 'pokemonFormCombatIndicator' PTU_Companion_Windows_Source/static-preview/app.js
+          grep -q 'pokemonFormCombatIndicator' PTU_Companion_Android_Tauri/www/app.js
           grep -q 'async function applyPokemonProgression' PTU_Companion_Windows_Source/static-preview/app.js
           grep -q 'async function applyPokemonProgression' PTU_Companion_Android_Tauri/www/app.js
           grep -q 'async function useItem' PTU_Companion_Windows_Source/static-preview/app.js
@@ -90,6 +100,8 @@ jobs:
           grep -q 'target_form_base_hp' docs/data/PTU_FORMS_STAGE_B.json
           grep -q '"uncovered_linked_surfaces": 0' docs/data/PTU_FORMS_HP_MUTATION_AUDIT.json
           grep -q 'Uncovered linked surfaces: \*\*0\*\*' docs/PTU_FORMS_HP_MUTATION_AUDIT.md
+          grep -q '"automatic_spending_supported": false' docs/data/PTU_FORMS_COMBAT_RESOURCE_AUDIT.json
+          grep -q 'Exact automatic-spending subset: \*\*0\*\*' docs/PTU_FORMS_COMBAT_RESOURCE_AUDIT.md
           grep -q 'tempHp:Number(p.tempHp??p.details?.tempHp??0)' PTU_Companion_Windows_Source/persistence/repository.mjs
           grep -q "extract('changeHp',true)" PTU_Companion_Windows_Source/scripts/verify_beta8_hp_identity.mjs
           grep -q "extract('changeHp',true)" PTU_Companion_Android_Tauri/scripts/verify-beta8-hp-identity.mjs
@@ -112,10 +124,12 @@ jobs:
             docs/PTU_FORMS_STAGE_B.md \
             docs/data/PTU_FORMS_STAGE_B.json \
             docs/PTU_FORMS_HP_MUTATION_AUDIT.md \
-            docs/data/PTU_FORMS_HP_MUTATION_AUDIT.json
+            docs/data/PTU_FORMS_HP_MUTATION_AUDIT.json \
+            docs/PTU_FORMS_COMBAT_RESOURCE_AUDIT.md \
+            docs/data/PTU_FORMS_COMBAT_RESOURCE_AUDIT.json
           if git diff --cached --quiet; then
             echo 'Campaign-state Form integration already current.'
           else
-            git commit -m 'feat(forms): close persistence and HP mutation audit [skip ci]'
+            git commit -m 'feat(forms): add combat resource audit and Form indicator [skip ci]'
             git push origin HEAD:content/ptu-parametrized-forms-catalog
           fi
