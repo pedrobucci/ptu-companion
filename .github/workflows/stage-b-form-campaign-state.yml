@@ -13,8 +13,10 @@ on:
       - 'PTU_Companion_Android_Tauri/www/rules/pokemon-form-events.mjs'
       - 'PTU_Companion_Windows_Source/scripts/apply_stage_b_form_campaign_state.py'
       - 'PTU_Companion_Windows_Source/scripts/apply_stage_b_form_campaign_hardening.py'
+      - 'PTU_Companion_Windows_Source/scripts/apply_stage_b_form_persistence_feedback.py'
       - 'PTU_Companion_Windows_Source/scripts/verify_stage_b_form_campaign_state.mjs'
       - 'PTU_Companion_Windows_Source/scripts/verify_stage_b_form_campaign_hardening.mjs'
+      - 'PTU_Companion_Windows_Source/scripts/verify_stage_b_form_persistence_feedback.mjs'
       - 'PTU_Companion_Windows_Source/scripts/verify_beta8_hp_identity.mjs'
       - 'PTU_Companion_Android_Tauri/scripts/verify-beta8-hp-identity.mjs'
       - 'PTU_Companion_Windows_Source/scripts/augment_ptu_form_lifecycle_events.py'
@@ -23,6 +25,8 @@ on:
       - 'PTU_Companion_Windows_Source/static-preview/app.js'
       - 'PTU_Companion_Android_Tauri/www/app.js'
       - 'PTU_Companion_Windows_Source/persistence/repository.mjs'
+      - 'docs/PTU_FORMS_HP_MUTATION_AUDIT.md'
+      - 'docs/data/PTU_FORMS_HP_MUTATION_AUDIT.json'
 
 permissions:
   contents: write
@@ -45,12 +49,16 @@ jobs:
         run: python PTU_Companion_Windows_Source/scripts/apply_stage_b_form_campaign_state.py
       - name: Harden storage, healing and lifecycle feedback
         run: python PTU_Companion_Windows_Source/scripts/apply_stage_b_form_campaign_hardening.py
+      - name: Close HP mutation audit and readable Form feedback
+        run: python PTU_Companion_Windows_Source/scripts/apply_stage_b_form_persistence_feedback.py
       - name: Refresh source lifecycle metadata
         run: python PTU_Companion_Windows_Source/scripts/augment_ptu_form_lifecycle_events.py
       - name: Verify campaign-state lifecycle model
         run: node PTU_Companion_Windows_Source/scripts/verify_stage_b_form_campaign_state.mjs
       - name: Verify campaign hardening model
         run: node PTU_Companion_Windows_Source/scripts/verify_stage_b_form_campaign_hardening.mjs
+      - name: Verify Form persistence/readable feedback model
+        run: node PTU_Companion_Windows_Source/scripts/verify_stage_b_form_persistence_feedback.mjs
       - name: Verify Windows regressions
         working-directory: PTU_Companion_Windows_Source
         run: npm run verify
@@ -69,6 +77,10 @@ jobs:
           grep -q 'clearPokemonFormTempHpTracking' PTU_Companion_Android_Tauri/www/app.js
           grep -q "title:'Pokémon Form changed'" PTU_Companion_Windows_Source/static-preview/app.js
           grep -q "title:'Pokémon Form changed'" PTU_Companion_Android_Tauri/www/app.js
+          grep -q 'function pokemonFormStateLabel(formState={},forms=\[\])' PTU_Companion_Windows_Source/static-preview/app.js
+          grep -q 'function pokemonFormStateLabel(formState={},forms=\[\])' PTU_Companion_Android_Tauri/www/app.js
+          grep -q 'async function applyPokemonProgression' PTU_Companion_Windows_Source/static-preview/app.js
+          grep -q 'async function applyPokemonProgression' PTU_Companion_Android_Tauri/www/app.js
           grep -q 'async function useItem' PTU_Companion_Windows_Source/static-preview/app.js
           grep -q 'async function useItem' PTU_Companion_Android_Tauri/www/app.js
           grep -q 'usePokemonMoveForForms' PTU_Companion_Windows_Source/static-preview/app.js
@@ -76,6 +88,8 @@ jobs:
           grep -q 'setPokemonBattleState' PTU_Companion_Windows_Source/static-preview/app.js
           grep -q 'setPokemonBattleState' PTU_Companion_Android_Tauri/www/app.js
           grep -q 'target_form_base_hp' docs/data/PTU_FORMS_STAGE_B.json
+          grep -q '"uncovered_linked_surfaces": 0' docs/data/PTU_FORMS_HP_MUTATION_AUDIT.json
+          grep -q 'Uncovered linked surfaces: \*\*0\*\*' docs/PTU_FORMS_HP_MUTATION_AUDIT.md
           grep -q 'tempHp:Number(p.tempHp??p.details?.tempHp??0)' PTU_Companion_Windows_Source/persistence/repository.mjs
           grep -q "extract('changeHp',true)" PTU_Companion_Windows_Source/scripts/verify_beta8_hp_identity.mjs
           grep -q "extract('changeHp',true)" PTU_Companion_Android_Tauri/scripts/verify-beta8-hp-identity.mjs
@@ -96,10 +110,12 @@ jobs:
             PTU_Companion_Android_Tauri/www/rules/pokemon-form-events.mjs \
             PTU_Companion_Windows_Source/scripts/augment_ptu_form_lifecycle_events.py \
             docs/PTU_FORMS_STAGE_B.md \
-            docs/data/PTU_FORMS_STAGE_B.json
+            docs/data/PTU_FORMS_STAGE_B.json \
+            docs/PTU_FORMS_HP_MUTATION_AUDIT.md \
+            docs/data/PTU_FORMS_HP_MUTATION_AUDIT.json
           if git diff --cached --quiet; then
             echo 'Campaign-state Form integration already current.'
           else
-            git commit -m 'feat(forms): harden campaign lifecycle state [skip ci]'
+            git commit -m 'feat(forms): close persistence and HP mutation audit [skip ci]'
             git push origin HEAD:content/ptu-parametrized-forms-catalog
           fi
