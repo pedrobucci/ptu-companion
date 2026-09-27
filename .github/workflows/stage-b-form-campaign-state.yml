@@ -12,7 +12,9 @@ on:
       - 'PTU_Companion_Windows_Source/rules/pokemon-form-events.mjs'
       - 'PTU_Companion_Android_Tauri/www/rules/pokemon-form-events.mjs'
       - 'PTU_Companion_Windows_Source/scripts/apply_stage_b_form_campaign_state.py'
+      - 'PTU_Companion_Windows_Source/scripts/apply_stage_b_form_campaign_hardening.py'
       - 'PTU_Companion_Windows_Source/scripts/verify_stage_b_form_campaign_state.mjs'
+      - 'PTU_Companion_Windows_Source/scripts/verify_stage_b_form_campaign_hardening.mjs'
       - 'PTU_Companion_Windows_Source/scripts/verify_beta8_hp_identity.mjs'
       - 'PTU_Companion_Android_Tauri/scripts/verify-beta8-hp-identity.mjs'
       - 'PTU_Companion_Windows_Source/scripts/augment_ptu_form_lifecycle_events.py'
@@ -41,10 +43,14 @@ jobs:
           python-version: '3.12'
       - name: Integrate Form lifecycle with campaign state and UI
         run: python PTU_Companion_Windows_Source/scripts/apply_stage_b_form_campaign_state.py
+      - name: Harden storage, healing and lifecycle feedback
+        run: python PTU_Companion_Windows_Source/scripts/apply_stage_b_form_campaign_hardening.py
       - name: Refresh source lifecycle metadata
         run: python PTU_Companion_Windows_Source/scripts/augment_ptu_form_lifecycle_events.py
       - name: Verify campaign-state lifecycle model
         run: node PTU_Companion_Windows_Source/scripts/verify_stage_b_form_campaign_state.mjs
+      - name: Verify campaign hardening model
+        run: node PTU_Companion_Windows_Source/scripts/verify_stage_b_form_campaign_hardening.mjs
       - name: Verify Windows regressions
         working-directory: PTU_Companion_Windows_Source
         run: npm run verify
@@ -59,6 +65,12 @@ jobs:
           grep -q '/api/pokemon/forms/apply-event' PTU_Companion_Android_Tauri/www/mobile-api.mjs
           grep -q 'applyPokemonFormGameEventUi' PTU_Companion_Windows_Source/static-preview/app.js
           grep -q 'applyPokemonFormGameEventUi' PTU_Companion_Android_Tauri/www/app.js
+          grep -q 'clearPokemonFormTempHpTracking' PTU_Companion_Windows_Source/static-preview/app.js
+          grep -q 'clearPokemonFormTempHpTracking' PTU_Companion_Android_Tauri/www/app.js
+          grep -q "title:'Pokémon Form changed'" PTU_Companion_Windows_Source/static-preview/app.js
+          grep -q "title:'Pokémon Form changed'" PTU_Companion_Android_Tauri/www/app.js
+          grep -q 'async function useItem' PTU_Companion_Windows_Source/static-preview/app.js
+          grep -q 'async function useItem' PTU_Companion_Android_Tauri/www/app.js
           grep -q 'usePokemonMoveForForms' PTU_Companion_Windows_Source/static-preview/app.js
           grep -q 'usePokemonMoveForForms' PTU_Companion_Android_Tauri/www/app.js
           grep -q 'setPokemonBattleState' PTU_Companion_Windows_Source/static-preview/app.js
@@ -88,6 +100,6 @@ jobs:
           if git diff --cached --quiet; then
             echo 'Campaign-state Form integration already current.'
           else
-            git commit -m 'feat(forms): persist lifecycle events into campaign state [skip ci]'
+            git commit -m 'feat(forms): harden campaign lifecycle state [skip ci]'
             git push origin HEAD:content/ptu-parametrized-forms-catalog
           fi
