@@ -142,7 +142,9 @@ export class CampaignRepository {
       round: semanticState.ui?.round ?? 1,
       scene: semanticState.ui?.scene ?? 1,
       day: semanticState.ui?.day ?? 1,
-      gmOverride: !!semanticState.ui?.gmOverride
+      gmOverride: !!semanticState.ui?.gmOverride,
+      inCombat: !!semanticState.ui?.inCombat,
+      combat: semanticState.ui?.combat ?? null
     };
     semanticState.selectedPokemonId = null;
     semanticState.selectedRosterId = null;

@@ -85,5 +85,7 @@
     "Do not create usage counters implicitly inside the Form engine without a shared combat-resource model.",
     "Continue surfacing actionCost and frequency as source metadata/history.",
     "A future resource ledger must define reset boundaries and source identity before automatic spending is enabled."
-  ]
+  ],
+  "status": "historical_pre_ledger_snapshot",
+  "superseded_by": "docs/PTU_COMBAT_SESSION_LEDGER.md"
 }

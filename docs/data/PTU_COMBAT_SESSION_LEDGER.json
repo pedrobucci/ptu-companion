@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "name": "PTU Pokémon Combat Session Ledger",
+  "storage": "state.ui.combat",
+  "platforms": [
+    "windows",
+    "android"
+  ],
+  "menu": "Combat",
+  "shared_resources": {
+    "turn_actions": [
+      "Standard Action",
+      "Shift Action",
+      "Swift Action",
+      "Free Action",
+      "Full Action"
+    ],
+    "frequencies": [
+      "At-Will",
+      "EOT",
+      "Scene",
+      "Scene xN",
+      "Daily",
+      "Daily xN"
+    ],
+    "future": [
+      "source-keyed Abilities",
+      "Form lifecycle spending",
+      "Extended Action progress"
+    ]
+  },
+  "combat_state": [
+    "live Pokémon HP/THP",
+    "Form state through existing lifecycle engine",
+    "Combat Stages",
+    "Curled Up",
+    "Rollout chain"
+  ],
+  "roll_resolution": {
+    "accuracy_die": "1d20 actual random or manually entered natural d20",
+    "automatic_hit_miss": true,
+    "automatic_critical_default": "natural 20, editable threshold for known modifiers",
+    "target_inputs": [
+      "Evasion",
+      "Defense or Special Defense",
+      "critical immunity"
+    ],
+    "damage": "actual Damage Base dice; critical repeats Damage Dice only; Stat and flat bonuses are added once"
+  },
+  "first_complex_interaction": {
+    "moves": [
+      "Defense Curl",
+      "Rollout"
+    ],
+    "defense_curl": "Curled Up; Critical immunity; DR 10; -4 Accuracy and Slowed except Rollout/Ice Ball exception; Rollout/Ice Ball +10 damage while Curled Up.",
+    "rollout": "DB 3; +4 DB after each successful use to max DB 15; continues on later turns until miss or no target."
+  },
+  "persistence": {
+    "local_and_export": true,
+    "sqlite_ui_state": true,
+    "revision_hash_includes_combat": true
+  },
+  "source_policy": "Only source-explicit PTU mechanics are automated. Unknown frequency/action semantics remain informational rather than guessed."
+}

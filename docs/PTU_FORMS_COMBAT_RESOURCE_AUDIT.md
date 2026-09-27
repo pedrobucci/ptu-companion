@@ -1,5 +1,7 @@
 # PTU Forms — Combat Resource Audit
 
+> Historical checkpoint: this audit describes the application **before** the shared Combat Session Ledger was introduced. Current behavior is documented in `PTU_COMBAT_SESSION_LEDGER.md`.
+
 Audit of the **existing** campaign combat state before any automatic spending of Form action/frequency costs.
 
 - Conclusion: **informational only**
