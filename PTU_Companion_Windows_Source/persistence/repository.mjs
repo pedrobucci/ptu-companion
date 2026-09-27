@@ -73,7 +73,7 @@ export class CampaignRepository {
 
     const pokemon = this.db.prepare('SELECT * FROM pokemon WHERE trainer_id=? ORDER BY rowid').all(profileId).map(p => ({
       id:p.id, name:p.name, species:p.species, level:p.level,
-      types:fromJson(p.types_json, []), hp:p.hp, maxHp:p.max_hp, injuries:p.injuries,
+      types:fromJson(p.types_json, []), hp:p.hp, maxHp:p.max_hp, tempHp:Number(fromJson(p.details_json, {}).tempHp||0), injuries:p.injuries,
       ball:p.ball, heldItem:p.held_item, img:p.image_path, storage:!!p.in_storage,
       loyalty:p.loyalty, rosterIds:memberships.get(p.id) || [],
       combatStages:fromJson(p.combat_stages_json, {}), details:fromJson(p.details_json, {})
@@ -172,7 +172,7 @@ export class CampaignRepository {
 
       const pokemonStmt=db.prepare(`INSERT INTO pokemon(id,trainer_id,name,species,level,types_json,hp,max_hp,injuries,ball,held_item,image_path,in_storage,loyalty,combat_stages_json,details_json)
         VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`);
-      for(const p of state.pokemon) pokemonStmt.run(p.id,profileId,p.name,p.species,p.level,toJson(p.types),p.hp,p.maxHp,p.injuries,p.ball,p.heldItem??null,p.img??null,bool(p.storage),p.loyalty,toJson(p.combatStages),toJson(p.details||{}));
+      for(const p of state.pokemon) pokemonStmt.run(p.id,profileId,p.name,p.species,p.level,toJson(p.types),p.hp,p.maxHp,p.injuries,p.ball,p.heldItem??null,p.img??null,bool(p.storage),p.loyalty,toJson(p.combatStages),toJson({...p.details,tempHp:Number(p.tempHp??p.details?.tempHp??0)}));
 
       const rosterStmt=db.prepare('INSERT INTO rosters(id,trainer_id,name,role,max_members,active,color) VALUES(?,?,?,?,?,?,?)');
       for(const r of state.rosters) rosterStmt.run(r.id,profileId,r.name,r.role,r.maxMembers,bool(r.active),r.color);

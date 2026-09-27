@@ -7,6 +7,7 @@ import {itemUsageMetadata} from './rules/item-metadata.mjs';
 import {normalizeCapabilities} from './rules/capability-normalization.mjs';
 import {normalizePokemonFormState,resolvePokemonForms,resolvePokemonPresentation} from './rules/pokemon-forms.mjs';
 import {applyPokemonFormTransitionEvent} from './rules/pokemon-form-events.mjs';
+import {applyPokemonFormGameEvent} from './rules/pokemon-form-campaign-state.mjs';
 import {normalizeSpeciesForms} from './rules/pokemon-forms.mjs';
 
 const MOBILE_KEY='ptu-companion-android-store-v1';
@@ -791,6 +792,24 @@ async function handleApi(req,res,url){
   if(req.method==='GET' && url.pathname==='/api/pokemon/evolution-guidance'){
     return json(res,200,definitions.getEvolutionGuidance());
   }
+  if(req.method==='POST' && url.pathname==='/api/pokemon/forms/apply-event'){
+    const payload=await bodyJson(req);
+    const rulesetId=String(payload.rulesetId||getActiveRuleset());
+    if(!definitions.getRuleset(rulesetId)) throw Object.assign(new Error('Unknown ruleset'),{status:400});
+    const pokemon=payload.pokemon||{}; const details=pokemon.details||{};
+    const speciesId=String(payload.speciesId||details.speciesDefinitionId||'');
+    const baseSpecies=definitions.getResolved({rulesetId,kind:'species',id:speciesId});
+    if(!baseSpecies)return json(res,404,{error:'Species definition not found in active ruleset'});
+    const result=applyPokemonFormGameEvent({
+      species:baseSpecies,
+      pokemon,
+      event:payload.event||{},
+      context:pokemonFormContext({pokemon,payload}),
+      allowUnmet:!!payload.gmOverride
+    });
+    return json(res,result.valid?200:400,{rulesetId,baseSpecies:{id:baseSpecies.id,name:baseSpecies.name,forms:baseSpecies.forms||[]},...result});
+  }
+
   if(req.method==='POST' && url.pathname==='/api/pokemon/forms/transition'){
     const payload=await bodyJson(req);
     const rulesetId=String(payload.rulesetId||getActiveRuleset());
