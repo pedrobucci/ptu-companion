@@ -19,6 +19,10 @@ export function normalizePokemonFormEvent(input={}){
     capability:raw.capability??raw.capabilityName??raw.capability_name??null,
     actionId:raw.actionId??raw.action_id??null,
     weather:raw.weather??null,
+    triggerItemId:raw.triggerItemId??raw.trigger_item_id??null,
+    triggerItemName:raw.triggerItemName??raw.trigger_item_name??null,
+    triggerItem:raw.triggerItem??raw.trigger_item??null,
+    targetFormMaxHp:raw.targetFormMaxHp??raw.target_form_max_hp??null,
     moveClass:raw.moveClass??raw.move_class??raw.class??null,
     damaging:raw.damaging==null?null:!!raw.damaging,
     raisesDefenseCombatStages:raw.raisesDefenseCombatStages==null?(raw.raises_defense_combat_stages==null?null:!!raw.raises_defense_combat_stages):!!raw.raisesDefenseCombatStages,
@@ -48,6 +52,7 @@ function matchWhen(when,event,state){
     if(key==='capability'&&!scalarMatch(event.capability,expected))return false;
     if((key==='action_id'||key==='actionId')&&!scalarMatch(event.actionId,expected))return false;
     if(key==='weather'&&!scalarMatch(event.weather,expected))return false;
+    if((key==='trigger_item'||key==='triggerItem')&&!scalarMatch(event.triggerItemName??event.triggerItemId??event.triggerItem,expected))return false;
     if((key==='move_class'||key==='moveClass')&&!scalarMatch(event.moveClass,expected))return false;
     if(key==='damaging'&&event.damaging!==!!expected)return false;
     if((key==='raises_defense_combat_stages'||key==='raisesDefenseCombatStages')&&event.raisesDefenseCombatStages!==!!expected)return false;
@@ -145,9 +150,10 @@ function applyAction({species,state,form,rule,context,event,allowUnmet}){
   const action=rule?.action&&typeof rule.action==='object'?rule.action:{type:rule?.action};
   const type=slug(action?.type||action?.kind||action?.action);
   if(type==='deactivate'||type==='clear-active'){
-    if(!state.activeFormId)return {state,changed:false,valid:true,errors:[],warnings:[],effects:[]};
-    if(action.form_id||action.formId){const wanted=slug(action.form_id??action.formId);if(state.activeFormId!==wanted)return {state,changed:false,valid:true,errors:[],warnings:[],effects:[]};}
-    return {state:{...state,activeFormId:null},changed:true,valid:true,errors:[],warnings:[],effects:resolvedEffects(rule,{context,event,form})};
+    const effectList=resolvedEffects(rule,{context,event,form});
+    if(!state.activeFormId)return {state,changed:false,valid:true,errors:[],warnings:[],effects:effectList};
+    if(action.form_id||action.formId){const wanted=slug(action.form_id??action.formId);if(state.activeFormId!==wanted)return {state,changed:false,valid:true,errors:[],warnings:[],effects:effectList};}
+    return {state:{...state,activeFormId:null},changed:true,valid:true,errors:[],warnings:[],effects:effectList};
   }
   if(type==='validate-persistence'){
     const result=validatePersistence({species,state,form,context,allowUnmet});
@@ -178,8 +184,16 @@ function applyAction({species,state,form,rule,context,event,allowUnmet}){
 export function applyPokemonFormTransitionEvent({species,formState={},context={},event={},allowUnmet=false}={}){
   const original=species||{};
   const forms=normalizeSpeciesForms(original.forms||original.raw?.forms||original.raw?.form_definitions||[]);
-  let state=normalizePokemonFormState(formState);
+  const initialState=normalizePokemonFormState(formState);
+  let state={...initialState};
   const normalizedEvent=normalizePokemonFormEvent(event);
+  const eventContext={
+    ...(context||{}),
+    triggerItemId:normalizedEvent.triggerItemId??context?.triggerItemId??null,
+    triggerItemName:normalizedEvent.triggerItemName??context?.triggerItemName??null,
+    triggerItem:normalizedEvent.triggerItem??context?.triggerItem??null,
+    targetFormMaxHp:normalizedEvent.targetFormMaxHp??context?.targetFormMaxHp??null,
+  };
   const errors=[]; const warnings=[]; const effects=[]; const appliedRules=[];
 
   const rules=[];
@@ -193,7 +207,7 @@ export function applyPokemonFormTransitionEvent({species,formState={},context={}
     if(expectedKind&&expectedKind!==normalizedEvent.kind)continue;
     if(!matchWhen(entry.rule?.when,normalizedEvent,state))continue;
     const before={...state};
-    const outcome=applyAction({species:original,state,form:entry.form,rule:entry.rule,context,event:normalizedEvent,allowUnmet});
+    const outcome=applyAction({species:original,state,form:entry.form,rule:entry.rule,context:eventContext,event:normalizedEvent,allowUnmet});
     warnings.push(...(outcome.warnings||[]));
     if(!outcome.valid){errors.push(...(outcome.errors||[]));continue;}
     state=outcome.state;
@@ -210,13 +224,13 @@ export function applyPokemonFormTransitionEvent({species,formState={},context={}
     }
   }
 
-  const resolution=candidateResolution({species:original,state,context:{...context,previousBaseFormId:normalizePokemonFormState(formState).baseFormId,previousActiveFormId:normalizePokemonFormState(formState).activeFormId},allowUnmet});
+  const resolution=candidateResolution({species:original,state,context:{...eventContext,previousBaseFormId:initialState.baseFormId,previousActiveFormId:initialState.activeFormId},allowUnmet});
   if(!resolution.valid&&!allowUnmet)errors.push(...resolution.errors);
   else warnings.push(...(resolution.warnings||[]));
 
   return {
     valid:errors.length===0,
-    changed:state.baseFormId!==normalizePokemonFormState(formState).baseFormId||state.activeFormId!==normalizePokemonFormState(formState).activeFormId,
+    changed:state.baseFormId!==initialState.baseFormId||state.activeFormId!==initialState.activeFormId,
     errors:[...new Set(errors)],
     warnings:[...new Set(warnings)],
     event:normalizedEvent,
