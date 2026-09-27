@@ -4,26 +4,27 @@ Generated deterministically from the versioned PTU classification/inventory. Thi
 
 ## Summary
 
-- Candidate-family form entries: **43**
+- Candidate-family form entries: **48**
 - Record-backed family entries: **32**
-- Rule-defined family entries: **11**
-- Candidate-record/derived Stage B forms emitted: **67**
+- Rule-defined family entries: **16**
+- Candidate-record/derived Stage B forms emitted: **82**
 - Record-backed forms: **37**
-- Rule-defined forms: **30**
-- Synthetic Stage B transforms emitted: **52**
+- Rule-defined forms: **45**
+- Synthetic Stage B transforms emitted: **50**
 - Mega transforms: **48**
 - Primal transforms: **2**
-- Ultra Burst transforms: **2**
-- Families not directly materialized: **26**
+- Synthetic Ultra Burst transforms: **0**
+- Composed Necrozma Ultra Burst active overlays: **1** from **2** source blocks
+- Families not directly materialized: **21**
 
 ## Safety gates
 
 - Every emitted `forms[]` entry uses Stage B mode `permanent` or `transformation`.
-- Source-insufficient/event-driven requirements use Stage B `manual` review gates instead of guessed items/conditions.
+- Event/action/HP conditions that Stage B cannot express exactly keep a `manual` review gate plus source mechanics; the manual gate is not the PTU rule itself.
+- Mixed families explicitly compose persistent `baseFormId` choices with active `activeFormId` overlays.
+- Necrozma Ultra Burst is emitted in the mixed family and removed from the synthetic list to prevent duplicate semantics.
+- Zygarde Complete overlays preserve the prior 10%/50% HP Base Stat by applying only non-HP Base Stat deltas.
 - No artwork URL is generated. Artwork remains governed by the separate asset audit and the existing Stage B fallback.
-- Rule-defined Ability builders clone source Ability-slot arrays rather than inventing slot placement.
-- Wormadam cloak Forms copy complete supported structured mechanics from their supplied Species records.
-- Pumpkaboo/Gourgeist size Forms copy only their explicit Base Stat matrices; exact per-size measurements are not fabricated from source ranges.
 - No `.ptucp` file is written by this generator.
 
 ## Rule-defined builders
@@ -31,14 +32,19 @@ Generated deterministically from the versioned PTU classification/inventory. Thi
 - `aegislash` / `rule_defined_stance_change` — Sword Stance
 - `basculin` / `embedded_color_ability_variant` — Red, Blue
 - `burmy` / `rule_defined_quick_cloak` — Plant Cloak, Sandy Cloak, Trash Cloak
+- `darmanitan` / `mixed_darmanitan_standard_zen` — Standard Mode, Galarian Standard Mode, Zen Mode, Galarian Zen Mode
 - `eiscue` / `rule_defined_ice_face` — Noice Face
 - `furfrou` / `rule_defined_fabulous_trim` — Star Trim, Diamond Trim, Heart Trim, Pharaoh Trim, Kabuki Trim, La Reine Trim, Matron Trim, Dandy Trim, Debutante Trim
 - `gourgeist` / `embedded_size_base_stats` — Small, Average, Large, Super
 - `meloetta` / `rule_defined_relic_song` — Step Forme
 - `minior` / `rule_defined_shields_down` — Core Forme
+- `necrozma` / `mixed_necrozma_fusion_ultra_burst` — Dusk Mane, Dawn Wings, Ultra Burst
 - `pumpkaboo` / `embedded_size_base_stats` — Small, Average, Large, Super
 - `wishiwashi` / `rule_defined_schooling` — Schooling Forme
 - `wormadam` / `source_record_cloak_forms` — Plant Cloak, Sandy Cloak, Trash Cloak
+- `zacian` / `mixed_weapon_bond` — Hero of Many Battles Forme, Crowned Sword Forme
+- `zamazenta` / `mixed_weapon_bond` — Hero of Many Battles Forme, Crowned Shield Forme
+- `zygarde` / `mixed_zygarde_cells_power_construct` — 10% Forme, 50% Forme, Complete Forme, Complete Forme
 
 ## Synthetic transformations
 
@@ -77,8 +83,6 @@ Generated deterministically from the versioned PTU classification/inventory. Thi
 - `medicham` / `mega-evolution` — Mega Medicham
 - `metagross` / `mega-evolution` — Mega Metagross
 - `mewtwo` / `mega-evolution` — Mega Mewtwo X, Mega Mewtwo Y
-- `necrozma-dawn-wings` / `ultra-burst` — Ultra NECROZMA Dawn Wings
-- `necrozma-dusk-mane` / `ultra-burst` — Ultra NECROZMA Dusk Mane
 - `pidgeot` / `mega-evolution` — Mega Pidgeot
 - `pinsir` / `mega-evolution` — Mega Pinsir
 - `rayquaza` / `mega-evolution` — Mega Rayquaza
@@ -98,7 +102,6 @@ Generated deterministically from the versioned PTU classification/inventory. Thi
 - `arceus` (runtime_state) — Classification is not safe for direct forms[] materialization.
 - `castform` (runtime_state) — Classification is not safe for direct forms[] materialization.
 - `cramorant` (false_positive) — Classification is not safe for direct forms[] materialization.
-- `darmanitan` (mixed) — Classification is not safe for direct forms[] materialization.
 - `deerling` (runtime_state) — Classification is not safe for direct forms[] materialization.
 - `deoxys` (defer) — Classification is not safe for direct forms[] materialization.
 - `giratina` (defer) — Classification is not safe for direct forms[] materialization.
@@ -107,7 +110,6 @@ Generated deterministically from the versioned PTU classification/inventory. Thi
 - `landorus` (defer) — Classification is not safe for direct forms[] materialization.
 - `mimikyu` (false_positive) — Classification is not safe for direct forms[] materialization.
 - `morpeko` (runtime_state) — Classification is not safe for direct forms[] materialization.
-- `necrozma` (mixed) — Classification is not safe for direct forms[] materialization.
 - `nidoran-f` (false_positive) — Classification is not safe for direct forms[] materialization.
 - `nidoran-m` (false_positive) — Classification is not safe for direct forms[] materialization.
 - `oricorio` (defer) — Classification is not safe for direct forms[] materialization.
@@ -118,6 +120,3 @@ Generated deterministically from the versioned PTU classification/inventory. Thi
 - `solosis` (false_positive) — Classification is not safe for direct forms[] materialization.
 - `thundurus` (defer) — Classification is not safe for direct forms[] materialization.
 - `tornadus` (defer) — Classification is not safe for direct forms[] materialization.
-- `zacian` (mixed) — Classification is not safe for direct forms[] materialization.
-- `zamazenta` (mixed) — Classification is not safe for direct forms[] materialization.
-- `zygarde` (mixed) — Classification is not safe for direct forms[] materialization.
