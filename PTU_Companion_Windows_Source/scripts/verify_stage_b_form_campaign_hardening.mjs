@@ -46,7 +46,7 @@ for(const path of appPaths){
     "title:'Temporary HP blocked'",
     'await revalidatePokemonFormAfterDirectHpMutation(p.id,{hpChanged:true,tempHpChanged:false,silent:true})',
   ])assert.ok(src.includes(needle),`${path} missing ${needle}`);
-  assert.ok(!src.includes('function storePokemon(id){\n  const p=pokemon(id); if(p.injuries>0)'),`${path} retained synchronous storage path`);
+  assert.doesNotMatch(src,/(^|\n)function storePokemon\(id\)\{/m,`${path} retained synchronous storage path`);
 
   const p={id:'p1',name:'Testmon',species:'Testmon',hp:30,maxHp:40,tempHp:12,injuries:0,heldItem:null,storage:false,combatStages:{attack:2,defense:-1},details:{tempHp:12,formTempHpBySource:{schooling:12},formTempHpBlockOtherSources:{source:'schooling',activeFormId:'schooling'},formState:{schemaVersion:1,baseFormId:'base',activeFormId:'schooling'},speciesDefinitionId:'testmon'}};
   const trainerObj={history:[]};const commits=[];const toasts=[];const calls=[];
