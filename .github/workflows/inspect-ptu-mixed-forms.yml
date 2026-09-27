@@ -9,6 +9,8 @@ on:
       - '.github/workflows/inspect-ptu-mixed-forms.yml'
       - 'PTU_Companion_Windows_Source/scripts/augment_ptu_mixed_stage_b.py'
       - 'PTU_Companion_Windows_Source/scripts/validate_ptu_mixed_forms.py'
+      - 'PTU_Companion_Windows_Source/scripts/augment_ptu_runtime_requirements.py'
+      - 'PTU_Companion_Windows_Source/scripts/verify_stage_b_form_requirements_v2.mjs'
   workflow_run:
     workflows:
       - Inspect PTU Form Candidates
@@ -30,10 +32,17 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
       - name: Materialize mixed base plus active Forms
         run: python PTU_Companion_Windows_Source/scripts/augment_ptu_mixed_stage_b.py
       - name: Validate mixed Form composition
         run: python PTU_Companion_Windows_Source/scripts/validate_ptu_mixed_forms.py
+      - name: Reapply source-explicit runtime requirements
+        run: python PTU_Companion_Windows_Source/scripts/augment_ptu_runtime_requirements.py
+      - name: Validate runtime requirement model v2
+        run: node PTU_Companion_Windows_Source/scripts/verify_stage_b_form_requirements_v2.mjs
       - name: Check mixed catalog invariants
         run: |
           grep -q 'Candidate-family form entries:.*48' docs/PTU_FORMS_STAGE_B.md
@@ -45,6 +54,8 @@ jobs:
           grep -q 'Primal transforms:.*2' docs/PTU_FORMS_STAGE_B.md
           grep -q 'Synthetic Ultra Burst transforms:.*0' docs/PTU_FORMS_STAGE_B.md
           grep -q 'Composed Necrozma Ultra Burst active overlays:.*1.*2.*source blocks' docs/PTU_FORMS_STAGE_B.md
+          grep -q 'Runtime requirement model:.*2' docs/PTU_FORMS_STAGE_B.md
+          grep -q 'Forms upgraded from review-only manual gates to structured source requirements:.*8' docs/PTU_FORMS_STAGE_B.md
           grep -q 'darmanitan.*mixed_darmanitan_standard_zen.*Standard Mode.*Galarian Standard Mode.*Zen Mode.*Galarian Zen Mode' docs/PTU_FORMS_STAGE_B.md
           grep -q 'necrozma.*mixed_necrozma_fusion_ultra_burst.*Dusk Mane.*Dawn Wings.*Ultra Burst' docs/PTU_FORMS_STAGE_B.md
           grep -q 'zacian.*mixed_weapon_bond.*Hero of Many Battles Forme.*Crowned Sword Forme' docs/PTU_FORMS_STAGE_B.md
@@ -52,6 +63,10 @@ jobs:
           grep -q 'zygarde.*mixed_zygarde_cells_power_construct.*10% Forme.*50% Forme.*Complete Forme' docs/PTU_FORMS_STAGE_B.md
           grep -q 'Zygarde Complete overlays preserve the prior 10%/50% HP Base Stat' docs/PTU_FORMS_STAGE_B.md
           grep -q 'Necrozma Ultra Burst is emitted in the mixed family and removed from the synthetic list' docs/PTU_FORMS_STAGE_B.md
+          grep -q 'meloetta:step-forme.*Relic Song' docs/PTU_FORMS_STAGE_B.md
+          grep -q 'minior:core.*half maximum HP' docs/PTU_FORMS_STAGE_B.md
+          grep -q 'eiscue:noice-face.*Temporary HP' docs/PTU_FORMS_STAGE_B.md
+          grep -q 'wishiwashi:schooling.*Schooling' docs/PTU_FORMS_STAGE_B.md
           git diff --exit-code -- '*.ptucp'
           git diff --check
       - name: Commit generated mixed catalog
@@ -61,8 +76,8 @@ jobs:
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add docs/PTU_FORMS_STAGE_B.md docs/data/PTU_FORMS_STAGE_B.json
           if git diff --cached --quiet; then
-            echo 'Mixed Forms catalog already current.'
+            echo 'Mixed Forms catalog and requirement v2 overlay already current.'
           else
-            git commit -m 'docs(content): compose PTU mixed forms [skip ci]'
+            git commit -m 'docs(content): compose PTU mixed forms with runtime requirements [skip ci]'
             git push origin HEAD:content/ptu-parametrized-forms-catalog
           fi
