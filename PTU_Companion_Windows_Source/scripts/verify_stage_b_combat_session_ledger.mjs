@@ -16,9 +16,8 @@ const oldAudit=join(repo,'docs','data','PTU_FORMS_COMBAT_RESOURCE_AUDIT.json');
 function extractFunction(src,name){
   const match=new RegExp(`(?:async\\s+)?function\\s+${name}\\s*\\(`).exec(src);
   if(!match)throw new Error(`Missing function ${name}`);
-  const start=match.index,brace=src.indexOf('{',start);let depth=0,end=-1;
-  for(let i=brace;i<src.length;i++){if(src[i]==='{')depth++;else if(src[i]==='}'){depth--;if(depth===0){end=i+1;break;}}}
-  if(end<0)throw new Error(`Unclosed function ${name}`);return src.slice(start,end);
+  const start=match.index;const tail=src.slice(start+1);const next=/\n(?:async\s+)?function\s+[A-Za-z_$][\w$]*\s*\(/.exec(tail);const end=next?start+1+next.index:src.length;
+  return src.slice(start,end).trim();
 }
 
 const sources=[];
