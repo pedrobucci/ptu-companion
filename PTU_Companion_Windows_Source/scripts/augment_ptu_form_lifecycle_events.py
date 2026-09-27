@@ -131,7 +131,7 @@ def main() -> None:
                 'id': f'power-construct-{base_id}', 'event': 'ability-used', 'priority': 10,
                 'when': {'all': [{'ability': 'Power Construct'}, {'base_form_id': base_id}]},
                 'action': {'type': 'activate'}, 'frequency': 'Daily', 'action_cost': 'Swift Action',
-                'effects': [{'kind': 'grant-temp-hp', 'source': 'power-construct', 'fraction_of_target_form_max_hp': 0.5, 'blocks_other_sources': True}],
+                'effects': [{'kind': 'grant-temp-hp', 'source': 'power-construct', 'fraction_of_target_form_max_hp': 0.5, 'target_form_base_hp': 22, 'blocks_other_sources': True}],
             },
             {
                 'id': f'power-construct-scene-end-{base_id}', 'event': 'scene-end', 'priority': 10,
