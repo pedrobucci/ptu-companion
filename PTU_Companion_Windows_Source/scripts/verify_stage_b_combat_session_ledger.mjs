@@ -66,4 +66,4 @@ const doc=JSON.parse(await readFile(docJson,'utf8'));assert.equal(doc.schema_ver
 const md=await readFile(docMd,'utf8');assert.match(md,/Combat Session Ledger/);assert.match(md,/Rollout starts at DB 3/);assert.match(md,/Full Actions consume both Standard and Shift Actions/);assert.match(md,/natural d20/i);
 const previous=JSON.parse(await readFile(oldAudit,'utf8'));assert.equal(previous.status,'historical_pre_ledger_snapshot');assert.equal(previous.superseded_by,'docs/PTU_COMBAT_SESSION_LEDGER.md');
 
-console.log(JSON.stringify({combatLedger:1,platforms:['windows','android'],menu:'Combat',realDice:true,actionLedger:true,frequencyLedger:true,rolloutDefenseCurl:true,formSpending:false},null,2));
+console.log(JSON.stringify({combatLedger:1,platforms:['windows','android'],menu:'Combat',realDice:true,actionLedger:true,frequencyLedger:true,rolloutDefenseCurl:true,formSpending:false,eotExtraTurnSafe:false},null,2));
