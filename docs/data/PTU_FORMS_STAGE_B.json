@@ -13297,6 +13297,7 @@
                     "kind": "grant-temp-hp",
                     "source": "power-construct",
                     "fraction_of_target_form_max_hp": 0.5,
+                    "target_form_base_hp": 22,
                     "blocks_other_sources": true
                   }
                 ]
@@ -13936,6 +13937,7 @@
                     "kind": "grant-temp-hp",
                     "source": "power-construct",
                     "fraction_of_target_form_max_hp": 0.5,
+                    "target_form_base_hp": 22,
                     "blocks_other_sources": true
                   }
                 ]
