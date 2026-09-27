@@ -13,6 +13,8 @@ on:
       - 'PTU_Companion_Android_Tauri/www/rules/pokemon-form-events.mjs'
       - 'PTU_Companion_Windows_Source/scripts/apply_stage_b_form_campaign_state.py'
       - 'PTU_Companion_Windows_Source/scripts/verify_stage_b_form_campaign_state.mjs'
+      - 'PTU_Companion_Windows_Source/scripts/verify_beta8_hp_identity.mjs'
+      - 'PTU_Companion_Android_Tauri/scripts/verify-beta8-hp-identity.mjs'
       - 'PTU_Companion_Windows_Source/scripts/augment_ptu_form_lifecycle_events.py'
       - 'PTU_Companion_Windows_Source/server.mjs'
       - 'PTU_Companion_Android_Tauri/www/mobile-api.mjs'
@@ -62,7 +64,9 @@ jobs:
           grep -q 'setPokemonBattleState' PTU_Companion_Windows_Source/static-preview/app.js
           grep -q 'setPokemonBattleState' PTU_Companion_Android_Tauri/www/app.js
           grep -q 'target_form_base_hp' docs/data/PTU_FORMS_STAGE_B.json
-          grep -q 'formTempHpBySource' PTU_Companion_Windows_Source/persistence/repository.mjs
+          grep -q 'tempHp:Number(p.tempHp??p.details?.tempHp??0)' PTU_Companion_Windows_Source/persistence/repository.mjs
+          grep -q "extract('changeHp',true)" PTU_Companion_Windows_Source/scripts/verify_beta8_hp_identity.mjs
+          grep -q "extract('changeHp',true)" PTU_Companion_Android_Tauri/scripts/verify-beta8-hp-identity.mjs
           git diff --exit-code -- '*.ptucp'
           git diff --check
       - name: Commit campaign-state runtime integration
