@@ -2,7 +2,7 @@ import {normalizeSpeciesForms,normalizePokemonFormState,resolvePokemonForms,eval
 
 const deepClone=value=>value==null?value:JSON.parse(JSON.stringify(value));
 const slug=value=>String(value||'').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
-const finite=value=>{const number=Number(value);return Number.isFinite(number)?number:null;};
+const finite=value=>{if(value==null||value==='')return null;const number=Number(value);return Number.isFinite(number)?number:null;};
 
 export const FORM_EVENT_SCHEMA_VERSION=1;
 export const FORM_LIFECYCLE_MODEL_VERSION=1;
@@ -220,6 +220,8 @@ export function applyPokemonFormTransitionEvent({species,formState={},context={}
         before,
         after:{...state},
         action:deepClone(entry.rule?.action||null),
+        actionCost:entry.rule?.action_cost||entry.rule?.actionCost||null,
+        frequency:entry.rule?.frequency||null,
       });
     }
   }
