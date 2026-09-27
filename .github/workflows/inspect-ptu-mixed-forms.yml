@@ -35,8 +35,33 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Materialize mixed base plus active Forms
-        run: python PTU_Companion_Windows_Source/scripts/augment_ptu_mixed_stage_b.py
+      - name: Materialize mixed base plus active Forms when needed
+        run: |
+          python - <<'PY'
+          import json
+          import subprocess
+          from pathlib import Path
+
+          path = Path('docs/data/PTU_FORMS_STAGE_B.json')
+          payload = json.loads(path.read_text(encoding='utf-8'))
+          synthetic_ultra = sum(
+              len(entry.get('forms', []))
+              for entry in payload.get('synthetic_transform_species', [])
+              if entry.get('source_family') == 'ultra-burst'
+          )
+          mixed = {
+              entry.get('family')
+              for entry in payload.get('candidate_families', [])
+              if str(entry.get('builder', '')).startswith('mixed_')
+          }
+          expected = {'darmanitan', 'necrozma', 'zacian', 'zamazenta', 'zygarde'}
+          if synthetic_ultra == 2:
+              subprocess.run(['python', 'PTU_Companion_Windows_Source/scripts/augment_ptu_mixed_stage_b.py'], check=True)
+          elif synthetic_ultra == 0 and expected <= mixed:
+              print('Mixed Forms are already materialized; keeping the existing composed catalog.')
+          else:
+              raise SystemExit(f'Unexpected mixed catalog state: synthetic_ultra={synthetic_ultra}, mixed={sorted(mixed)}')
+          PY
       - name: Validate mixed Form composition
         run: python PTU_Companion_Windows_Source/scripts/validate_ptu_mixed_forms.py
       - name: Reapply source-explicit runtime requirements
