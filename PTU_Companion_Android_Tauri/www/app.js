@@ -814,7 +814,7 @@ async function loadCreatureReferenceData(force=false){
     const response=await fetch('/api/pokemon/reference-data',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({pokemon:p,rulesetId:catalogState.status?.activeRulesetId})});
     const payload=await response.json(); if(!response.ok)throw new Error(payload.error||'Unable to load Pokémon reference data');
     const resolvedMax=Number(payload?.resolvedCreature?.stats?.breakdown?.maxHp);
-    if(Number.isFinite(resolvedMax)&&resolvedMax>0&&Number(p.maxHp)!==resolvedMax){ p.maxHp=resolvedMax; p.hp=Math.min(Number(p.hp||0),resolvedMax); persist(); }
+    if(Number.isFinite(resolvedMax)&&resolvedMax>0&&Number(p.maxHp)!==resolvedMax){ p.maxHp=resolvedMax;p.hp=Math.min(Number(p.hp||0),resolvedMax);await revalidatePokemonFormAfterDirectHpMutation(p.id,{hpChanged:true,tempHpChanged:false,silent:true});persist(); }
     creatureReferenceState={pokemonId:p.id,loading:false,error:null,data:payload};
   }catch(error){creatureReferenceState={pokemonId:p.id,loading:false,error:error.message,data:null};}
   render();
@@ -1689,7 +1689,7 @@ function resetPokemonRestat(){const p=pokemon(pokemonRestatState.pokemonId); pok
 function cancelPokemonRestat(){state.ui.screen='creature';state.ui.creatureTab='species';persist();render();loadCreatureReferenceData(true);}
 async function applyPokemonRestat(){
   const p=pokemon(pokemonRestatState.pokemonId),pv=pokemonRestatState.preview;if(!p||!pv)return;if(!pv.valid&&!state.ui.gmOverride)return toast('Resolve the Stat allocation errors first.','error');
-  const oldMax=p.maxHp; p.details.statAllocations={...pv.statAllocations}; p.details.natureAdjustedBaseStats={...pv.natureAdjustedBaseStats}; p.details.finalStats={...pv.finalStats}; p.details.baseRelationExemptStats=[...(pv.resolvedStatEffects?.baseRelations?.exemptStats||pv.baseRelations?.exemptStats||['hp'])]; p.maxHp=Number(pv.resolvedMaxHp??pv.maxHp); p.hp=Math.min(p.hp,p.maxHp);
+  const oldMax=p.maxHp; p.details.statAllocations={...pv.statAllocations}; p.details.natureAdjustedBaseStats={...pv.natureAdjustedBaseStats}; p.details.finalStats={...pv.finalStats}; p.details.baseRelationExemptStats=[...(pv.resolvedStatEffects?.baseRelations?.exemptStats||pv.baseRelations?.exemptStats||['hp'])]; p.maxHp=Number(pv.resolvedMaxHp??pv.maxHp);p.hp=Math.min(p.hp,p.maxHp);await revalidatePokemonFormAfterDirectHpMutation(p.id,{hpChanged:true,tempHpChanged:false,silent:true});
   p.details.progressionHistory=Array.isArray(p.details.progressionHistory)?p.details.progressionHistory:[]; p.details.progressionHistory.push({date:new Date().toISOString(),action:'stat_redistribution',oldMaxHp:oldMax,newMaxHp:p.maxHp,gmOverride:!!state.ui.gmOverride,allocations:{...pv.statAllocations}});
   trainer().history.push({id:uid('h'),date:new Date().toISOString().slice(0,10),title:'Pokémon Stats redistributed',detail:`${p.name}: permanent Stat allocation corrected${state.ui.gmOverride?' with GM Override':''}.`}); state.ui.screen='creature';state.ui.creatureTab='species'; creatureReferenceState={pokemonId:null,loading:false,error:null,data:null}; await commit(`${p.name} Stat allocation updated.`); await loadCreatureReferenceData(true);
 }
@@ -1783,14 +1783,14 @@ async function acquirePokeEdge(edgeId,targetStat=null){
   }
   const response=await fetch('/api/pokemon/training-action-preview',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'acquire_edge',pokemon:p,edgeId,targetNote,targetId,targetKind,targetStat,statAllocation,manualConfirm,gmOverride:state.ui.gmOverride,rulesetId:catalogState.status?.activeRulesetId})}); const payload=await response.json();
   if(!response.ok||!payload.valid) return toast((payload.errors||[payload.error||'Unable to acquire Poké Edge']).join(' '),'error');
-  p.details=payload.details; if(Number(payload?.resolvedStatEffects?.maxHp)>0){p.maxHp=Number(payload.resolvedStatEffects.maxHp);p.hp=Math.min(p.hp,p.maxHp);} invalidateCreatureReference(); trainer().history.push({id:uid('h'),date:new Date().toISOString().slice(0,10),title:'Poké Edge acquired',detail:`${p.name}: ${payload.resultRecord.name} (${payload.cost} TP)`}); await commit(`${p.name} acquired ${payload.resultRecord.name}.`); await refreshPokemonTrainingOptions();
+  p.details=payload.details; if(Number(payload?.resolvedStatEffects?.maxHp)>0){p.maxHp=Number(payload.resolvedStatEffects.maxHp);p.hp=Math.min(p.hp,p.maxHp);await revalidatePokemonFormAfterDirectHpMutation(p.id,{hpChanged:true,tempHpChanged:false,silent:true});} invalidateCreatureReference(); trainer().history.push({id:uid('h'),date:new Date().toISOString().slice(0,10),title:'Poké Edge acquired',detail:`${p.name}: ${payload.resultRecord.name} (${payload.cost} TP)`}); await commit(`${p.name} acquired ${payload.resultRecord.name}.`); await refreshPokemonTrainingOptions();
 }
 async function refundPokeEdge(edgeIndex){
   const p=pokemon(pokemonTrainingState.pokemonId); const edge=p?.details?.pokeEdges?.[edgeIndex]; if(!p||!edge)return;
   if(!(await styledConfirm({title:'Refund Poké Edge',message:`<p>Refund <strong>${esc(edge.name)}${edge.targetNote?` (${esc(edge.targetNote)})`:''}</strong>?</p><div class="dialog-warning">This is a sheet-correction convenience and returns ${Number(edge.cost||0)} Tutor Point${Number(edge.cost||0)===1?'':'s'}.</div>`,confirmLabel:'Refund Edge',tone:'gold'}))) return;
   const response=await fetch('/api/pokemon/training-action-preview',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'refund_edge',pokemon:p,edgeIndex,edgeInstanceId:edge.instanceId||null,rulesetId:catalogState.status?.activeRulesetId})});
   const payload=await response.json(); if(!response.ok||!payload.valid) return toast((payload.errors||[payload.error||'Unable to refund Poké Edge']).join(' '),'error');
-  p.details=payload.details; if(Number(payload?.resolvedStatEffects?.maxHp)>0){p.maxHp=Number(payload.resolvedStatEffects.maxHp);p.hp=Math.min(p.hp,p.maxHp);} invalidateCreatureReference(); trainer().history.push({id:uid('h'),date:new Date().toISOString().slice(0,10),title:'Poké Edge refunded',detail:`${p.name}: ${edge.name}${edge.targetNote?` (${edge.targetNote})`:''}; +${payload.resultRecord?.refundedTutorPoints||0} TP`}); await commit(`${edge.name} refunded for ${p.name}.`); await refreshPokemonTrainingOptions();
+  p.details=payload.details; if(Number(payload?.resolvedStatEffects?.maxHp)>0){p.maxHp=Number(payload.resolvedStatEffects.maxHp);p.hp=Math.min(p.hp,p.maxHp);await revalidatePokemonFormAfterDirectHpMutation(p.id,{hpChanged:true,tempHpChanged:false,silent:true});} invalidateCreatureReference(); trainer().history.push({id:uid('h'),date:new Date().toISOString().slice(0,10),title:'Poké Edge refunded',detail:`${p.name}: ${edge.name}${edge.targetNote?` (${edge.targetNote})`:''}; +${payload.resultRecord?.refundedTutorPoints||0} TP`}); await commit(`${edge.name} refunded for ${p.name}.`); await refreshPokemonTrainingOptions();
 }
 async function learnPokemonTrainingMove(moveId){
   const p=pokemon(pokemonTrainingState.pokemonId); const o=pokemonTrainingState.options; const method=pokemonTrainingState.moveMethod; const move=(o?.moveTeaching?.[method]||[]).find(m=>m.id===moveId); if(!p||!move)return;
@@ -1883,9 +1883,42 @@ function syncPokemonTempHpPersistence(p){
   if(!p)return;p.details=p.details&&typeof p.details==='object'?p.details:{};p.tempHp=Math.max(0,Number(p.tempHp??p.details.tempHp??0));p.details.tempHp=p.tempHp;
   if(!p.details.formTempHpBySource||typeof p.details.formTempHpBySource!=='object'||Array.isArray(p.details.formTempHpBySource))p.details.formTempHpBySource={};
 }
+
+function clearPokemonFormTempHpTracking(p){
+  if(!p)return;syncPokemonTempHpPersistence(p);p.tempHp=0;p.details.tempHp=0;p.details.formTempHpBySource={};delete p.details.formTempHpBlockOtherSources;
+}
+function pokemonFormStateSnapshot(p){
+  const state=p?.details?.formState||{};return {baseFormId:formEventSlug(state.baseFormId||'base')||'base',activeFormId:state.activeFormId==null?null:(formEventSlug(state.activeFormId)||null)};
+}
+function pokemonFormStateLabel(formState={}){const base=formState.baseFormId||'base',active=formState.activeFormId||null;return active?`${base} + ${active}`:base;}
+function pokemonFormAppliedRuleSummary(payload){
+  const notes=[];for(const transition of (payload?.transitions||[]))for(const rule of (transition?.appliedRules||[])){const bits=[rule.frequency,rule.actionCost].filter(Boolean);if(bits.length)notes.push(bits.join(' · '));}
+  return [...new Set(notes)].join('; ');
+}
+function recordPokemonFormLifecycleFeedback(p,beforeState,payload,event,{silent=false}={}){
+  if(!p||!payload?.valid)return {formChanged:false,blockedTempHp:0};
+  const afterState=pokemonFormStateSnapshot(p);const formChanged=beforeState.baseFormId!==afterState.baseFormId||beforeState.activeFormId!==afterState.activeFormId;
+  const blockedTempHp=Math.max(0,Number(payload?.hpAdjustment?.blockedTempHp||0));const history=trainer()?.history;
+  if(formChanged&&Array.isArray(history)){
+    const ruleSummary=pokemonFormAppliedRuleSummary(payload);history.push({id:uid('h'),date:new Date().toISOString().slice(0,10),title:'Pokémon Form changed',detail:`${p.name}: ${pokemonFormStateLabel(beforeState)} → ${pokemonFormStateLabel(afterState)}${ruleSummary?` · ${ruleSummary}`:''}`});
+    if(!silent)toast(`${p.name}: Form ${pokemonFormStateLabel(beforeState)} → ${pokemonFormStateLabel(afterState)}.`);
+  }
+  if(blockedTempHp>0&&Array.isArray(history)){
+    history.push({id:uid('h'),date:new Date().toISOString().slice(0,10),title:'Temporary HP blocked',detail:`${p.name}: ${blockedTempHp} Temporary HP blocked by the active Form source rule.`});
+    if(!silent)toast(`${p.name}: ${blockedTempHp} Temporary HP blocked by the active Form rule.`,'error');
+  }
+  return {formChanged,blockedTempHp};
+}
+async function revalidatePokemonFormAfterDirectHpMutation(id,{hpChanged=true,tempHpChanged=false,silent=true}={}){
+  const p=pokemon(id);if(!p?.details?.speciesDefinitionId)return null;let payload=null;
+  if(hpChanged)payload=await applyPokemonFormGameEventUi(id,{kind:'hp-changed'},{silent,commitAfter:false});
+  if(tempHpChanged)payload=await applyPokemonFormGameEventUi(id,{kind:'temp-hp-changed'},{silent,commitAfter:false});
+  return payload;
+}
+
 async function applyPokemonFormGameEventUi(id,event,{silent=false,commitAfter=true,message=null}={}){
   const p=pokemon(id);if(!p)return null;syncPokemonTempHpPersistence(p);
-  if(!p.details?.speciesDefinitionId)return null;
+  if(!p.details?.speciesDefinitionId)return null;const beforeFormState=pokemonFormStateSnapshot(p);
   try{
     const response=await fetch('/api/pokemon/forms/apply-event',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
       pokemon:p,event,rulesetId:catalogState.status?.activeRulesetId||p.details.linkedRulesetId||null,gmOverride:!!state.ui.gmOverride,
@@ -1898,9 +1931,10 @@ async function applyPokemonFormGameEventUi(id,event,{silent=false,commitAfter=tr
       return payload;
     }
     if(payload.pokemon){Object.assign(p,payload.pokemon);syncPokemonTempHpPersistence(p);}
-    if(payload.changed){invalidateCreatureReference();if(commitAfter)commit(message||`${p.name} Form state updated.`);}
+    const feedback=recordPokemonFormLifecycleFeedback(p,beforeFormState,payload,event,{silent});
+    if(payload.changed){invalidateCreatureReference();if(commitAfter)commit(message||`${p.name} state updated.${feedback.formChanged?' Form changed.':''}`);}
     else if(!silent&&commitAfter)toast('No Pokémon Form lifecycle change was triggered.');
-    return payload;
+    return {...payload,lifecycleFeedback:feedback};
   }catch(error){if(!silent)toast(error.message,'error');return null;}
 }
 function pokemonMoveRaisesDefenseCombatStages(def={}){
@@ -1990,21 +2024,26 @@ async function deleteRoster(id=state.selectedRosterId){
   if(state.selectedRosterId===r.id||!state.rosters.some(x=>x.id===state.selectedRosterId))state.selectedRosterId=state.rosters[0]?.id||null;
   commit(`Roster ${r.name} deleted. Pokémon were kept.`);
 }
-function storePokemon(id){
+async function storePokemon(id){
   const p=pokemon(id); if(p.injuries>0) return toast(`${p.name} cannot enter Storage with Injuries.`,'error');
   if(p.heldItem) returnHeldItemToBackpack(p);
-  p.storage=true; p.hp=p.maxHp; p.tempHp=0; Object.keys(p.combatStages).forEach(k=>p.combatStages[k]=0); commit(`${p.name} moved to Storage.`);
+  p.storage=true;p.hp=p.maxHp;clearPokemonFormTempHpTracking(p);Object.keys(p.combatStages).forEach(k=>p.combatStages[k]=0);
+  await revalidatePokemonFormAfterDirectHpMutation(id,{hpChanged:true,tempHpChanged:true,silent:true});commit(`${p.name} moved to Storage. Temporary HP and Form THP provenance cleared.`);
 }
-function withdrawPokemon(id){ const p=pokemon(id); p.storage=false; p.hp=p.maxHp; p.tempHp=0; commit(`${p.name} withdrawn from Storage.`); }
+async function withdrawPokemon(id){
+  const p=pokemon(id);if(!p)return;p.storage=false;p.hp=p.maxHp;clearPokemonFormTempHpTracking(p);
+  await revalidatePokemonFormAfterDirectHpMutation(id,{hpChanged:true,tempHpChanged:true,silent:true});commit(`${p.name} withdrawn from Storage. Temporary HP and Form state revalidated.`);
+}
 
 /* --- Inventory --- */
-function useItem(itemId,pid){
-  const i=inventoryItem(itemId), p=pokemon(pid); if(!i||i.qty<=0) return toast('No item available.','error');
-  if(i.id==='potion') p.hp=Math.min(p.maxHp,p.hp+20);
-  else if(i.id==='super-potion') p.hp=Math.min(p.maxHp,p.hp+50);
-  else if(i.id==='oran-berry') p.hp=Math.min(p.maxHp,p.hp+10);
-  else return toast(`${i.name} use is not automated in this prototype.`,'error');
-  i.qty-=1; commit(`${i.name} used on ${p.name}.`);
+async function useItem(itemId,pid){
+  const i=inventoryItem(itemId),p=pokemon(pid);if(!i||i.qty<=0)return toast('No item available.','error');
+  const healing=i.id==='potion'?20:i.id==='super-potion'?50:i.id==='oran-berry'?10:null;
+  if(healing==null)return toast(`${i.name} use is not automated in this prototype.`,'error');
+  if(p.details?.speciesDefinitionId){
+    const payload=await applyPokemonFormGameEventUi(pid,{kind:'hp-adjust',delta:healing},{silent:false,commitAfter:false});if(!payload?.valid)return;
+  }else p.hp=Math.min(p.maxHp,p.hp+healing);
+  i.qty-=1;commit(`${i.name} used on ${p.name}.`);
 }
 
 /* --- Shop --- */
