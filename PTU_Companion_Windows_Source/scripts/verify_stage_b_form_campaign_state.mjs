@@ -63,6 +63,7 @@ assert.equal(result.pokemon.details.formState.activeFormId,null);
 // Power Construct resolves Complete's hypothetical Max HP from source Base HP 22 plus the saved build deltas.
 p=pokemon({level:50,hp:40,maxHp:100,details:{formState:formState('10-percent',null),abilities:['Power Construct'],baseStats:{hp:5},natureAdjustedBaseStats:{hp:5},finalStats:{hp:15}}});
 result=applyPokemonFormGameEvent({species:family('zygarde'),pokemon:p,event:{kind:'ability-used',ability:'Power Construct'},context:{abilities:['Power Construct'],inCombat:true}});
+console.log('POWER_CONSTRUCT_DIAGNOSTIC',JSON.stringify({effects:result.effects,effectApplications:result.effectApplications,formState:result.pokemon?.details?.formState,tempHp:result.pokemon?.tempHp,details:result.pokemon?.details},null,2));
 assert.equal(result.valid,true);assert.equal(result.pokemon.details.formState.activeFormId,'complete-from-10-percent');
 assert.equal(result.pokemon.tempHp,78);assert.deepEqual(result.pokemon.details.formTempHpBySource,{'power-construct':78});
 result=applyPokemonFormGameEvent({species:family('zygarde'),pokemon:result.pokemon,event:{kind:'scene-end'},context:{abilities:['Power Construct'],inCombat:true}});
