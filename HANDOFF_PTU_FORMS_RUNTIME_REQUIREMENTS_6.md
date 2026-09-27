@@ -1,5 +1,7 @@
 # Handoff — PTU Forms runtime requirements 6
 
+This handoff is superseded by `HANDOFF_PTU_FORMS_LIFECYCLE_EVENTS_7.md` for the next implementation checkpoint.
+
 ## Branch / PR
 
 - Repository: `pedrobucci/ptu-companion`
@@ -71,7 +73,7 @@ Runtime representation:
 - `complete-from-10-percent` is compatible only with base `10-percent`;
 - `complete-from-50-percent` is compatible only with base `50-percent`.
 
-Automatic end-of-Scene clearing is still not invented. The duration remains explicit source metadata until a scene-lifecycle state primitive exists.
+Automatic end-of-Scene clearing was not part of this checkpoint; it is implemented in the successor lifecycle handoff.
 
 ### Zacian / Zamazenta — Weapon Bond
 
@@ -130,9 +132,9 @@ No save-schema migration was introduced. `POKEMON_FORM_SCHEMA_VERSION` remains `
 
 ## Stage B generated catalog
 
-Catalog schema is now **6** with `requirement_model_version: 2`.
+Catalog schema at this checkpoint was **6** with `requirement_model_version: 2`.
 
-Counts remain unchanged:
+Counts remained unchanged:
 
 - 48 candidate-family entries;
 - 32 generic record-backed family entries;
@@ -156,60 +158,21 @@ Exactly **8 Forms** were upgraded from review-only manual eligibility gates to s
 7. Zacian Crowned Sword;
 8. Zamazenta Crowned Shield.
 
-`docs/PTU_FORMS_STAGE_B.md` and JSON version these semantics.
-
-## Scripts / tests
-
-Added:
-
-- `PTU_Companion_Windows_Source/scripts/apply_stage_b_form_requirements_v2.py`
-- `PTU_Companion_Windows_Source/scripts/augment_ptu_runtime_requirements.py`
-- `PTU_Companion_Windows_Source/scripts/verify_stage_b_form_requirements_v2.mjs`
-- `.github/workflows/stage-b-form-requirements-v2.yml`
-
-Updated:
-
-- `PTU_Companion_Windows_Source/scripts/validate_ptu_mixed_forms.py`
-- `.github/workflows/inspect-ptu-mixed-forms.yml`
-
-The requirement overlay and mixed pipeline are idempotent: a catalog that is already mixed/schema-v6 is validated/re-overlaid rather than requiring the old two synthetic Ultra Burst entries to be recreated.
-
 ## Validation
 
-### Requirement model v2
-
-GitHub Actions:
+Requirement model v2:
 
 - run `36288580783`
 - job `108534068188`
 - conclusion: **success**
 
-Passed:
-
-- shared Windows/Android runtime patch;
-- deterministic Stage B requirement overlay;
-- requirement-v2 focused regression tests;
-- full Windows `npm run verify`;
-- full Android `npm run verify`;
-- no `.ptucp` diff;
-- `git diff --check`;
-- runtime integration commit `5f5edc4e13cf40334ecc508a427974fcf830e3e1`.
-
-### Mixed regeneration compatibility
-
-An intermediate run (`36288633929`) exposed a CI-only idempotency problem: the old mixed augmenter expected exactly two pre-existing synthetic Ultra Burst entries even when the catalog was already composed. No runtime/default-pack regression occurred.
-
-The workflow was corrected to detect whether mixed composition is already present, and the final validation passed:
+Mixed regeneration compatibility:
 
 - run `36288797340`
 - job `108534689665`
 - conclusion: **success**
 
-It validates the mixed catalog, reapplies requirement model v2, reruns the focused verifier, checks catalog invariants, and confirms no `.ptucp` mutation.
-
 ## Deferred gate unchanged
-
-The exact ten deferred families remain:
 
 - Deoxys
 - Giratina
@@ -224,13 +187,6 @@ The exact ten deferred families remain:
 
 The new runtime primitives must **not** be used to fabricate the missing species-specific transition rules for these families. Their default-pack gate remains closed.
 
-## Remaining manual gates / next useful pass
+## Successor handoff
 
-Structured requirements do not mean every transformation lifecycle is now automatic. Important remaining cases:
-
-- Aegislash Stance Change: exact move/event triggers are source-defined, but the current model does not yet consume move events automatically;
-- Darmanitan regular Zen Mode: supplied Core and February 2016 activation semantics conflict, so its manual review gate must remain until a source policy is explicitly chosen;
-- Necrozma Ultra Burst: transformation effects are explicit but activation is still source-insufficient, so its manual gate must remain;
-- Mega/Primal forms: review gates remain where source activation/equipment/action context is not yet represented losslessly.
-
-A useful next pass is to introduce explicit **form transition events/lifecycle state** (scene expiration, move-use trigger, battle-start hook, faint/relinquish transitions, and source-specific Temporary HP grants) so source-defined effects such as Stance Change, Ice Face restoration, Power Construct scene expiry, Schooling activation, and Weapon Bond relinquish can update `activeFormId` automatically instead of only validating a requested state.
+Continue from `HANDOFF_PTU_FORMS_LIFECYCLE_EVENTS_7.md`, which adds source-explicit event/lifecycle automation on top of this requirement model.
