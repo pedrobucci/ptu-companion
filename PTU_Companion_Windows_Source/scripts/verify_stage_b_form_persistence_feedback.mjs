@@ -51,7 +51,10 @@ for(const path of appPaths){
     normalizePokemonGender:value=>String(value||'None'),
     defaultState:()=>({version:2,trainer:{details:{}},pokemon:[],inventory:[],ui:{}}),
   };
-  vm.createContext(migrateCtx);vm.runInContext(extractFunction(src,'migrateState'),migrateCtx);
+  vm.createContext(migrateCtx);
+  vm.runInContext(extractFunction(src,'pokemonCombatDefaultUi'),migrateCtx);
+  vm.runInContext(extractFunction(src,'normalizePokemonCombatUiState'),migrateCtx);
+  vm.runInContext(extractFunction(src,'migrateState'),migrateCtx);
   const original={
     version:2,
     trainer:{id:'t1',name:'Trainer',nextExp:10,details:{}},
@@ -67,7 +70,7 @@ for(const path of appPaths){
       }
     }],
     inventory:[{id:'two-handed-sword'}],
-    ui:{screen:'creature',inCombat:true},
+    ui:{screen:'creature',inCombat:true,combat:{version:1,active:true,rosterId:'r1',activePokemonId:'zygarde-1',participantIds:['zygarde-1'],participants:{'zygarde-1':{pokemonId:'zygarde-1'}},log:[]}},
   };
   const imported=JSON.parse(JSON.stringify(original));
   const migrated=migrateCtx.migrateState(imported);const p=migrated.pokemon[0];
@@ -75,9 +78,10 @@ for(const path of appPaths){
   assert.deepEqual({...p.details.formTempHpBySource},{power_construct:33});
   assert.deepEqual({...p.details.formTempHpBlockOtherSources},{source:'power_construct',activeFormId:'complete-from-10'});
   assert.equal(p.tempHp,33);assert.equal(p.details.tempHp,33);assert.equal(migrated.ui.inCombat,true);
+  assert.equal(migrated.ui.combat.active,true);assert.deepEqual(Array.from(migrated.ui.combat.participantIds),['zygarde-1']);
 }
 
-for(const functionName of ['pokemonFormStateLabel','applyPokemonProgression','migrateState']){
+for(const functionName of ['pokemonFormStateLabel','pokemonCombatDefaultUi','normalizePokemonCombatUiState','applyPokemonProgression','migrateState']){
   assert.equal(extractFunction(appSources[0],functionName),extractFunction(appSources[1],functionName),`${functionName} diverged between Windows and Android`);
 }
 
@@ -97,6 +101,7 @@ console.log(JSON.stringify({
   platforms:['windows','android'],
   readableFormNames:true,
   activeFormJsonRoundTrip:true,
+  combatSessionJsonRoundTrip:true,
   sqliteDetailsRoundTripGuard:true,
   hpMutationAuditSurfaces:audit.summary.surfaces,
   uncoveredLinkedHpMutationSurfaces:audit.summary.uncovered_linked_surfaces,
