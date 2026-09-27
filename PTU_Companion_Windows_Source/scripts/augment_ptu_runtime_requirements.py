@@ -29,9 +29,14 @@ def clear_review_gate(form: dict) -> None:
     if requirement is None:
         return
     leaves = requirement.get('all') if isinstance(requirement, dict) else None
-    if not isinstance(leaves, list) or not leaves or any(not isinstance(row, dict) or row.get('kind') != 'manual' for row in leaves):
-        raise SystemExit(f'Expected only a manual review gate before structured upgrade: {form.get("id")} -> {requirement}')
-    form.pop('requirements', None)
+    if isinstance(leaves, list) and leaves and all(isinstance(row, dict) and row.get('kind') == 'manual' for row in leaves):
+        form.pop('requirements', None)
+        return
+    # Idempotent reruns may already contain the structured requirement produced by this overlay.
+    # The deterministic assignments below will rewrite those fields to the canonical values.
+    if manual_leaf_count(requirement) == 0:
+        return
+    raise SystemExit(f'Unexpected mixed manual/structured requirement before upgrade: {form.get("id")} -> {requirement}')
 
 
 def manual_leaf_count(value: object) -> int:
