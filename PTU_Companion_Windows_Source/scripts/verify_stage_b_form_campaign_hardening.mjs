@@ -12,25 +12,11 @@ const appPaths=[join(root,'static-preview','app.js'),join(repo,'PTU_Companion_An
 function extractFunction(src,name){
   const match=new RegExp(`(?:async\\s+)?function\\s+${name}\\s*\\(`).exec(src);
   if(!match)throw new Error(`Missing function ${name}`);
-  const start=match.index;const open=src.indexOf('{',start);if(open<0)throw new Error(`Missing body for ${name}`);
-  let depth=0,quote=null,escape=false,templateDepth=0;
-  for(let i=open;i<src.length;i++){
-    const ch=src[i],next=src[i+1];
-    if(quote){
-      if(escape){escape=false;continue;}
-      if(ch==='\\'){escape=true;continue;}
-      if(quote==='`'&&ch==='$'&&next==='{'){templateDepth++;i++;continue;}
-      if(quote==='`'&&templateDepth>0){if(ch==='{')templateDepth++;else if(ch==='}')templateDepth--;continue;}
-      if(ch===quote)quote=null;
-      continue;
-    }
-    if(ch==='"'||ch==="'"||ch==='`'){quote=ch;continue;}
-    if(ch==='/'&&next==='/'){const nl=src.indexOf('\n',i+2);i=nl<0?src.length:nl;continue;}
-    if(ch==='/'&&next==='*'){const end=src.indexOf('*/',i+2);i=end<0?src.length:end+1;continue;}
-    if(ch==='{')depth++;
-    else if(ch==='}'&&--depth===0)return src.slice(start,i+1);
-  }
-  throw new Error(`Unclosed function ${name}`);
+  const start=match.index;
+  const tail=src.slice(start+1);
+  const next=/\n(?:async\s+)?function\s+[A-Za-z_$][\w$]*\s*\(/.exec(tail);
+  const end=next?start+1+next.index:src.length;
+  return src.slice(start,end).trim();
 }
 
 for(const path of appPaths){
