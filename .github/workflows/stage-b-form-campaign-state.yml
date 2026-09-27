@@ -1,0 +1,89 @@
+name: Stage B Form Campaign State
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - content/ptu-parametrized-forms-catalog
+    paths:
+      - '.github/workflows/stage-b-form-campaign-state.yml'
+      - 'PTU_Companion_Windows_Source/rules/pokemon-form-campaign-state.mjs'
+      - 'PTU_Companion_Android_Tauri/www/rules/pokemon-form-campaign-state.mjs'
+      - 'PTU_Companion_Windows_Source/rules/pokemon-form-events.mjs'
+      - 'PTU_Companion_Android_Tauri/www/rules/pokemon-form-events.mjs'
+      - 'PTU_Companion_Windows_Source/scripts/apply_stage_b_form_campaign_state.py'
+      - 'PTU_Companion_Windows_Source/scripts/verify_stage_b_form_campaign_state.mjs'
+      - 'PTU_Companion_Windows_Source/scripts/augment_ptu_form_lifecycle_events.py'
+      - 'PTU_Companion_Windows_Source/server.mjs'
+      - 'PTU_Companion_Android_Tauri/www/mobile-api.mjs'
+      - 'PTU_Companion_Windows_Source/static-preview/app.js'
+      - 'PTU_Companion_Android_Tauri/www/app.js'
+      - 'PTU_Companion_Windows_Source/persistence/repository.mjs'
+
+permissions:
+  contents: write
+
+jobs:
+  campaign-state:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: content/ptu-parametrized-forms-catalog
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Integrate Form lifecycle with campaign state and UI
+        run: python PTU_Companion_Windows_Source/scripts/apply_stage_b_form_campaign_state.py
+      - name: Refresh source lifecycle metadata
+        run: python PTU_Companion_Windows_Source/scripts/augment_ptu_form_lifecycle_events.py
+      - name: Verify campaign-state lifecycle model
+        run: node PTU_Companion_Windows_Source/scripts/verify_stage_b_form_campaign_state.mjs
+      - name: Verify Windows regressions
+        working-directory: PTU_Companion_Windows_Source
+        run: npm run verify
+      - name: Verify Android regressions
+        working-directory: PTU_Companion_Android_Tauri
+        run: npm run verify
+      - name: Check campaign-state invariants
+        run: |
+          cmp PTU_Companion_Windows_Source/rules/pokemon-form-campaign-state.mjs PTU_Companion_Android_Tauri/www/rules/pokemon-form-campaign-state.mjs
+          cmp PTU_Companion_Windows_Source/rules/pokemon-form-events.mjs PTU_Companion_Android_Tauri/www/rules/pokemon-form-events.mjs
+          grep -q '/api/pokemon/forms/apply-event' PTU_Companion_Windows_Source/server.mjs
+          grep -q '/api/pokemon/forms/apply-event' PTU_Companion_Android_Tauri/www/mobile-api.mjs
+          grep -q 'applyPokemonFormGameEventUi' PTU_Companion_Windows_Source/static-preview/app.js
+          grep -q 'applyPokemonFormGameEventUi' PTU_Companion_Android_Tauri/www/app.js
+          grep -q 'usePokemonMoveForForms' PTU_Companion_Windows_Source/static-preview/app.js
+          grep -q 'usePokemonMoveForForms' PTU_Companion_Android_Tauri/www/app.js
+          grep -q 'setPokemonBattleState' PTU_Companion_Windows_Source/static-preview/app.js
+          grep -q 'setPokemonBattleState' PTU_Companion_Android_Tauri/www/app.js
+          grep -q 'target_form_base_hp' docs/data/PTU_FORMS_STAGE_B.json
+          grep -q 'formTempHpBySource' PTU_Companion_Windows_Source/persistence/repository.mjs
+          git diff --exit-code -- '*.ptucp'
+          git diff --check
+      - name: Commit campaign-state runtime integration
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add \
+            PTU_Companion_Windows_Source/server.mjs \
+            PTU_Companion_Android_Tauri/www/mobile-api.mjs \
+            PTU_Companion_Windows_Source/static-preview/app.js \
+            PTU_Companion_Android_Tauri/www/app.js \
+            PTU_Companion_Windows_Source/persistence/repository.mjs \
+            PTU_Companion_Windows_Source/rules/pokemon-form-events.mjs \
+            PTU_Companion_Android_Tauri/www/rules/pokemon-form-events.mjs \
+            PTU_Companion_Windows_Source/scripts/augment_ptu_form_lifecycle_events.py \
+            docs/PTU_FORMS_STAGE_B.md \
+            docs/data/PTU_FORMS_STAGE_B.json
+          if git diff --cached --quiet; then
+            echo 'Campaign-state Form integration already current.'
+          else
+            git commit -m 'feat(forms): persist lifecycle events into campaign state [skip ci]'
+            git push origin HEAD:content/ptu-parametrized-forms-catalog
+          fi
