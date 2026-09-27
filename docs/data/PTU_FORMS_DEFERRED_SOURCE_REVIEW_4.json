@@ -1,0 +1,150 @@
+{
+  "schema_version": 2,
+  "review_pass": 4,
+  "policy": "Use only supplied PTU sources. A separately parameterized Species/Form record or the generic Forme Change capability proves that a Form exists, but does not establish the Move, Ability, item, action, duration, or other effect that actually changes the user into that Form.",
+  "result": {
+    "families_reviewed": 10,
+    "families_reclassified": 0,
+    "families_still_deferred": 10
+  },
+  "deferred_families": [
+    "deoxys",
+    "giratina",
+    "hoopa",
+    "kyurem",
+    "landorus",
+    "oricorio",
+    "rotom",
+    "shaymin",
+    "thundurus",
+    "tornadus"
+  ],
+  "cross_family_findings": [
+    {
+      "id": "forme-change-is-not-a-trigger",
+      "source": "February 2016 Playtest Packet p.14",
+      "finding": "Forme Change says the user is capable of changing formes through a Move, Ability, or other effect and defines multi-form Base Stat invariants. It does not itself provide an activation action or choose which Move, Ability, item, or other effect performs a particular species' change.",
+      "consequence": "A Forme Change capability on a Species record is not sufficient by itself to materialize a selectable or automatic Stage B Form transition."
+    },
+    {
+      "id": "gen8ish-special-capabilities-are-labels-only",
+      "source": "Gen 8ish PokeDex supplied Species pages",
+      "finding": "Exact-text review found Multiform only on Deoxys records, Dragon Fusion only on Kyurem records, Sky Forme only on Shaymin records, Therian Forme only on the Kami trio records, and Nectar Dancer only on the Oricorio entry. No separate mechanical definition for those capability labels was found in the supplied Gen 8ish document.",
+      "consequence": "Those labels cannot be treated as implicit switch actions."
+    },
+    {
+      "id": "common-main-series-trigger-names-not-imported",
+      "source": "supplied PTU source review",
+      "finding": "The audit explicitly checked likely trigger-name hypotheses rather than importing them from general Pokemon knowledge. No supplied PTU switching rule was found for Prison Bottle, Reveal Glass, Gracidea, DNA Splicers, or a Deoxys Meteorite interaction. Game of Throhs contains a Griseous Orb only as a Kaladanda crafting reagent, not as a Giratina Form-change rule.",
+      "consequence": "No item-based transition is inferred for any deferred family."
+    }
+  ],
+  "families": [
+    {
+      "family": "deoxys",
+      "status": "defer",
+      "positive_evidence": [
+        "Gen 8ish provides Normal, Attack, Defense, and Speed parameter records with Forme Change and Multiform.",
+        "Blessed and the Damned describes Deoxys as highly adaptive and able to take many forms."
+      ],
+      "new_pass_4_finding": "The February 2016 generic Forme Change capability confirms that another Move, Ability, or effect must drive the change. Multiform appears only as a Species capability label in the supplied Gen 8ish pages, and the additional supplied-source search did not establish that driving effect.",
+      "missing_semantics": "No supplied PTU Move, Ability, item, action, or other effect establishes how/when Normal, Attack, Defense, and Speed Formes are selected or changed.",
+      "decision": "remain_deferred"
+    },
+    {
+      "family": "giratina",
+      "status": "defer",
+      "positive_evidence": [
+        "Gen 8ish provides Altered and Origin parameter records with Forme Change and Origin Forme.",
+        "Game of Throhs mentions a Griseous Orb as a Kaladanda crafting reagent."
+      ],
+      "new_pass_4_finding": "The only supplied Griseous Orb occurrence found in the reviewed source set is not a Giratina Form-change mechanic. Forme Change still requires another explicit effect, and no supplied Origin Forme transition effect was found.",
+      "missing_semantics": "No supplied PTU rule establishes the requirement, action, duration, or reversal for Altered <-> Origin Forme.",
+      "decision": "remain_deferred"
+    },
+    {
+      "family": "hoopa",
+      "status": "defer",
+      "positive_evidence": [
+        "Gen 8ish provides Confined and Unbound records with different Types, Base Stats, Abilities, capabilities, and linked Moves.",
+        "Both records carry Forme Change; the source also lists Confined/Unbound move substitutions."
+      ],
+      "new_pass_4_finding": "The supplied records define the two states and their linked mechanics, but no supplied Move/Ability/item/action was found that performs Confined <-> Unbound. A Prison Bottle rule is not imported from outside PTU sources.",
+      "missing_semantics": "No supplied PTU activation, release, duration, or reversal rule for Confined/Unbound.",
+      "decision": "remain_deferred"
+    },
+    {
+      "family": "kyurem",
+      "status": "defer",
+      "positive_evidence": [
+        "Gen 8ish provides normal Kyurem plus White Fusion and Black Fusion records.",
+        "All relevant records expose Dragon Fusion and Forme Change, and White/Black have explicit source mechanics and Move lists."
+      ],
+      "new_pass_4_finding": "Dragon Fusion appears only as a capability label on the supplied Gen 8ish Kyurem records. The additional supplied-source pass did not find its action, target, requirement, or termination rule. Blessed and the Damned provides Tao-trio lore but not a mechanical fusion procedure.",
+      "missing_semantics": "No supplied PTU rule establishes how Kyurem enters/exits White or Black Fusion or what counterpart/resource is required.",
+      "decision": "remain_deferred"
+    },
+    {
+      "family": "landorus",
+      "status": "defer",
+      "positive_evidence": [
+        "Gen 8ish provides Incarnate and Therian parameter records and the Therian Forme capability label."
+      ],
+      "new_pass_4_finding": "Therian Forme exact-text occurrences in the supplied Gen 8ish source are confined to the Kami trio Species records; no separate capability definition or transition action was found. No Reveal Glass rule is imported.",
+      "missing_semantics": "No supplied PTU rule establishes the Incarnate <-> Therian switch action, requirement, or duration.",
+      "decision": "remain_deferred"
+    },
+    {
+      "family": "oricorio",
+      "status": "defer",
+      "positive_evidence": [
+        "Gen 8ish explicitly types Oricorio as Special/Flying with a 'see Nectar Dancer' note and lists Forme Change plus Nectar Dancer."
+      ],
+      "new_pass_4_finding": "Nectar Dancer occurs only in the Oricorio Species entry in the supplied Gen 8ish document; no supplied mechanical definition was found that maps styles/nectars to Types or defines a change action.",
+      "missing_semantics": "No supplied PTU rule establishes the selectable Oricorio Form set, each Form's source-defined Type, or the action/requirement for changing between them.",
+      "decision": "remain_deferred"
+    },
+    {
+      "family": "rotom",
+      "status": "defer",
+      "positive_evidence": [
+        "Gen 8ish explicitly defines Normal Rotom plus five Appliance Form parameter sets and says Type, size, capabilities, skills, and Move list change upon changing forms.",
+        "February 2016 Poltergeist maps Standard/Heat/Wash/Frost/Fan/Mow to source-defined Ability and level-40 Move effects."
+      ],
+      "new_pass_4_finding": "This is the strongest deferred family for effect data, but the generic Forme Change definition still requires a separate Move, Ability, or other effect. No supplied appliance-enter/leave action or requirement was found in the reviewed material.",
+      "missing_semantics": "No supplied PTU rule establishes how Rotom enters/leaves an appliance, whether an appliance is required/consumed/occupied, or what action/frequency controls the transition.",
+      "decision": "remain_deferred"
+    },
+    {
+      "family": "shaymin",
+      "status": "defer",
+      "positive_evidence": [
+        "Gen 8ish provides Land and Sky Forme records with Forme Change and Sky Forme capability labels.",
+        "Blessed and the Damned contains Shaymin lore but no Land/Sky transformation procedure."
+      ],
+      "new_pass_4_finding": "Sky Forme occurs only as the Shaymin Species/Form label in the supplied Gen 8ish source; no separate mechanical definition or supplied Gracidea transition rule was found.",
+      "missing_semantics": "No supplied PTU rule establishes the Land <-> Sky trigger, action, requirement, duration, or forced reversion.",
+      "decision": "remain_deferred"
+    },
+    {
+      "family": "thundurus",
+      "status": "defer",
+      "positive_evidence": [
+        "Gen 8ish provides Incarnate and Therian parameter records and the Therian Forme capability label."
+      ],
+      "new_pass_4_finding": "Therian Forme exact-text occurrences are Species-row labels rather than a supplied switching rule; no Reveal Glass rule was found in the reviewed PTU material.",
+      "missing_semantics": "No supplied PTU rule establishes the Incarnate <-> Therian switch action, requirement, or duration.",
+      "decision": "remain_deferred"
+    },
+    {
+      "family": "tornadus",
+      "status": "defer",
+      "positive_evidence": [
+        "Gen 8ish provides Incarnate and Therian parameter records and the Therian Forme capability label."
+      ],
+      "new_pass_4_finding": "Therian Forme exact-text occurrences are Species-row labels rather than a supplied switching rule; no Reveal Glass rule was found in the reviewed PTU material.",
+      "missing_semantics": "No supplied PTU rule establishes the Incarnate <-> Therian switch action, requirement, or duration.",
+      "decision": "remain_deferred"
+    }
+  ]
+}
