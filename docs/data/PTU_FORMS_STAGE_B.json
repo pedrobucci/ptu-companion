@@ -1,5 +1,5 @@
 {
-  "schema_version": 6,
+  "schema_version": 7,
   "stage_b_form_schema_version": 1,
   "applied_to_default_packs": false,
   "policy": {
@@ -11,7 +11,10 @@
     "note": "This is a generated conversion catalog. It intentionally does not mutate bundled .ptucp files while deferred families remain.",
     "structured_source_requirements": true,
     "runtime_requirement_model_version": 2,
-    "requirement_note": "Structured requirements validate only source-explicit eligibility/state. Action frequency and automatic scene lifecycle remain source metadata unless the runtime has an exact state primitive; activeFormId selection still represents the deliberate transformation action."
+    "requirement_note": "Structured requirements validate only source-explicit eligibility/state. Action frequency and automatic scene lifecycle remain source metadata unless the runtime has an exact state primitive; activeFormId selection still represents the deliberate transformation action.",
+    "source_event_lifecycle_automation": true,
+    "lifecycle_model_version": 1,
+    "lifecycle_note": "Lifecycle events automate only source-explicit state changes. Event callers remain responsible for action economy/frequency accounting and for applying returned effect directives to campaign state."
   },
   "summary": {
     "candidate_family_entries": 48,
@@ -30,7 +33,9 @@
     "ultra_burst_source_blocks": 2,
     "composed_ultra_burst_forms": 1,
     "structured_runtime_requirement_forms": 8,
-    "manual_requirement_leaves_remaining": 54
+    "manual_requirement_leaves_remaining": 53,
+    "lifecycle_automated_forms": 8,
+    "lifecycle_event_rules": 24
   },
   "candidate_families": [
     {
@@ -43,14 +48,6 @@
           "id": "sword-stance",
           "name": "Sword Stance",
           "mode": "transformation",
-          "requirements": {
-            "all": [
-              {
-                "kind": "manual",
-                "value": "aegislash-sword-stance"
-              }
-            ]
-          },
           "overrides": {
             "baseStats": {
               "replace": {
@@ -63,7 +60,71 @@
               }
             }
           },
-          "sortOrder": 10
+          "sortOrder": 10,
+          "lifecycle": {
+            "model_version": 1,
+            "source": "Pokemon Tabletop United 1.05 Core p.331",
+            "note": "Shield is implicit base. Damaging attacks enter Sword; King’s Shield, Protect, qualifying Defense-raising Status Moves and Blessings return Shield; Full Action may toggle either way.",
+            "events": [
+              {
+                "id": "stance-change-damaging-attack",
+                "event": "move-used",
+                "priority": 10,
+                "when": {
+                  "damaging": true
+                },
+                "action": {
+                  "type": "activate"
+                },
+                "source_action": "Automatic when Aegislash uses a damaging attack."
+              },
+              {
+                "id": "stance-change-defensive-move",
+                "event": "move-used",
+                "priority": 20,
+                "when": {
+                  "any": [
+                    {
+                      "move": [
+                        "King's Shield",
+                        "Protect"
+                      ]
+                    },
+                    {
+                      "all": [
+                        {
+                          "move_class": "Status"
+                        },
+                        {
+                          "raises_defense_combat_stages": true
+                        }
+                      ]
+                    },
+                    {
+                      "tag": "Blessing"
+                    }
+                  ]
+                },
+                "action": {
+                  "type": "deactivate",
+                  "form_id": "sword-stance"
+                },
+                "source_action": "Automatic return to Shield Stance."
+              },
+              {
+                "id": "stance-change-full-action",
+                "event": "form-action",
+                "priority": 30,
+                "when": {
+                  "action_id": "stance-change-full-action"
+                },
+                "action": {
+                  "type": "toggle"
+                },
+                "action_cost": "Full Action"
+              }
+            ]
+          }
         }
       ],
       "source_mechanics": {
@@ -3087,6 +3148,70 @@
                 }
               }
             ]
+          },
+          "lifecycle": {
+            "model_version": 1,
+            "source": "New Abilities and Moves p.1",
+            "note": "Ice Face exists while Ice Face-specific Temporary HP remains; battle start and the source-defined Standard Action in Hail grant two ticks.",
+            "events": [
+              {
+                "id": "ice-face-battle-start",
+                "event": "battle-start",
+                "priority": 10,
+                "action": {
+                  "type": "deactivate",
+                  "form_id": "noice-face"
+                },
+                "effects": [
+                  {
+                    "kind": "grant-temp-hp",
+                    "source": "ice-face",
+                    "ticks": 2
+                  }
+                ]
+              },
+              {
+                "id": "ice-face-hail-restore",
+                "event": "form-action",
+                "priority": 20,
+                "when": {
+                  "all": [
+                    {
+                      "action_id": "ice-face-hail-restore"
+                    },
+                    {
+                      "weather": "Hail"
+                    }
+                  ]
+                },
+                "action": {
+                  "type": "deactivate",
+                  "form_id": "noice-face"
+                },
+                "action_cost": "Standard Action",
+                "effects": [
+                  {
+                    "kind": "grant-temp-hp",
+                    "source": "ice-face",
+                    "ticks": 2
+                  }
+                ]
+              },
+              {
+                "id": "ice-face-temp-hp-sync",
+                "event": "temp-hp-changed",
+                "action": {
+                  "type": "sync"
+                }
+              },
+              {
+                "id": "ice-face-state-sync",
+                "event": "form-state-check",
+                "action": {
+                  "type": "sync"
+                }
+              }
+            ]
           }
         }
       ],
@@ -4955,6 +5080,34 @@
               {
                 "kind": "hp_fraction_lte",
                 "value": 0.5
+              }
+            ]
+          },
+          "lifecycle": {
+            "model_version": 1,
+            "source": "SuMo References p.4",
+            "note": "Meteor automatically becomes Core at half Maximum HP or lower; outside combat, Core returns to Meteor above half Maximum HP.",
+            "events": [
+              {
+                "id": "shields-down-hp-sync",
+                "event": "hp-changed",
+                "action": {
+                  "type": "sync"
+                }
+              },
+              {
+                "id": "shields-down-combat-sync",
+                "event": "combat-state-changed",
+                "action": {
+                  "type": "sync"
+                }
+              },
+              {
+                "id": "shields-down-state-sync",
+                "event": "form-state-check",
+                "action": {
+                  "type": "sync"
+                }
               }
             ]
           }
@@ -7414,6 +7567,55 @@
                 }
               ]
             }
+          },
+          "lifecycle": {
+            "model_version": 1,
+            "source": "SuMo References p.4",
+            "note": "Schooling activates by its Daily Free Action and returns to Solo only when below half Maximum HP with no Temporary HP remaining.",
+            "events": [
+              {
+                "id": "schooling-ability-use",
+                "event": "ability-used",
+                "priority": 10,
+                "when": {
+                  "ability": "Schooling"
+                },
+                "action": {
+                  "type": "activate"
+                },
+                "frequency": "Daily",
+                "action_cost": "Free Action",
+                "effects": [
+                  {
+                    "kind": "grant-temp-hp",
+                    "source": "schooling",
+                    "fraction_of_max_hp": 0.5,
+                    "blocks_other_sources": true
+                  }
+                ]
+              },
+              {
+                "id": "schooling-hp-check",
+                "event": "hp-changed",
+                "action": {
+                  "type": "validate-persistence"
+                }
+              },
+              {
+                "id": "schooling-temp-hp-check",
+                "event": "temp-hp-changed",
+                "action": {
+                  "type": "validate-persistence"
+                }
+              },
+              {
+                "id": "schooling-state-check",
+                "event": "form-state-check",
+                "action": {
+                  "type": "validate-persistence"
+                }
+              }
+            ]
           }
         }
       ],
@@ -10131,6 +10333,64 @@
                 "value": "Ancestral Sword"
               }
             ]
+          },
+          "lifecycle": {
+            "model_version": 1,
+            "source": "New Abilities and Moves p.1",
+            "note": "Weapon Bond uses Ancestral Sword as an Extended Action to enter Crowned Forme, which lasts until Fainted or voluntarily relinquished as an Extended Action.",
+            "events": [
+              {
+                "id": "zacian-weapon-bond-enter",
+                "event": "capability-used",
+                "priority": 10,
+                "when": {
+                  "all": [
+                    {
+                      "capability": "Weapon Bond"
+                    },
+                    {
+                      "trigger_item": "Ancestral Sword"
+                    }
+                  ]
+                },
+                "action": {
+                  "type": "activate"
+                },
+                "action_cost": "Extended Action"
+              },
+              {
+                "id": "zacian-weapon-bond-faint",
+                "event": "faint",
+                "priority": 10,
+                "when": {
+                  "active_form_id": "crowned-sword"
+                },
+                "action": {
+                  "type": "deactivate",
+                  "form_id": "crowned-sword"
+                }
+              },
+              {
+                "id": "zacian-weapon-bond-relinquish",
+                "event": "form-action",
+                "priority": 10,
+                "when": {
+                  "all": [
+                    {
+                      "action_id": "weapon-bond-relinquish"
+                    },
+                    {
+                      "active_form_id": "crowned-sword"
+                    }
+                  ]
+                },
+                "action": {
+                  "type": "deactivate",
+                  "form_id": "crowned-sword"
+                },
+                "action_cost": "Extended Action"
+              }
+            ]
           }
         }
       ],
@@ -11126,6 +11386,64 @@
               {
                 "kind": "trigger_item",
                 "value": "Ancestral Shield"
+              }
+            ]
+          },
+          "lifecycle": {
+            "model_version": 1,
+            "source": "New Abilities and Moves p.1",
+            "note": "Weapon Bond uses Ancestral Shield as an Extended Action to enter Crowned Forme, which lasts until Fainted or voluntarily relinquished as an Extended Action.",
+            "events": [
+              {
+                "id": "zamazenta-weapon-bond-enter",
+                "event": "capability-used",
+                "priority": 10,
+                "when": {
+                  "all": [
+                    {
+                      "capability": "Weapon Bond"
+                    },
+                    {
+                      "trigger_item": "Ancestral Shield"
+                    }
+                  ]
+                },
+                "action": {
+                  "type": "activate"
+                },
+                "action_cost": "Extended Action"
+              },
+              {
+                "id": "zamazenta-weapon-bond-faint",
+                "event": "faint",
+                "priority": 10,
+                "when": {
+                  "active_form_id": "crowned-shield"
+                },
+                "action": {
+                  "type": "deactivate",
+                  "form_id": "crowned-shield"
+                }
+              },
+              {
+                "id": "zamazenta-weapon-bond-relinquish",
+                "event": "form-action",
+                "priority": 10,
+                "when": {
+                  "all": [
+                    {
+                      "action_id": "weapon-bond-relinquish"
+                    },
+                    {
+                      "active_form_id": "crowned-shield"
+                    }
+                  ]
+                },
+                "action": {
+                  "type": "deactivate",
+                  "form_id": "crowned-shield"
+                },
+                "action_cost": "Extended Action"
               }
             ]
           }
@@ -12949,6 +13267,53 @@
                 "value": 0.5
               }
             ]
+          },
+          "lifecycle": {
+            "model_version": 1,
+            "source": "SuMo References p.3",
+            "note": "Power Construct may activate only below 50% HP, lasts until end of Scene, preserves prior Form HP total/maximum, and grants half of Complete Forme maximum HP as Temporary HP.",
+            "events": [
+              {
+                "id": "power-construct-10-percent",
+                "event": "ability-used",
+                "priority": 10,
+                "when": {
+                  "all": [
+                    {
+                      "ability": "Power Construct"
+                    },
+                    {
+                      "base_form_id": "10-percent"
+                    }
+                  ]
+                },
+                "action": {
+                  "type": "activate"
+                },
+                "frequency": "Daily",
+                "action_cost": "Swift Action",
+                "effects": [
+                  {
+                    "kind": "grant-temp-hp",
+                    "source": "power-construct",
+                    "fraction_of_target_form_max_hp": 0.5,
+                    "blocks_other_sources": true
+                  }
+                ]
+              },
+              {
+                "id": "power-construct-scene-end-10-percent",
+                "event": "scene-end",
+                "priority": 10,
+                "when": {
+                  "active_form_id": "complete-from-10-percent"
+                },
+                "action": {
+                  "type": "deactivate",
+                  "form_id": "complete-from-10-percent"
+                }
+              }
+            ]
           }
         },
         {
@@ -13539,6 +13904,53 @@
               {
                 "kind": "hp_fraction_lt",
                 "value": 0.5
+              }
+            ]
+          },
+          "lifecycle": {
+            "model_version": 1,
+            "source": "SuMo References p.3",
+            "note": "Power Construct may activate only below 50% HP, lasts until end of Scene, preserves prior Form HP total/maximum, and grants half of Complete Forme maximum HP as Temporary HP.",
+            "events": [
+              {
+                "id": "power-construct-50-percent",
+                "event": "ability-used",
+                "priority": 10,
+                "when": {
+                  "all": [
+                    {
+                      "ability": "Power Construct"
+                    },
+                    {
+                      "base_form_id": "50-percent"
+                    }
+                  ]
+                },
+                "action": {
+                  "type": "activate"
+                },
+                "frequency": "Daily",
+                "action_cost": "Swift Action",
+                "effects": [
+                  {
+                    "kind": "grant-temp-hp",
+                    "source": "power-construct",
+                    "fraction_of_target_form_max_hp": 0.5,
+                    "blocks_other_sources": true
+                  }
+                ]
+              },
+              {
+                "id": "power-construct-scene-end-50-percent",
+                "event": "scene-end",
+                "priority": 10,
+                "when": {
+                  "active_form_id": "complete-from-50-percent"
+                },
+                "action": {
+                  "type": "deactivate",
+                  "form_id": "complete-from-50-percent"
+                }
               }
             ]
           }
@@ -15624,5 +16036,6 @@
       "reason": "Classification is not safe for direct forms[] materialization."
     }
   ],
-  "requirement_model_version": 2
+  "requirement_model_version": 2,
+  "lifecycle_model_version": 1
 }

@@ -18,6 +18,9 @@ Generated deterministically from the versioned PTU classification/inventory. Thi
 - Families not directly materialized: **21**
 - Runtime requirement model: **2**
 - Forms upgraded from review-only manual gates to structured source requirements: **8**
+- Form lifecycle model: **1**
+- Forms with source-explicit lifecycle automation: **8**
+- Source-explicit lifecycle event rules: **24**
 
 ## Safety gates
 
@@ -39,6 +42,16 @@ Generated deterministically from the versioned PTU classification/inventory. Thi
 - `zygarde:complete-from-*` — requires Power Construct and activation below 50% HP; end-of-Scene lifecycle remains source metadata.
 - `zacian:crowned-sword` / `zamazenta:crowned-shield` — require Weapon Bond and the corresponding ancestral weapon as the transformation trigger item; once active they persist until the source-defined relinquish/Faint condition.
 - `compatible_base_forms` is enforced by the shared Windows/Android resolver for active transformations.
+
+## Source-explicit lifecycle automation
+
+- `aegislash:sword-stance` — damaging Move use enters Sword; King’s Shield, Protect, qualifying Defense-raising Status Moves or Blessings return Shield; an explicit Full Action event toggles Stance.
+- `wishiwashi:schooling` — Schooling Ability use enters Schooling and returns a half-Max-HP Temporary HP grant directive; HP/Temporary-HP events revalidate the exact Solo reversion condition.
+- `minior:core` — HP and combat-state events synchronize Meteor/Core using Shields Down.
+- `eiscue:noice-face` — battle start and the Hail restoration action return two Ice Face tick directives; Ice Face-specific Temporary HP events synchronize Ice/Noice state.
+- `zygarde:complete-from-*` — Power Construct Ability use activates the base-compatible Complete overlay and returns the source Temporary-HP formula; `scene-end` clears Complete.
+- `zacian:crowned-sword` / `zamazenta:crowned-shield` — Weapon Bond capability use with the matching ancestral weapon activates Crowned; `faint` or explicit Extended Action relinquish clears it.
+- The event engine returns state/effect directives; it does not silently spend actions, consume Daily/Scene frequency, or round HP fractions beyond the supplied source rule.
 
 ## Rule-defined builders
 

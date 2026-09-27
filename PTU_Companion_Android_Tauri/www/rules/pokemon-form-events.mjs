@@ -80,8 +80,8 @@ function formContext(context,state,resolvedSpecies=null){
   return {
     ...(context||{}),
     baseFormId:state.baseFormId,
-    previousBaseFormId:context?.previousBaseFormId??state.baseFormId,
-    previousActiveFormId:context?.previousActiveFormId??state.activeFormId,
+    previousBaseFormId:context?.previousBaseFormId!==undefined?context.previousBaseFormId:state.baseFormId,
+    previousActiveFormId:context&&Object.prototype.hasOwnProperty.call(context,'previousActiveFormId')?context.previousActiveFormId:state.activeFormId,
     resolvedSpecies:resolvedSpecies||context?.resolvedSpecies||null,
   };
 }

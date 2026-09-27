@@ -16,6 +16,7 @@ import {resolveTrainerModel} from './rules/trainer-engine.mjs';
 import {previewTrainerProgression,applyTrainerProgression,previewTrainerXpPurchase,applyTrainerXpPurchase} from './rules/trainer-progression-engine.mjs';
 import {itemUsageMetadata} from './rules/item-metadata.mjs';
 import {normalizePokemonFormState,resolvePokemonForms,resolvePokemonPresentation} from './rules/pokemon-forms.mjs';
+import {applyPokemonFormTransitionEvent} from './rules/pokemon-form-events.mjs';
 
 const projectRoot=fileURLToPath(new URL('.',import.meta.url));
 const staticRoot=join(projectRoot,'static-preview');
@@ -673,6 +674,25 @@ async function handleApi(req,res,url){
   if(req.method==='GET' && url.pathname==='/api/pokemon/evolution-guidance'){
     return json(res,200,definitions.getEvolutionGuidance());
   }
+  if(req.method==='POST' && url.pathname==='/api/pokemon/forms/transition'){
+    const payload=await bodyJson(req);
+    const rulesetId=String(payload.rulesetId||getActiveRuleset());
+    if(!definitions.getRuleset(rulesetId)) throw Object.assign(new Error('Unknown ruleset'),{status:400});
+    const pokemon=payload.pokemon||{}; const details=pokemon.details||{};
+    const speciesId=String(payload.speciesId||details.speciesDefinitionId||'');
+    const baseSpecies=definitions.getResolved({rulesetId,kind:'species',id:speciesId});
+    if(!baseSpecies)return json(res,404,{error:'Species definition not found in active ruleset'});
+    const requested=payload.formState||details.formState||{baseFormId:payload.baseFormId,activeFormId:payload.activeFormId};
+    const result=applyPokemonFormTransitionEvent({
+      species:baseSpecies,
+      formState:requested,
+      context:pokemonFormContext({pokemon,payload}),
+      event:payload.event||{},
+      allowUnmet:!!payload.gmOverride
+    });
+    return json(res,result.valid?200:400,{rulesetId,baseSpecies:{id:baseSpecies.id,name:baseSpecies.name,forms:baseSpecies.forms||[]},...result});
+  }
+
   if(req.method==='POST' && url.pathname==='/api/pokemon/forms/resolve'){
     const payload=await bodyJson(req);
     const rulesetId=String(payload.rulesetId||getActiveRuleset());
