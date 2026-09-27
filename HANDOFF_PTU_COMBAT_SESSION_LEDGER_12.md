@@ -13,7 +13,7 @@
 
 - Source / final validation checkpoint: `0904053a04e5514e3a39f6997ed67cad82695b56`
 - Generated Combat runtime/docs + campaign-patch idempotency checkpoint: `847ee05a4747e77cd9fab8892d110276bc3de3b1`
-- Validated handoff checkpoint: `dba7c944a41fc046c4f74443b5efac7026631a17`
+- Validated handoff content checkpoint: `dba7c944a41fc046c4f74443b5efac7026631a17`
 - GitHub Actions run: `36359086521`
 - Job: `108732526366`
 - Conclusion: **success**
