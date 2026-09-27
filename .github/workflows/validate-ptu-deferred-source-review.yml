@@ -1,0 +1,41 @@
+name: Validate PTU Deferred Source Review
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - content/ptu-parametrized-forms-catalog
+    paths:
+      - '.github/workflows/validate-ptu-deferred-source-review.yml'
+      - 'PTU_Companion_Windows_Source/scripts/validate_ptu_deferred_source_review.py'
+      - 'docs/PTU_FORMS_DEFERRED_SOURCE_REVIEW_4.md'
+      - 'docs/data/PTU_FORMS_DEFERRED_SOURCE_REVIEW_4.json'
+      - 'docs/PTU_FORMS_CLASSIFICATION.md'
+      - 'docs/data/PTU_FORMS_CLASSIFICATION.json'
+      - 'docs/PTU_FORMS_STAGE_B.md'
+      - 'docs/data/PTU_FORMS_STAGE_B.json'
+
+permissions:
+  contents: read
+
+jobs:
+  deferred-source-review:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate pass 4 source gate
+        run: python PTU_Companion_Windows_Source/scripts/validate_ptu_deferred_source_review.py
+      - name: Check versioned audit artifacts
+        run: |
+          test -s docs/PTU_FORMS_DEFERRED_SOURCE_REVIEW_4.md
+          test -s docs/data/PTU_FORMS_DEFERRED_SOURCE_REVIEW_4.json
+          grep -q 'Families reviewed:.*10' docs/PTU_FORMS_DEFERRED_SOURCE_REVIEW_4.md
+          grep -q 'Families reclassified in this pass:.*0' docs/PTU_FORMS_DEFERRED_SOURCE_REVIEW_4.md
+          grep -q 'Families still deferred:.*10' docs/PTU_FORMS_DEFERRED_SOURCE_REVIEW_4.md
+          grep -q 'Forme Change.*is not a trigger' docs/PTU_FORMS_DEFERRED_SOURCE_REVIEW_4.md
+          grep -q 'Default `.ptucp` gate:.*closed' docs/PTU_FORMS_DEFERRED_SOURCE_REVIEW_4.md
+          git diff --exit-code -- '*.ptucp'
+          git diff --check
