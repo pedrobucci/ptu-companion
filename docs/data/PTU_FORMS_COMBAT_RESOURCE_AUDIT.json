@@ -1,0 +1,89 @@
+{
+  "schema_version": 1,
+  "scope": "Existing Pokémon combat action/frequency state available to source-explicit Form lifecycle rules",
+  "conclusion": "informational_only",
+  "automatic_spending_supported": false,
+  "exact_auto_spend_subset": [],
+  "observed_state": [
+    {
+      "resource": "global_round_scene_day",
+      "location": "state.ui.round / state.ui.scene / state.ui.day",
+      "supports": "time boundaries only",
+      "does_not_support": "per-Pokémon action expenditure or per-source usage counts"
+    },
+    {
+      "resource": "trainer_action_points",
+      "location": "trainer.details.currentAp / trainerDerived().maxAp",
+      "supports": "Trainer AP only",
+      "does_not_support": "Pokémon Free/Swift/Standard/Full/Extended Action economy"
+    },
+    {
+      "resource": "pokemon_combat_state",
+      "location": "Pokémon hp/tempHp/injuries/combatStages/formState",
+      "supports": "HP, THP, injuries, Combat Stages and Form state",
+      "does_not_support": "action slots, turn expenditure, Daily/Scene usage ledger or Extended Action progress"
+    },
+    {
+      "resource": "definition_frequency_text",
+      "location": "Move/Ability/Form definition frequency fields",
+      "supports": "display/reference metadata",
+      "does_not_support": "authoritative remaining-use counters"
+    },
+    {
+      "resource": "form_lifecycle_applied_rules",
+      "location": "appliedRules.actionCost / appliedRules.frequency",
+      "supports": "exact source labels returned to the caller",
+      "does_not_support": "resource consumption without a ledger"
+    }
+  ],
+  "boundaries": [
+    {
+      "event": "nextRound",
+      "behavior": "increments global round only"
+    },
+    {
+      "event": "endScene",
+      "behavior": "increments scene, resets round and Combat Stages, dispatches scene-end Form events"
+    },
+    {
+      "event": "newDay",
+      "behavior": "increments day and resets scene/round only"
+    }
+  ],
+  "blocked_spending_cases": [
+    {
+      "cost": "Free Action",
+      "reason": "No per-Pokémon turn/action ledger exists."
+    },
+    {
+      "cost": "Swift Action",
+      "reason": "No per-Pokémon turn/action ledger exists."
+    },
+    {
+      "cost": "Standard Action",
+      "reason": "No per-Pokémon turn/action ledger exists."
+    },
+    {
+      "cost": "Full Action",
+      "reason": "No per-Pokémon turn/action ledger exists."
+    },
+    {
+      "cost": "Extended Action",
+      "reason": "No Extended Action progress/completion model exists."
+    },
+    {
+      "frequency": "Daily",
+      "reason": "No per-Pokémon/per-source Daily usage ledger exists."
+    },
+    {
+      "frequency": "Scene",
+      "reason": "No per-Pokémon/per-source Scene usage ledger exists."
+    }
+  ],
+  "policy": [
+    "Do not infer Trainer Action Points as Pokémon action economy.",
+    "Do not create usage counters implicitly inside the Form engine without a shared combat-resource model.",
+    "Continue surfacing actionCost and frequency as source metadata/history.",
+    "A future resource ledger must define reset boundaries and source identity before automatic spending is enabled."
+  ]
+}
