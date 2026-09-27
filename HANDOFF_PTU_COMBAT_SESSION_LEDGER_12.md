@@ -9,15 +9,17 @@
 - Keep PR **Draft/Open**. Do not merge or publish a Release without explicit owner approval.
 - Do not mutate bundled/default `.ptucp` while the ten source-insufficient Form families remain deferred.
 
-## Checkpoints
+## Final checkpoints
 
-- Source / CI trigger checkpoint: `14327676a09338712610016e6156e8892286d72b`
-- Generated Combat runtime/docs checkpoint: `0da6253f68284dab2bc7b54a1957abaa39a0c366`
-- GitHub Actions run: `36358383751`
-- Job: `108730534343`
+- Source / final validation checkpoint: `0904053a04e5514e3a39f6997ed67cad82695b56`
+- Generated Combat runtime/docs + campaign-patch idempotency checkpoint: `847ee05a4747e77cd9fab8892d110276bc3de3b1`
+- GitHub Actions run: `36359086521`
+- Job: `108732526366`
 - Conclusion: **success**
 
-The successful run executed all previous Stage B Form campaign/lifecycle verifiers, the new Combat Session Ledger verifier, full Windows `npm run verify`, full Android `npm run verify`, invariants, `.ptucp` guard, and `git diff --check`.
+The final successful run executed all previous Stage B Form campaign/lifecycle verifiers, the new Combat Session Ledger verifier, persistence/import regression checks including combat state, full Windows `npm run verify`, full Android `npm run verify`, invariants, `.ptucp` guard, and `git diff --check`.
+
+A regeneration issue discovered after the first green Combat run was also closed: the older `apply_stage_b_form_campaign_state.py` patch now explicitly accepts the Combat-enhanced `endScene()` that calls `pokemonCombatOnSceneAdvance()`. The persistence verifier now loads the Combat-state normalizer before evaluating `migrateState()`, so the generated Combat runtime remains deterministically re-verifiable on later workflow runs.
 
 ## User-facing goal delivered
 
@@ -126,14 +128,17 @@ Form lifecycle `actionCost` / `frequency` is **not yet auto-spent** from this ne
 
 ## Deterministic implementation files
 
-Source patch / fixup:
+Source patch / fixups:
 
 - `PTU_Companion_Windows_Source/scripts/apply_stage_b_combat_session_ledger.py`
 - `PTU_Companion_Windows_Source/scripts/apply_stage_b_combat_session_fixups.py`
+- `PTU_Companion_Windows_Source/scripts/prepare_stage_b_form_campaign_state_idempotency.py`
+- `PTU_Companion_Windows_Source/scripts/apply_stage_b_form_campaign_state.py` now accepts the Combat-enhanced `endScene()` state.
 
 Verification:
 
 - `PTU_Companion_Windows_Source/scripts/verify_stage_b_combat_session_ledger.mjs`
+- `PTU_Companion_Windows_Source/scripts/verify_stage_b_form_persistence_feedback.mjs` now includes the Combat state normalizer and combat-session JSON round-trip in its migration regression.
 
 Generated/versioned docs:
 
@@ -152,15 +157,16 @@ CI:
 
 The old `PTU_FORMS_COMBAT_RESOURCE_AUDIT` is intentionally kept as a **historical pre-ledger checkpoint** and points to the new Combat Session Ledger document.
 
-## Validation result
+## Final validation result
 
-Run `36358383751` / job `108730534343` — **success**.
+Run `36359086521` / job `108732526366` — **success**.
 
 Validated:
 
+- campaign-state source-patch idempotency with the Combat-enhanced scene boundary;
 - Stage B Form campaign-state lifecycle tests;
 - campaign hardening tests;
-- persistence/readable-feedback tests;
+- persistence/readable-feedback tests including Combat JSON migration/round-trip;
 - historical pre-ledger combat ergonomics verifier;
 - shared Combat Session Ledger verifier;
 - Windows full `npm run verify`;
@@ -178,7 +184,7 @@ Validated:
 3. **Target model:** a future pass may allow another campaign Pokémon/NPC combatant to be selected as target so Evasion, Defense, typing, HP and status can be resolved without manual target fields.
 4. **Type effectiveness:** not automated yet in this pass.
 5. **Move effect handlers:** Defense Curl + Rollout is the first complex pair. Add additional source-explicit handlers incrementally rather than interpreting arbitrary prose.
-6. **EOT / extra-turn hardening:** current EOT baseline keys its cooldown to combat round boundaries. Before supporting effects that grant extra turns in one round, promote this to an explicit per-Pokémon turn serial so EOT remains lossless.
+6. **EOT / extra-turn hardening:** current EOT baseline keys its cooldown to combat round boundaries. This is adequate for the ordinary one-turn-per-round baseline, but before supporting effects that grant extra turns in one round it must be promoted to an explicit per-Pokémon turn serial. The verifier intentionally reports `eotExtraTurnSafe:false`.
 7. **Extended Actions:** placeholder exists but progress/completion semantics are not automated yet.
 8. **GM correction/override:** add ledger correction UI before relying on the ledger for every combat resource.
 9. Keep the exact ten deferred Form families blocked: Deoxys, Giratina, Hoopa, Kyurem, Landorus, Oricorio, Rotom, Shaymin, Thundurus, Tornadus.
