@@ -157,7 +157,16 @@ def patch_client(path: Path) -> bool:
 
     restat_old = "p.maxHp=Number(pv.resolvedMaxHp??pv.maxHp); p.hp=Math.min(p.hp,p.maxHp);"
     restat_new = "p.maxHp=Number(pv.resolvedMaxHp??pv.maxHp);p.hp=Math.min(p.hp,p.maxHp);await revalidatePokemonFormAfterDirectHpMutation(p.id,{hpChanged:true,tempHpChanged:false,silent:true});"
-    text = replace_once(text, restat_old, restat_new, f'restat HP revalidation in {path}')
+    restat_start = text.find('async function applyPokemonRestat(){')
+    restat_end = text.find('\nfunction trainingStatusChip', restat_start)
+    if restat_start < 0 or restat_end < 0:
+        raise SystemExit(f'Restat function anchor drifted: {path}')
+    restat_segment = text[restat_start:restat_end]
+    if restat_new not in restat_segment:
+        if restat_old not in restat_segment:
+            raise SystemExit(f'Restat HP anchor drifted: {path}')
+        restat_segment = restat_segment.replace(restat_old, restat_new, 1)
+        text = text[:restat_start] + restat_segment + text[restat_end:]
 
     training_old = "if(Number(payload?.resolvedStatEffects?.maxHp)>0){p.maxHp=Number(payload.resolvedStatEffects.maxHp);p.hp=Math.min(p.hp,p.maxHp);}"
     training_new = "if(Number(payload?.resolvedStatEffects?.maxHp)>0){p.maxHp=Number(payload.resolvedStatEffects.maxHp);p.hp=Math.min(p.hp,p.maxHp);await revalidatePokemonFormAfterDirectHpMutation(p.id,{hpChanged:true,tempHpChanged:false,silent:true});}"
