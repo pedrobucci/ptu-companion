@@ -16,16 +16,29 @@ Generated deterministically from the versioned PTU classification/inventory. Thi
 - Synthetic Ultra Burst transforms: **0**
 - Composed Necrozma Ultra Burst active overlays: **1** from **2** source blocks
 - Families not directly materialized: **21**
+- Runtime requirement model: **2**
+- Forms upgraded from review-only manual gates to structured source requirements: **8**
 
 ## Safety gates
 
 - Every emitted `forms[]` entry uses Stage B mode `permanent` or `transformation`.
-- Event/action/HP conditions that Stage B cannot express exactly keep a `manual` review gate plus source mechanics; the manual gate is not the PTU rule itself.
+- Source-explicit eligibility/state uses structured runtime requirements for HP ratios, Temporary HP provenance, known Moves, combat state, trigger items, Abilities, Capabilities, and compatible base Forms.
+- Remaining unsupported event/frequency/scene-lifecycle semantics keep `manual` review gates only where the PTU rule still cannot be represented losslessly.
 - Mixed families explicitly compose persistent `baseFormId` choices with active `activeFormId` overlays.
 - Necrozma Ultra Burst is emitted in the mixed family and removed from the synthetic list to prevent duplicate semantics.
 - Zygarde Complete overlays preserve the prior 10%/50% HP Base Stat by applying only non-HP Base Stat deltas.
 - No artwork URL is generated. Artwork remains governed by the separate asset audit and the existing Stage B fallback.
 - No `.ptucp` file is written by this generator.
+
+## Structured runtime requirements
+
+- `wishiwashi:schooling` — requires Schooling; persists until both below half maximum HP and out of Temporary HP.
+- `minior:core` — enters at half maximum HP or lower; once active it may persist above half HP while in combat, but not outside combat.
+- `eiscue:noice-face` — requires Ice Face and tracked Ice Face Temporary HP to be exhausted.
+- `meloetta:step-forme` — requires Relic Song to be known.
+- `zygarde:complete-from-*` — requires Power Construct and activation below 50% HP; end-of-Scene lifecycle remains source metadata.
+- `zacian:crowned-sword` / `zamazenta:crowned-shield` — require Weapon Bond and the corresponding ancestral weapon as the transformation trigger item; once active they persist until the source-defined relinquish/Faint condition.
+- `compatible_base_forms` is enforced by the shared Windows/Android resolver for active transformations.
 
 ## Rule-defined builders
 

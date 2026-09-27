@@ -54,10 +54,23 @@ const getActiveRuleset=()=>db.prepare("SELECT value FROM app_meta WHERE key='act
 
 function pokemonFormContext({pokemon={},payload={}}={}){
   const details=pokemon?.details||{};
+  const previousFormState=normalizePokemonFormState(details.formState||{});
+  const knownMoves=payload.knownMoves??payload.selectedMoves??details.moves??pokemon.moves??[];
+  const tempHpBySource=payload.tempHpBySource??details.formTempHpBySource??details.tempHpBySource??{};
   return {
     level:Number(payload.level??pokemon.level??1),gender:payload.gender??details.gender??pokemon.gender??null,
     heldItemId:details.heldItemDefinitionId||null,heldItemName:pokemon.heldItem||null,heldItem:pokemon.heldItem||null,
-    abilities:details.abilities||[],capabilities:details.capabilities||[],tags:details.formTags||[],flags:details.formFlags||{},
+    triggerItemId:payload.formTriggerItemId??payload.triggerItemId??null,
+    triggerItemName:payload.formTriggerItemName??payload.triggerItemName??null,
+    triggerItem:payload.formTriggerItem??payload.triggerItem??null,
+    currentHp:payload.currentHp??pokemon.hp??details.currentHp??null,
+    maxHp:payload.maxHp??pokemon.maxHp??details.maxHp??null,
+    tempHp:payload.tempHp??pokemon.tempHp??details.tempHp??0,
+    tempHpBySource,
+    inCombat:!!(payload.inCombat??details.inCombat??pokemon.inCombat??false),
+    knownMoves,
+    abilities:payload.selectedAbilities??details.abilities??[],capabilities:details.capabilities||[],tags:details.formTags||[],flags:details.formFlags||{},
+    previousBaseFormId:previousFormState.baseFormId,previousActiveFormId:previousFormState.activeFormId,
     manualApprovals:payload.manualFormApprovals||details.manualFormApprovals||[]
   };
 }

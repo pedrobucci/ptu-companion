@@ -1,5 +1,5 @@
 {
-  "schema_version": 5,
+  "schema_version": 6,
   "stage_b_form_schema_version": 1,
   "applied_to_default_packs": false,
   "policy": {
@@ -8,7 +8,10 @@
     "no_invented_requirements": true,
     "no_invented_artwork_urls": true,
     "manual_requirement_is_a_review_gate": true,
-    "note": "This is a generated conversion catalog. It intentionally does not mutate bundled .ptucp files while deferred families remain."
+    "note": "This is a generated conversion catalog. It intentionally does not mutate bundled .ptucp files while deferred families remain.",
+    "structured_source_requirements": true,
+    "runtime_requirement_model_version": 2,
+    "requirement_note": "Structured requirements validate only source-explicit eligibility/state. Action frequency and automatic scene lifecycle remain source metadata unless the runtime has an exact state primitive; activeFormId selection still represents the deliberate transformation action."
   },
   "summary": {
     "candidate_family_entries": 48,
@@ -25,7 +28,9 @@
     "ultra_burst_forms": 0,
     "local_artwork_matches_available_for_review": 0,
     "ultra_burst_source_blocks": 2,
-    "composed_ultra_burst_forms": 1
+    "composed_ultra_burst_forms": 1,
+    "structured_runtime_requirement_forms": 8,
+    "manual_requirement_leaves_remaining": 54
   },
   "candidate_families": [
     {
@@ -2998,14 +3003,6 @@
           "id": "noice-face",
           "name": "Noice Face",
           "mode": "transformation",
-          "requirements": {
-            "all": [
-              {
-                "kind": "manual",
-                "value": "eiscue-noice-face"
-              }
-            ]
-          },
           "overrides": {
             "baseStats": {
               "replace": {
@@ -3075,7 +3072,22 @@
               ]
             }
           },
-          "sortOrder": 10
+          "sortOrder": 10,
+          "requirements": {
+            "all": [
+              {
+                "kind": "ability",
+                "value": "Ice Face"
+              },
+              {
+                "kind": "temp_hp_source_lte",
+                "value": {
+                  "source": "ice-face",
+                  "amount": 0
+                }
+              }
+            ]
+          }
         }
       ],
       "source_mechanics": {
@@ -4382,14 +4394,6 @@
           "id": "step-forme",
           "name": "Step Forme",
           "mode": "transformation",
-          "requirements": {
-            "all": [
-              {
-                "kind": "manual",
-                "value": "meloetta-step-forme"
-              }
-            ]
-          },
           "overrides": {
             "types": {
               "replace": [
@@ -4581,7 +4585,15 @@
               ]
             }
           },
-          "sortOrder": 10
+          "sortOrder": 10,
+          "requirements": {
+            "all": [
+              {
+                "kind": "known_move",
+                "value": "Relic Song"
+              }
+            ]
+          }
         }
       ],
       "source_mechanics": {
@@ -4811,14 +4823,6 @@
           "id": "core",
           "name": "Core Forme",
           "mode": "transformation",
-          "requirements": {
-            "all": [
-              {
-                "kind": "manual",
-                "value": "minior-core"
-              }
-            ]
-          },
           "overrides": {
             "baseStats": {
               "replace": {
@@ -4925,7 +4929,35 @@
               ]
             }
           },
-          "sortOrder": 10
+          "sortOrder": 10,
+          "requirements": {
+            "all": [
+              {
+                "kind": "ability",
+                "value": "Shields Down"
+              }
+            ]
+          },
+          "activation_requirements": {
+            "all": [
+              {
+                "kind": "hp_fraction_lte",
+                "value": 0.5
+              }
+            ]
+          },
+          "persistence_requirements": {
+            "any": [
+              {
+                "kind": "in_combat",
+                "value": true
+              },
+              {
+                "kind": "hp_fraction_lte",
+                "value": 0.5
+              }
+            ]
+          }
         }
       ],
       "source_mechanics": {
@@ -7245,14 +7277,6 @@
           "id": "schooling",
           "name": "Schooling Forme",
           "mode": "transformation",
-          "requirements": {
-            "all": [
-              {
-                "kind": "manual",
-                "value": "wishiwashi-schooling"
-              }
-            ]
-          },
           "overrides": {
             "baseStats": {
               "replace": {
@@ -7368,7 +7392,29 @@
               ]
             }
           },
-          "sortOrder": 10
+          "sortOrder": 10,
+          "requirements": {
+            "all": [
+              {
+                "kind": "ability",
+                "value": "Schooling"
+              }
+            ]
+          },
+          "persistence_requirements": {
+            "not": {
+              "all": [
+                {
+                  "kind": "hp_fraction_lt",
+                  "value": 0.5
+                },
+                {
+                  "kind": "temp_hp_lte",
+                  "value": 0
+                }
+              ]
+            }
+          }
         }
       ],
       "source_mechanics": {
@@ -10067,17 +10113,25 @@
             "id": "zacian-crowned-sword-forme",
             "source_page": 964
           },
+          "compatible_base_forms": [
+            "hero-of-many-battles"
+          ],
           "requirements": {
             "all": [
               {
-                "kind": "manual",
-                "value": "zacian-weapon-bond-crowned-form"
+                "kind": "capability",
+                "value": "Weapon Bond"
               }
             ]
           },
-          "compatible_base_forms": [
-            "hero-of-many-battles"
-          ]
+          "activation_requirements": {
+            "all": [
+              {
+                "kind": "trigger_item",
+                "value": "Ancestral Sword"
+              }
+            ]
+          }
         }
       ],
       "source_mechanics": {
@@ -11056,17 +11110,25 @@
             "id": "zamazenta-crowned-shield-forme",
             "source_page": 966
           },
+          "compatible_base_forms": [
+            "hero-of-many-battles"
+          ],
           "requirements": {
             "all": [
               {
-                "kind": "manual",
-                "value": "zamazenta-weapon-bond-crowned-form"
+                "kind": "capability",
+                "value": "Weapon Bond"
               }
             ]
           },
-          "compatible_base_forms": [
-            "hero-of-many-battles"
-          ]
+          "activation_requirements": {
+            "all": [
+              {
+                "kind": "trigger_item",
+                "value": "Ancestral Shield"
+              }
+            ]
+          }
         }
       ],
       "source_mechanics": {
@@ -12299,14 +12361,6 @@
           "id": "complete-from-10-percent",
           "name": "Complete Forme",
           "mode": "transformation",
-          "requirements": {
-            "all": [
-              {
-                "kind": "manual",
-                "value": "zygarde-power-construct-from-10-percent"
-              }
-            ]
-          },
           "compatible_base_forms": [
             "10-percent"
           ],
@@ -12879,20 +12933,28 @@
               }
             }
           },
-          "sortOrder": 110
+          "sortOrder": 110,
+          "requirements": {
+            "all": [
+              {
+                "kind": "ability",
+                "value": "Power Construct"
+              }
+            ]
+          },
+          "activation_requirements": {
+            "all": [
+              {
+                "kind": "hp_fraction_lt",
+                "value": 0.5
+              }
+            ]
+          }
         },
         {
           "id": "complete-from-50-percent",
           "name": "Complete Forme",
           "mode": "transformation",
-          "requirements": {
-            "all": [
-              {
-                "kind": "manual",
-                "value": "zygarde-power-construct-from-50-percent"
-              }
-            ]
-          },
           "compatible_base_forms": [
             "50-percent"
           ],
@@ -13463,7 +13525,23 @@
               }
             }
           },
-          "sortOrder": 120
+          "sortOrder": 120,
+          "requirements": {
+            "all": [
+              {
+                "kind": "ability",
+                "value": "Power Construct"
+              }
+            ]
+          },
+          "activation_requirements": {
+            "all": [
+              {
+                "kind": "hp_fraction_lt",
+                "value": 0.5
+              }
+            ]
+          }
         }
       ],
       "source_mechanics": {
@@ -15545,5 +15623,6 @@
       "classification": "defer",
       "reason": "Classification is not safe for direct forms[] materialization."
     }
-  ]
+  ],
+  "requirement_model_version": 2
 }
