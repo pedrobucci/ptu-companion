@@ -40,7 +40,10 @@ def main() -> None:
     for family in EXPECTED_MIXED:
         assert families[family]['target_layer'] == 'baseFormId+activeFormId', families[family]
 
-    assert stage_b['schema_version'] == 5
+    assert stage_b['schema_version'] in {5, 6}
+    requirement_v2 = stage_b['schema_version'] >= 6
+    if requirement_v2:
+        assert stage_b.get('requirement_model_version') == 2
     assert stage_b['stage_b_form_schema_version'] == 1
     assert stage_b['applied_to_default_packs'] is False
     summary = stage_b['summary']
@@ -62,6 +65,8 @@ def main() -> None:
     }
     for key, value in expected_summary.items():
         assert summary.get(key) == value, (key, summary.get(key), value)
+    if requirement_v2:
+        assert summary.get('structured_runtime_requirement_forms') == 8
 
     entries = {row['family']: row for row in stage_b['candidate_families']}
     assert EXPECTED_MIXED <= set(entries)
@@ -113,9 +118,9 @@ def main() -> None:
     assert_full_source_form(nforms['dawn-wings'])
 
     # Weapon Bond: Hero base + Crowned active, with exact source move/end metadata.
-    for family, form_id, types, move in (
-        ('zacian', 'crowned-sword', ['Fairy', 'Steel'], 'Behemoth Blade'),
-        ('zamazenta', 'crowned-shield', ['Fighting', 'Steel'], 'Behemoth Bash'),
+    for family, form_id, types, move, item in (
+        ('zacian', 'crowned-sword', ['Fairy', 'Steel'], 'Behemoth Blade', 'Ancestral Sword'),
+        ('zamazenta', 'crowned-shield', ['Fighting', 'Steel'], 'Behemoth Bash', 'Ancestral Shield'),
     ):
         entry = entries[family]
         assert entry['builder'] == 'mixed_weapon_bond'
@@ -125,7 +130,12 @@ def main() -> None:
         assert forms[form_id]['mode'] == 'transformation'
         assert forms[form_id]['compatible_base_forms'] == ['hero-of-many-battles']
         assert forms[form_id]['overrides']['types']['replace'] == types
-        assert has_manual_gate(forms[form_id])
+        if requirement_v2:
+            assert not has_manual_gate(forms[form_id])
+            assert forms[form_id]['requirements']['all'] == [{'kind': 'capability', 'value': 'Weapon Bond'}]
+            assert forms[form_id]['activation_requirements']['all'] == [{'kind': 'trigger_item', 'value': item}]
+        else:
+            assert has_manual_gate(forms[form_id])
         assert entry['source_mechanics']['granted_move'] == move
         assert 'Fainted' in entry['source_mechanics']['exit']
         assert 'Extended Action' in entry['source_mechanics']['enter']
@@ -145,7 +155,13 @@ def main() -> None:
     fifty_complete = zforms['complete-from-50-percent']
     assert ten_complete['compatible_base_forms'] == ['10-percent']
     assert fifty_complete['compatible_base_forms'] == ['50-percent']
-    assert has_manual_gate(ten_complete) and has_manual_gate(fifty_complete)
+    if requirement_v2:
+        for form in (ten_complete, fifty_complete):
+            assert not has_manual_gate(form)
+            assert form['requirements']['all'] == [{'kind': 'ability', 'value': 'Power Construct'}]
+            assert form['activation_requirements']['all'] == [{'kind': 'hp_fraction_lt', 'value': 0.5}]
+    else:
+        assert has_manual_gate(ten_complete) and has_manual_gate(fifty_complete)
     assert ten_complete['overrides']['baseStats']['add'] == {'defense': 5, 'special_attack': 3, 'special_defense': 1, 'speed': -3}
     assert fifty_complete['overrides']['baseStats']['add'] == {'special_attack': 1, 'speed': -1}
     assert 'hp' not in ten_complete['overrides']['baseStats']['add']
@@ -170,6 +186,8 @@ def main() -> None:
 
     print(json.dumps({
         'mixed_families': len(EXPECTED_MIXED),
+        'catalog_schema_version': stage_b['schema_version'],
+        'requirement_model_version': stage_b.get('requirement_model_version'),
         'candidate_family_entries': summary['candidate_family_entries'],
         'candidate_forms': summary['candidate_forms'],
         'rule_defined_forms': summary['rule_defined_forms'],
