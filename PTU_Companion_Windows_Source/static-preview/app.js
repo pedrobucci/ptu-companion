@@ -1648,7 +1648,7 @@ function pokemonProgressionScreen(){
       ${section('6 · REVIEW & APPLY',`${err?`<div class="builder-validation bad">${esc(err)}</div>`:''}${validation}${pv?`<dl class="detail-dl"><div><dt>Level</dt><dd>${pv.currentLevel} → ${pv.targetLevel}</dd></div><div><dt>EXP</dt><dd>${Number(pv.currentExperience).toLocaleString()} → ${Number(pv.totalExperience).toLocaleString()}</dd></div><div><dt>Species</dt><dd>${esc(p.species)} → ${esc(pv.targetSpecies.name)}</dd></div><div><dt>Max HP</dt><dd>${p.maxHp} → ${pv.resolvedMaxHp??pv.maxHp}</dd></div><div><dt>Tutor Points</dt><dd>${pv.tutorPoints.remaining} remaining / ${pv.tutorPoints.earned} earned</dd></div></dl><button class="btn ${pv.valid?'btn-success':'btn-disabled'} full" onclick="applyPokemonProgression()" ${pv.valid?'':'disabled'}>Apply Progression</button>`:''}`)}
     </div></div>`;
 }
-function applyPokemonProgression(){
+async function applyPokemonProgression(){
   const p=pokemon(pokemonProgressState.pokemonId), pv=pokemonProgressState.preview, f=pokemonProgressState.form; if(!p||!pv?.valid) return toast('Resolve progression validation issues first.','error');
   const oldLevel=p.level, oldSpecies=p.species, oldMax=p.maxHp, d=p.details||(p.details={});
   const pool=new Map((pv.movePool||[]).map(m=>[m.key,m]));
@@ -1675,6 +1675,7 @@ function applyPokemonProgression(){
     d.tutorPointsRemaining=Math.max(0,Number(d.tutorPointsEarned||0)-d.tutorPointsSpent);
   }
   d.buildEngineVersion='1.5.0'; d.hpBaseRelationsExempt=true; d.baseRelationsOverridden=!!pv.baseRelations?.overridden;
+  if(!pv.evolved)await revalidatePokemonFormAfterDirectHpMutation(p.id,{hpChanged:true,tempHpChanged:false,silent:true});
   d.progressionHistory=Array.isArray(d.progressionHistory)?d.progressionHistory:[];
   d.progressionHistory.push({date:new Date().toISOString(),fromLevel:oldLevel,toLevel:p.level,expGain:pv.experienceGain,fromSpecies:oldSpecies,toSpecies:p.species,evolved:pv.evolved,statPointsGained:pv.rewards.statPoints,tutorPointsGained:pv.rewards.tutorPoints,pokeEdgesRemoved:edgeRemovals.map(x=>x.name||x.id),tutorPointsRefunded:edgeRefund,abilityUnlockLevels:pv.rewards.abilityUnlockLevels,abilitiesAfter:[...d.abilities]});
   if(pv.evolved) d.evolutionNotice=null;
@@ -1909,7 +1910,10 @@ function clearPokemonFormTempHpTracking(p){
 function pokemonFormStateSnapshot(p){
   const state=p?.details?.formState||{};return {baseFormId:formEventSlug(state.baseFormId||'base')||'base',activeFormId:state.activeFormId==null?null:(formEventSlug(state.activeFormId)||null)};
 }
-function pokemonFormStateLabel(formState={}){const base=formState.baseFormId||'base',active=formState.activeFormId||null;return active?`${base} + ${active}`:base;}
+function pokemonFormStateLabel(formState={},forms=[]){
+  const display=id=>{const key=formEventSlug(id||'base')||'base';if(key==='base')return 'Canonical Base';const match=(forms||[]).find(form=>formEventSlug(form?.id)===key);return match?.name||String(id||'Canonical Base');};
+  const base=display(formState.baseFormId||'base'),active=formState.activeFormId==null?null:display(formState.activeFormId);return active?`${base} + ${active}`:base;
+}
 function pokemonFormAppliedRuleSummary(payload){
   const notes=[];for(const transition of (payload?.transitions||[]))for(const rule of (transition?.appliedRules||[])){const bits=[rule.frequency,rule.actionCost].filter(Boolean);if(bits.length)notes.push(bits.join(' · '));}
   return [...new Set(notes)].join('; ');
@@ -1917,10 +1921,10 @@ function pokemonFormAppliedRuleSummary(payload){
 function recordPokemonFormLifecycleFeedback(p,beforeState,payload,event,{silent=false}={}){
   if(!p||!payload?.valid)return {formChanged:false,blockedTempHp:0};
   const afterState=pokemonFormStateSnapshot(p);const formChanged=beforeState.baseFormId!==afterState.baseFormId||beforeState.activeFormId!==afterState.activeFormId;
-  const blockedTempHp=Math.max(0,Number(payload?.hpAdjustment?.blockedTempHp||0));const history=trainer()?.history;
+  const blockedTempHp=Math.max(0,Number(payload?.hpAdjustment?.blockedTempHp||0));const history=trainer()?.history;const formDefinitions=Array.isArray(payload?.baseSpecies?.forms)?payload.baseSpecies.forms:[];
   if(formChanged&&Array.isArray(history)){
-    const ruleSummary=pokemonFormAppliedRuleSummary(payload);history.push({id:uid('h'),date:new Date().toISOString().slice(0,10),title:'Pokémon Form changed',detail:`${p.name}: ${pokemonFormStateLabel(beforeState)} → ${pokemonFormStateLabel(afterState)}${ruleSummary?` · ${ruleSummary}`:''}`});
-    if(!silent)toast(`${p.name}: Form ${pokemonFormStateLabel(beforeState)} → ${pokemonFormStateLabel(afterState)}.`);
+    const ruleSummary=pokemonFormAppliedRuleSummary(payload);history.push({id:uid('h'),date:new Date().toISOString().slice(0,10),title:'Pokémon Form changed',detail:`${p.name}: ${pokemonFormStateLabel(beforeState,formDefinitions)} → ${pokemonFormStateLabel(afterState,formDefinitions)}${ruleSummary?` · ${ruleSummary}`:''}`});
+    if(!silent)toast(`${p.name}: Form ${pokemonFormStateLabel(beforeState,formDefinitions)} → ${pokemonFormStateLabel(afterState,formDefinitions)}.`);
   }
   if(blockedTempHp>0&&Array.isArray(history)){
     history.push({id:uid('h'),date:new Date().toISOString().slice(0,10),title:'Temporary HP blocked',detail:`${p.name}: ${blockedTempHp} Temporary HP blocked by the active Form source rule.`});

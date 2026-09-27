@@ -1,0 +1,122 @@
+{
+  "schema_version": 1,
+  "scope": "Pokemon HP/max-HP mutation surfaces in the Windows/Android campaign UI clients",
+  "platforms": [
+    "windows",
+    "android"
+  ],
+  "summary": {
+    "surfaces": 14,
+    "lifecycle_sensitive_or_event": 7,
+    "construction_only": 2,
+    "intentional_form_reset": 1,
+    "application_reset": 2,
+    "unlinked_fallback": 2,
+    "uncovered_linked_surfaces": 0
+  },
+  "surfaces": [
+    {
+      "surface": "defaultState sample Pokémon",
+      "assignment": "object literals with hp/maxHp",
+      "classification": "construction_only",
+      "lifecycle": "not_applicable",
+      "reason": "Initial sample objects are created before any individual Form lifecycle state exists."
+    },
+    {
+      "surface": "rules-backed Pokémon creation builder",
+      "assignment": "new Pokémon object hp/maxHp",
+      "classification": "construction_only",
+      "lifecycle": "not_applicable",
+      "reason": "A new individual is constructed from resolved PTU stats before it enters campaign state."
+    },
+    {
+      "surface": "loadCreatureReferenceData",
+      "assignment": "resolved maxHp reconciliation + hp clamp",
+      "classification": "lifecycle_sensitive",
+      "lifecycle": "covered",
+      "reason": "A resolved Max HP change can alter HP-ratio Form conditions; linked Pokémon are revalidated."
+    },
+    {
+      "surface": "applyPokemonProgression — no evolution",
+      "assignment": "level-up maxHp update + hp clamp",
+      "classification": "lifecycle_sensitive",
+      "lifecycle": "covered_in_this_pass",
+      "reason": "Normal level progression can change Max HP without changing Species, so HP-ratio Forms must be revalidated after progression details are updated."
+    },
+    {
+      "surface": "applyPokemonProgression — evolution",
+      "assignment": "new Species maxHp + hp clamp",
+      "classification": "intentional_form_reset",
+      "lifecycle": "covered_by_reset",
+      "reason": "Evolution changes Species and intentionally resets formState to canonical base instead of carrying an old Species Form across evolution."
+    },
+    {
+      "surface": "applyPokemonRestat",
+      "assignment": "redistributed maxHp + hp clamp",
+      "classification": "lifecycle_sensitive",
+      "lifecycle": "covered",
+      "reason": "Stat redistribution can change Max HP and therefore HP-ratio Form conditions."
+    },
+    {
+      "surface": "acquirePokeEdge",
+      "assignment": "resolved maxHp from edge effects + hp clamp",
+      "classification": "lifecycle_sensitive",
+      "lifecycle": "covered",
+      "reason": "A Poké Edge can alter resolved Max HP; linked Form state is revalidated when it does."
+    },
+    {
+      "surface": "refundPokeEdge",
+      "assignment": "resolved maxHp after edge refund + hp clamp",
+      "classification": "lifecycle_sensitive",
+      "lifecycle": "covered",
+      "reason": "Removing a Poké Edge can alter resolved Max HP; linked Form state is revalidated when it does."
+    },
+    {
+      "surface": "changeHp — linked Species",
+      "assignment": "HP/THP adjustment",
+      "classification": "lifecycle_event",
+      "lifecycle": "covered",
+      "reason": "The normal HP control dispatches hp-adjust through the campaign Form event endpoint."
+    },
+    {
+      "surface": "changeHp — unlinked/demo fallback",
+      "assignment": "direct HP/THP adjustment",
+      "classification": "unlinked_fallback",
+      "lifecycle": "not_applicable",
+      "reason": "Demo/unlinked Pokémon have no Species Form catalog to revalidate."
+    },
+    {
+      "surface": "storePokemon",
+      "assignment": "restore hp to maxHp and clear THP",
+      "classification": "application_reset",
+      "lifecycle": "covered",
+      "reason": "Existing Storage semantics already reset HP/THP; Form THP provenance is cleared and Form state is revalidated."
+    },
+    {
+      "surface": "withdrawPokemon",
+      "assignment": "restore hp to maxHp and clear THP",
+      "classification": "application_reset",
+      "lifecycle": "covered",
+      "reason": "Existing withdrawal semantics reset HP/THP; linked Form state is revalidated after cleanup."
+    },
+    {
+      "surface": "useItem — linked Species",
+      "assignment": "Potion/Super Potion/Oran Berry healing",
+      "classification": "lifecycle_event",
+      "lifecycle": "covered",
+      "reason": "Automated healing dispatches hp-adjust so HP-sensitive Forms re-evaluate."
+    },
+    {
+      "surface": "useItem — unlinked/demo fallback",
+      "assignment": "direct healing clamp",
+      "classification": "unlinked_fallback",
+      "lifecycle": "not_applicable",
+      "reason": "Demo/unlinked Pokémon have no Species Form catalog to revalidate."
+    }
+  ],
+  "notes": [
+    "The audit covers mutation/initialization surfaces in the campaign UI clients, not internal resolver calculations that operate on copies.",
+    "Persisted Form IDs remain unchanged; readable names are a display concern only.",
+    "No deferred/source-insufficient family is unlocked by this audit."
+  ]
+}
