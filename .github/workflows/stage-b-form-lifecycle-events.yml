@@ -64,6 +64,8 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add \
+            PTU_Companion_Windows_Source/rules/pokemon-form-events.mjs \
+            PTU_Companion_Android_Tauri/www/rules/pokemon-form-events.mjs \
             PTU_Companion_Windows_Source/server.mjs \
             PTU_Companion_Android_Tauri/www/mobile-api.mjs \
             docs/PTU_FORMS_STAGE_B.md \
