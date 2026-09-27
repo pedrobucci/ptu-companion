@@ -33,9 +33,9 @@ for(const path of appPaths){
     'const formDefinitions=Array.isArray(payload?.baseSpecies?.forms)?payload.baseSpecies.forms:[];',
     'pokemonFormStateLabel(beforeState,formDefinitions)',
     'pokemonFormStateLabel(afterState,formDefinitions)',
-    'function exportSave(){ downloadJson(state,',
     'state=migrateState(data);',
   ])assert.ok(src.includes(needle),`${path} missing ${needle}`);
+  assert.match(src,/(?:async\s+)?function exportSave\(\)/,`${path} missing save export function`);
 
   const labelCtx={};vm.createContext(labelCtx);
   vm.runInContext(extractFunction(src,'formEventSlug'),labelCtx);
