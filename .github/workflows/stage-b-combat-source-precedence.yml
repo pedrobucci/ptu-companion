@@ -1,0 +1,17 @@
+name: Stage B Combat source precedence
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'PTU_Companion_Windows_Source/scripts/*combat*source*'
+      - 'PTU_Companion_Windows_Source/static-preview/app.js'
+      - 'PTU_Companion_Android_Tauri/www/app.js'
+      - 'docs/PTU_COMBAT_SOURCE_PRECEDENCE.md'
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: 20}
+      - run: node PTU_Companion_Windows_Source/scripts/verify_stage_b_combat_source_precedence.mjs

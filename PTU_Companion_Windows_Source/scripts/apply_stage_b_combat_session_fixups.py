@@ -10,6 +10,7 @@ from apply_stage_b_combat_non_move_session_docs import main as apply_non_move_se
 from apply_stage_b_combat_sprint_maneuver import main as apply_sprint_maneuver
 from apply_stage_b_combat_quick_curl import main as apply_quick_curl
 from apply_stage_b_combat_vicious import main as apply_vicious
+from apply_stage_b_combat_source_precedence import main as apply_source_precedence
 
 ROOT=Path(__file__).resolve().parents[1]
 REPO=ROOT.parent
@@ -45,6 +46,7 @@ apply_non_move_session_docs()
 apply_sprint_maneuver()
 apply_quick_curl()
 apply_vicious()
+apply_source_precedence()
 
 # The legacy physical-dice patch historically anchors at the `function` token of
 # pokemonCombatOpenMove. When the ledger source already declares it `async`, that

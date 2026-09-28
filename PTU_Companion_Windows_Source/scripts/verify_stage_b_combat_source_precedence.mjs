@@ -1,0 +1,23 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import path from 'node:path';
+import vm from 'node:vm';
+const repo=path.resolve(import.meta.dirname,'..','..');
+const files=[path.join(repo,'PTU_Companion_Windows_Source','static-preview','app.js'),path.join(repo,'PTU_Companion_Android_Tauri','www','app.js')];
+const win=fs.readFileSync(files[0],'utf8');
+for(const file of files){const s=fs.readFileSync(file,'utf8');assert.match(s,/const PTU_COMBAT_SOURCE_PRECEDENCE=/);assert.match(s,/function pokemonCombatFebruary2016Override/);assert.match(s,/function pokemonCombatElectrodashResourceSpec/);assert.match(s,/Scene x2 – Swift Action/);assert.match(s,/Standard Action Interrupt/);assert.match(s,/function pokemonCombatQuickCurlVariant/);assert.match(s,/function pokemonCombatUseElectrodashSprint/);}
+const doc=JSON.parse(fs.readFileSync(path.join(repo,'docs','data','PTU_COMBAT_SOURCE_PRECEDENCE.json'),'utf8'));
+assert.deepEqual(doc.sources.map(s=>s.id),['ptu-core-1.05','ptu-1.05-editation','ptu-may-2015-playtest','ptu-september-2015-playtest','ptu-february-2016-playtest']);
+assert.equal(doc.resolution,'highest-rank-then-later-record');
+assert.equal(doc.affected.electrodash.winner,'ptu-february-2016-playtest');
+const start=win.indexOf('const PTU_COMBAT_SOURCE_PRECEDENCE=');
+const end=win.indexOf('function pokemonCombatElectrodashResourceSpec');
+const context={pokemonCombatSlug:value=>String(value||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')};
+vm.createContext(context);vm.runInContext(win.slice(start,end),context);
+const quick=context.pokemonCombatResolveDefinition([{name:'Quick Curl',definition:{name:'Quick Curl',effect:'Core text'}}],'Quick Curl');
+const electro=context.pokemonCombatResolveDefinition([{name:'Electrodash',definition:{name:'Electrodash',effect:'Core text'}}],'Electrodash');
+assert.match(quick.definition.effect,/Standard Action Interrupt/);
+assert.equal(quick.definition.sourceId,'ptu-february-2016-playtest');
+assert.match(electro.definition.frequency,/Scene x2/);
+assert.match(electro.definition.effect,/Sprint Action as a Free Action/);
+console.log('Combat source precedence: passed');

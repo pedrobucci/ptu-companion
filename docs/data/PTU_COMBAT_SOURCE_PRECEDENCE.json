@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "sources": [
+    {"id":"ptu-core-1.05","rank":100,"label":"PTU 1.05 Core"},
+    {"id":"ptu-1.05-editation","rank":110,"label":"PTU 1.05 Editation"},
+    {"id":"ptu-may-2015-playtest","rank":120,"label":"PTU May 2015 Playtest Packet"},
+    {"id":"ptu-september-2015-playtest","rank":130,"label":"PTU September 2015 Playtest Packet"},
+    {"id":"ptu-february-2016-playtest","rank":140,"label":"February 2016 Playtest Packet"}
+  ],
+  "resolution": "highest-rank-then-later-record",
+  "guard": "winning-definition-only",
+  "affected": {
+    "quick-curl": {"winner":"ptu-february-2016-playtest","automation":"standard-action-interrupt-plus-dr-10-round"},
+    "electrodash": {"winner":"ptu-february-2016-playtest","automation":"free-sprint-swift-scene-x2"},
+    "vicious": {"winner":"latest-enabled-definition","automation":"shared-ledger"},
+    "hone-claws": {"winner":"latest-enabled-definition","automation":"shared-ledger"}
+  }
+}
