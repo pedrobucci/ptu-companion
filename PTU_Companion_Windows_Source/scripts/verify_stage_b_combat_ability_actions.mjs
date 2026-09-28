@@ -33,7 +33,7 @@ for(const path of appPaths){
     'Did the source trigger occur?',
     'No opponent state was persisted.',
     "section('AVAILABLE ABILITIES'",
-    'pokemonCombatSpendNonMoveResource(id,spec.resource',{log:false})'.replace("',{",",{")
+    'pokemonCombatSpendNonMoveResource(id,spec.resource,{log:false})'
   ])assert.ok(src.includes(needle),`${path} missing ${needle}`);
   const open=extractFunction(src,'pokemonCombatOpenAbilityAction'),resolveAbility=extractFunction(src,'pokemonCombatResolveAbilityAction');
   for(const code of [open,resolveAbility]){
