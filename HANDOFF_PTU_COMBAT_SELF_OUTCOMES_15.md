@@ -145,3 +145,7 @@ Suggested order:
 4. keep physical dice/manual outcome input for any Ability that needs a roll;
 5. add correction/refund controls so a mistaken click does not permanently consume a Scene/Daily resource;
 6. add deterministic tests for action conversion, Scene/Daily reset, source-key separation and no double-spend.
+
+## Successor
+
+This pass is complete. Continue from `HANDOFF_PTU_COMBAT_NON_MOVE_RESOURCES_16.md`.
