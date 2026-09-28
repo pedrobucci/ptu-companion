@@ -7,11 +7,21 @@ on:
       - content/ptu-parametrized-forms-catalog
     paths:
       - '.github/workflows/stage-b-combat-non-move-resources.yml'
-      - 'PTU_Companion_Windows_Source/scripts/apply_stage_b_combat_non_move_resources.py'
-      - 'PTU_Companion_Windows_Source/scripts/verify_stage_b_combat_non_move_resources.mjs'
       - 'PTU_Companion_Windows_Source/scripts/apply_stage_b_combat_session_fixups.py'
+      - 'PTU_Companion_Windows_Source/scripts/apply_stage_b_combat_manual_physical_dice.py'
+      - 'PTU_Companion_Windows_Source/scripts/apply_stage_b_combat_move_outcomes.py'
+      - 'PTU_Companion_Windows_Source/scripts/apply_stage_b_combat_self_outcomes.py'
+      - 'PTU_Companion_Windows_Source/scripts/apply_stage_b_combat_non_move_resources.py'
+      - 'PTU_Companion_Windows_Source/scripts/verify_stage_b_combat_session_ledger.mjs'
+      - 'PTU_Companion_Windows_Source/scripts/verify_stage_b_combat_move_outcomes.mjs'
+      - 'PTU_Companion_Windows_Source/scripts/verify_stage_b_combat_self_outcomes.mjs'
+      - 'PTU_Companion_Windows_Source/scripts/verify_stage_b_combat_non_move_resources.mjs'
       - 'PTU_Companion_Windows_Source/static-preview/app.js'
       - 'PTU_Companion_Android_Tauri/www/app.js'
+      - 'docs/PTU_COMBAT_SESSION_LEDGER.md'
+      - 'docs/data/PTU_COMBAT_SESSION_LEDGER.json'
+      - 'docs/PTU_COMBAT_MOVE_OUTCOMES.md'
+      - 'docs/data/PTU_COMBAT_MOVE_OUTCOMES.json'
       - 'docs/PTU_COMBAT_NON_MOVE_RESOURCES.md'
       - 'docs/data/PTU_COMBAT_NON_MOVE_RESOURCES.json'
 
