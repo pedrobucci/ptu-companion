@@ -18,11 +18,14 @@ on:
       - 'PTU_Companion_Windows_Source/scripts/apply_stage_b_form_combat_ergonomics.py'
       - 'PTU_Companion_Windows_Source/scripts/apply_stage_b_combat_session_ledger.py'
       - 'PTU_Companion_Windows_Source/scripts/apply_stage_b_combat_session_fixups.py'
+      - 'PTU_Companion_Windows_Source/scripts/apply_stage_b_combat_manual_physical_dice.py'
+      - 'PTU_Companion_Windows_Source/scripts/apply_stage_b_combat_move_outcomes.py'
       - 'PTU_Companion_Windows_Source/scripts/verify_stage_b_form_campaign_state.mjs'
       - 'PTU_Companion_Windows_Source/scripts/verify_stage_b_form_campaign_hardening.mjs'
       - 'PTU_Companion_Windows_Source/scripts/verify_stage_b_form_persistence_feedback.mjs'
       - 'PTU_Companion_Windows_Source/scripts/verify_stage_b_form_combat_ergonomics.mjs'
       - 'PTU_Companion_Windows_Source/scripts/verify_stage_b_combat_session_ledger.mjs'
+      - 'PTU_Companion_Windows_Source/scripts/verify_stage_b_combat_move_outcomes.mjs'
       - 'PTU_Companion_Windows_Source/scripts/verify_beta8_hp_identity.mjs'
       - 'PTU_Companion_Android_Tauri/scripts/verify-beta8-hp-identity.mjs'
       - 'PTU_Companion_Windows_Source/scripts/augment_ptu_form_lifecycle_events.py'
@@ -37,6 +40,8 @@ on:
       - 'docs/data/PTU_FORMS_COMBAT_RESOURCE_AUDIT.json'
       - 'docs/PTU_COMBAT_SESSION_LEDGER.md'
       - 'docs/data/PTU_COMBAT_SESSION_LEDGER.json'
+      - 'docs/PTU_COMBAT_MOVE_OUTCOMES.md'
+      - 'docs/data/PTU_COMBAT_MOVE_OUTCOMES.json'
 
 permissions:
   contents: write
@@ -81,6 +86,8 @@ jobs:
           python PTU_Companion_Windows_Source/scripts/apply_stage_b_combat_session_fixups.py
       - name: Verify shared Pokémon combat session ledger
         run: node PTU_Companion_Windows_Source/scripts/verify_stage_b_combat_session_ledger.mjs
+      - name: Verify source-explicit Move outcome handlers
+        run: node PTU_Companion_Windows_Source/scripts/verify_stage_b_combat_move_outcomes.mjs
       - name: Verify Windows regressions
         working-directory: PTU_Companion_Windows_Source
         run: npm run verify
@@ -109,6 +116,8 @@ jobs:
           grep -q 'function pokemonCombatScreen' PTU_Companion_Android_Tauri/www/app.js
           grep -q 'function pokemonCombatResolveMove' PTU_Companion_Windows_Source/static-preview/app.js
           grep -q 'function pokemonCombatResolveMove' PTU_Companion_Android_Tauri/www/app.js
+          grep -q 'function pokemonCombatApplyMoveOutcome' PTU_Companion_Windows_Source/static-preview/app.js
+          grep -q 'function pokemonCombatApplyMoveOutcome' PTU_Companion_Android_Tauri/www/app.js
           grep -q 'async function applyPokemonProgression' PTU_Companion_Windows_Source/static-preview/app.js
           grep -q 'async function applyPokemonProgression' PTU_Companion_Android_Tauri/www/app.js
           grep -q 'async function useItem' PTU_Companion_Windows_Source/static-preview/app.js
@@ -124,6 +133,8 @@ jobs:
           grep -q 'Historical checkpoint:' docs/PTU_FORMS_COMBAT_RESOURCE_AUDIT.md
           grep -q '"menu": "Combat"' docs/data/PTU_COMBAT_SESSION_LEDGER.json
           grep -q 'First complex Move interaction: Defense Curl + Rollout' docs/PTU_COMBAT_SESSION_LEDGER.md
+          grep -q '"physical_dice_only": true' docs/data/PTU_COMBAT_MOVE_OUTCOMES.json
+          grep -q 'Fury Cutter' docs/PTU_COMBAT_MOVE_OUTCOMES.md
           grep -q 'combat: semanticState.ui?.combat ?? null' PTU_Companion_Windows_Source/persistence/repository.mjs
           grep -q 'tempHp:Number(p.tempHp??p.details?.tempHp??0)' PTU_Companion_Windows_Source/persistence/repository.mjs
           grep -q "extract('changeHp',true)" PTU_Companion_Windows_Source/scripts/verify_beta8_hp_identity.mjs
@@ -152,10 +163,12 @@ jobs:
             docs/PTU_FORMS_COMBAT_RESOURCE_AUDIT.md \
             docs/data/PTU_FORMS_COMBAT_RESOURCE_AUDIT.json \
             docs/PTU_COMBAT_SESSION_LEDGER.md \
-            docs/data/PTU_COMBAT_SESSION_LEDGER.json
+            docs/data/PTU_COMBAT_SESSION_LEDGER.json \
+            docs/PTU_COMBAT_MOVE_OUTCOMES.md \
+            docs/data/PTU_COMBAT_MOVE_OUTCOMES.json
           if git diff --cached --quiet; then
             echo 'Campaign-state Form integration already current.'
           else
-            git commit -m 'feat(combat): add shared Pokémon combat session ledger [skip ci]'
+            git commit -m 'feat(combat): integrate Move outcome handlers [skip ci]'
             git push origin HEAD:content/ptu-parametrized-forms-catalog
           fi
