@@ -75,55 +75,52 @@ Runtime behavior:
 
 ## Implementation files
 
-New deterministic patch:
-
 - `PTU_Companion_Windows_Source/scripts/apply_stage_b_combat_self_outcomes.py`
-
-Existing deterministic stack now calls it after the physical-dice and v1 outcome layers:
-
 - `PTU_Companion_Windows_Source/scripts/apply_stage_b_combat_session_fixups.py`
-
-Verification:
-
 - `PTU_Companion_Windows_Source/scripts/verify_stage_b_combat_self_outcomes.mjs`
-- `PTU_Companion_Windows_Source/scripts/verify_stage_b_combat_move_outcomes.mjs` now accepts schema v2 while preserving all v1 assertions.
-
-Dedicated CI:
-
+- `PTU_Companion_Windows_Source/scripts/verify_stage_b_combat_move_outcomes.mjs`
 - `.github/workflows/stage-b-combat-self-outcomes.yml`
-
-Generated runtime surfaces remain Windows/Android equivalent for the new outcome functions:
-
 - `PTU_Companion_Windows_Source/static-preview/app.js`
 - `PTU_Companion_Android_Tauri/www/app.js`
+- `docs/PTU_COMBAT_MOVE_OUTCOMES.md`
+- `docs/data/PTU_COMBAT_MOVE_OUTCOMES.json`
 
 ## Full-rebuild idempotency fix
 
 During integration, the legacy physical-dice patch could leave `async async function pokemonCombatOpenMove` when the full Combat stack was rebuilt over an already-async ledger declaration.
 
-`apply_stage_b_combat_session_fixups.py` now normalizes that declaration after all deterministic Combat layers and fails if any duplicate `async async function` remains.
-
-This was a build-pipeline idempotency issue, not a rules/runtime design change.
+`apply_stage_b_combat_session_fixups.py` now normalizes that declaration after all deterministic Combat layers and fails if any duplicate `async async function` remains. This was a build-pipeline idempotency issue, not a rules/runtime design change.
 
 ## Validation
 
-Final full campaign/Combat rebuild:
+Latest validation on the current runtime/docs state:
 
-- GitHub Actions run: `36429448384`
-- job: `108951543950`
+### Full campaign/Combat rebuild
+
+- GitHub Actions run: `36429963701`
+- job: `108953302178`
 - result: **success**
-- validated all prior Form/Combat checks, shared Combat ledger, Move Outcome model v2 compatibility, Windows `npm run verify`, Android `npm run verify`, invariants, `.ptucp` guard and `git diff --check`.
+- all prior Form/Combat checks passed;
+- shared Combat ledger passed;
+- Move Outcome model v2 compatibility passed;
+- Windows `npm run verify` passed;
+- Android `npm run verify` passed;
+- invariants, `.ptucp` guard and `git diff --check` passed.
 
-Dedicated controlled-Pokémon outcome workflow:
+### Dedicated controlled-Pokémon outcome workflow
 
-- GitHub Actions run: `36429448569`
-- job: `108951549656`
+- GitHub Actions run: `36429963768`
+- job: `108953303143`
 - result: **success**
-- explicitly validated Close Combat, Leaf Storm, Petal Dance and Charge Beam handlers, physical extra d20 behavior, stage clamping, status flags, Windows/Android parity, full Windows/Android regressions and `.ptucp` guard.
+- Close Combat, Leaf Storm, Petal Dance and Charge Beam handlers passed;
+- physical extra-d20 behavior passed;
+- Combat Stage clamping and status flags passed;
+- Windows/Android parity passed;
+- full Windows/Android regressions and `.ptucp` guard passed.
 
-Generated controlled-Pokémon runtime/docs checkpoint from the preceding dedicated integration: `302d73e7e9c2ee2cd590a0674a5bd71b0023f951`.
+Generated controlled-Pokémon runtime/docs checkpoint: `302d73e7e9c2ee2cd590a0674a5bd71b0023f951`.
 
-Validated source/fixup checkpoint: `ed103408c1a9246510ce92f2bef33a45085b4943`.
+Validated full-rebuild fixup checkpoint: `ed103408c1a9246510ce92f2bef33a45085b4943`.
 
 ## Conservative boundaries retained
 
