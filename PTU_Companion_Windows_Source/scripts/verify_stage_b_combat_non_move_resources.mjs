@@ -13,7 +13,7 @@ const docMd=join(repo,'docs','PTU_COMBAT_NON_MOVE_RESOURCES.md');
 
 function extractFunction(src,name){
   const match=new RegExp(`(?:async\\s+)?function\\s+${name}\\s*\\(`).exec(src);if(!match)throw new Error(`Missing function ${name}`);
-  const start=match.index,tail=src.slice(start+1),next=/\n(?:async\s+)?function\s+[A-Za-z_$][\w$]*\s*\(/.exec(tail),end=next?start+1+next.index:src.length;return src.slice(start,end).trim();
+  const start=match.index,tail=src.slice(start+1),next=/\n(?:(?:async\s+)?function\s+[A-Za-z_$][\w$]*\s*\(|const\s+POKEMON_COMBAT_TRACKED_ACTION_COSTS\s*=)/.exec(tail),end=next?start+1+next.index:src.length;return src.slice(start,end).trim();
 }
 
 const parityNames=[
