@@ -52,7 +52,7 @@ ctx.pokemonCombatParticipant=(id,{create=true}={})=>id==='p'?ctx.row:null;
 ctx.pokemonCombatLog=()=>null;
 ctx.pkm={id:'p',name:'Testmon',combatStages:{attack:0,defense:0,spAttack:0,spDefense:0,speed:0,accuracy:0,evasion:0}};
 ctx.pokemon=id=>id==='p'?ctx.pkm:null;
-for(const name of ['pokemonCombatSlug','pokemonCombatParseFrequency','pokemonCombatSyncBoundaries','pokemonCombatTurn','pokemonCombatCanSpendAction','pokemonCombatSpendAction','pokemonCombatFrequencyAvailability','pokemonCombatSpendFrequency'])vm.runInContext(extractFunction(sources[0],name),ctx);
+for(const name of ['pokemonCombatSlug','pokemonCombatParseFrequency','pokemonCombatSyncBoundaries','pokemonCombatTurn','pokemonCombatStandardRemaining','pokemonCombatSpendStandardToken','pokemonCombatCanSpendAction','pokemonCombatSpendAction','pokemonCombatFrequencyAvailability','pokemonCombatSpendFrequency'])vm.runInContext(extractFunction(sources[0],name),ctx);
 vm.runInContext("const POKEMON_COMBAT_TRACKED_ACTION_COSTS=new Set(['Full Action','Standard Action','Shift Action','Swift Action','Free Action']);",ctx);
 for(const name of ['pokemonCombatNonMoveSpec','pokemonCombatNonMoveResourceKey','pokemonCombatNonMoveAvailability','pokemonCombatActionDelta','pokemonCombatFrequencyValue','pokemonCombatRefundActionDelta','pokemonCombatSpendNonMoveResource','pokemonCombatRefundNonMoveResourceCore'])vm.runInContext(extractFunction(sources[0],name),ctx);
 vm.runInContext(extractConstBlock(sources[0],'POKEMON_COMBAT_ABILITY_ACTION_ALLOWLIST','pokemonCombatAbilityActionSpec'),ctx);
