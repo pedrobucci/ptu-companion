@@ -29,6 +29,16 @@ def patch_json() -> bool:
         'enabled_subset':['Schooling','Power Construct','Aegislash manual Stance Change','Ice Face Hail restoration','Weapon Bond entry/relinquish'],
         'policy':'only source-explicit action/frequency metadata is consumed; failed/no-op lifecycle events refund reserved resources',
     }
+    data['ability_action_automation']={
+        'model_version':1,
+        'enabled_subset':['Dodge','Parry','Effect Spore','Stalwart'],
+        'source_signature_guard':True,
+        'physical_dice_only':True,
+        'abstract_target':True,
+        'resource_ledger':'shared non-Move per-Pokémon action/frequency ledger',
+        'excluded_conflicts':['Prime Fury','Hydration','Ice Body','Regal Challenge'],
+        'deferred_composite':['Sprint'],
+    }
     rendered=json.dumps(data,indent=2,ensure_ascii=False)+'\n'
     changed=before!=json.dumps(data,sort_keys=True,ensure_ascii=False) or DOC_JSON.read_text(encoding='utf-8')!=rendered
     if changed:DOC_JSON.write_text(rendered,encoding='utf-8')
@@ -41,7 +51,7 @@ def patch_md() -> bool:
     if start<0:start=md.find('## Form integration')
     end=md.find('## PTU source anchors',start)
     if start<0 or end<0:raise SystemExit('Combat ledger Form integration documentation anchors drifted')
-    section='''## Form / Ability resource integration\n\n- Entering/leaving the Combat session dispatches the existing Form `battle-start` / `battle-end` events.\n- Resolved Move use dispatches the existing `move-used` Form event.\n- HP controls continue to use the existing HP/Form lifecycle path.\n- Source-explicit non-Move actions now consume the **same per-Pokémon action/frequency ledger** used by Moves; there is no second resource system.\n- Enabled exact subset: Schooling (`Daily – Free Action`), Power Construct (`Daily – Swift Action`), Aegislash manual Stance Change (`Full Action`), Ice Face Hail restoration (`Standard Action`), and Weapon Bond entry/relinquish (`Extended Action`).\n- Ability/Form/Capability frequency keys are namespaced by source kind and source key, preventing collisions with Moves or similarly named sources.\n- Resource spending is atomic around lifecycle events: an invalid or no-op event refunds the reserved action/frequency.\n- Recent non-Move resource transactions expose a resource-only correction/refund control. It restores only tokens/counters spent by that transaction and does not rewind HP, Form state, Move outcomes, or later game state.\n- Weapon Bond's Extended Action remains faithfully labeled but is not converted into Standard/Shift/Swift turn economy; Extended Action progress is still not modeled.\n\n'''
+    section='''## Form / Ability resource integration\n\n- Entering/leaving the Combat session dispatches the existing Form `battle-start` / `battle-end` events.\n- Resolved Move use dispatches the existing `move-used` Form event.\n- HP controls continue to use the existing HP/Form lifecycle path.\n- Source-explicit non-Move actions consume the **same per-Pokémon action/frequency ledger** used by Moves; there is no second resource system.\n- Enabled exact Form/lifecycle subset: Schooling (`Daily – Free Action`), Power Construct (`Daily – Swift Action`), Aegislash manual Stance Change (`Full Action`), Ice Face Hail restoration (`Standard Action`), and Weapon Bond entry/relinquish (`Extended Action`).\n- Ability/Form/Capability frequency keys are namespaced by source kind and source key, preventing collisions with Moves or similarly named sources.\n- Resource spending is atomic around lifecycle events: an invalid or no-op event refunds the reserved action/frequency.\n- Recent non-Move resource transactions expose a resource-only correction/refund control. It restores only tokens/counters spent by that transaction and does not rewind HP, Form state, Move outcomes, Ability effects, or later game state.\n- Weapon Bond's Extended Action remains faithfully labeled but is not converted into Standard/Shift/Swift turn economy; Extended Action progress is still not modeled.\n\n### Source-explicit Combat Ability actions\n\n- The first general Ability action allowlist is **Dodge, Parry, Effect Spore, and Stalwart**.\n- Each Ability uses the shared non-Move resource ledger with its audited Scene/Daily and action cost; no parallel Ability resource system exists.\n- Triggers are confirmed manually. Effect Spore's `1d6` is rolled physically and entered manually.\n- Dodge/Parry and Effect Spore keep the triggering opponent abstract; no enemy entity or persistent target condition is created.\n- Stalwart changes only the controlled Pokémon's Combat Stages.\n- Automation is hidden/disabled when the active Ruleset effect text no longer matches the audited source signature.\n- Prime Fury, Hydration, Ice Body, and Regal Challenge remain manual because supplied definitions conflict. Sprint remains deferred until its triggering Standard Action Sprint Maneuver can be represented without undercounting action economy.\n\n'''
     md=md[:start]+section+md[end:]
     md=md.replace('- Extended Action progress is reserved for a later shared-ledger layer.','- Extended Actions remain source-labeled/informational; multi-step Extended Action progress is not modeled as turn actions.')
     if md!=original:DOC_MD.write_text(md,encoding='utf-8');return True
@@ -49,7 +59,7 @@ def patch_md() -> bool:
 
 
 def main() -> None:
-    print({'combat_session_non_move_docs':1,'json_changed':patch_json(),'md_changed':patch_md()})
+    print({'combat_session_non_move_docs':2,'json_changed':patch_json(),'md_changed':patch_md(),'ability_actions':['Dodge','Parry','Effect Spore','Stalwart']})
 
 
 if __name__=='__main__':main()
