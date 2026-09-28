@@ -1,6 +1,6 @@
 # Handoff — PTU Combat Source-Explicit Ability Actions 17
 
-This handoff supersedes `HANDOFF_PTU_COMBAT_NON_MOVE_RESOURCES_16.md` for continuation.
+This handoff is superseded by `HANDOFF_PTU_COMBAT_SPRINT_MANEUVER_18.md` for continuation.
 
 Validated implementation checkpoint: `d75ea931e29911ccebfbb68d3e74765f71674cb0`.
 
@@ -43,7 +43,7 @@ Still wired through the same resource API:
 
 Prime Fury, Hydration, Ice Body and Regal Challenge remain manual because supplied source versions conflict.
 
-Sprint is source-consistent as an Ability but remains deferred here because its trigger is the separate **Sprint Maneuver**, which itself costs a Standard Action. Automating only the Ability's `Scene – Swift Action` would undercount action economy. Rattled/Steadfast and other playtest-changed Abilities likewise need source-resolution first.
+Sprint was intentionally deferred in this handoff because its trigger is the separate **Sprint Maneuver**, which itself costs a Standard Action. That composite interaction is implemented in successor handoff 18 rather than undercounting action economy here. Rattled/Steadfast and other playtest-changed Abilities likewise need source-resolution first.
 
 No generic Ability prose parser, opponent entity, persistent target-status ledger, or generated dice is introduced.
 
@@ -57,15 +57,6 @@ Covered: all prior Form/campaign checks, shared Combat ledger, Move Outcome v2, 
 
 Earlier non-Move workflow failures in this pass were final-push races after all validations had already passed. The workflow now fetches the current branch, regenerates deterministically, and retries the generated push; final run `36450265241` is green.
 
-## Next pass
+## Successor
 
-Use **Sprint** as the first composite Maneuver + Ability integration:
-
-1. model the Core Sprint Maneuver as a Standard Action in the Pokémon Combat ledger;
-2. trigger the source-explicit Sprint Ability from that maneuver and spend its `Scene – Swift Action` without double-spending/undercounting;
-3. apply +2 Speed CS;
-4. distinguish Maneuver vs Ability resource transactions/refunds;
-5. test insufficient Standard/Swift resources, conversion rules, Scene reset, repeated-trigger prevention, Windows/Android parity;
-6. preserve abstract opponents and physical/manual dice.
-
-Do not expand this into conflicting Ability automation until their supplied-source conflicts are explicitly resolved.
+Continue from `HANDOFF_PTU_COMBAT_SPRINT_MANEUVER_18.md`.
