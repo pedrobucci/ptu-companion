@@ -99,7 +99,7 @@ def patch_client(path: Path) -> bool:
     text = replace_between(text,'function pokemonCombatOutcomeSpec(','function pokemonCombatFuryCutterState(',OUTCOME_SPEC,f'{path}: outcome spec')
     text = replace_between(text,'function pokemonCombatOutcomeUiFields(','async function pokemonCombatApplyHpGain(',OUTCOME_UI,f'{path}: outcome UI')
     text = replace_between(text,'function pokemonCombatApplyAttackStages(','async function pokemonCombatApplyMoveOutcome(',STAGE_HELPERS,f'{path}: self helpers')
-    text = replace_between(text,'async function pokemonCombatApplyMoveOutcome(','async function pokemonCombatUseNoRoll(',APPLY_OUTCOME,f'{path}: apply self outcome')
+    text = replace_between(text,'async function pokemonCombatApplyMoveOutcome(','function pokemonCombatKnowsRollMove(',APPLY_OUTCOME,f'{path}: apply self outcome')
     text = replace_between(text,'async function pokemonCombatResolveMove(','function pokemonCombatMoveCard(',RESOLVE_MOVE,f'{path}: resolve self outcome')
     if text != original:
         path.write_text(text,encoding='utf-8');return True
