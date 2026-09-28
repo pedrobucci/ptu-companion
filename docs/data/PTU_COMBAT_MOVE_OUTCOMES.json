@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "name": "PTU Combat Move Outcome Handlers",
   "target_model": "abstract",
   "physical_dice_only": true,
@@ -42,6 +42,29 @@
     "fell_stinger": {
       "input": "did this Move knock out the target?",
       "effect": "on confirmed successful knockout, raise controlled user Attack by 2 Combat Stages, capped by normal CS bounds"
+    },
+    "close_combat": {
+      "input": "reported successful hit",
+      "effect": "controlled user Defense -1 CS and Special Defense -1 CS",
+      "source_semantics": "self stage change from the supplied Move effect"
+    },
+    "leaf_storm": {
+      "input": "did the Move actually deal damage?",
+      "effect": "on confirmed damage, controlled user Special Attack -2 CS"
+    },
+    "petal_dance": {
+      "input": "did the Move actually deal damage?",
+      "effect": "on confirmed damage, controlled user becomes Enraged and Confused",
+      "tracking": "combat-session condition flags; no enemy state"
+    },
+    "charge_beam": {
+      "inputs": [
+        "reported successful hit",
+        "extra physical d20 effect roll"
+      ],
+      "threshold": "7+",
+      "effect": "controlled user Special Attack +1 CS on 7+",
+      "digital_rng": false
     }
   },
   "non_goals": [

@@ -23,3 +23,25 @@ Attack and damage dice are always rolled physically. The Companion records the n
 ## Conservative boundary
 
 Handlers are explicit by Move name and supplied PTU rule. This pass does not parse arbitrary effect prose and does not infer opponent Defense, Evasion, HP, typing, Features, Abilities, DR, conditions, or type effectiveness.
+
+## v2 controlled-Pokémon outcomes
+
+This pass adds explicit handlers for effects that change only the controlled Pokémon. No opposing entity is created.
+
+### Close Combat
+
+On a reported successful hit, the controlled user lowers Defense and Special Defense by 1 Combat Stage each. The normal [-6,+6] Combat Stage bounds remain enforced.
+
+### Leaf Storm
+
+Because the supplied Move says the Special Attack reduction occurs **after damage**, the UI asks only whether the Move actually dealt damage. On confirmation, the controlled user lowers Special Attack by 2 Combat Stages. No target HP or defenses are stored.
+
+### Petal Dance
+
+Because the supplied Move says the statuses occur **after damage is dealt**, the UI asks only whether damage was actually dealt. On confirmation, the combat ledger marks the controlled user Enraged and Confused. These are session condition flags; detailed cure/save automation is intentionally outside this pass.
+
+### Charge Beam
+
+After a reported successful hit, the user rolls the additional **1d20 physically** and enters the natural result. On 7+, the controlled user's Special Attack rises by 1 Combat Stage. The Companion never generates this roll.
+
+All four handlers remain explicit by Move name and supplied PTU wording; there is still no generic prose interpreter.
