@@ -5,6 +5,7 @@ This handoff supersedes `HANDOFF_PTU_COMBAT_ABILITY_ACTIONS_17.md` for continuat
 Repository: `pedrobucci/ptu-companion`; branch `content/ptu-parametrized-forms-catalog`; Draft PR #11; base `feature/pokemon-shiny-d`. Keep the PR **Draft/Open**. Do not merge or publish a Release without explicit owner approval. Do not mutate bundled/default `.ptucp` while the ten source-insufficient Form families remain deferred.
 
 Generated runtime/docs checkpoint: `d8016ef5f6ff32eb1308f54e564229d7da514176`.
+Final handoff/documentation head after this file: see current branch head; the generated runtime itself remains the checkpoint above.
 
 ## Sprint composite model v1
 
