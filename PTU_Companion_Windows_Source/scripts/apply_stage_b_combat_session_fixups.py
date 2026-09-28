@@ -8,6 +8,7 @@ from apply_stage_b_combat_non_move_resources import main as apply_non_move_resou
 from apply_stage_b_combat_ability_actions import main as apply_ability_actions
 from apply_stage_b_combat_non_move_session_docs import main as apply_non_move_session_docs
 from apply_stage_b_combat_sprint_maneuver import main as apply_sprint_maneuver
+from apply_stage_b_combat_quick_curl import main as apply_quick_curl
 
 ROOT=Path(__file__).resolve().parents[1]
 REPO=ROOT.parent
@@ -33,7 +34,7 @@ for path in TARGETS:
         if old not in text:raise SystemExit(f'Fixup anchor drifted in {path}: {label}')
         text=text.replace(old,new,1)
     if text!=original:path.write_text(text,encoding='utf-8')
-print({'targets':len(TARGETS),'fixups':len(REPLACEMENTS),'self_outcomes':True,'non_move_resources':True,'ability_actions':True,'sprint_maneuver':True})
+print({'targets':len(TARGETS),'fixups':len(REPLACEMENTS),'self_outcomes':True,'non_move_resources':True,'ability_actions':True,'sprint_maneuver':True,'quick_curl':True})
 apply_manual_physical_dice()
 apply_move_outcomes()
 apply_self_outcomes()
@@ -41,6 +42,7 @@ apply_non_move_resources()
 apply_ability_actions()
 apply_non_move_session_docs()
 apply_sprint_maneuver()
+apply_quick_curl()
 
 # The legacy physical-dice patch historically anchors at the `function` token of
 # pokemonCombatOpenMove. When the ledger source already declares it `async`, that
