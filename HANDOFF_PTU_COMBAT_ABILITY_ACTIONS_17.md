@@ -7,6 +7,7 @@
 - Draft PR: #11 — `docs: audit PTU Mega, Primal and alternate Forms`
 - Base: `feature/pokemon-shiny-d`
 - Validated branch checkpoint: `d75ea931e29911ccebfbb68d3e74765f71674cb0`
+- Handoff checkpoint: `82e2dfb1797dd76ec9a0a615b968eee3cc571ed3`
 - Keep the PR **Draft/Open**. Do not merge or publish a Release without explicit owner approval.
 - Do not mutate bundled/default `.ptucp` while the ten source-insufficient Form families remain deferred.
 
@@ -164,7 +165,8 @@ Validated across these runs:
 
 - generated Ability runtime/docs checkpoint: `b21647693fb8d8ddfcfc67f19dd6dc15bca9151c`;
 - Ability ledger-doc verification checkpoint: `220e42c4ff46a8b6bbc9edf5f4e5ff991146e23e`;
-- race-safe non-Move CI checkpoint: `d75ea931e29911ccebfbb68d3e74765f71674cb0`.
+- race-safe non-Move CI checkpoint: `d75ea931e29911ccebfbb68d3e74765f71674cb0`;
+- handoff checkpoint: `82e2dfb1797dd76ec9a0a615b968eee3cc571ed3`.
 
 ## Conservative boundaries retained
 
