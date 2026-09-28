@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "name": "PTU Combat Sprint Maneuver + Ability",
+  "shared_non_move_resource_ledger": true,
+  "physical_dice_only": true,
+  "target_model": "self; no opponent entity",
+  "maneuver": {
+    "name": "Sprint",
+    "source": "Pokemon Tabletop United 1.05 Core p.242",
+    "action_cost": "Standard Action",
+    "class": "Status",
+    "range": "Self",
+    "effect": "Increase Movement Speeds by 50% for the rest of the turn",
+    "runtime_tracking": "transient effect is logged; no persistent Movement Capability mutation is invented"
+  },
+  "ability": {
+    "name": "Sprint",
+    "source": "Pokemon Tabletop United 1.05 Core p.331",
+    "frequency": "Scene",
+    "action_cost": "Swift Action",
+    "trigger": "user uses the Sprint Action during Combat",
+    "triggered_effect": "controlled user gains +2 Speed Combat Stages",
+    "passive_effect": "Overland Speed is always increased by +2",
+    "passive_runtime": "source information only in this layer; no new capability mutation is invented"
+  },
+  "composite_policy": {
+    "activate_ability_with_maneuver": "requires Standard Action for Sprint plus an independently available Swift Action and the Sprint Ability Scene use",
+    "standard_to_swift_conversion": "not allowed for the composite activation because the Standard Action is already reserved/spent by the Sprint Maneuver",
+    "maneuver_only": "remains available whenever Standard Action is available, including after Sprint Ability is exhausted",
+    "transactions": "Maneuver and Ability use distinct namespaced resource transactions linked by a compositeId",
+    "refund": "resource-only Undo may correct each transaction independently; it does not rewind the +2 Speed CS effect"
+  },
+  "non_goals": [
+    "No opponent entity.",
+    "No generated dice.",
+    "No generic Ability prose parser.",
+    "No default .ptucp mutation."
+  ]
+}
