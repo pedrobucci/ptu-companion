@@ -37,7 +37,8 @@ def patch_json() -> bool:
 
 def patch_md() -> bool:
     md=DOC_MD.read_text(encoding='utf-8');original=md
-    start=md.find('## Form integration')
+    start=md.find('## Form / Ability resource integration')
+    if start<0:start=md.find('## Form integration')
     end=md.find('## PTU source anchors',start)
     if start<0 or end<0:raise SystemExit('Combat ledger Form integration documentation anchors drifted')
     section='''## Form / Ability resource integration\n\n- Entering/leaving the Combat session dispatches the existing Form `battle-start` / `battle-end` events.\n- Resolved Move use dispatches the existing `move-used` Form event.\n- HP controls continue to use the existing HP/Form lifecycle path.\n- Source-explicit non-Move actions now consume the **same per-Pokémon action/frequency ledger** used by Moves; there is no second resource system.\n- Enabled exact subset: Schooling (`Daily – Free Action`), Power Construct (`Daily – Swift Action`), Aegislash manual Stance Change (`Full Action`), Ice Face Hail restoration (`Standard Action`), and Weapon Bond entry/relinquish (`Extended Action`).\n- Ability/Form/Capability frequency keys are namespaced by source kind and source key, preventing collisions with Moves or similarly named sources.\n- Resource spending is atomic around lifecycle events: an invalid or no-op event refunds the reserved action/frequency.\n- Recent non-Move resource transactions expose a resource-only correction/refund control. It restores only tokens/counters spent by that transaction and does not rewind HP, Form state, Move outcomes, or later game state.\n- Weapon Bond's Extended Action remains faithfully labeled but is not converted into Standard/Shift/Swift turn economy; Extended Action progress is still not modeled.\n\n'''
