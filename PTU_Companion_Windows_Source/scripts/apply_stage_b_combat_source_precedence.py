@@ -40,11 +40,16 @@ async function pokemonCombatUseElectrodashClearStuck(id){const data=pokemonComba
 function pokemonCombatSetStuck(id,stuck){const ledger=pokemonCombatParticipant(id);ledger.conditions.stuck=!!stuck;pokemonCombatLog(id,stuck?'Stuck':'Stuck cleared',`${pokemon(id)?.name||id} was marked ${stuck?'Stuck':'not Stuck'} manually.`,'condition');commit(`${pokemon(id)?.name||'Pokémon'} Stuck state updated.`);render();}
 function pokemonCombatElectrodashPanel(id,data){const available=pokemonCombatElectrodashAvailability(id,data),clear=pokemonCombatElectrodashClearStuckAvailability(id,data);if(!available.row)return '';const button=(label,check,fn)=>`<button class="btn ${check.valid?'btn-gold':'btn-disabled'} full" ${check.valid?'':'disabled'} onclick="${fn}">${label}</button>`;return `<article class="ability-card"><h3>Electrodash + Sprint</h3><p>February 2016: Sprint is a Free Action; no Attacks of Opportunity while Sprinting.</p>${button('Use Electrodash + Sprint · Free + Swift · Scene x2',available,`pokemonCombatUseElectrodashSprint('${id}')`)}${button('Electrodash · clear Stuck · Shift Action',clear,`pokemonCombatUseElectrodashClearStuck('${id}')`)}</article>`;}'''
 
-PANEL = r'''function pokemonCombatSourcePrecedencePanel(data){const rows=[['Quick Curl',pokemonCombatQuickCurlAbilityRow(data)],['Electrodash',pokemonCombatElectrodashDefinition(data?.abilities)],['Vicious',pokemonCombatViciousAbilityRow(data)],['Hone Claws',pokemonCombatViciousHoneClawsRow(data)]].filter(([,row])=>row);if(!rows.length)return '';return `<details class="flow-note"><summary><strong>Resolved PTU sources</strong></summary><small>Core → 1.05 Editation → May 2015 → September 2015 → February 2016. Guards inspect the resolved winner.</small><div class="detail-dl">${rows.map(([name,row])=>{const source=pokemonCombatResolvedSource(row);return `<div><dt>${esc(name)}</dt><dd>${esc(source.label)}</dd></div>`;}).join('')}</div></details>`;}'''
+PRIME_FURY = r'''function pokemonCombatPrimeFuryResourceSpec(){return pokemonCombatNonMoveSpec('ability','combat-prime-fury','Prime Fury','Swift Action','Scene');}
+function pokemonCombatPrimeFuryAvailability(id,data){const row=pokemonCombatResolveDefinition(data?.abilities,'Prime Fury');if(!row)return {valid:false,reason:'This Pokémon does not have Prime Fury.'};const effect=String(row.definition?.effect||'').toLowerCase();if(!effect.includes('becomes enraged')||!effect.includes('special attack'))return {valid:false,row,reason:'The resolved Prime Fury definition is not the audited February 2016 version.'};const resource=pokemonCombatPrimeFuryResourceSpec(),check=pokemonCombatNonMoveAvailability(id,resource);return check.valid?{valid:true,row,resource}:{...check,row,resource};}
+async function pokemonCombatUsePrimeFury(id){const p=pokemon(id),data=pokemonCombatReferenceState.pokemonId===id?pokemonCombatReferenceState.data:null,check=pokemonCombatPrimeFuryAvailability(id,data);if(!check.valid)return toast(check.reason||'Prime Fury is unavailable.','error');const spent=pokemonCombatSpendNonMoveResource(id,check.resource,{log:false});if(!spent.valid)return toast(spent.reason,'error');pokemonCombatApplySelfStatuses(id,['Enraged'],'Prime Fury');pokemonCombatApplyCombatStages(id,{attack:1,spAttack:1},'Prime Fury');pokemonCombatLog(id,'Prime Fury',`${p.name} became Enraged · Attack +1 CS · Special Attack +1 CS.`,'ability');await commit(`${p.name} used Prime Fury.`);render();return {valid:true,spent};}
+function pokemonCombatPrimeFuryPanel(id,data){const available=pokemonCombatPrimeFuryAvailability(id,data),enraged=!!pokemonCombatParticipant(id,{create:false})?.conditions?.enraged;if(!available.row)return '';return `<article class="ability-card"><h3>Prime Fury</h3><p>February 2016: become Enraged; Attack and Special Attack each rise by +1 Combat Stage.</p>${enraged?'<div class="flow-note"><small>Enraged is active.</small></div>':''}<button class="btn ${available.valid?'btn-gold':'btn-disabled'} full" ${available.valid?'':'disabled'} onclick="pokemonCombatUsePrimeFury('${id}')">Use Prime Fury · Swift Action · Scene</button></article>`;}'''
+
+PANEL = r'''function pokemonCombatSourcePrecedencePanel(data){const rows=[['Quick Curl',pokemonCombatQuickCurlAbilityRow(data)],['Electrodash',pokemonCombatElectrodashDefinition(data?.abilities)],['Prime Fury',pokemonCombatResolveDefinition(data?.abilities,'Prime Fury')],['Vicious',pokemonCombatViciousAbilityRow(data)],['Hone Claws',pokemonCombatViciousHoneClawsRow(data)]].filter(([,row])=>row);if(!rows.length)return '';return `<details class="flow-note"><summary><strong>Resolved PTU sources</strong></summary><small>Core → 1.05 Editation → May 2015 → September 2015 → February 2016. Guards inspect the resolved winner.</small><div class="detail-dl">${rows.map(([name,row])=>{const source=pokemonCombatResolvedSource(row);return `<div><dt>${esc(name)}</dt><dd>${esc(source.label)}</dd></div>`;}).join('')}</div></details>`;}'''
 
 def patch(path):
     text=path.read_text(encoding='utf-8')
-    if 'function pokemonCombatSourceOverride(' not in text and 'const PTU_COMBAT_SOURCE_PRECEDENCE=' in text:
+    if 'const PTU_COMBAT_SOURCE_PRECEDENCE=' in text:
         text=re.sub(r"const PTU_COMBAT_SOURCE_PRECEDENCE=\[[\s\S]*?(?=function pokemonCombatQuickCurlAbilityResourceSpec)",HELPERS+'\n',text,count=1)
     elif 'const PTU_COMBAT_SOURCE_PRECEDENCE=' not in text:
         anchor='function pokemonCombatQuickCurlAbilityResourceSpec()'
@@ -55,11 +60,18 @@ def patch(path):
         text=re.sub(r"function pokemonCombatElectrodashResourceSpec\([\s\S]*?(?=function pokemonCombatQuickCurlAbilityResourceSpec)",ELECTRODASH+'\n',text,count=1)
     elif 'function pokemonCombatElectrodashResourceSpec(' not in text:
         text=text.replace('function pokemonCombatQuickCurlAbilityResourceSpec()',ELECTRODASH+'\nfunction pokemonCombatQuickCurlAbilityResourceSpec()',1)
-    if 'function pokemonCombatSourcePrecedencePanel(' not in text:
+    if 'function pokemonCombatPrimeFuryAvailability(' not in text:
+        text=text.replace('function pokemonCombatQuickCurlAbilityResourceSpec()',PRIME_FURY+'\nfunction pokemonCombatQuickCurlAbilityResourceSpec()',1)
+    if "['Prime Fury',pokemonCombatResolveDefinition" not in text and 'function pokemonCombatSourcePrecedencePanel(' in text:
+        text=re.sub(r"function pokemonCombatSourcePrecedencePanel\([\s\S]*?(?=function pokemonCombatElectrodashResourceSpec)",PANEL+'\n',text,count=1)
+    elif 'function pokemonCombatSourcePrecedencePanel(' not in text:
         text=text.replace('function pokemonCombatElectrodashResourceSpec()',PANEL+'\nfunction pokemonCombatElectrodashResourceSpec()',1)
     panel="const electrodash=data?pokemonCombatElectrodashPanel(active.id,data):'';if(electrodash)body+=section('ELECTRODASH · SPRINT',electrodash);"
     anchor="const quickCurl=data?pokemonCombatQuickCurlPanel(active.id,data):'';"
     if panel not in text and anchor in text:text=text.replace(anchor,panel+anchor,1)
+    fury_panel="const primeFury=data?pokemonCombatPrimeFuryPanel(active.id,data):'';if(primeFury)body+=section('PRIME FURY',primeFury);"
+    fury_anchor="const electrodash=data?pokemonCombatElectrodashPanel(active.id,data):'';"
+    if fury_panel not in text and fury_anchor in text:text=text.replace(fury_anchor,fury_panel+fury_anchor,1)
     source_panel="const sources=data?pokemonCombatSourcePrecedencePanel(data):'';if(sources)body+=section('RULESET SOURCE RESOLUTION',sources);"
     source_anchor="body+=section('MANEUVERS'"
     if source_panel not in text and source_anchor in text:text=text.replace(source_anchor,source_panel+source_anchor,1)
@@ -68,6 +80,9 @@ def patch(path):
     if condition_extra not in text:
         if condition_anchor in text:text=text.replace(condition_anchor,condition_extra,1)
         else:text=re.sub(r"const parts=\[\];[\s\S]*?(?=if\(Number\(row\?\.conditions\?\.quickCurlDrRound)",condition_extra,text,count=1)
+    duplicated="if(Number(row?.conditions?.quickCurlDrRound)===Number(state.ui.round||1))parts.push(`<div class=\"flow-note\"><strong>Quick Curl</strong><small>+10 Damage Reduction for this round.</small></div>`);if(Number(row?.conditions?.electrodashSprintRound)===Number(state.ui.round||1))parts.push(`<div class=\"flow-note\"><strong>Electrodash Sprint</strong><small>Sprint was a Free Action; no Attacks of Opportunity while Sprinting this round.</small></div>`);if(Number(row?.conditions?.quickCurlDrRound)===Number(state.ui.round||1))parts.push(`<div class=\"flow-note\"><strong>Quick Curl</strong><small>+10 Damage Reduction for this round.</small></div>`);if(Number(row?.conditions?.electrodashSprintRound)===Number(state.ui.round||1))parts.push(`<div class=\"flow-note\"><strong>Electrodash Sprint</strong><small>Sprint was a Free Action; no Attacks of Opportunity while Sprinting this round.</small></div>`);"
+    single="if(Number(row?.conditions?.quickCurlDrRound)===Number(state.ui.round||1))parts.push(`<div class=\"flow-note\"><strong>Quick Curl</strong><small>+10 Damage Reduction for this round.</small></div>`);if(Number(row?.conditions?.electrodashSprintRound)===Number(state.ui.round||1))parts.push(`<div class=\"flow-note\"><strong>Electrodash Sprint</strong><small>Sprint was a Free Action; no Attacks of Opportunity while Sprinting this round.</small></div>`);"
+    text=text.replace(duplicated,single)
     old="function pokemonCombatQuickCurlAbilityRow(data){return (data?.abilities||[]).find(row=>pokemonCombatSlug(row?.name||row?.definition?.name)==='quick-curl')||null;}"
     new="function pokemonCombatQuickCurlAbilityRow(data){return pokemonCombatResolveDefinition(data?.abilities,'Quick Curl');}"
     if old in text: text=text.replace(old,new,1)

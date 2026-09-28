@@ -20,11 +20,17 @@
       "frequency": "Scene x2 – Swift Action",
       "effect": "The user may make a Sprint Action as a Free Action.",
       "bonus": "The user may free itself from the Stuck condition as a Shift Action. The user does not provoke Attacks of Opportunity when Sprinting."
+    },
+    "prime-fury": {
+      "sourceId": "ptu-february-2016-playtest",
+      "frequency": "Scene – Swift Action",
+      "effect": "The user becomes Enraged, and gains +1 Combat Stage in each of Attack and Special Attack."
     }
   },
   "affected": {
     "quick-curl": {"winner":"ptu-february-2016-playtest","automation":"standard-action-interrupt-plus-dr-10-round"},
     "electrodash": {"winner":"ptu-february-2016-playtest","automation":"free-sprint-swift-scene-x2"},
+    "prime-fury": {"winner":"ptu-february-2016-playtest","automation":"enraged-plus-attack-and-special-attack-1-cs"},
     "vicious": {"winner":"latest-enabled-definition","automation":"shared-ledger"},
     "hone-claws": {"winner":"latest-enabled-definition","automation":"shared-ledger"}
   }

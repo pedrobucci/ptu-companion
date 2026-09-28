@@ -21,10 +21,10 @@ Effect Spore never rolls digitally. The player rolls the d6 physically and enter
 
 Ability frequency and action costs use `pokemonCombatSpendNonMoveResource`, including source-keyed Scene/Daily counters and the existing correction/refund UI. `Undo` corrects only the action/frequency spend; it deliberately does not rewind Stalwart Combat Stages or an already-recorded abstract outcome.
 
+## Source-precedence integration
+
+**Prime Fury** resolves to the February 2016 definition: `Scene – Swift Action`, becoming Enraged and gaining +1 Attack and +1 Special Attack Combat Stage. It is an explicit controlled-Pokémon action using the same ledger; Undo remains resource-only.
+
 ## Conservative exclusions
 
-Prime Fury, Hydration, Ice Body and Regal Challenge are not automated here because the supplied Core/playtest definitions conflict. Sprint is handled by the separate composite Sprint Maneuver layer: the Core Maneuver spends its Standard Action and the optional Sprint Ability spends its own Scene – Swift Action without undercounting either resource. See `PTU_COMBAT_SPRINT_MANEUVER.md`.
-
-## Composite Quick Curl + Defense Curl
-
-Quick Curl is integrated through a dedicated composite layer rather than the standalone Ability allowlist. Its `Scene – Free Action` resource and Defense Curl's overridden Swift Action are spent through the same shared ledger. The normal Defense Curl Move remains unchanged. See `PTU_COMBAT_QUICK_CURL.md`.
+Hydration and Ice Body resolve to February 2016 but remain gated pending explicit weather/healing session semantics. Regal Challenge retains its Core definition but remains gated pending a physical AC4 attack against an abstract target. Sprint is also deferred even though its Ability text agrees across supplied sources: its trigger is the separate Sprint Maneuver, which costs a Standard Action in PTU Core, and that Maneuver is not yet modeled in this Ability action surface.

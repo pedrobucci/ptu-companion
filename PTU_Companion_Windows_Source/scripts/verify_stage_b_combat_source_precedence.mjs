@@ -5,13 +5,14 @@ import vm from 'node:vm';
 const repo=path.resolve(import.meta.dirname,'..','..');
 const files=[path.join(repo,'PTU_Companion_Windows_Source','static-preview','app.js'),path.join(repo,'PTU_Companion_Android_Tauri','www','app.js')];
 const win=fs.readFileSync(files[0],'utf8');
-for(const file of files){const s=fs.readFileSync(file,'utf8');assert.match(s,/const PTU_COMBAT_SOURCE_PRECEDENCE=/);assert.match(s,/const PTU_COMBAT_SOURCE_OVERRIDES=/);assert.match(s,/function pokemonCombatSourceOverride/);assert.match(s,/function pokemonCombatElectrodashResourceSpec/);assert.match(s,/Scene x2 – Swift Action/);assert.match(s,/Standard Action Interrupt/);assert.match(s,/function pokemonCombatQuickCurlVariant/);assert.match(s,/function pokemonCombatUseElectrodashSprint/);assert.match(s,/function pokemonCombatElectrodashClearStuckAvailability/);assert.match(s,/function pokemonCombatUseElectrodashClearStuck/);assert.match(s,/Mark Stuck/);assert.match(s,/function pokemonCombatSourcePrecedencePanel/);assert.match(s,/RULESET SOURCE RESOLUTION/);}
+for(const file of files){const s=fs.readFileSync(file,'utf8');assert.match(s,/const PTU_COMBAT_SOURCE_PRECEDENCE=/);assert.match(s,/const PTU_COMBAT_SOURCE_OVERRIDES=/);assert.match(s,/function pokemonCombatSourceOverride/);assert.match(s,/function pokemonCombatElectrodashResourceSpec/);assert.match(s,/function pokemonCombatPrimeFuryAvailability/);assert.match(s,/Prime Fury · Swift Action · Scene/);assert.match(s,/pokemonCombatApplySelfStatuses\(id,\['Enraged'\],'Prime Fury'\)/);assert.match(s,/pokemonCombatApplyCombatStages\(id,\{attack:1,spAttack:1\},'Prime Fury'\)/);assert.equal((s.match(/<strong>Quick Curl<\/strong><small>\+10 Damage Reduction for this round\.<\/small>/g)||[]).length,1,'Quick Curl condition must not be duplicated');assert.match(s,/Scene x2 – Swift Action/);assert.match(s,/Standard Action Interrupt/);assert.match(s,/function pokemonCombatQuickCurlVariant/);assert.match(s,/function pokemonCombatUseElectrodashSprint/);assert.match(s,/function pokemonCombatElectrodashClearStuckAvailability/);assert.match(s,/function pokemonCombatUseElectrodashClearStuck/);assert.match(s,/Mark Stuck/);assert.match(s,/function pokemonCombatSourcePrecedencePanel/);assert.match(s,/RULESET SOURCE RESOLUTION/);}
 const doc=JSON.parse(fs.readFileSync(path.join(repo,'docs','data','PTU_COMBAT_SOURCE_PRECEDENCE.json'),'utf8'));
 assert.deepEqual(doc.sources.map(s=>s.id),['ptu-core-1.05','ptu-1.05-editation','ptu-may-2015-playtest','ptu-september-2015-playtest','ptu-february-2016-playtest']);
 assert.equal(doc.resolution,'highest-rank-then-later-record');
 assert.equal(doc.affected.electrodash.winner,'ptu-february-2016-playtest');
 assert.equal(doc.overrides['quick-curl'].sourceId,'ptu-february-2016-playtest');
 assert.match(doc.overrides.electrodash.bonus,/Stuck condition/);
+assert.match(doc.overrides['prime-fury'].effect,/Special Attack/);
 const start=win.indexOf('const PTU_COMBAT_SOURCE_PRECEDENCE=');
 const end=win.indexOf('function pokemonCombatElectrodashResourceSpec');
 const context={pokemonCombatSlug:value=>String(value||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')};
@@ -19,8 +20,10 @@ vm.createContext(context);vm.runInContext(win.slice(start,end),context);
 assert.equal(vm.runInContext('JSON.stringify(PTU_COMBAT_SOURCE_OVERRIDES)',context),JSON.stringify(doc.overrides));
 const quick=context.pokemonCombatResolveDefinition([{name:'Quick Curl',definition:{name:'Quick Curl',effect:'Core text'}}],'Quick Curl');
 const electro=context.pokemonCombatResolveDefinition([{name:'Electrodash',definition:{name:'Electrodash',effect:'Core text'}}],'Electrodash');
+const fury=context.pokemonCombatResolveDefinition([{name:'Prime Fury',definition:{name:'Prime Fury',effect:'Core text'}}],'Prime Fury');
 assert.match(quick.definition.effect,/Standard Action Interrupt/);
 assert.equal(quick.definition.sourceId,'ptu-february-2016-playtest');
 assert.match(electro.definition.frequency,/Scene x2/);
 assert.match(electro.definition.effect,/Sprint Action as a Free Action/);
+assert.match(fury.definition.effect,/becomes Enraged/);
 console.log('Combat source precedence: passed');
