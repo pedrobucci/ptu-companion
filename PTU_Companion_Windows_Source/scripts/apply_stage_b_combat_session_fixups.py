@@ -4,6 +4,7 @@ from pathlib import Path
 from apply_stage_b_combat_manual_physical_dice import main as apply_manual_physical_dice
 from apply_stage_b_combat_move_outcomes import main as apply_move_outcomes
 from apply_stage_b_combat_self_outcomes import main as apply_self_outcomes
+from apply_stage_b_combat_non_move_resources import main as apply_non_move_resources
 
 ROOT=Path(__file__).resolve().parents[1]
 REPO=ROOT.parent
@@ -29,10 +30,11 @@ for path in TARGETS:
         if old not in text:raise SystemExit(f'Fixup anchor drifted in {path}: {label}')
         text=text.replace(old,new,1)
     if text!=original:path.write_text(text,encoding='utf-8')
-print({'targets':len(TARGETS),'fixups':len(REPLACEMENTS),'self_outcomes':True})
+print({'targets':len(TARGETS),'fixups':len(REPLACEMENTS),'self_outcomes':True,'non_move_resources':True})
 apply_manual_physical_dice()
 apply_move_outcomes()
 apply_self_outcomes()
+apply_non_move_resources()
 
 # The legacy physical-dice patch historically anchors at the `function` token of
 # pokemonCombatOpenMove. When the ledger source already declares it `async`, that
