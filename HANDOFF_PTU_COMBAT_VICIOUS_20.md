@@ -4,9 +4,11 @@ This handoff supersedes `HANDOFF_PTU_COMBAT_QUICK_CURL_19.md` for continuation.
 
 Repository: `pedrobucci/ptu-companion`; branch `content/ptu-parametrized-forms-catalog`; Draft PR #11; base `feature/pokemon-shiny-d`. Keep the PR **Draft/Open**. Do not merge or publish a Release without explicit owner approval. Do not mutate bundled/default `.ptucp` while the ten source-insufficient Form families remain deferred.
 
-Validated implementation checkpoint before this handoff: `d6e4abf6ee3d65e7107ac374f7392f1d8b06b374`.
+Validated full-campaign implementation checkpoint: `d6e4abf6ee3d65e7107ac374f7392f1d8b06b374`.
 
 Generated Vicious runtime/docs checkpoint: `9e191888ba59b7445409d4f45d032667980f65bb`.
+
+This handoff file is committed after runtime validation and does not alter runtime behavior.
 
 ## Vicious triggered connection model v1
 
