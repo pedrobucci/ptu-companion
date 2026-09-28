@@ -91,7 +91,7 @@ Resource Undo remains intentionally resource-only: refunding Sprint Ability rest
 
 The Combat screen now has a **MANEUVERS** section before AVAILABLE ABILITIES.
 
-- `Use Sprint · Standard Action` is always available when the Pokémon has a Standard Action.
+- `Use Sprint · Standard Action` is enabled whenever the Pokémon has its Standard Action available.
 - If the Pokémon knows a source-matching Sprint Ability, a second `Sprint + Ability · Standard + Swift · Scene` control is shown.
 - If the Ability's active Ruleset text no longer matches the audited source signature, only the plain Maneuver remains automated.
 
