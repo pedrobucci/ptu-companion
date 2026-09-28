@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 from pathlib import Path
 
+from apply_stage_b_combat_manual_physical_dice import main as apply_manual_physical_dice
+
 ROOT=Path(__file__).resolve().parents[1]
 REPO=ROOT.parent
 TARGETS=[ROOT/'static-preview'/'app.js',REPO/'PTU_Companion_Android_Tauri'/'www'/'app.js']
@@ -26,3 +28,4 @@ for path in TARGETS:
         text=text.replace(old,new,1)
     if text!=original:path.write_text(text,encoding='utf-8')
 print({'targets':len(TARGETS),'fixups':len(REPLACEMENTS)})
+apply_manual_physical_dice()
