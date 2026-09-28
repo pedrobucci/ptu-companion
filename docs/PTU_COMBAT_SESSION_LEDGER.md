@@ -26,16 +26,16 @@ Shared combat-state foundation for Windows and Android. This replaces a Form-onl
 - `Daily` / `Daily xN`: source-keyed counts reset at Day change.
 - Unknown frequency text remains informational instead of being guessed.
 
-## Attack roll resolver
+## Physical-dice combat outcome resolver
 
-- Uses an actual randomized natural d20 by default.
-- A player may enter the natural d20 from a physical die instead.
-- Target Evasion is added to the Move AC.
-- Natural 1 always misses and natural 20 always hits.
-- Critical Hit uses the natural d20, not the modified total; default threshold is 20 and the resolver lets the user enter an already-known modified threshold.
-- Target critical immunity can be declared explicitly.
-- Damaging Moves roll the actual Damage Base dice from the active Ruleset. On a Critical Hit the Damage Dice are rolled a second time, while the attacking Stat and other flat bonuses are not duplicated.
-- Optional target Defense/Sp. Defense produces post-defense damage; otherwise the result remains pre-defense.
+- **Combat never generates attack or damage dice.** Accuracy and Damage Rolls are always made with physical dice and entered manually.
+- When a Move has an Accuracy Roll, the natural d20 result is entered so Accuracy-triggered effects and Critical ranges can still be evaluated/audited.
+- Hit/Miss is confirmed by the player as the authoritative result because the target is intentionally abstract and may have Evasion, defensive Features, Shields, immunities, or GM-side effects unknown to this Companion.
+- Critical Hit is likewise confirmed explicitly; the natural d20 is retained in the log rather than replaced by a calculated total.
+- For damaging hits, the UI shows the PTU Damage Base dice expression and, when relevant, the doubled Critical expression. The player rolls those dice physically and enters the resulting Damage Roll.
+- The Companion may add only values it actually owns for the active Pokémon, such as its attacking Stat, Mixed Power bonus, or Defense Curl bonus. It does not invent target Defense, DR, type effectiveness, HP, or other opponent state.
+- `Damage actually taken by target` is an optional outcome value. Move-specific handlers can require it when the user's own Pokémon needs that external result, such as draining Moves that heal from damage actually dealt.
+- The opposing Pokémon/NPC is never persisted as a combat entity.
 
 ## First complex Move interaction: Defense Curl + Rollout
 

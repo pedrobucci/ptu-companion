@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "name": "PTU Pokémon Combat Session Ledger",
   "storage": "state.ui.combat",
   "platforms": [
@@ -37,15 +37,14 @@
     "Rollout chain"
   ],
   "roll_resolution": {
-    "accuracy_die": "1d20 actual random or manually entered natural d20",
-    "automatic_hit_miss": true,
-    "automatic_critical_default": "natural 20, editable threshold for known modifiers",
-    "target_inputs": [
-      "Evasion",
-      "Defense or Special Defense",
-      "critical immunity"
-    ],
-    "damage": "actual Damage Base dice; critical repeats Damage Dice only; Stat and flat bonuses are added once"
+    "physical_dice_only": true,
+    "digital_rng": false,
+    "accuracy_die": "manual natural d20 result from a physical die when an Accuracy Roll exists",
+    "automatic_hit_miss": false,
+    "final_hit_miss": "user-confirmed authoritative outcome",
+    "critical_hit": "user-confirmed authoritative outcome; natural d20 remains recorded for effect/critical-range rules",
+    "damage_roll": "manual physical Damage Base roll; the Companion adds only known local attacking Stat and local bonuses",
+    "target_damage": "optional user-entered actual damage taken by the abstract target for Move effects that depend on damage actually dealt"
   },
   "first_complex_interaction": {
     "moves": [
@@ -60,5 +59,6 @@
     "sqlite_ui_state": true,
     "revision_hash_includes_combat": true
   },
-  "source_policy": "Only source-explicit PTU mechanics are automated. Unknown frequency/action semantics remain informational rather than guessed."
+  "source_policy": "Only source-explicit PTU mechanics are automated. Unknown frequency/action semantics remain informational rather than guessed.",
+  "target_model": "abstract; opposing creatures are not persisted or resolved as campaign entities"
 }
