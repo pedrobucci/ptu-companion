@@ -10,6 +10,8 @@ const repo=resolve(root,'..');
 const appPaths=[join(root,'static-preview','app.js'),join(repo,'PTU_Companion_Android_Tauri','www','app.js')];
 const docJson=join(repo,'docs','data','PTU_COMBAT_NON_MOVE_RESOURCES.json');
 const docMd=join(repo,'docs','PTU_COMBAT_NON_MOVE_RESOURCES.md');
+const sessionJson=join(repo,'docs','data','PTU_COMBAT_SESSION_LEDGER.json');
+const sessionMd=join(repo,'docs','PTU_COMBAT_SESSION_LEDGER.md');
 
 function extractFunction(src,name){
   const match=new RegExp(`(?:async\\s+)?function\\s+${name}\\s*\\(`).exec(src);if(!match)throw new Error(`Missing function ${name}`);
@@ -72,5 +74,7 @@ const bondSpend=ctx.pokemonCombatSpendNonMoveResource('p',bond,{log:false});asse
 
 const doc=JSON.parse(await readFile(docJson,'utf8'));assert.equal(doc.schema_version,1);assert.equal(doc.shared_with_moves,true);assert.equal(doc.physical_dice_only,true);assert.equal(doc.sources.schooling.action_cost,'Free Action');assert.equal(doc.sources.schooling.frequency,'Daily');assert.equal(doc.sources.power_construct.action_cost,'Swift Action');assert.equal(doc.sources.stance_change_manual.action_cost,'Full Action');assert.equal(doc.sources.ice_face_hail_restore.action_cost,'Standard Action');assert.equal(doc.sources.weapon_bond.tracked_as_turn_action,false);assert.equal(doc.refund.supported,true);
 const md=await readFile(docMd,'utf8');assert.match(md,/same Pokémon Combat action\/frequency ledger/i);assert.match(md,/Schooling/);assert.match(md,/Power Construct/);assert.match(md,/Stance Change/);assert.match(md,/Ice Face/);assert.match(md,/Weapon Bond/);assert.match(md,/Undo/);
+const session=JSON.parse(await readFile(sessionJson,'utf8'));assert.equal(session.shared_resources.non_move_sources.enabled,true);assert.equal(session.shared_resources.non_move_sources.source_keyed,true);assert.equal(session.shared_resources.non_move_sources.shares_move_action_frequency_ledger,true);assert.equal(session.shared_resources.non_move_sources.refund_supported,true);assert.ok(session.form_resource_spending.enabled_subset.includes('Schooling'));assert.ok(session.form_resource_spending.enabled_subset.includes('Power Construct'));
+const sessionText=await readFile(sessionMd,'utf8');assert.match(sessionText,/Form \/ Ability resource integration/);assert.match(sessionText,/same per-Pokémon action\/frequency ledger/i);assert.match(sessionText,/resource-only correction\/refund/i);assert.match(sessionText,/Extended Action.*not converted/i);
 
-console.log(JSON.stringify({nonMoveResourceModel:1,sharedLedger:true,schooling:true,powerConstruct:true,stanceChange:true,iceFace:true,weaponBondInformational:true,refund:true,sourceKeySeparation:true,sceneDailyReset:true,physicalDiceOnly:true,windowsAndroidParity:true},null,2));
+console.log(JSON.stringify({nonMoveResourceModel:1,sharedLedger:true,schooling:true,powerConstruct:true,stanceChange:true,iceFace:true,weaponBondInformational:true,refund:true,sourceKeySeparation:true,sceneDailyReset:true,physicalDiceOnly:true,sessionDocsCurrent:true,windowsAndroidParity:true},null,2));
