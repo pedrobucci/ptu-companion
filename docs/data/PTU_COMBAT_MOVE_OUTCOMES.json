@@ -25,18 +25,8 @@
         "damage actually taken by target",
         "same abstract target when a chain exists"
       ],
-      "base_db": [
-        4,
-        8,
-        12,
-        16
-      ],
-      "reset": [
-        "miss",
-        "failed to damage",
-        "different Move",
-        "Scene/Day boundary"
-      ],
+      "base_db": [4, 8, 12, 16],
+      "reset": ["miss", "failed to damage", "different Move", "Scene/Day boundary"],
       "target_identity": "not persisted; same-target continuity is user-confirmed"
     },
     "fell_stinger": {
@@ -58,10 +48,7 @@
       "tracking": "combat-session condition flags; no enemy state"
     },
     "charge_beam": {
-      "inputs": [
-        "reported successful hit",
-        "extra physical d20 effect roll"
-      ],
+      "inputs": ["reported successful hit", "extra physical d20 effect roll"],
       "threshold": "7+",
       "effect": "controlled user Special Attack +1 CS on 7+",
       "digital_rng": false
