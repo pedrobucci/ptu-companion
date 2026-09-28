@@ -3,6 +3,7 @@ import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { fileURLToPath } from 'node:url';
 import { spawn } from 'node:child_process';
+import { once } from 'node:events';
 import { DefinitionRepository } from '../definitions/repository.mjs';
 import { resolveTrainerModel } from '../rules/trainer-engine.mjs';
 
@@ -134,8 +135,10 @@ try{
   const profiles=(await (await fetch(`http://127.0.0.1:${port}/api/profiles`)).json()).profiles;
   assert(profiles.some(p=>p.id===reload.activeProfileId&&p.portraitDataUrl==='data:image/webp;base64,VFJBSU5FUg=='),'Trainer switcher profile does not expose portrait');
 } finally {
+  const stopped=child.exitCode===null?once(child,'exit'):Promise.resolve();
   child.kill('SIGTERM');
-  rmSync(testData,{recursive:true,force:true});
+  await stopped;
+  rmSync(testData,{recursive:true,force:true,maxRetries:5,retryDelay:200});
 }
 
 definitions.close();
