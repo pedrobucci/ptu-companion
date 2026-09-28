@@ -30,9 +30,12 @@ CREATURE_ANCHOR = 'function creatureScreen(){'
 SUMMARY_OLD = '  const formSummaryBlock=pokemonFormSummaryBlock(p,data);\n  const sheet=`<div class="creature-detail-grid">${section(\'ACTIVE STATE\',`<div class="battle-controls">'
 SUMMARY_NEW = '  const formSummaryBlock=pokemonFormSummaryBlock(p,data);\n  const formCombatIndicator=pokemonFormCombatIndicator(p,data);\n  const sheet=`<div class="creature-detail-grid">${section(\'ACTIVE STATE\',`${formCombatIndicator}<div class="battle-controls">'
 
+# Historical checkpoint retained for traceability. The shared Combat ledger now
+# supersedes these pre-ledger conclusions; this script must therefore remain safe
+# when run against either an old pre-ledger surface or the current ledger-enabled UI.
 AUDIT = {
     'schema_version': 1,
-    'scope': 'Existing Pokémon combat action/frequency state available to source-explicit Form lifecycle rules',
+    'scope': 'Historical Pokémon combat action/frequency state before the shared Combat ledger',
     'conclusion': 'informational_only',
     'automatic_spending_supported': False,
     'exact_auto_spend_subset': [],
@@ -74,20 +77,22 @@ AUDIT = {
         {'event': 'newDay', 'behavior': 'increments day and resets scene/round only'},
     ],
     'blocked_spending_cases': [
-        {'cost': 'Free Action', 'reason': 'No per-Pokémon turn/action ledger exists.'},
-        {'cost': 'Swift Action', 'reason': 'No per-Pokémon turn/action ledger exists.'},
-        {'cost': 'Standard Action', 'reason': 'No per-Pokémon turn/action ledger exists.'},
-        {'cost': 'Full Action', 'reason': 'No per-Pokémon turn/action ledger exists.'},
-        {'cost': 'Extended Action', 'reason': 'No Extended Action progress/completion model exists.'},
-        {'frequency': 'Daily', 'reason': 'No per-Pokémon/per-source Daily usage ledger exists.'},
-        {'frequency': 'Scene', 'reason': 'No per-Pokémon/per-source Scene usage ledger exists.'},
+        {'cost': 'Free Action', 'reason': 'No per-Pokémon turn/action ledger existed at this checkpoint.'},
+        {'cost': 'Swift Action', 'reason': 'No per-Pokémon turn/action ledger existed at this checkpoint.'},
+        {'cost': 'Standard Action', 'reason': 'No per-Pokémon turn/action ledger existed at this checkpoint.'},
+        {'cost': 'Full Action', 'reason': 'No per-Pokémon turn/action ledger existed at this checkpoint.'},
+        {'cost': 'Extended Action', 'reason': 'No Extended Action progress/completion model existed at this checkpoint.'},
+        {'frequency': 'Daily', 'reason': 'No per-Pokémon/per-source Daily usage ledger existed at this checkpoint.'},
+        {'frequency': 'Scene', 'reason': 'No per-Pokémon/per-source Scene usage ledger existed at this checkpoint.'},
     ],
     'policy': [
         'Do not infer Trainer Action Points as Pokémon action economy.',
         'Do not create usage counters implicitly inside the Form engine without a shared combat-resource model.',
         'Continue surfacing actionCost and frequency as source metadata/history.',
-        'A future resource ledger must define reset boundaries and source identity before automatic spending is enabled.',
+        'A shared resource ledger must define reset boundaries and source identity before automatic spending is enabled.',
     ],
+    'status': 'historical_pre_ledger_snapshot',
+    'superseded_by': 'docs/PTU_COMBAT_SESSION_LEDGER.md',
 }
 
 
@@ -107,15 +112,16 @@ def validate_resource_anchors(path: Path, text: str) -> None:
         'async function endScene(){ state.ui.scene+=1; state.ui.round=1;',
         'function newDay(){ state.ui.day+=1; state.ui.scene=1; state.ui.round=1;',
         'const bits=[rule.frequency,rule.actionCost].filter(Boolean)',
-        'Action/frequency costs are shown by the source rules but are not silently consumed by the Form engine.',
     ]
     missing = [needle for needle in required if needle not in text]
     if missing:
-        raise SystemExit(f'Combat-resource audit anchors missing in {path}: {missing}')
-    prohibited = ['pokemonActionLedger', 'pokemonFrequencyLedger', 'formActionUsageLedger']
-    present = [needle for needle in prohibited if needle in text]
-    if present:
-        raise SystemExit(f'Combat-resource audit must be revisited because a resource ledger now exists in {path}: {present}')
+        raise SystemExit(f'Combat-resource historical audit anchors missing in {path}: {missing}')
+    lifecycle_notes = [
+        'Action/frequency costs are shown by the source rules but are not silently consumed by the Form engine.',
+        'Combat Actions and Scene/Daily uses share the Pokémon Combat ledger. Extended Actions remain source-labeled but are not converted into turn actions.',
+    ]
+    if not any(note in text for note in lifecycle_notes):
+        raise SystemExit(f'Combat-resource lifecycle note drifted in {path}')
 
 
 def patch_client(path: Path) -> bool:
@@ -139,15 +145,15 @@ def write_audit() -> None:
     lines = [
         '# PTU Forms — Combat Resource Audit',
         '',
-        'Audit of the **existing** campaign combat state before any automatic spending of Form action/frequency costs.',
+        '**Historical checkpoint:** this document records the application state before the shared Pokémon Combat ledger was introduced. Current behavior is documented in `docs/PTU_COMBAT_SESSION_LEDGER.md` and the non-Move resource model.',
         '',
-        '- Conclusion: **informational only**',
-        '- Automatic spending supported by the current combat model: **No**',
+        '- Historical conclusion: **informational only**',
+        '- Automatic spending supported at this historical checkpoint: **No**',
         '- Exact automatic-spending subset: **0**',
         '',
-        'The lifecycle engine may continue to return exact source labels such as `Daily`, `Scene`, `Free Action`, `Swift Action`, `Standard Action`, `Full Action`, and `Extended Action`, but the current application does not have a lossless Pokémon resource ledger in which those costs can be consumed.',
+        'At this checkpoint, the lifecycle engine could return exact source labels such as `Daily`, `Scene`, `Free Action`, `Swift Action`, `Standard Action`, `Full Action`, and `Extended Action`, but the application did not yet have a lossless Pokémon resource ledger in which those costs could be consumed.',
         '',
-        '## Existing state',
+        '## Historical state',
         '',
         '| Resource | Existing support | Missing for automatic Form spending |',
         '| --- | --- | --- |',
@@ -156,14 +162,14 @@ def write_audit() -> None:
         lines.append(f"| `{row['resource']}` | {row['supports']} | {row['does_not_support']} |")
     lines += [
         '',
-        '## Reset / time boundaries',
+        '## Historical reset / time boundaries',
         '',
     ]
     for row in AUDIT['boundaries']:
         lines.append(f"- `{row['event']}`: {row['behavior']}.")
     lines += [
         '',
-        '## Why no cost is auto-spent yet',
+        '## Why no cost was auto-spent at this checkpoint',
         '',
     ]
     for row in AUDIT['blocked_spending_cases']:
@@ -171,14 +177,14 @@ def write_audit() -> None:
         lines.append(f"- **{key}:** {row['reason']}")
     lines += [
         '',
-        '## Policy',
+        '## Historical policy',
         '',
     ]
     for item in AUDIT['policy']:
         lines.append(f'- {item}')
     lines += [
         '',
-        'This audit does not change any PTU source mechanics, persisted Form IDs, deferred-family status, or default content packs.',
+        'This historical audit does not change any PTU source mechanics, persisted Form IDs, deferred-family status, or default content packs.',
         ''
     ]
     AUDIT_MD.write_text('\n'.join(lines), encoding='utf-8')
@@ -191,8 +197,9 @@ def main() -> None:
         'changed': changed,
         'targets': len(TARGETS),
         'combat_resource_audit_version': 1,
-        'automatic_spending_supported': False,
-        'exact_auto_spend_subset': 0,
+        'status': 'historical_pre_ledger_snapshot',
+        'automatic_spending_supported_at_checkpoint': False,
+        'exact_auto_spend_subset_at_checkpoint': 0,
         'compact_form_indicator': True,
     })
 
