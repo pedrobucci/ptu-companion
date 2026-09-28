@@ -84,3 +84,7 @@ Shared combat-state foundation for Windows and Android. This replaces a Form-onl
 - Extended Actions remain source-labeled/informational; multi-step Extended Action progress is not modeled as turn actions.
 - Deferred/source-insufficient Pokémon Form families remain unchanged.
 - No bundled/default `.ptucp` is modified.
+
+## Quick Curl + Defense Curl composite
+
+Quick Curl is the first source-explicit Ability/Move cost override in the Combat ledger. The assisted path spends Quick Curl (`Scene – Free Action`) and Defense Curl as a Swift Action, while ordinary Defense Curl remains on its existing normal Move path. Standard → Swift conversion is allowed only when the shared ledger says the Standard Action is still available. Both resource transactions are independently correctable; correction never rewinds Curled Up.

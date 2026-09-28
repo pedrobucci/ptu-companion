@@ -116,5 +116,17 @@
     "plain_maneuver_action": "Standard Action",
     "ability_cost": "Scene – Swift Action",
     "standard_to_swift_during_composite": false
+  },
+  "composite_integrations": {
+    "quick_curl_defense_curl": {
+      "ability": "Quick Curl",
+      "move": "Defense Curl",
+      "ability_cost": "Scene – Free Action",
+      "overridden_move_cost": "Swift Action",
+      "standard_to_swift_when_valid": true,
+      "normal_move_path_preserved": true,
+      "source_signature_guard": true,
+      "resource_only_refund": true
+    }
   }
 }

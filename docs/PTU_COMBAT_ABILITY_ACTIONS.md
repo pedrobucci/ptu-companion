@@ -24,3 +24,7 @@ Ability frequency and action costs use `pokemonCombatSpendNonMoveResource`, incl
 ## Conservative exclusions
 
 Prime Fury, Hydration, Ice Body and Regal Challenge are not automated here because the supplied Core/playtest definitions conflict. Sprint is handled by the separate composite Sprint Maneuver layer: the Core Maneuver spends its Standard Action and the optional Sprint Ability spends its own Scene – Swift Action without undercounting either resource. See `PTU_COMBAT_SPRINT_MANEUVER.md`.
+
+## Composite Quick Curl + Defense Curl
+
+Quick Curl is integrated through a dedicated composite layer rather than the standalone Ability allowlist. Its `Scene – Free Action` resource and Defense Curl's overridden Swift Action are spent through the same shared ledger. The normal Defense Curl Move remains unchanged. See `PTU_COMBAT_QUICK_CURL.md`.

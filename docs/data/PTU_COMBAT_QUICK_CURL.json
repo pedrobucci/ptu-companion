@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "name": "PTU Combat Quick Curl + Defense Curl",
+  "shared_non_move_resource_ledger": true,
+  "physical_dice_only": true,
+  "target_model": "self; no opponent entity",
+  "ability": {
+    "name": "Quick Curl",
+    "source": "Pokemon Tabletop United 1.05 Core p.327",
+    "frequency": "Scene",
+    "action_cost": "Free Action",
+    "effect": "Connection - Defense Curl; activate Quick Curl to use Defense Curl as a Swift Action"
+  },
+  "move": {
+    "name": "Defense Curl",
+    "source": "Pokemon Tabletop United 1.05 Core p.394",
+    "frequency": "At-Will",
+    "normal_action_cost": "Standard Action",
+    "quick_curl_action_cost": "Swift Action",
+    "effect_state": "Curled Up",
+    "existing_runtime": "critical immunity, DR 10, Slowed/Accuracy interactions, Rollout/Ice Ball exceptions remain owned by the existing Combat condition model"
+  },
+  "composite_policy": {
+    "quick_curl_resource": "ability:combat-quick-curl · Scene · Free Action",
+    "defense_curl_override_resource": "move:defense-curl-quick-curl · Swift Action · At-Will",
+    "standard_to_swift": "allowed only through the shared ledger when Swift is spent and Standard remains available",
+    "ordinary_defense_curl": "unchanged and still uses its normal Move path/action cost",
+    "transactions": "Ability and overridden Move action create separate namespaced transactions linked by compositeId",
+    "refund": "resource-only Undo may correct either spend independently and never clears Curled Up"
+  },
+  "source_guards": [
+    "Quick Curl effect signature must match the audited Core wording.",
+    "Defense Curl must remain At-Will/Self and match the audited Curled Up effect signature."
+  ],
+  "non_goals": [
+    "No opponent entity.",
+    "No generated dice.",
+    "No generic Ability/Move prose parser.",
+    "No default .ptucp mutation."
+  ]
+}

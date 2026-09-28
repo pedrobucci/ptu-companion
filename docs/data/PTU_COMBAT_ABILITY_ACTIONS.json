@@ -54,5 +54,13 @@
     "No generated dice.",
     "Resource Undo does not rewind Ability effects.",
     "No default .ptucp mutation."
-  ]
+  ],
+  "composite_integrations": {
+    "quick_curl_defense_curl": {
+      "ability": "Quick Curl · Scene – Free Action",
+      "move_override": "Defense Curl as Swift Action",
+      "resource_ledger": "shared non-Move action/frequency API",
+      "source_guard": true
+    }
+  }
 }
