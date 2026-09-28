@@ -33,3 +33,16 @@ print({'targets':len(TARGETS),'fixups':len(REPLACEMENTS),'self_outcomes':True})
 apply_manual_physical_dice()
 apply_move_outcomes()
 apply_self_outcomes()
+
+# The legacy physical-dice patch historically anchors at the `function` token of
+# pokemonCombatOpenMove. When the ledger source already declares it `async`, that
+# can leave the original `async ` prefix in place. Normalize the generated surface
+# after all deterministic layers so full rebuilds remain syntactically idempotent.
+for path in TARGETS:
+    text=path.read_text(encoding='utf-8')
+    bad='async async function pokemonCombatOpenMove('
+    if bad in text:
+        text=text.replace(bad,'async function pokemonCombatOpenMove(',1)
+        path.write_text(text,encoding='utf-8')
+    if 'async async function ' in text:
+        raise SystemExit(f'Duplicate async declaration remains after Combat fixups: {path}')
