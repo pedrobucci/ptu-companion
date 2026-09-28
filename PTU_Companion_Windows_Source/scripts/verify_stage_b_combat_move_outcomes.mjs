@@ -49,7 +49,7 @@ for(const path of appPaths){
 
 for(const name of ['pokemonCombatOutcomeSpec','pokemonCombatFuryCutterState','pokemonCombatResetFuryCutter','pokemonCombatFuryCutterAfterResult','pokemonCombatOutcomeUiFields','pokemonCombatApplyHpGain','pokemonCombatApplyAttackStages','pokemonCombatApplyMoveOutcome','pokemonCombatUseNoRoll','pokemonCombatOpenMove','pokemonCombatResolveMove'])assert.equal(extractFunction(sources[0],name),extractFunction(sources[1],name),`${name} diverged between Windows and Android`);
 
-const doc=JSON.parse(await readFile(docJson,'utf8'));assert.equal(doc.schema_version,1);assert.equal(doc.target_model,'abstract');assert.equal(doc.physical_dice_only,true);assert.deepEqual(doc.handlers.drain_half.moves,['Absorb','Drain Punch','Draining Kiss','Dream Eater','Giga Drain','Horn Leech','Leech Life','Mega Drain']);assert.deepEqual(doc.handlers.fury_cutter.base_db,[4,8,12,16]);assert.match(doc.handlers.fell_stinger.effect,/Attack by 2 Combat Stages/);
+const doc=JSON.parse(await readFile(docJson,'utf8'));assert.equal(doc.schema_version,2);assert.equal(doc.target_model,'abstract');assert.equal(doc.physical_dice_only,true);assert.deepEqual(doc.handlers.drain_half.moves,['Absorb','Drain Punch','Draining Kiss','Dream Eater','Giga Drain','Horn Leech','Leech Life','Mega Drain']);assert.deepEqual(doc.handlers.fury_cutter.base_db,[4,8,12,16]);assert.match(doc.handlers.fell_stinger.effect,/Attack by 2 Combat Stages/);
 const md=await readFile(docMd,'utf8');assert.match(md,/physical dice/i);assert.match(md,/Fury Cutter/);assert.match(md,/Fell Stinger/);assert.match(md,/Damage actually taken by target/);
 
-console.log(JSON.stringify({moveOutcomeModel:1,physicalDiceOnly:true,targetModel:'abstract',drainingMoves:8,furyCutter:true,fellStinger:true,enemyEntities:false},null,2));
+console.log(JSON.stringify({moveOutcomeModel:2,physicalDiceOnly:true,targetModel:'abstract',drainingMoves:8,furyCutter:true,fellStinger:true,enemyEntities:false},null,2));
