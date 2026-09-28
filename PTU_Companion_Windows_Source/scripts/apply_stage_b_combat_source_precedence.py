@@ -6,21 +6,19 @@ import re
 ROOT = Path(__file__).resolve().parents[1]
 REPO = ROOT.parent
 TARGETS = [ROOT / 'static-preview' / 'app.js', REPO / 'PTU_Companion_Android_Tauri' / 'www' / 'app.js']
+SOURCE_CATALOG = json.loads((REPO / 'docs' / 'data' / 'PTU_COMBAT_SOURCE_PRECEDENCE.json').read_text(encoding='utf-8'))
 
-HELPERS = r'''const PTU_COMBAT_SOURCE_PRECEDENCE=[
-  {id:'ptu-core-1.05',rank:100,label:'PTU 1.05 Core'},
-  {id:'ptu-1.05-editation',rank:110,label:'PTU 1.05 Editation'},
-  {id:'ptu-may-2015-playtest',rank:120,label:'PTU May 2015 Playtest Packet'},
-  {id:'ptu-september-2015-playtest',rank:130,label:'PTU September 2015 Playtest Packet'},
-  {id:'ptu-february-2016-playtest',rank:140,label:'February 2016 Playtest Packet'}
-];
-function pokemonCombatSourceKey(row){const d=row?.definition||row?.record||row||{};return String(row?.sourceId||row?.source_id||d.sourceId||d.source_id||row?.source||d.source||d.sourceTitle||d.source_title||'').toLowerCase();}
+HELPERS = (
+    'const PTU_COMBAT_SOURCE_PRECEDENCE=' + json.dumps(SOURCE_CATALOG['sources'], ensure_ascii=False, separators=(',', ':')) + ';\n'
+    + 'const PTU_COMBAT_SOURCE_OVERRIDES=' + json.dumps(SOURCE_CATALOG['overrides'], ensure_ascii=False, separators=(',', ':')) + ';\n'
+    + r'''function pokemonCombatSourceKey(row){const d=row?.definition||row?.record||row||{};return String(row?.sourceId||row?.source_id||d.sourceId||d.source_id||row?.source||d.source||d.sourceTitle||d.source_title||'').toLowerCase();}
 function pokemonCombatSourceRank(row){const key=pokemonCombatSourceKey(row);const found=PTU_COMBAT_SOURCE_PRECEDENCE.find(s=>key.includes(s.id)||key.includes(s.label.toLowerCase()));return found?.rank||100;}
-function pokemonCombatFebruary2016Override(row){const name=pokemonCombatSlug(row?.name||row?.definition?.name||row?.record?.name),d=row?.definition||row?.record||{};if(name==='quick-curl')return {...row,definition:{...d,sourceId:'ptu-february-2016-playtest',frequency:'Scene – Free Action',effect:'Connection – Defense Curl. The user may activate this Ability to use Defense Curl as a Standard Action Interrupt and gain +10 Damage Reduction for 1 full round.'}};if(name==='electrodash')return {...row,definition:{...d,sourceId:'ptu-february-2016-playtest',frequency:'Scene x2 – Swift Action',effect:'The user may make a Sprint Action as a Free Action.',bonus:'The user may free itself from the Stuck condition as a Shift Action. The user does not provoke Attacks of Opportunity when Sprinting.'}};return row;}
-function pokemonCombatResolveDefinition(rows,name){const wanted=pokemonCombatSlug(name);const candidates=(rows||[]).filter(row=>pokemonCombatSlug(row?.name||row?.definition?.name||row?.record?.name)===wanted);const winner=candidates.map((row,index)=>({row,rank:pokemonCombatSourceRank(row),index})).sort((a,b)=>b.rank-a.rank||b.index-a.index)[0]?.row||null;return winner&&['quick-curl','electrodash'].includes(wanted)?pokemonCombatFebruary2016Override(winner):winner;}
+function pokemonCombatSourceOverride(row){const name=pokemonCombatSlug(row?.name||row?.definition?.name||row?.record?.name),override=PTU_COMBAT_SOURCE_OVERRIDES[name],d=row?.definition||row?.record||{};return override?{...row,definition:{...d,...override}}:row;}
+function pokemonCombatResolveDefinition(rows,name){const wanted=pokemonCombatSlug(name);const candidates=(rows||[]).filter(row=>pokemonCombatSlug(row?.name||row?.definition?.name||row?.record?.name)===wanted).map(pokemonCombatSourceOverride);return candidates.map((row,index)=>({row,rank:pokemonCombatSourceRank(row),index})).sort((a,b)=>b.rank-a.rank||b.index-a.index)[0]?.row||null;}
 function pokemonCombatResolvedSource(row){const rank=pokemonCombatSourceRank(row);return PTU_COMBAT_SOURCE_PRECEDENCE.find(s=>s.rank===rank)||PTU_COMBAT_SOURCE_PRECEDENCE[0];}
 function pokemonCombatElectrodashDefinition(rows){return pokemonCombatResolveDefinition(rows,'Electrodash');}
 '''
+)
 
 QUICK_CURL = r'''function pokemonCombatQuickCurlAbilityResourceSpec(){return pokemonCombatNonMoveSpec('ability','combat-quick-curl','Quick Curl','Free Action','Scene');}
 function pokemonCombatQuickCurlDefenseResourceSpec(variant='core'){return pokemonCombatNonMoveSpec('move','defense-curl-quick-curl','Defense Curl via Quick Curl',variant==='february-2016'?'Standard Action':'Swift Action','At-Will');}
@@ -46,7 +44,7 @@ PANEL = r'''function pokemonCombatSourcePrecedencePanel(data){const rows=[['Quic
 
 def patch(path):
     text=path.read_text(encoding='utf-8')
-    if 'function pokemonCombatFebruary2016Override(' not in text and 'const PTU_COMBAT_SOURCE_PRECEDENCE=' in text:
+    if 'function pokemonCombatSourceOverride(' not in text and 'const PTU_COMBAT_SOURCE_PRECEDENCE=' in text:
         text=re.sub(r"const PTU_COMBAT_SOURCE_PRECEDENCE=\[[\s\S]*?(?=function pokemonCombatQuickCurlAbilityResourceSpec)",HELPERS+'\n',text,count=1)
     elif 'const PTU_COMBAT_SOURCE_PRECEDENCE=' not in text:
         anchor='function pokemonCombatQuickCurlAbilityResourceSpec()'
