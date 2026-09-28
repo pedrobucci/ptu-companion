@@ -26,12 +26,15 @@ for(const path of appPaths){
     'function pokemonFormCombatIndicator',
     'const formCombatIndicator=pokemonFormCombatIndicator(p,data);',
     "section('ACTIVE STATE',`${formCombatIndicator}<div class=\"battle-controls\">",
-    'Action/frequency costs are shown by the source rules but are not silently consumed by the Form engine.',
     'function nextRound(){ state.ui.round+=1;',
     'async function endScene(){ state.ui.scene+=1; state.ui.round=1;',
     'function newDay(){ state.ui.day+=1; state.ui.scene=1; state.ui.round=1;',
   ])assert.ok(src.includes(needle),`${path} missing ${needle}`);
-  for(const prohibited of ['pokemonActionLedger','pokemonFrequencyLedger','formActionUsageLedger'])assert.ok(!src.includes(prohibited),`${path} unexpectedly contains ${prohibited}; resource audit must be revised`);
+  assert.ok(
+    src.includes('Action/frequency costs are shown by the source rules but are not silently consumed by the Form engine.') ||
+    src.includes('Combat Actions and Scene/Daily uses share the Pokémon Combat ledger. Extended Actions remain source-labeled but are not converted into turn actions.'),
+    `${path} missing recognized Form resource lifecycle note`,
+  );
 
   const history=[{title:'Pokémon Form changed',detail:'Zed: 10% Forme → 10% Forme + Complete Forme · Daily · Swift Action'}];
   const ctx={
@@ -54,12 +57,12 @@ for(const path of appPaths){
 for(const name of ['pokemonFormCombatPresentation','pokemonFormCombatIndicator'])assert.equal(extractFunction(sources[0],name),extractFunction(sources[1],name),`${name} diverged between Windows and Android`);
 
 const audit=JSON.parse(await readFile(auditJson,'utf8'));
-assert.equal(audit.schema_version,1);assert.equal(audit.conclusion,'informational_only');assert.equal(audit.automatic_spending_supported,false);assert.deepEqual(audit.exact_auto_spend_subset,[]);
+assert.equal(audit.schema_version,1);assert.equal(audit.status,'historical_pre_ledger_snapshot');assert.equal(audit.superseded_by,'docs/PTU_COMBAT_SESSION_LEDGER.md');assert.equal(audit.conclusion,'informational_only');assert.equal(audit.automatic_spending_supported,false);assert.deepEqual(audit.exact_auto_spend_subset,[]);
 assert.ok(audit.observed_state.some(row=>row.resource==='trainer_action_points'&&/Trainer AP only/.test(row.supports)));
 assert.ok(audit.observed_state.some(row=>row.resource==='pokemon_combat_state'&&/action slots/.test(row.does_not_support)));
 assert.ok(audit.blocked_spending_cases.some(row=>row.cost==='Extended Action'));
 assert.ok(audit.blocked_spending_cases.some(row=>row.frequency==='Daily'));
 assert.ok(audit.blocked_spending_cases.some(row=>row.frequency==='Scene'));
-const md=await readFile(auditMd,'utf8');assert.match(md,/Exact automatic-spending subset: \*\*0\*\*/);assert.match(md,/informational only/i);
+const md=await readFile(auditMd,'utf8');assert.match(md,/Historical checkpoint:/);assert.match(md,/Exact automatic-spending subset: \*\*0\*\*/);assert.match(md,/informational only/i);assert.match(md,/supersed|Current behavior/i);
 
-console.log(JSON.stringify({combatResourceAudit:1,platforms:['windows','android'],automaticSpending:false,exactAutoSpendSubset:0,compactFormIndicator:true,latestTransitionVisible:true},null,2));
+console.log(JSON.stringify({combatResourceAudit:1,status:'historical_pre_ledger_snapshot',platforms:['windows','android'],automaticSpendingAtCheckpoint:false,exactAutoSpendSubsetAtCheckpoint:0,compactFormIndicator:true,latestTransitionVisible:true},null,2));
