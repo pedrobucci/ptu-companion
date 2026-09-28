@@ -7,7 +7,6 @@
 - Draft PR: #11 — `docs: audit PTU Mega, Primal and alternate Forms`
 - Base: `feature/pokemon-shiny-d`
 - Validated branch checkpoint: `d75ea931e29911ccebfbb68d3e74765f71674cb0`
-- Handoff checkpoint: `82e2dfb1797dd76ec9a0a615b968eee3cc571ed3`
 - Keep the PR **Draft/Open**. Do not merge or publish a Release without explicit owner approval.
 - Do not mutate bundled/default `.ptucp` while the ten source-insufficient Form families remain deferred.
 
@@ -127,46 +126,11 @@ The older non-Move workflow's generated push was also made race-safe. Earlier fa
 
 ## Validation
 
-Full Form/campaign rebuild with the composed Combat stack:
+- Full Form/campaign rebuild: run `36449143419`, job `109019071180`, **success**.
+- Dedicated Ability Actions: run `36449673641`, job `109020881791`, **success**.
+- Shared non-Move resources after race-safe fix: run `36450265241`, job `109022920510`, **success**.
 
-- run `36449143419`
-- job `109019071180`
-- **success**
-
-Dedicated source-explicit Ability Actions workflow:
-
-- run `36449673641`
-- job `109020881791`
-- **success**
-
-Current shared non-Move resource workflow after race-safe generation fix:
-
-- run `36450265241`
-- job `109022920510`
-- **success**
-
-Validated across these runs:
-
-- all prior Form lifecycle/campaign checks;
-- shared Combat session ledger;
-- Move Outcome model v2;
-- non-Move source-keyed action/frequency resource ledger;
-- resource-only Undo/refund;
-- Dodge / Parry / Effect Spore / Stalwart;
-- physical-dice-only invariant;
-- abstract-target invariant;
-- Windows/Android parity;
-- full Windows `npm run verify`;
-- full Android `npm run verify`;
-- no `.ptucp` mutation;
-- `git diff --check`.
-
-## Useful checkpoints
-
-- generated Ability runtime/docs checkpoint: `b21647693fb8d8ddfcfc67f19dd6dc15bca9151c`;
-- Ability ledger-doc verification checkpoint: `220e42c4ff46a8b6bbc9edf5f4e5ff991146e23e`;
-- race-safe non-Move CI checkpoint: `d75ea931e29911ccebfbb68d3e74765f71674cb0`;
-- handoff checkpoint: `82e2dfb1797dd76ec9a0a615b968eee3cc571ed3`.
+Validated across these runs: all prior Form lifecycle/campaign checks, shared Combat ledger, Move Outcome model v2, source-keyed Ability/Form resource spending, resource-only Undo/refund, Dodge/Parry/Effect Spore/Stalwart, physical-dice-only and abstract-target invariants, Windows/Android parity, full Windows/Android regressions, no `.ptucp` mutation, and `git diff --check`.
 
 ## Conservative boundaries retained
 
