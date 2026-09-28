@@ -12,6 +12,7 @@ on:
       - 'PTU_Companion_Windows_Source/scripts/apply_stage_b_combat_move_outcomes.py'
       - 'PTU_Companion_Windows_Source/scripts/apply_stage_b_combat_self_outcomes.py'
       - 'PTU_Companion_Windows_Source/scripts/apply_stage_b_combat_non_move_resources.py'
+      - 'PTU_Companion_Windows_Source/scripts/apply_stage_b_combat_non_move_session_docs.py'
       - 'PTU_Companion_Windows_Source/scripts/verify_stage_b_combat_session_ledger.mjs'
       - 'PTU_Companion_Windows_Source/scripts/verify_stage_b_combat_move_outcomes.mjs'
       - 'PTU_Companion_Windows_Source/scripts/verify_stage_b_combat_self_outcomes.mjs'
@@ -67,6 +68,8 @@ jobs:
           grep -q 'Schooling · Daily Free Action' PTU_Companion_Windows_Source/static-preview/app.js
           grep -q 'Power Construct · Daily Swift Action' PTU_Companion_Android_Tauri/www/app.js
           grep -q '"shared_with_moves": true' docs/data/PTU_COMBAT_NON_MOVE_RESOURCES.json
+          grep -q '"shares_move_action_frequency_ledger": true' docs/data/PTU_COMBAT_SESSION_LEDGER.json
+          grep -q 'Form / Ability resource integration' docs/PTU_COMBAT_SESSION_LEDGER.md
           grep -q 'Weapon Bond' docs/PTU_COMBAT_NON_MOVE_RESOURCES.md
           ! grep -q 'async async function ' PTU_Companion_Windows_Source/static-preview/app.js
           ! grep -q 'async async function ' PTU_Companion_Android_Tauri/www/app.js
