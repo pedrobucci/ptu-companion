@@ -67,6 +67,9 @@ jobs:
           grep -q 'No opponent state was persisted.' PTU_Companion_Android_Tauri/www/app.js
           grep -q '"physical_dice_only": true' docs/data/PTU_COMBAT_ABILITY_ACTIONS.json
           grep -q '"target_model": "abstract"' docs/data/PTU_COMBAT_ABILITY_ACTIONS.json
+          grep -q '"ability_action_automation"' docs/data/PTU_COMBAT_SESSION_LEDGER.json
+          grep -q '"Dodge"' docs/data/PTU_COMBAT_SESSION_LEDGER.json
+          grep -q 'Source-explicit Combat Ability actions' docs/PTU_COMBAT_SESSION_LEDGER.md
           grep -q 'Sprint Maneuver' docs/PTU_COMBAT_ABILITY_ACTIONS.md
           ! grep -q 'async async function ' PTU_Companion_Windows_Source/static-preview/app.js
           ! grep -q 'async async function ' PTU_Companion_Android_Tauri/www/app.js
