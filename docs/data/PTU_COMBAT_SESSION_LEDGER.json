@@ -128,5 +128,21 @@
       "source_signature_guard": true,
       "resource_only_refund": true
     }
+  },
+  "triggered_connections": {
+    "vicious_hone_claws": {
+      "ability": "Vicious · Scene – Special",
+      "trigger_move": "Hone Claws · At-Will · Self",
+      "choices": [
+        "another Standard Action this round",
+        "Critical Hit Range +2 for the remainder of the encounter"
+      ],
+      "extra_standard_shared_action_api": true,
+      "standard_to_swift_or_shift": true,
+      "bonus_standard_satisfies_full_action": false,
+      "source_signature_guard": true,
+      "physical_dice_only": true,
+      "resource_only_refund": true
+    }
   }
 }

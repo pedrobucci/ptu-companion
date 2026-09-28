@@ -88,3 +88,7 @@ Shared combat-state foundation for Windows and Android. This replaces a Form-onl
 ## Quick Curl + Defense Curl composite
 
 Quick Curl is the first source-explicit Ability/Move cost override in the Combat ledger. The assisted path spends Quick Curl (`Scene – Free Action`) and Defense Curl as a Swift Action, while ordinary Defense Curl remains on its existing normal Move path. Standard → Swift conversion is allowed only when the shared ledger says the Standard Action is still available. Both resource transactions are independently correctable; correction never rewinds Curled Up.
+
+## Vicious + Hone Claws triggered connection
+
+The controlled-Pokémon ledger now supports a real bonus Standard Action through the source-explicit Vicious trigger. After a source-matched Hone Claws use, Vicious (`Scene – Special`) may grant another Standard Action for that round or record Critical Hit Range +2 for the remainder of the current Combat encounter. Bonus Standard Actions share the same Standard/Swift/Shift conversion API but are conservatively not used to satisfy Full Actions. See `PTU_COMBAT_VICIOUS.md`.
