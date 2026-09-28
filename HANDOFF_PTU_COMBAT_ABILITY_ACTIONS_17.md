@@ -7,6 +7,7 @@
 - Draft PR: #11 — `docs: audit PTU Mega, Primal and alternate Forms`
 - Base: `feature/pokemon-shiny-d`
 - Validated branch checkpoint: `d75ea931e29911ccebfbb68d3e74765f71674cb0`
+- Handoff snapshot commit: `94ebf1305c55ca970c206d65facfc6c3b1c581c4`
 - Keep the PR **Draft/Open**. Do not merge or publish a Release without explicit owner approval.
 - Do not mutate bundled/default `.ptucp` while the ten source-insufficient Form families remain deferred.
 
