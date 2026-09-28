@@ -21,6 +21,7 @@ on:
       - 'PTU_Companion_Windows_Source/scripts/apply_stage_b_combat_manual_physical_dice.py'
       - 'PTU_Companion_Windows_Source/scripts/apply_stage_b_combat_move_outcomes.py'
       - 'PTU_Companion_Windows_Source/scripts/apply_stage_b_combat_quick_curl.py'
+      - 'PTU_Companion_Windows_Source/scripts/apply_stage_b_combat_vicious.py'
       - 'PTU_Companion_Windows_Source/scripts/verify_stage_b_form_campaign_state.mjs'
       - 'PTU_Companion_Windows_Source/scripts/verify_stage_b_form_campaign_hardening.mjs'
       - 'PTU_Companion_Windows_Source/scripts/verify_stage_b_form_persistence_feedback.mjs'
@@ -28,6 +29,7 @@ on:
       - 'PTU_Companion_Windows_Source/scripts/verify_stage_b_combat_session_ledger.mjs'
       - 'PTU_Companion_Windows_Source/scripts/verify_stage_b_combat_move_outcomes.mjs'
       - 'PTU_Companion_Windows_Source/scripts/verify_stage_b_combat_quick_curl.mjs'
+      - 'PTU_Companion_Windows_Source/scripts/verify_stage_b_combat_vicious.mjs'
       - 'PTU_Companion_Windows_Source/scripts/verify_beta8_hp_identity.mjs'
       - 'PTU_Companion_Android_Tauri/scripts/verify-beta8-hp-identity.mjs'
       - 'PTU_Companion_Windows_Source/scripts/augment_ptu_form_lifecycle_events.py'
@@ -46,6 +48,8 @@ on:
       - 'docs/data/PTU_COMBAT_MOVE_OUTCOMES.json'
       - 'docs/PTU_COMBAT_QUICK_CURL.md'
       - 'docs/data/PTU_COMBAT_QUICK_CURL.json'
+      - 'docs/PTU_COMBAT_VICIOUS.md'
+      - 'docs/data/PTU_COMBAT_VICIOUS.json'
 
 permissions:
   contents: write
@@ -94,6 +98,8 @@ jobs:
         run: node PTU_Companion_Windows_Source/scripts/verify_stage_b_combat_move_outcomes.mjs
       - name: Verify Quick Curl composite Ability/Move override
         run: node PTU_Companion_Windows_Source/scripts/verify_stage_b_combat_quick_curl.mjs
+      - name: Verify Vicious triggered Ability/Move connection
+        run: node PTU_Companion_Windows_Source/scripts/verify_stage_b_combat_vicious.mjs
       - name: Verify Windows regressions
         working-directory: PTU_Companion_Windows_Source
         run: npm run verify
@@ -126,6 +132,10 @@ jobs:
           grep -q 'function pokemonCombatApplyMoveOutcome' PTU_Companion_Android_Tauri/www/app.js
           grep -q 'function pokemonCombatQuickCurlAbilityResourceSpec' PTU_Companion_Windows_Source/static-preview/app.js
           grep -q 'function pokemonCombatQuickCurlAbilityResourceSpec' PTU_Companion_Android_Tauri/www/app.js
+          grep -q 'function pokemonCombatViciousAbilityResourceSpec' PTU_Companion_Windows_Source/static-preview/app.js
+          grep -q 'function pokemonCombatViciousAbilityResourceSpec' PTU_Companion_Android_Tauri/www/app.js
+          grep -q 'function pokemonCombatStandardRemaining' PTU_Companion_Windows_Source/static-preview/app.js
+          grep -q 'function pokemonCombatStandardRemaining' PTU_Companion_Android_Tauri/www/app.js
           grep -q 'async function applyPokemonProgression' PTU_Companion_Windows_Source/static-preview/app.js
           grep -q 'async function applyPokemonProgression' PTU_Companion_Android_Tauri/www/app.js
           grep -q 'async function useItem' PTU_Companion_Windows_Source/static-preview/app.js
@@ -145,6 +155,9 @@ jobs:
           grep -q 'Fury Cutter' docs/PTU_COMBAT_MOVE_OUTCOMES.md
           grep -q '"physical_dice_only": true' docs/data/PTU_COMBAT_QUICK_CURL.json
           grep -q 'Quick Curl + Defense Curl' docs/PTU_COMBAT_QUICK_CURL.md
+          grep -q '"physical_dice_only": true' docs/data/PTU_COMBAT_VICIOUS.json
+          grep -q 'Vicious + Hone Claws' docs/PTU_COMBAT_VICIOUS.md
+          grep -q 'Electrodash was rejected' docs/PTU_COMBAT_VICIOUS.md
           grep -q 'combat: semanticState.ui?.combat ?? null' PTU_Companion_Windows_Source/persistence/repository.mjs
           grep -q 'tempHp:Number(p.tempHp??p.details?.tempHp??0)' PTU_Companion_Windows_Source/persistence/repository.mjs
           grep -q "extract('changeHp',true)" PTU_Companion_Windows_Source/scripts/verify_beta8_hp_identity.mjs
@@ -177,10 +190,12 @@ jobs:
             docs/PTU_COMBAT_MOVE_OUTCOMES.md \
             docs/data/PTU_COMBAT_MOVE_OUTCOMES.json \
             docs/PTU_COMBAT_QUICK_CURL.md \
-            docs/data/PTU_COMBAT_QUICK_CURL.json
+            docs/data/PTU_COMBAT_QUICK_CURL.json \
+            docs/PTU_COMBAT_VICIOUS.md \
+            docs/data/PTU_COMBAT_VICIOUS.json
           if git diff --cached --quiet; then
             echo 'Campaign-state Form integration already current.'
           else
-            git commit -m 'feat(combat): integrate Move outcome handlers [skip ci]'
+            git commit -m 'feat(combat): integrate Vicious triggered connection [skip ci]'
             git push origin HEAD:content/ptu-parametrized-forms-catalog
           fi
