@@ -31,7 +31,8 @@
       "kinds": [
         "Ability",
         "Form action",
-        "Capability"
+        "Capability",
+        "Maneuver"
       ],
       "source_keyed": true,
       "shares_move_action_frequency_ledger": true,
@@ -99,8 +100,21 @@
       "Ice Body",
       "Regal Challenge"
     ],
-    "deferred_composite": [
+    "deferred_composite": [],
+    "composite_integrations": [
       "Sprint"
     ]
+  },
+  "maneuver_automation": {
+    "model_version": 1,
+    "enabled_subset": [
+      "Sprint"
+    ],
+    "source": "Pokemon Tabletop United 1.05 Core p.242 / Sprint Ability p.331",
+    "shared_resource_ledger": true,
+    "composite_ability": "Sprint",
+    "plain_maneuver_action": "Standard Action",
+    "ability_cost": "Scene – Swift Action",
+    "standard_to_swift_during_composite": false
   }
 }

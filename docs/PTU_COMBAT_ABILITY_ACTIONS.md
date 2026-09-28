@@ -23,4 +23,4 @@ Ability frequency and action costs use `pokemonCombatSpendNonMoveResource`, incl
 
 ## Conservative exclusions
 
-Prime Fury, Hydration, Ice Body and Regal Challenge are not automated here because the supplied Core/playtest definitions conflict. Sprint is also deferred even though its Ability text agrees across supplied sources: its trigger is the separate Sprint Maneuver, which costs a Standard Action in PTU Core, and that Maneuver is not yet modeled in this Ability action surface.
+Prime Fury, Hydration, Ice Body and Regal Challenge are not automated here because the supplied Core/playtest definitions conflict. Sprint is handled by the separate composite Sprint Maneuver layer: the Core Maneuver spends its Standard Action and the optional Sprint Ability spends its own Scene – Swift Action without undercounting either resource. See `PTU_COMBAT_SPRINT_MANEUVER.md`.
