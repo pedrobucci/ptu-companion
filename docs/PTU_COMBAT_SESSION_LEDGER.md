@@ -51,12 +51,22 @@ Shared combat-state foundation for Windows and Android. This replaces a Form-onl
 - Entering/leaving the Combat session dispatches the existing Form `battle-start` / `battle-end` events.
 - Resolved Move use dispatches the existing `move-used` Form event.
 - HP controls continue to use the existing HP/Form lifecycle path.
-- Source-explicit non-Move actions now consume the **same per-Pokémon action/frequency ledger** used by Moves; there is no second resource system.
-- Enabled exact subset: Schooling (`Daily – Free Action`), Power Construct (`Daily – Swift Action`), Aegislash manual Stance Change (`Full Action`), Ice Face Hail restoration (`Standard Action`), and Weapon Bond entry/relinquish (`Extended Action`).
+- Source-explicit non-Move actions consume the **same per-Pokémon action/frequency ledger** used by Moves; there is no second resource system.
+- Enabled exact Form/lifecycle subset: Schooling (`Daily – Free Action`), Power Construct (`Daily – Swift Action`), Aegislash manual Stance Change (`Full Action`), Ice Face Hail restoration (`Standard Action`), and Weapon Bond entry/relinquish (`Extended Action`).
 - Ability/Form/Capability frequency keys are namespaced by source kind and source key, preventing collisions with Moves or similarly named sources.
 - Resource spending is atomic around lifecycle events: an invalid or no-op event refunds the reserved action/frequency.
-- Recent non-Move resource transactions expose a resource-only correction/refund control. It restores only tokens/counters spent by that transaction and does not rewind HP, Form state, Move outcomes, or later game state.
+- Recent non-Move resource transactions expose a resource-only correction/refund control. It restores only tokens/counters spent by that transaction and does not rewind HP, Form state, Move outcomes, Ability effects, or later game state.
 - Weapon Bond's Extended Action remains faithfully labeled but is not converted into Standard/Shift/Swift turn economy; Extended Action progress is still not modeled.
+
+### Source-explicit Combat Ability actions
+
+- The first general Ability action allowlist is **Dodge, Parry, Effect Spore, and Stalwart**.
+- Each Ability uses the shared non-Move resource ledger with its audited Scene/Daily and action cost; no parallel Ability resource system exists.
+- Triggers are confirmed manually. Effect Spore's `1d6` is rolled physically and entered manually.
+- Dodge/Parry and Effect Spore keep the triggering opponent abstract; no enemy entity or persistent target condition is created.
+- Stalwart changes only the controlled Pokémon's Combat Stages.
+- Automation is hidden/disabled when the active Ruleset effect text no longer matches the audited source signature.
+- Prime Fury, Hydration, Ice Body, and Regal Challenge remain manual because supplied definitions conflict. Sprint remains deferred until its triggering Standard Action Sprint Maneuver can be represented without undercounting action economy.
 
 ## PTU source anchors
 

@@ -80,5 +80,27 @@
       "Weapon Bond entry/relinquish"
     ],
     "policy": "only source-explicit action/frequency metadata is consumed; failed/no-op lifecycle events refund reserved resources"
+  },
+  "ability_action_automation": {
+    "model_version": 1,
+    "enabled_subset": [
+      "Dodge",
+      "Parry",
+      "Effect Spore",
+      "Stalwart"
+    ],
+    "source_signature_guard": true,
+    "physical_dice_only": true,
+    "abstract_target": true,
+    "resource_ledger": "shared non-Move per-Pokémon action/frequency ledger",
+    "excluded_conflicts": [
+      "Prime Fury",
+      "Hydration",
+      "Ice Body",
+      "Regal Challenge"
+    ],
+    "deferred_composite": [
+      "Sprint"
+    ]
   }
 }
