@@ -11,6 +11,7 @@ on:
       - 'PTU_Companion_Windows_Source/scripts/apply_stage_b_combat_vicious.py'
       - 'PTU_Companion_Windows_Source/scripts/verify_stage_b_combat_vicious.mjs'
       - 'PTU_Companion_Windows_Source/scripts/verify_stage_b_combat_non_move_resources.mjs'
+      - 'PTU_Companion_Windows_Source/scripts/verify_stage_b_combat_quick_curl.mjs'
       - 'PTU_Companion_Windows_Source/static-preview/app.js'
       - 'PTU_Companion_Android_Tauri/www/app.js'
       - 'docs/PTU_COMBAT_VICIOUS.md'
