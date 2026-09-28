@@ -24,10 +24,20 @@
       "Daily xN"
     ],
     "future": [
-      "source-keyed Abilities",
-      "Form lifecycle spending",
       "Extended Action progress"
-    ]
+    ],
+    "non_move_sources": {
+      "enabled": true,
+      "kinds": [
+        "Ability",
+        "Form action",
+        "Capability"
+      ],
+      "source_keyed": true,
+      "shares_move_action_frequency_ledger": true,
+      "refund_supported": true,
+      "extended_action": "source-labeled/informational; not converted into Standard/Shift/Swift actions"
+    }
   },
   "combat_state": [
     "live Pokémon HP/THP",
@@ -60,5 +70,15 @@
     "revision_hash_includes_combat": true
   },
   "source_policy": "Only source-explicit PTU mechanics are automated. Unknown frequency/action semantics remain informational rather than guessed.",
-  "target_model": "abstract; opposing creatures are not persisted or resolved as campaign entities"
+  "target_model": "abstract; opposing creatures are not persisted or resolved as campaign entities",
+  "form_resource_spending": {
+    "enabled_subset": [
+      "Schooling",
+      "Power Construct",
+      "Aegislash manual Stance Change",
+      "Ice Face Hail restoration",
+      "Weapon Bond entry/relinquish"
+    ],
+    "policy": "only source-explicit action/frequency metadata is consumed; failed/no-op lifecycle events refund reserved resources"
+  }
 }

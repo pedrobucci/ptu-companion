@@ -46,12 +46,17 @@ Shared combat-state foundation for Windows and Android. This replaces a Form-onl
 - Rollout starts at DB 3. Each successful use raises the next Rollout base DB by +4 to a maximum of DB 15.
 - A successful Rollout locks the Pokémon to Rollout on later turns. Missing resets the chain; the UI also exposes **No valid target · end chain** for the source-defined no-target exit.
 
-## Form integration
+## Form / Ability resource integration
 
 - Entering/leaving the Combat session dispatches the existing Form `battle-start` / `battle-end` events.
 - Resolved Move use dispatches the existing `move-used` Form event.
 - HP controls continue to use the existing HP/Form lifecycle path.
-- This pass does not yet auto-spend Form lifecycle `actionCost` / `frequency`; the new shared ledger is now the correct target for that next integration.
+- Source-explicit non-Move actions now consume the **same per-Pokémon action/frequency ledger** used by Moves; there is no second resource system.
+- Enabled exact subset: Schooling (`Daily – Free Action`), Power Construct (`Daily – Swift Action`), Aegislash manual Stance Change (`Full Action`), Ice Face Hail restoration (`Standard Action`), and Weapon Bond entry/relinquish (`Extended Action`).
+- Ability/Form/Capability frequency keys are namespaced by source kind and source key, preventing collisions with Moves or similarly named sources.
+- Resource spending is atomic around lifecycle events: an invalid or no-op event refunds the reserved action/frequency.
+- Recent non-Move resource transactions expose a resource-only correction/refund control. It restores only tokens/counters spent by that transaction and does not rewind HP, Form state, Move outcomes, or later game state.
+- Weapon Bond's Extended Action remains faithfully labeled but is not converted into Standard/Shift/Swift turn economy; Extended Action progress is still not modeled.
 
 ## PTU source anchors
 
@@ -66,6 +71,6 @@ Shared combat-state foundation for Windows and Android. This replaces a Form-onl
 
 - No enemy/NPC automation is invented; external target Evasion/Defense may be entered by the user.
 - Type effectiveness and arbitrary textual Move effects are not guessed by this first pass.
-- Extended Action progress is reserved for a later shared-ledger layer.
+- Extended Actions remain source-labeled/informational; multi-step Extended Action progress is not modeled as turn actions.
 - Deferred/source-insufficient Pokémon Form families remain unchanged.
 - No bundled/default `.ptucp` is modified.
