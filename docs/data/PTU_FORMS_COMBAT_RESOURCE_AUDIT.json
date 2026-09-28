@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "scope": "Existing Pokémon combat action/frequency state available to source-explicit Form lifecycle rules",
+  "scope": "Historical Pokémon combat action/frequency state before the shared Combat ledger",
   "conclusion": "informational_only",
   "automatic_spending_supported": false,
   "exact_auto_spend_subset": [],
@@ -53,38 +53,38 @@
   "blocked_spending_cases": [
     {
       "cost": "Free Action",
-      "reason": "No per-Pokémon turn/action ledger exists."
+      "reason": "No per-Pokémon turn/action ledger existed at this checkpoint."
     },
     {
       "cost": "Swift Action",
-      "reason": "No per-Pokémon turn/action ledger exists."
+      "reason": "No per-Pokémon turn/action ledger existed at this checkpoint."
     },
     {
       "cost": "Standard Action",
-      "reason": "No per-Pokémon turn/action ledger exists."
+      "reason": "No per-Pokémon turn/action ledger existed at this checkpoint."
     },
     {
       "cost": "Full Action",
-      "reason": "No per-Pokémon turn/action ledger exists."
+      "reason": "No per-Pokémon turn/action ledger existed at this checkpoint."
     },
     {
       "cost": "Extended Action",
-      "reason": "No Extended Action progress/completion model exists."
+      "reason": "No Extended Action progress/completion model existed at this checkpoint."
     },
     {
       "frequency": "Daily",
-      "reason": "No per-Pokémon/per-source Daily usage ledger exists."
+      "reason": "No per-Pokémon/per-source Daily usage ledger existed at this checkpoint."
     },
     {
       "frequency": "Scene",
-      "reason": "No per-Pokémon/per-source Scene usage ledger exists."
+      "reason": "No per-Pokémon/per-source Scene usage ledger existed at this checkpoint."
     }
   ],
   "policy": [
     "Do not infer Trainer Action Points as Pokémon action economy.",
     "Do not create usage counters implicitly inside the Form engine without a shared combat-resource model.",
     "Continue surfacing actionCost and frequency as source metadata/history.",
-    "A future resource ledger must define reset boundaries and source identity before automatic spending is enabled."
+    "A shared resource ledger must define reset boundaries and source identity before automatic spending is enabled."
   ],
   "status": "historical_pre_ledger_snapshot",
   "superseded_by": "docs/PTU_COMBAT_SESSION_LEDGER.md"

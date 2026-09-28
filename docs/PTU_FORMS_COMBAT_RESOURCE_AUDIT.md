@@ -1,16 +1,14 @@
 # PTU Forms — Combat Resource Audit
 
-> Historical checkpoint: this audit describes the application **before** the shared Combat Session Ledger was introduced. Current behavior is documented in `PTU_COMBAT_SESSION_LEDGER.md`.
+**Historical checkpoint:** this document records the application state before the shared Pokémon Combat ledger was introduced. Current behavior is documented in `docs/PTU_COMBAT_SESSION_LEDGER.md` and the non-Move resource model.
 
-Audit of the **existing** campaign combat state before any automatic spending of Form action/frequency costs.
-
-- Conclusion: **informational only**
-- Automatic spending supported by the current combat model: **No**
+- Historical conclusion: **informational only**
+- Automatic spending supported at this historical checkpoint: **No**
 - Exact automatic-spending subset: **0**
 
-The lifecycle engine may continue to return exact source labels such as `Daily`, `Scene`, `Free Action`, `Swift Action`, `Standard Action`, `Full Action`, and `Extended Action`, but the current application does not have a lossless Pokémon resource ledger in which those costs can be consumed.
+At this checkpoint, the lifecycle engine could return exact source labels such as `Daily`, `Scene`, `Free Action`, `Swift Action`, `Standard Action`, `Full Action`, and `Extended Action`, but the application did not yet have a lossless Pokémon resource ledger in which those costs could be consumed.
 
-## Existing state
+## Historical state
 
 | Resource | Existing support | Missing for automatic Form spending |
 | --- | --- | --- |
@@ -20,27 +18,27 @@ The lifecycle engine may continue to return exact source labels such as `Daily`,
 | `definition_frequency_text` | display/reference metadata | authoritative remaining-use counters |
 | `form_lifecycle_applied_rules` | exact source labels returned to the caller | resource consumption without a ledger |
 
-## Reset / time boundaries
+## Historical reset / time boundaries
 
 - `nextRound`: increments global round only.
 - `endScene`: increments scene, resets round and Combat Stages, dispatches scene-end Form events.
 - `newDay`: increments day and resets scene/round only.
 
-## Why no cost is auto-spent yet
+## Why no cost was auto-spent at this checkpoint
 
-- **Free Action:** No per-Pokémon turn/action ledger exists.
-- **Swift Action:** No per-Pokémon turn/action ledger exists.
-- **Standard Action:** No per-Pokémon turn/action ledger exists.
-- **Full Action:** No per-Pokémon turn/action ledger exists.
-- **Extended Action:** No Extended Action progress/completion model exists.
-- **Daily:** No per-Pokémon/per-source Daily usage ledger exists.
-- **Scene:** No per-Pokémon/per-source Scene usage ledger exists.
+- **Free Action:** No per-Pokémon turn/action ledger existed at this checkpoint.
+- **Swift Action:** No per-Pokémon turn/action ledger existed at this checkpoint.
+- **Standard Action:** No per-Pokémon turn/action ledger existed at this checkpoint.
+- **Full Action:** No per-Pokémon turn/action ledger existed at this checkpoint.
+- **Extended Action:** No Extended Action progress/completion model existed at this checkpoint.
+- **Daily:** No per-Pokémon/per-source Daily usage ledger existed at this checkpoint.
+- **Scene:** No per-Pokémon/per-source Scene usage ledger existed at this checkpoint.
 
-## Policy
+## Historical policy
 
 - Do not infer Trainer Action Points as Pokémon action economy.
 - Do not create usage counters implicitly inside the Form engine without a shared combat-resource model.
 - Continue surfacing actionCost and frequency as source metadata/history.
-- A future resource ledger must define reset boundaries and source identity before automatic spending is enabled.
+- A shared resource ledger must define reset boundaries and source identity before automatic spending is enabled.
 
-This audit does not change any PTU source mechanics, persisted Form IDs, deferred-family status, or default content packs.
+This historical audit does not change any PTU source mechanics, persisted Form IDs, deferred-family status, or default content packs.
