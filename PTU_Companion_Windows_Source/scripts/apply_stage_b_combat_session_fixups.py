@@ -29,7 +29,7 @@ for path in TARGETS:
         if old not in text:raise SystemExit(f'Fixup anchor drifted in {path}: {label}')
         text=text.replace(old,new,1)
     if text!=original:path.write_text(text,encoding='utf-8')
-print({'targets':len(TARGETS),'fixups':len(REPLACEMENTS)})
+print({'targets':len(TARGETS),'fixups':len(REPLACEMENTS),'self_outcomes':True})
 apply_manual_physical_dice()
 apply_move_outcomes()
 apply_self_outcomes()
