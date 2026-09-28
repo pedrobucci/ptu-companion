@@ -31,6 +31,7 @@ for(const path of appPaths){
     'function pokemonCombatActionCostForMove',
     'function pokemonCombatRolloutAfterResult',
     'function pokemonCombatDefenseCurlModifier',
+    'function pokemonCombatDoubleDamageDiceExpression',
     'function pokemonCombatResolveMove',
     'function pokemonCombatScreen',
     'data.ui.combat=normalizePokemonCombatUiState(data.ui.combat);',
@@ -41,12 +42,24 @@ for(const path of appPaths){
     "kind:'battle-end'",
     "kind:'move-used'",
     'No valid target · end chain',
-    'Target Evasion',
-    'Natural d20',
+    'Natural d20 · physical die',
+    'Final attack result',
+    'Physical Damage Roll',
+    'Damage actually taken by target',
+    'Combat screen never generates attack or damage dice',
+    'Digital dice are disabled in Combat',
   ])assert.ok(src.includes(needle),`${path} missing ${needle}`);
+  assert.ok(!src.includes('blank = roll in app'),`${path} still offers digital d20 rolling`);
+
+  const resolveMove=extractFunction(src,'pokemonCombatResolveMove');
+  assert.ok(!resolveMove.includes('pokemonCombatRandomInt('),`${path} resolve Move still generates a random d20`);
+  assert.ok(!resolveMove.includes('pokemonCombatRollDiceExpression('),`${path} resolve Move still generates random damage dice`);
+  assert.ok(resolveMove.includes("hitRaw==='hit'"),`${path} does not treat reported Hit/Miss as authoritative`);
+  assert.ok(resolveMove.includes("criticalRaw==='yes'"),`${path} does not treat reported Critical as authoritative`);
+  assert.ok(resolveMove.includes('manualDamage'),`${path} does not consume a manually entered physical Damage Roll`);
 
   const ctx={};vm.createContext(ctx);
-  for(const name of ['pokemonCombatDefaultUi','normalizePokemonCombatUiState','pokemonCombatSlug','pokemonCombatParseFrequency','pokemonCombatActionCostForMove','pokemonCombatRolloutAfterResult','pokemonCombatDefenseCurlModifier'])vm.runInContext(extractFunction(src,name),ctx);
+  for(const name of ['pokemonCombatDefaultUi','normalizePokemonCombatUiState','pokemonCombatSlug','pokemonCombatParseFrequency','pokemonCombatActionCostForMove','pokemonCombatRolloutAfterResult','pokemonCombatDefenseCurlModifier','pokemonCombatDoubleDamageDiceExpression'])vm.runInContext(extractFunction(src,name),ctx);
   const blank=ctx.pokemonCombatDefaultUi();assert.equal(blank.version,1);assert.deepEqual(Array.from(blank.participantIds),[]);
   const migrated=ctx.normalizePokemonCombatUiState({active:true,participantIds:['a','a','b'],log:Array.from({length:150},(_,i)=>i)});assert.equal(migrated.active,true);assert.deepEqual(Array.from(migrated.participantIds),['a','b']);assert.equal(migrated.log.length,120);
   assert.deepEqual({...ctx.pokemonCombatParseFrequency('Scene x2')},{kind:'scene',limit:2,label:'Scene x2'});
@@ -57,13 +70,15 @@ for(const path of appPaths){
   let rollout={active:false,hits:0,nextDb:3};rollout=ctx.pokemonCombatRolloutAfterResult(rollout,true,3);assert.equal(rollout.nextDb,7);rollout=ctx.pokemonCombatRolloutAfterResult(rollout,true,7);assert.equal(rollout.nextDb,11);rollout=ctx.pokemonCombatRolloutAfterResult(rollout,true,11);assert.equal(rollout.nextDb,15);rollout=ctx.pokemonCombatRolloutAfterResult(rollout,true,15);assert.equal(rollout.nextDb,15);rollout=ctx.pokemonCombatRolloutAfterResult(rollout,false,15);assert.equal(rollout.active,false);assert.equal(rollout.nextDb,3);
   const curlRollout=ctx.pokemonCombatDefenseCurlModifier({curledUp:true,moveName:'Rollout',knowsRollMove:true});assert.equal(curlRollout.damageBonus,10);assert.equal(curlRollout.accuracyPenalty,0);assert.equal(curlRollout.slowed,false);assert.equal(curlRollout.criticalImmune,true);
   const curlOther=ctx.pokemonCombatDefenseCurlModifier({curledUp:true,moveName:'Tackle',knowsRollMove:false});assert.equal(curlOther.damageBonus,0);assert.equal(curlOther.accuracyPenalty,-4);assert.equal(curlOther.slowed,true);
+  assert.equal(ctx.pokemonCombatDoubleDamageDiceExpression('2d6+8'),'4d6+16');
+  assert.equal(ctx.pokemonCombatDoubleDamageDiceExpression('1d8+6'),'2d8+12');
 }
 
-for(const name of ['pokemonCombatDefaultUi','normalizePokemonCombatUiState','pokemonCombatParseFrequency','pokemonCombatActionCostForMove','pokemonCombatRolloutAfterResult','pokemonCombatDefenseCurlModifier','pokemonCombatMoveAvailability','pokemonCombatResolveMove','pokemonCombatScreen'])assert.equal(extractFunction(sources[0],name),extractFunction(sources[1],name),`${name} diverged between Windows and Android`);
+for(const name of ['pokemonCombatDefaultUi','normalizePokemonCombatUiState','pokemonCombatParseFrequency','pokemonCombatActionCostForMove','pokemonCombatRolloutAfterResult','pokemonCombatDefenseCurlModifier','pokemonCombatDoubleDamageDiceExpression','pokemonCombatMoveAvailability','pokemonCombatOpenMove','pokemonCombatResolveMove','pokemonCombatScreen'])assert.equal(extractFunction(sources[0],name),extractFunction(sources[1],name),`${name} diverged between Windows and Android`);
 
 const repository=await readFile(repositoryPath,'utf8');assert.match(repository,/combat:\s*semanticState\.ui\?\.combat \?\? null/);assert.match(repository,/inCombat:\s*!!semanticState\.ui\?\.inCombat/);
-const doc=JSON.parse(await readFile(docJson,'utf8'));assert.equal(doc.schema_version,1);assert.equal(doc.menu,'Combat');assert.deepEqual(doc.platforms,['windows','android']);assert.equal(doc.roll_resolution.automatic_hit_miss,true);assert.equal(doc.persistence.revision_hash_includes_combat,true);assert.deepEqual(doc.first_complex_interaction.moves,['Defense Curl','Rollout']);
-const md=await readFile(docMd,'utf8');assert.match(md,/Combat Session Ledger/);assert.match(md,/Rollout starts at DB 3/);assert.match(md,/Full Actions consume both Standard and Shift Actions/);assert.match(md,/natural d20/i);
+const doc=JSON.parse(await readFile(docJson,'utf8'));assert.equal(doc.schema_version,2);assert.equal(doc.menu,'Combat');assert.deepEqual(doc.platforms,['windows','android']);assert.equal(doc.roll_resolution.physical_dice_only,true);assert.equal(doc.roll_resolution.digital_rng,false);assert.equal(doc.roll_resolution.automatic_hit_miss,false);assert.match(doc.roll_resolution.final_hit_miss,/user-confirmed/i);assert.match(doc.target_model,/abstract/i);assert.equal(doc.persistence.revision_hash_includes_combat,true);assert.deepEqual(doc.first_complex_interaction.moves,['Defense Curl','Rollout']);
+const md=await readFile(docMd,'utf8');assert.match(md,/Combat Session Ledger/);assert.match(md,/Rollout starts at DB 3/);assert.match(md,/Full Actions consume both Standard and Shift Actions/);assert.match(md,/physical dice only|never generates attack or damage dice/i);assert.match(md,/Damage actually taken by target/);
 const previous=JSON.parse(await readFile(oldAudit,'utf8'));assert.equal(previous.status,'historical_pre_ledger_snapshot');assert.equal(previous.superseded_by,'docs/PTU_COMBAT_SESSION_LEDGER.md');
 
-console.log(JSON.stringify({combatLedger:1,platforms:['windows','android'],menu:'Combat',realDice:true,actionLedger:true,frequencyLedger:true,rolloutDefenseCurl:true,formSpending:false,eotExtraTurnSafe:false},null,2));
+console.log(JSON.stringify({combatLedger:1,platforms:['windows','android'],menu:'Combat',physicalDiceOnly:true,digitalRng:false,abstractTarget:true,manualHitMiss:true,manualDamageRoll:true,actionLedger:true,frequencyLedger:true,rolloutDefenseCurl:true,formSpending:false,eotExtraTurnSafe:false},null,2));
