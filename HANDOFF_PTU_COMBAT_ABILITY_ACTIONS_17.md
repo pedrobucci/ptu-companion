@@ -6,7 +6,7 @@
 - Branch: `content/ptu-parametrized-forms-catalog`
 - Draft PR: #11 — `docs: audit PTU Mega, Primal and alternate Forms`
 - Base: `feature/pokemon-shiny-d`
-- Current validated branch checkpoint before this handoff: `d75ea931e29911ccebfbb68d3e74765f71674cb0`
+- Validated branch checkpoint: `d75ea931e29911ccebfbb68d3e74765f71674cb0`
 - Keep the PR **Draft/Open**. Do not merge or publish a Release without explicit owner approval.
 - Do not mutate bundled/default `.ptucp` while the ten source-insufficient Form families remain deferred.
 
@@ -55,58 +55,31 @@ The Combat screen now has an `AVAILABLE ABILITIES` source-explicit action surfac
 
 ### Dodge
 
-Supplied Core source:
-
 - `Daily – Free Action`;
 - trigger: user is hit by a Damaging Move;
-- triggering Move instead misses.
-
-Runtime:
-
-- player manually confirms the source trigger occurred;
-- Daily/Free Action resource is spent through the shared non-Move ledger;
-- only the fact that the triggering attack is treated as a miss is logged;
-- no attacker entity is created.
+- triggering Move instead misses;
+- trigger confirmed manually; no attacker entity is created.
 
 ### Parry
 
-Supplied Core source:
-
 - `Scene – Free Action`;
 - trigger: user is hit by a Melee Attack;
-- attack instead misses.
-
-Runtime follows the same abstract-target/manual-trigger pattern as Dodge, with Scene frequency.
+- attack instead misses;
+- same abstract-target/manual-trigger pattern as Dodge.
 
 ### Effect Spore
 
-Supplied Core source:
-
 - `Scene – Free Action`;
 - trigger: user is hit by a Melee Attack;
-- roll `1d6`: 1–2 Poisoned, 3–4 Paralyzed, 5–6 Asleep.
-
-Runtime:
-
-- the d6 is always rolled physically and entered manually;
-- no RNG helper is used;
-- the resulting status label is logged against the **abstract attacker only**;
-- no opponent condition object/entity is persisted.
+- physical/manual `1d6`: 1–2 Poisoned, 3–4 Paralyzed, 5–6 Asleep;
+- status is logged against the abstract attacker only; no opponent condition object/entity is persisted.
 
 ### Stalwart
 
-Supplied `New Abilities and Moves` source:
-
 - `Scene – Free Action, Reaction`;
 - trigger: user receives Massive Damage;
-- user Attack, Special Attack, Defense and Special Defense each increase by +1 Combat Stage.
-
-Runtime:
-
-- player confirms the trigger;
-- Scene/Free Action is spent through the shared ledger;
-- the four controlled-Pokémon Combat Stages are changed using the existing bounded stage helper;
-- normal `[-6,+6]` Combat Stage limits are respected.
+- user Attack, Special Attack, Defense and Special Defense each +1 Combat Stage;
+- existing bounded Combat Stage helper keeps normal `[-6,+6]` limits.
 
 ## Source signature guard
 
@@ -116,8 +89,6 @@ This guard is intentionally conservative and does not attempt general semantic p
 
 ## Conflicting/composite Abilities deliberately not automated
 
-The supplied PDFs were audited before selecting the first allowlist.
-
 Still manual due conflicting supplied definitions:
 
 - Prime Fury;
@@ -125,7 +96,7 @@ Still manual due conflicting supplied definitions:
 - Ice Body;
 - Regal Challenge.
 
-`Sprint` is also deliberately deferred even though its Ability text agrees across supplied sources: Sprint is triggered by using the separate **Sprint Maneuver**, and the Core defines that Maneuver as a Standard Action. Automating only the Ability's `Scene – Swift Action` now would undercount the composite action economy. Model the Maneuver first.
+`Sprint` is deliberately deferred even though its Ability text agrees across supplied sources: Sprint is triggered by using the separate **Sprint Maneuver**, and Core defines that Maneuver as a Standard Action. Automating only the Ability's `Scene – Swift Action` now would undercount the composite action economy. Model the Maneuver first.
 
 Rattled/Steadfast and other changed playtest definitions should likewise be source-resolved before automation is added.
 
@@ -145,24 +116,13 @@ New verifier:
 
 - `PTU_Companion_Windows_Source/scripts/verify_stage_b_combat_ability_actions.mjs`
 
-It covers:
-
-- exact Ability allowlist/specs;
-- active-source signature guard;
-- Effect Spore physical d6 mapping;
-- no digital RNG in Ability action paths;
-- no-double-spend;
-- resource refund;
-- Scene reset;
-- Daily reset;
-- source-key isolation;
-- Stalwart stage changes and +6 cap;
-- Windows/Android parity;
-- documentation metadata.
+It covers exact Ability specs, source-signature guard, Effect Spore physical d6 mapping, no RNG, no-double-spend, refund, Scene/Day reset, source-key isolation, Stalwart stage caps, Windows/Android parity and docs.
 
 Dedicated workflow:
 
 - `.github/workflows/stage-b-combat-ability-actions.yml`
+
+The older non-Move workflow's generated push was also made race-safe. Earlier failures in this pass occurred only after every validation step had succeeded, when a sibling workflow advanced the same branch between checkout and push. It now refreshes from origin, regenerates deterministically and retries; the final run is green.
 
 ## Validation
 
@@ -193,14 +153,12 @@ Validated across these runs:
 - resource-only Undo/refund;
 - Dodge / Parry / Effect Spore / Stalwart;
 - physical-dice-only invariant;
-- abstract target invariant;
+- abstract-target invariant;
 - Windows/Android parity;
 - full Windows `npm run verify`;
 - full Android `npm run verify`;
 - no `.ptucp` mutation;
 - `git diff --check`.
-
-The earlier non-Move workflow failures in this pass were not rule/test failures: all verification steps had passed and only the final generated push lost a non-fast-forward race to another CI writer. The workflow now refreshes from the branch and regenerates/retries deterministically before a subsequent push; the final run above is green.
 
 ## Useful checkpoints
 
