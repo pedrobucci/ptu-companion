@@ -1,12 +1,12 @@
-# PTU Companion Android v2.2.0-beta.25
+# PTU Companion Android v2.2.0-beta.26
 
 Hydration and Ice Body now use their February 2016 Playtest definitions in Combat. Combat weather and manually tracked Status Afflictions support these actions; Ice Body healing is integrated with the shared action ledger.
 
-# PTU Companion v2.2.0-android-beta.25
+# PTU Companion v2.2.0-android-beta.26
 
 ## Beta.23 — Combat source precedence: Hydration + Ice Body
 
-Hydration e Ice Body seguem a definição vencedora do February 2016 Playtest Packet. Rainy Weather ignora apenas a frequência de Hydration; Hail e HP controlam a disponibilidade de Ice Body. O `versionCode` Android avançou para `2002025`.
+Hydration e Ice Body seguem a definição vencedora do February 2016 Playtest Packet. Rainy Weather ignora apenas a frequência de Hydration; Hail e HP controlam a disponibilidade de Ice Body. O `versionCode` Android avançou para `2002026`.
 
 ## Beta.16 — Weapons v2 e Arcane Weapons
 
@@ -24,7 +24,7 @@ Primeira beta Android focada em uso de campanha. A edição Android contém as f
 
 ## Instalação
 
-1. Copie `PTU-Companion-v2.2.0-beta.25-arm64-release.apk` para o telefone.
+1. Copie `PTU-Companion-v2.2.0-beta.26-arm64-release.apk` para o telefone.
 2. Abra o arquivo pelo gerenciador de arquivos.
 3. Se o Android solicitar, autorize temporariamente a instalação de apps desconhecidos para o aplicativo usado para abrir o APK.
 4. Instale/atualize e abra **PTU Companion**.

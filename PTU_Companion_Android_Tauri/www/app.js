@@ -1,5 +1,5 @@
 /*
- * PTU Companion — Android v2.2.0-beta.25
+ * PTU Companion — Android v2.2.0-beta.26
  * No dependencies, no build step, runs offline in a browser.
  *
  * This is deliberately a UI/domain reference implementation. The final Tauri app
@@ -541,7 +541,7 @@ function shell(content){
   const t=trainer();
   const toastHtml=state.ui.toast?`<div class="toast ${state.ui.toast.type==='error'?'toast-error':''}">${esc(state.ui.toast.message)}</div>`:'';
   const visibleNav=window.PTU_ANDROID_BUILD?nav.filter(n=>n[0]!=='editor'):nav;
-  const platformLabel=window.PTU_ANDROID_BUILD?'ANDROID BETA v2.2.0-beta.25':'BETA v2.1.0';
+  const platformLabel=window.PTU_ANDROID_BUILD?'ANDROID BETA v2.2.0-beta.26':'BETA v2.1.0';
   return `<div class="app-backdrop ${window.PTU_ANDROID_BUILD?'android-build':''}"><div class="pokedex-shell"><aside class="hardware-rail"><div class="lens"><span></span></div><div class="hardware-dots"><i></i><i></i></div></aside><div class="app-window"><header class="topbar"><div class="brand">${window.PTU_ANDROID_BUILD?'<span class="brand-mark"><img src="app-icon.png" alt=""></span>':'<span class="brand-mark">◉</span>'}<strong>PTU Companion</strong><span class="prototype-label functional">${platformLabel}</span><span class="persistence-badge">${window.PTU_ANDROID_BUILD?'Local autosave':persistenceLabel()}</span></div><div class="top-actions"><button onclick="openGlobalActions()">⚙</button><button class="trainer-mini trainer-switcher-button" onclick="openTrainerSwitcher()" title="Switch Trainer">${personPortrait(t,'trainer-mini-avatar','span')}<small>${esc(t.name)}</small><b class="trainer-switch-caret">⌄</b></button></div></header><div class="app-layout"><nav class="sidebar">${visibleNav.map(n=>`<button class="${state.ui.screen===n[0]?'active':''}" onclick="route('${n[0]}')"><span>${n[1]}</span>${n[2]}</button>`).join('')}<div class="sidebar-footer"><button onclick="openSaveTools()">⇄ Save Tools</button></div></nav><main class="screen-content">${content}</main></div><footer class="shell-footer">${window.PTU_ANDROID_BUILD?'Android beta · local autosave':`Desktop beta · ${persistenceLabel()}`} <span>●</span></footer>${mobileBottomNav()}</div><div class="hardware-bottom"></div></div>${toastHtml}<div id="modal-root"></div></div>`;
 }
 

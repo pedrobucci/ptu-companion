@@ -1,4 +1,4 @@
-# PTU Companion Android v2.2.0-beta.25 — Tauri 2 build
+# PTU Companion Android v2.2.0-beta.26 — Tauri 2 build
 
 Esta é a build Android canônica. Não use o APK `beta.3-compat` para diagnosticar runtime: ele usa um wrapper Android artesanal criado apenas para isolar o problema de instalação e pode falhar em execução.
 
@@ -40,7 +40,7 @@ Ou:
 Saída esperada:
 
 ```text
-dist/android/PTU-Companion-v2.2.0-beta.25-arm64-release.apk
+dist/android/PTU-Companion-v2.2.0-beta.26-arm64-release.apk
 ```
 
 O pipeline executa `zipalign -P 16`, `apksigner sign` e `apksigner verify` antes de concluir.
