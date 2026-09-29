@@ -9,6 +9,7 @@ import {normalizePokemonFormState,resolvePokemonForms,resolvePokemonPresentation
 import {applyPokemonFormTransitionEvent} from './rules/pokemon-form-events.mjs';
 import {applyPokemonFormGameEvent} from './rules/pokemon-form-campaign-state.mjs';
 import {normalizeSpeciesForms} from './rules/pokemon-forms.mjs';
+import {mergeBuiltInSpeciesForms} from './rules/pokemon-form-builtins.mjs';
 
 const MOBILE_KEY='ptu-companion-android-store-v1';
 const data=window.__PTU_MOBILE_DATA__;
@@ -152,14 +153,14 @@ class MobileDefinitions {
   getRuleset(id){ return deep((data.rulesets||[]).find(r=>r.id===id)||null); }
   getPacks(){ return deep(data.packs||[]); }
   _map(rs,kind){ return data.resolved?.[rs]?.[kind]||{}; }
-  getResolved({rulesetId,kind,id}){ const vid=this._map(rulesetId,kind)[id],record=data.records?.[vid]; if(!record)return null; const out={...deep(record),kind}; if(kind==='species'){out.capabilities=normalizeCapabilities(out.capabilities||out.raw?.capabilities);out.forms=normalizeSpeciesForms(out.forms||out.raw?.forms||out.raw?.form_definitions||[]);} return out; }
+  getResolved({rulesetId,kind,id}){ const vid=this._map(rulesetId,kind)[id],record=data.records?.[vid]; if(!record)return null; const out={...deep(record),kind}; if(kind==='species'){out.capabilities=normalizeCapabilities(out.capabilities||out.raw?.capabilities);out.forms=mergeBuiltInSpeciesForms(id,out.forms||out.raw?.forms||out.raw?.form_definitions||[]);} return out; }
   listResolved({rulesetId,kind,q='',limit=60,offset=0}){
     const needle=norm(q); const ids=Object.keys(this._map(rulesetId,kind)); const rows=[];
     for(const id of ids){ const row=this.getResolved({rulesetId,kind,id}); if(!row)continue; if(needle && !norm(`${id} ${row.name||''} ${row.effect||''} ${JSON.stringify(row.raw||{})}`).includes(needle))continue; rows.push(row); }
     rows.sort((a,b)=>String(a.name||a.id).localeCompare(String(b.name||b.id))); return rows.slice(Number(offset)||0,(Number(offset)||0)+(Number(limit)||60));
   }
   countResolved({rulesetId,kind,q=''}){ return this.listResolved({rulesetId,kind,q,limit:100000,offset:0}).length; }
-  getVersions({kind,id}){ const vids=data.versionGroups?.[`${kind}:${id}`]||[]; return vids.map(v=>{const record=data.records[v];if(!record)return null;const out={...deep(record),kind};if(kind==='species'){out.capabilities=normalizeCapabilities(out.capabilities||out.raw?.capabilities);out.forms=normalizeSpeciesForms(out.forms||out.raw?.forms||out.raw?.form_definitions||[]);}return out;}).filter(Boolean); }
+  getVersions({kind,id}){ const vids=data.versionGroups?.[`${kind}:${id}`]||[]; return vids.map(v=>{const record=data.records[v];if(!record)return null;const out={...deep(record),kind};if(kind==='species'){out.capabilities=normalizeCapabilities(out.capabilities||out.raw?.capabilities);out.forms=mergeBuiltInSpeciesForms(id,out.forms||out.raw?.forms||out.raw?.form_definitions||[]);}return out;}).filter(Boolean); }
   getCounts(rulesetId){ const out={}; for(const k of ALLOWED_KINDS)out[k]=Object.keys(this._map(rulesetId,k)).length; return out; }
   getDamageBase(db){ return deep(data.damageBase?.[String(Number(db))]||null); }
   getTypeMatchups(){ return deep(data.typeMatchups||[]); }

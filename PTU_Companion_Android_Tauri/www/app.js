@@ -99,8 +99,9 @@ function localMoveKeywordRows(query=''){
   return MOVE_KEYWORD_CATALOG.filter(entry=>`${entry.name} ${entry.effect} ${entry.reference||''}`.toLowerCase().includes(needle));
 }
 function moveKeywordSourceText(move={}){
-  const payload=definitionPayload(move);
-  const values=[payload.keyword,payload.keywords,payload.tags,payload.range,payload.frequency,payload.effect,move.keyword,move.keywords,move.tags,move.range,move.frequency,move.effect];
+  const source=move&&typeof move==='object'?move:{};
+  const payload=source.payload&&typeof source.payload==='object'?source.payload:source.raw&&typeof source.raw==='object'?source.raw:source;
+  const values=[payload.keyword,payload.keywords,payload.tags,payload.range,payload.frequency,payload.effect,source.keyword,source.keywords,source.tags,source.range,source.frequency,source.effect];
   return values.flatMap(value=>Array.isArray(value)?value:[value]).filter(value=>value!=null).map(value=>typeof value==='object'?JSON.stringify(value):String(value)).join(' ');
 }
 function moveKeywordEntries(move={}){
@@ -519,6 +520,7 @@ function selectNpc(id){ state.selectedNpcId=id; persist(); render(); }
 
 function openMobileMore(){
   modal(`<h2>More</h2><div class="mobile-more-grid">
+    <button class="btn btn-ghost" onclick="closeModal();route('combat')">⚔ Combat</button>
     <button class="btn btn-ghost" onclick="closeModal();route('creature')">🐾 Creatures</button>
     <button class="btn btn-ghost" onclick="closeModal();route('storage')">▣ Storage</button>
     <button class="btn btn-ghost" onclick="closeModal();route('shop')">🛒 Shop</button>

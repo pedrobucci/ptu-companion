@@ -1,6 +1,6 @@
 import { DatabaseSync } from 'node:sqlite';
 import {normalizeCapabilities} from '../rules/capability-normalization.mjs';
-import {normalizeSpeciesForms} from '../rules/pokemon-forms.mjs';
+import {mergeBuiltInSpeciesForms} from '../rules/pokemon-form-builtins.mjs';
 
 const safeJson = (value, fallback={}) => {
   try { return value == null ? fallback : JSON.parse(value); }
@@ -303,7 +303,7 @@ export class DefinitionRepository {
       abilities:raw.ability_slots || [],
       capabilities:normalizeCapabilities(raw.capabilities),
       levelUpMoves:raw.level_up_moves || [],
-      forms:normalizeSpeciesForms(raw.forms || raw.form_definitions || []),
+      forms:mergeBuiltInSpeciesForms(row.logical_id,raw.forms || raw.form_definitions || []),
       icon:raw.icon_data_url || raw.icon_url || raw.icon || null,
       image:raw.image_data_url || raw.image_url || raw.artwork_url || null,
       portraitDataUrl:raw.portrait_data_url || null,

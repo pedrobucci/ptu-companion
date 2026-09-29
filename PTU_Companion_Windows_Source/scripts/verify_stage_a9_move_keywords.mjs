@@ -1,9 +1,11 @@
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
+import vm from 'node:vm';
 
 const windowsSource=await readFile(new URL('../static-preview/app.js',import.meta.url),'utf8');
 const androidSource=await readFile(new URL('../../PTU_Companion_Android_Tauri/www/app.js',import.meta.url),'utf8');
 const catalog=JSON.parse(await readFile(new URL('../rules/move-keywords-core-1.05.json',import.meta.url),'utf8'));
+const patcher=await readFile(new URL('./apply_stage_a9_move_keywords.py',import.meta.url),'utf8');
 
 const expected=[
   'Aura','Berry','Blessing','Coat','Dash','Double Strike','Environ','Execute','Exhaust','Fling','Friendly',
@@ -29,6 +31,17 @@ function catalogBlock(source){
 const block=catalogBlock(windowsSource);
 const androidBlock=catalogBlock(androidSource);
 assert.equal(androidBlock,block,'Windows and Android must share the same generated Move Keyword reference');
+assert.ok(!block.includes('definitionPayload('),'Move keyword detection must not call an undefined helper');
+assert.ok(!patcher.includes('definitionPayload('),'The deterministic A.9 patcher must preserve the fixed helper');
+for(const source of [windowsSource,androidSource]){
+  const helper=source.match(/function moveKeywordSourceText\(move=\{\}\)\{[\s\S]*?\n\}/)?.[0];
+  assert.ok(helper,'Move keyword source extraction helper must exist');
+  const read=vm.runInNewContext(`${helper}; moveKeywordSourceText`);
+  assert.match(read({keyword:'Hone Claws'}),/Hone Claws/);
+  assert.match(read({raw:{effect:'Hone Claws'}}),/Hone Claws/);
+  assert.match(read({payload:{tags:['Five Strike']}}),/Five Strike/);
+  assert.equal(read(null),'','Null move definitions must not crash Creature rendering');
+}
 for(const name of ['Aura','Interrupt','Priority','Shield','Weight Class'])assert.match(block,new RegExp(`"name":"${name.replace(' ','\\s?')}"`),`Runtime catalog must embed ${name}`);
 
 assert.match(windowsSource,/\['move_keywords','Move Keywords'\]/,'Library must expose Move Keywords as a category');

@@ -2,12 +2,15 @@ import assert from 'node:assert/strict';
 import {mkdtemp,readFile,rm} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
+import {fileURLToPath} from 'node:url';
 import {openDatabase} from '../persistence/database.mjs';
 import {CampaignRepository} from '../persistence/repository.mjs';
+import {DefinitionRepository} from '../definitions/repository.mjs';
 import {
   POKEMON_FORM_SCHEMA_VERSION,BASE_FORM_ID,normalizeSpeciesForms,normalizePokemonFormState,
   applyFormOperation,evaluateFormRequirements,resolvePokemonForms
 } from '../rules/pokemon-forms.mjs';
+import {mergeBuiltInSpeciesForms} from '../rules/pokemon-form-builtins.mjs';
 
 assert.equal(POKEMON_FORM_SCHEMA_VERSION,1);
 assert.equal(BASE_FORM_ID,'base');
@@ -77,6 +80,24 @@ assert.match(wrongMode.errors.join(' '),/transformation Form/i);
 assert.deepEqual(normalizePokemonFormState({permanentFormId:'Alpine Form',transformationFormId:'Spectral Shift'}),{schemaVersion:1,baseFormId:'alpine-form',activeFormId:'spectral-shift'});
 assert.deepEqual(normalizePokemonFormState({}),{schemaVersion:1,baseFormId:'base',activeFormId:null});
 
+const sableyeForms=mergeBuiltInSpeciesForms('sableye',[]);
+assert.equal(sableyeForms.length,1,'Mega Sableye must be registered when the selected content pack predates Stage B Forms');
+assert.equal(sableyeForms[0].name,'Mega Sableye');
+assert.equal(sableyeForms[0].mode,'transformation');
+assert.equal(sableyeForms[0].requirements.all[0].value,'mega-evolution-sableye-mega');
+assert.deepEqual(sableyeForms[0].overrides.baseStats.add,{attack:1,defense:5,special_attack:2,special_defense:5,speed:-3});
+assert.equal(mergeBuiltInSpeciesForms('sableye',[{id:'mega',name:'Campaign Mega Sableye'}])[0].name,'Campaign Mega Sableye','Explicit pack definitions must take precedence over the built-in fallback');
+const sableyeResolution=resolvePokemonForms({species:{id:'sableye',name:'Sableye',baseStats:{hp:5,attack:5,defense:5,special_attack:5,special_defense:5,speed:5},forms:sableyeForms},formState:{activeFormId:'mega'},context:{manualApprovals:['mega-evolution-sableye-mega']}});
+assert.equal(sableyeResolution.valid,true,sableyeResolution.errors.join('; '));
+assert.deepEqual(sableyeResolution.species.baseStats,{hp:5,attack:6,defense:10,special_attack:7,special_defense:10,speed:2});
+const definitionRepository=new DefinitionRepository(fileURLToPath(new URL('../seed/definitions/ptu_seed_v1.0.sqlite3',import.meta.url)));
+try{
+  const ruleset=definitionRepository.getRulesets().find(row=>row.id==='all-provided-material');
+  assert.ok(ruleset,'Bundled Ruleset fixture must be available');
+  const registeredSableye=definitionRepository.getResolved({rulesetId:ruleset.id,kind:'species',id:'sableye'});
+  assert.ok(registeredSableye?.forms.some(form=>form.id==='mega'&&form.name==='Mega Sableye'),'The actual bundled Species lookup must expose Mega Sableye');
+}finally{definitionRepository.close();}
+
 // Campaign persistence deliberately reuses pokemon.details_json: no save-schema migration is required.
 const temp=await mkdtemp(join(tmpdir(),'ptu-stage-b-forms-'));
 const db=openDatabase(join(temp,'campaign.sqlite3'));
@@ -100,7 +121,7 @@ try{
 const repositorySource=await readFile(new URL('../definitions/repository.mjs',import.meta.url),'utf8');
 const importerSource=await readFile(new URL('../definitions/pack-importer.mjs',import.meta.url),'utf8');
 const serverSource=await readFile(new URL('../server.mjs',import.meta.url),'utf8');
-assert.match(repositorySource,/forms:normalizeSpeciesForms\(raw\.forms \|\| raw\.form_definitions \|\| \[\]\)/,'DefinitionRepository must expose normalized Forms on Species');
+assert.match(repositorySource,/forms:mergeBuiltInSpeciesForms\(row\.logical_id,raw\.forms \|\| raw\.form_definitions \|\| \[\]\)/,'DefinitionRepository must expose Forms plus built-in Stage B entries on Species');
 assert.match(importerSource,/normalizeSpeciesForms\(raw\.forms\|\|raw\.form_definitions\|\|\[\]\)/,'.ptucp Species import must validate Form definitions');
 assert.match(importerSource,/format_version\)!==1/,'Stage B must remain compatible with .ptucp format_version 1');
 assert.match(serverSource,/function resolveSpeciesFormState/,'Windows server must have one central Species Form resolver adapter');
