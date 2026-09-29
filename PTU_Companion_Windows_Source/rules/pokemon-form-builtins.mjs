@@ -1,22 +1,12 @@
 import {normalizeSpeciesForms} from './pokemon-forms.mjs';
+import {MEGA_FORM_CATALOG,MEGA_STONE_CATALOG} from './mega-form-runtime-data.mjs';
 
-const BUILT_IN_SPECIES_FORMS=Object.freeze({
-  sableye:[{
-    id:'mega',name:'Mega Sableye',mode:'transformation',
-    requirements:{all:[{kind:'held_item',value:'sableye-mega-stone'},{kind:'manual',value:{id:'mega-evolution-sableye-mega',label:'Trainer has the Mega Ring'}}]},
-    overrides:{baseStats:{add:{attack:1,defense:5,special_attack:2,special_defense:5,speed:-3}}},
-    sortOrder:100
-  }]
-});
-
-const BUILT_IN_FORM_ITEMS=Object.freeze({
-  'sableye-mega-stone':{
-    id:'sableye-mega-stone',name:'Sableye Mega Stone',kind:'items',category:'Mega Stone',
-    effect:'Species-specific Mega Stone required for Mega Evolution. No price or automatic effect is defined by the supplied Core item data.',
-    price:null,sourceId:'ptu-core-1.05',sourcePage:206,versionId:'builtin:items:sableye-mega-stone@ptu-core-1.05',contentPackId:null,
-    raw:{id:'sableye-mega-stone',name:'Sableye Mega Stone',category:'Mega Stone',effect_text:'Species-specific Mega Stone required for Mega Evolution. No price or automatic effect is defined by the supplied Core item data.',pokemon_held_usable:true,shop_visible:false}
-  }
-});
+const BUILT_IN_SPECIES_FORMS=Object.freeze(MEGA_FORM_CATALOG);
+const BUILT_IN_FORM_ITEMS=Object.freeze(Object.fromEntries(MEGA_STONE_CATALOG.map(item=>[item.id,{
+  id:item.id,name:item.name,kind:'items',category:'Mega Stone',effect:item.effect,
+  price:null,sourceId:'ptu-core-1.05',sourcePage:item.sourcePage,versionId:`builtin:items:${item.id}@ptu-core-1.05`,contentPackId:null,
+  raw:{id:item.id,name:item.name,category:'Mega Stone',effect_text:item.effect,pokemon_held_usable:true,shop_visible:false,mega_species_id:item.speciesId,mega_form_id:item.formId,app_helper:true}
+}])));
 
 export function mergeBuiltInSpeciesForms(speciesId,forms=[]){
   const source=Array.isArray(forms)?forms:[];

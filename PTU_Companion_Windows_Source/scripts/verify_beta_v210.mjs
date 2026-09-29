@@ -16,7 +16,7 @@ const definitions=new DefinitionRepository(join(root,'seed','definitions','ptu_s
 const rulesetId='all-provided-material';
 const assert=(ok,msg)=>{if(!ok)throw new Error(msg)};
 
-assert(pkg.version==='2.1.0-beta.22','package.json version mismatch');
+assert(pkg.version==='2.1.0-beta.23','package.json version mismatch');
 assert(app.includes('BETA v2.1.0'),'Beta label missing from UI');
 assert(app.includes('function ownedInventory()')&&app.includes('Number(i.qty||0)>0'),'Backpack does not filter zero-quantity items');
 for(const token of ['openBackpackItemPicker','addCatalogItemToBackpack','createCustomItem','Custom Item','pokemonPortraitUrl','/api/pokemon/portrait/'])assert(app.includes(token),`Missing beta UI token: ${token}`);
@@ -82,11 +82,11 @@ let stderr=''; child.stderr.on('data',d=>stderr+=d);
 async function waitServer(){for(let i=0;i<80;i++){try{const r=await fetch(`http://127.0.0.1:${port}/api/health`);if(r.ok)return r.json();}catch{} await new Promise(r=>setTimeout(r,100));}throw new Error(`Server did not start: ${stderr}`)}
 try{
   const health=await waitServer();
-  assert(health.version==='2.1.0-beta.22','Server health version mismatch');
+  assert(health.version==='2.1.0-beta.23','Server health version mismatch');
   assert(health.schemaVersion===5,'Trainer/NPC portrait migration is not schema v5');
   const catalogRes=await fetch(`http://127.0.0.1:${port}/api/items/catalog`);
   const catalog=await catalogRes.json();
-  assert(catalogRes.ok&&catalog.total===509&&catalog.items.length===509,'Full default item catalog endpoint failed');
+  assert(catalogRes.ok&&catalog.total===556&&catalog.items.length===556,'Full default item catalog plus 48 Mega Stone helpers endpoint failed');
   assert(catalog.items.find(i=>i.id==='sableye-mega-stone')?.pokemonHeldUsable===true,'Sableye Mega Stone must be available as a Pokémon Held Item');
   assert(catalog.items.every(i=>i.definitionId&&typeof i.description==='string'),'Catalog item metadata is incomplete');
   const sunglasses=catalog.items.find(i=>i.id==='sunglasses');
@@ -143,10 +143,10 @@ try{
 }
 
 definitions.close();
-console.log('PTU Companion Beta v2.1.0-beta.22 verification: OK');
+console.log('PTU Companion Beta v2.1.0-beta.23 verification: OK');
 console.log('Campaign classes/features/edges + profession Training Features: passed');
 console.log('Sunglasses resolved Trainer skill bonuses: passed');
-console.log('508 source item definitions + Sableye Mega Stone helper -> catalog API: passed');
+console.log('508 source item definitions + 48 Mega Stone helpers -> catalog API: passed');
 console.log('Owned-only Backpack + Custom Item UI contract: passed');
 console.log('Item usability + equipment slot metadata: passed');
 console.log('Underdog / Realized Potential / Skill Improvement mechanics: passed');

@@ -623,6 +623,17 @@ function resolveCreatureAbilityRecords({pokemon,species,rulesetId,heldItemEffect
     if(!obj.name) return;
     records.push({name:String(obj.name),sourceKind:obj.source||'granted',sourceLabel:obj.sourceId==='mixed-power'?'Granted by Mixed Power':'Granted Ability',unlockLevel:null,selectedAtLevel:null,sourceId:obj.sourceId||null,sourceVersionId:obj.sourceVersionId||null,grantSource:obj,index:nativeNames.length+index});
   });
+  const appliedForms=Array.isArray(species?.formState?.applied)?species.formState.applied:[];
+  for(const applied of appliedForms){
+    const form=(Array.isArray(species?.forms)?species.forms:[]).find(candidate=>candidate.id===applied?.id);
+    const formGrants=Array.isArray(form?.grantedAbilities)?form.grantedAbilities:[];
+    for(const entry of formGrants){
+      const name=String(typeof entry==='string'?entry:entry?.name||'').trim(); if(!name)continue;
+      const sourceId=`form:${species.id||'species'}:${form.id}`;
+      const grant={name,source:'form',sourceId,sourceVersionId:form?.source?.versionId||null,derived:true};
+      records.push({name,sourceKind:'form',sourceLabel:`Granted by ${form.name}`,unlockLevel:null,selectedAtLevel:null,sourceId,sourceVersionId:form?.source?.versionId||null,grantSource:grant,index:records.length});
+    }
+  }
   const heldGranted=Array.isArray(heldItemEffect?.grantedAbilities)?heldItemEffect.grantedAbilities:[];
   heldGranted.forEach(name=>records.push({name:String(name),sourceKind:'held_item',sourceLabel:`Granted by ${heldItemEffect.name}`,unlockLevel:null,selectedAtLevel:null,sourceId:heldItemEffect.id,sourceVersionId:heldItemEffect.versionId||null,grantSource:{name:String(name),source:'held_item',sourceId:heldItemEffect.id}}));
   const hasMixed=(details.pokeEdges||[]).some(e=>abilitySlug(e?.id||e?.name)==='mixed-power');
@@ -677,7 +688,7 @@ async function handleApi(req,res,url){
     return json(res,200,{ok:true,desktopSession});
   }
   if(req.method==='GET' && url.pathname==='/api/health'){
-    return json(res,200,{ok:true,version:'2.2.0-android-beta.24',persistence:'android-local',database:'app-data/content-packs + WebView local storage',schemaVersion:5,definitions:{database:'embedded mobile bundle + installed .ptucp overlays',activeRuleset:getActiveRuleset()}});
+    return json(res,200,{ok:true,version:'2.2.0-android-beta.25',persistence:'android-local',database:'app-data/content-packs + WebView local storage',schemaVersion:5,definitions:{database:'embedded mobile bundle + installed .ptucp overlays',activeRuleset:getActiveRuleset()}});
   }
   if(req.method==='GET' && url.pathname==='/api/rulesets'){
     const activeRulesetId=getActiveRuleset();
@@ -1070,6 +1081,7 @@ async function handleApi(req,res,url){
       if(Number(inv.qty||0)<=0) continue;
       const definition=resolveHeldItemDefinition({rulesetId,inventoryItem:inv});
       if(!definition || !definition.raw?.pokemon_held_usable) continue;
+      if(definition.raw?.mega_species_id&&definition.raw.mega_species_id!==speciesId) continue;
       const effect=resolveHeldItemEffect({itemDefinition:definition,config:{},pokemon,hasOutgoingEvolution:outgoing.length>0});
       items.push({inventoryId:inv.id,name:inv.name,qty:Number(inv.qty||0),icon:inv.icon||'◆',definition,effect:{...effect,valid:effect.requiresConfig?.length?true:effect.valid,errors:effect.requiresConfig?.length?[]:effect.errors}});
     }
@@ -1085,6 +1097,7 @@ async function handleApi(req,res,url){
     const inv=payload.inventoryItem||{};
     const definition=resolveHeldItemDefinition({rulesetId,inventoryItem:inv});
     if(!definition || !definition.raw?.pokemon_held_usable) return json(res,400,{valid:false,errors:['This backpack item is not resolved as a Pokémon Held Item in the active Ruleset.']});
+    if(definition.raw?.mega_species_id&&definition.raw.mega_species_id!==speciesId) return json(res,400,{valid:false,errors:['This Mega Stone helper is only compatible with its listed Pokémon species.']});
     const outgoing=species?definitions.getOutgoingEvolutions({rulesetId,speciesName:species.name,sourceId:species.sourceId}):[];
     const effect=resolveHeldItemEffect({itemDefinition:definition,config:payload.config||{},pokemon,hasOutgoingEvolution:outgoing.length>0});
     return json(res,200,{valid:!!effect.valid,errors:effect.errors||[],warnings:effect.warnings||[],definition,effect});
