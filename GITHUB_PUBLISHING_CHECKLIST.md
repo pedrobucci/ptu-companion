@@ -1,17 +1,18 @@
 # GitHub publishing and release workflow
 
-This document defines the canonical release process for PTU Companion. The goal is to keep `main` as the source of truth, make every distributed binary traceable to an exact commit, and keep generated executables out of the source tree.
+This document defines the canonical release process for PTU Companion. The goal is to make every distributed binary traceable to an exact reviewed commit and keep generated executables out of the source tree. Releases normally come from `main`; when a release is intentionally based on another reviewed line, a release-candidate branch may be created from the latest published tag and used as the PR target.
 
 ## Canonical release flow
 
 1. Implement application/content changes in a dedicated branch.
 2. Update the application version metadata before release. Keep all version declarations for the target platform consistent.
-3. Open a Pull Request targeting `main` and run the relevant verification/build checks.
-4. Merge only after review/approval. The merge commit in `main` becomes the source commit for the release.
-5. Create a Git tag that points to that exact `main` commit. A release tag must not be moved later to another commit.
-6. Build the Windows and/or Android artifacts from the tagged commit (or from a checkout whose HEAD is exactly that commit).
-7. Create a GitHub Release from the tag and attach the generated binaries and verification metadata as Release assets.
-8. Verify that the Release page, tag and build metadata all reference the same commit before announcing/distributing the build.
+3. Open a Pull Request targeting `main`, an explicitly designated release-integration branch, or a temporary release-candidate branch created from the latest published tag. Run the relevant verification/build checks.
+4. Merge only after review/approval. The merge commit in the selected release branch becomes the source commit for the release.
+5. Confirm the selected branch contains the latest published release tag in its ancestry. If it does not, first reconcile the release history through a reviewed PR; do not publish from a divergent branch or silently replace the previous release baseline. A release-candidate branch is created at that tag, so it preserves a short, auditable path even when ordinary development branches have diverged.
+6. Create a Git tag that points to that exact merged commit. A release tag must not be moved later to another commit.
+7. Build the Windows and/or Android artifacts from the tagged commit (or from a checkout whose HEAD is exactly that commit).
+8. Create a GitHub Release from the tag and attach the generated binaries and verification metadata as Release assets.
+9. Verify that the Release page, tag and build metadata all reference the same commit before announcing/distributing the build.
 
 Conceptually:
 
@@ -19,7 +20,7 @@ Conceptually:
 feature/release branch
         |
         v
-Pull Request -> main commit
+Pull Request -> reviewed release branch commit
                   |
                   +-> immutable release tag
                            |
@@ -29,6 +30,8 @@ Pull Request -> main commit
                                 |- SHA-256 checksums
                                 `- signing/build metadata
 ```
+
+`main` remains the default release branch. An owner may instead authorize a release-candidate branch rooted at the latest published tag; the fixes are reviewed and merged into that branch before it is tagged. Merging a PR into a feature branch alone does not automatically make that branch a valid release source. The source commit must retain the latest release tag in its ancestry.
 
 ## Source control versus Release assets
 
@@ -65,6 +68,7 @@ Recommended release checks:
 - record the source commit SHA in build/release metadata;
 - run the project's verification suites before packaging;
 - produce SHA-256 hashes for distributed binaries;
+- build the Windows desktop launcher with `PTU_Companion_Windows_Source/scripts/build-windows-release.ps1` and Android ARM64 with `PTU_Companion_Android_Tauri/scripts/build-android-arm64-release.ps1`;
 - keep workflow/build scripts versioned in the repository when they are intended to be reused;
 - do not rebuild a different binary under the same release tag/version without explicitly replacing the release and documenting why.
 

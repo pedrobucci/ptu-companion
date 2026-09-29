@@ -94,8 +94,12 @@ These candidates are the original first-pass census. The hardened discovery repo
 ## Mega item audit
 
 - Core item records matching Mega-related heuristics: **3**.
-- Exact Mega Stone IDs are intentionally not fabricated. Requirements will bind only to stable source-backed item definitions; otherwise the generic Forms requirement system must expose a source-backed/manual condition.
-- The built-in Sableye catalog fallback is an app-level helper named **Sableye Mega Stone**, with internal ID `sableye-mega-stone` and Core p.206 attribution. It is not presented as a separately priced Core catalog record and has no automatic item effect. Mega Sableye requires it as the Pokémon's Held Item; the Trainer-worn Mega Ring remains a manual table confirmation because the supplied item catalog has no resolvable Mega Ring definition.
+- PTU Core p.206 describes a species/form-specific Mega Stone but does not enumerate official Stone names, IDs, or prices. The app therefore creates **48 clearly identified helper catalog entries** (one per Mega Form); these are not represented as official priced Core records.
+- The existing helper ID `sableye-mega-stone` is retained for save compatibility. Other IDs are deterministic app IDs, and Charizard/Mewtwo X/Y have separate entries. Held-item options show only a helper compatible with the Pokémon's species; form activation checks the matching item and manually confirms the Trainer's Mega Ring.
+- `PTU_Companion_Android_Tauri/scripts/generate-mega-form-runtime.mjs` deterministically generates the mirrored Windows/Android runtime catalog from the reviewed Stage B source catalog. It adds source-listed Mega Abilities to each form and does not mutate `.ptucp` packs or infer shop prices.
+- Mega Sableye's added **Magic Bounce** is source-listed on Gen 8ish PokéDex p.691 and is now exposed as a Form-granted Ability only while the Mega Form is active. It is not written into the Pokémon's saved/native Ability choices.
+- Mega artwork is mapped to the matching form from the supplied Gen 8ish PokéDex PDF: the extractor validates the per-page image count against this inventory, selects the large artwork image objects in page order, composites their PDF soft masks into transparent PNGs, and writes matching Android and Windows assets under `creatures/forms/`. The generated Form `overrides.artwork.replace` path points to each local image. Visual spot checks covered Sableye, Charizard X/Y, and Mewtwo X/Y; the Stage B verifier checks all 48 files exist and match across platforms.
+- Rebuild these assets from the read-only supplied PDF by running `scripts/extract-mega-form-artwork.ps1 -PdfPath <path-to-Gen-8ish-PokeDex.pdf>` from `PTU_Companion_Android_Tauri`. The script only reads the PDF and writes generated application assets; it does not edit project `sources/`.
 
 ## Conversion gate
 

@@ -10,7 +10,7 @@ import {
   POKEMON_FORM_SCHEMA_VERSION,BASE_FORM_ID,normalizeSpeciesForms,normalizePokemonFormState,
   applyFormOperation,evaluateFormRequirements,resolvePokemonForms
 } from '../rules/pokemon-forms.mjs';
-import {getBuiltInFormItem,mergeBuiltInSpeciesForms} from '../rules/pokemon-form-builtins.mjs';
+import {getBuiltInFormItem,listBuiltInFormItems,mergeBuiltInSpeciesForms} from '../rules/pokemon-form-builtins.mjs';
 
 assert.equal(POKEMON_FORM_SCHEMA_VERSION,1);
 assert.equal(BASE_FORM_ID,'base');
@@ -88,6 +88,24 @@ assert.deepEqual(sableyeForms[0].requirements.all.map(x=>x.kind),['held_item','m
 assert.equal(sableyeForms[0].requirements.all[0].value,'sableye-mega-stone');
 assert.equal(sableyeForms[0].requirements.all[1].value.label,'Trainer has the Mega Ring');
 assert.deepEqual(sableyeForms[0].overrides.baseStats.add,{attack:1,defense:5,special_attack:2,special_defense:5,speed:-3});
+assert.deepEqual(sableyeForms[0].grantedAbilities,['Magic Bounce'],'Mega Sableye must register its source-listed added Ability as a Form grant');
+const megaCatalog=await import('../rules/mega-form-runtime-data.mjs');
+assert.equal(Object.values(megaCatalog.MEGA_FORM_CATALOG).reduce((count,forms)=>count+forms.length,0),48,'Runtime catalog must contain every source-backed Mega Form');
+assert.equal(listBuiltInFormItems().length,48,'Every Mega Form must have a corresponding species/form Mega Stone helper');
+for(const [speciesId,speciesForms] of Object.entries(megaCatalog.MEGA_FORM_CATALOG)){
+  for(const form of mergeBuiltInSpeciesForms(speciesId,[])){
+    assert.equal(form.grantedAbilities.length,1,`${form.name} must retain its source-listed added Ability`);
+    const itemId=form.raw.appItemId;
+    assert.ok(form.requirements.all.some(requirement=>requirement.kind==='held_item'&&requirement.value===itemId),`${form.name} must require its matching Mega Stone helper`);
+    const item=getBuiltInFormItem(itemId);
+    assert.equal(item?.raw?.mega_species_id,speciesId,`${form.name} Mega Stone helper must be species-bound`);
+    assert.equal(item?.raw?.mega_form_id,form.id,`${form.name} Mega Stone helper must be form-bound`);
+    const art=form.overrides.artwork?.replace;
+    assert.ok(art,`${form.name} must map to source artwork`);
+    const asset=await readFile(new URL(`../static-preview/${art}`,import.meta.url));
+    assert.ok(asset.length>1000,`${form.name} artwork must be bundled for Windows`);
+  }
+}
 assert.equal(mergeBuiltInSpeciesForms('sableye',[{id:'mega',name:'Campaign Mega Sableye'}])[0].name,'Campaign Mega Sableye','Explicit pack definitions must take precedence over the built-in fallback');
 const sableyeResolution=resolvePokemonForms({species:{id:'sableye',name:'Sableye',baseStats:{hp:5,attack:5,defense:5,special_attack:5,special_defense:5,speed:5},forms:sableyeForms},formState:{activeFormId:'mega'},context:{heldItemId:'sableye-mega-stone',manualApprovals:['mega-evolution-sableye-mega']}});
 assert.equal(getBuiltInFormItem('sableye-mega-stone')?.raw?.pokemon_held_usable,true);
@@ -125,6 +143,9 @@ try{
 const repositorySource=await readFile(new URL('../definitions/repository.mjs',import.meta.url),'utf8');
 const importerSource=await readFile(new URL('../definitions/pack-importer.mjs',import.meta.url),'utf8');
 const serverSource=await readFile(new URL('../server.mjs',import.meta.url),'utf8');
+const windowsMegaData=await readFile(new URL('../rules/mega-form-runtime-data.mjs',import.meta.url),'utf8');
+const androidMegaData=await readFile(new URL('../../PTU_Companion_Android_Tauri/www/rules/mega-form-runtime-data.mjs',import.meta.url),'utf8');
+assert.equal(windowsMegaData,androidMegaData,'Windows and Android must ship the same generated 48-form Mega catalog');
 assert.match(repositorySource,/forms:mergeBuiltInSpeciesForms\(row\.logical_id,raw\.forms \|\| raw\.form_definitions \|\| \[\]\)/,'DefinitionRepository must expose Forms plus built-in Stage B entries on Species');
 assert.match(importerSource,/normalizeSpeciesForms\(raw\.forms\|\|raw\.form_definitions\|\|\[\]\)/,'.ptucp Species import must validate Form definitions');
 assert.match(importerSource,/format_version\)!==1/,'Stage B must remain compatible with .ptucp format_version 1');
@@ -132,5 +153,6 @@ assert.match(serverSource,/function resolveSpeciesFormState/,'Windows server mus
 assert.match(serverSource,/\/api\/pokemon\/forms\/resolve/,'Windows server must expose a Form resolution endpoint for Stage C UI');
 assert.match(serverSource,/const buildFormResolution=resolveSpeciesFormState/,'Pokémon creation preview must use the central Form resolver');
 assert.match(serverSource,/const referenceFormResolution=resolveSpeciesFormState/,'current Creature reference/combat data must use active Form state');
+assert.match(serverSource,/formGrants=Array\.isArray\(form\?\.grantedAbilities\)/,'Windows resolved creature Abilities must include grants from applied Forms');
 
 console.log('Stage B Windows Pokémon Forms foundation regression OK');

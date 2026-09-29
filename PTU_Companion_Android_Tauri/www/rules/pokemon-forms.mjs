@@ -110,6 +110,7 @@ export function normalizeSpeciesForm(input,index=0){
     persistenceRequirements:normalizeRequirementNode(raw.persistenceRequirements||raw.persistence_requirements||null),
     compatibleBaseForms:uniqueArray((raw.compatibleBaseForms||raw.compatible_base_forms||[]).map(slug).filter(Boolean)),
     overrides:normalizedOverrides,
+    grantedAbilities:uniqueArray(raw.grantedAbilities||raw.granted_abilities||[]),
     source:raw.source||null,
     notes:raw.notes||null,
     raw

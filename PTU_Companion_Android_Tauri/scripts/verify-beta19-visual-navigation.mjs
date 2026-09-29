@@ -6,5 +6,5 @@ ok(css.includes('.android-build .section-body>.creature-header>.creature-vitals'
 ok(app.includes('definitionArtworkHtml(d)'), 'Rules Library artwork helper missing');
 ok(app.includes('<span>Adjusted Base</span><span>Existing alloc.</span>'), 'Adjusted Base column missing');
 ok(app.includes('openPokemonProgressAbilityInfo'), 'Ability details action missing');ok(app.includes('openPokemonProgressMoveInfo'), 'Move details action missing');ok(app.includes('🐾 Open in Creatures'), 'Open in Creatures action missing');
-ok(app.includes("['trainer','🪪','Trainer'],['rosters'"), 'Trainer is not in Android quick nav');ok(app.includes("route('creature')\">🐾 Creatures"), 'Creatures is not preserved in More menu');ok(css.includes('.ability-choice{display:grid'), 'Ability alignment CSS missing');ok(runtime.includes("version:'2.2.0-android-beta.24'"),'Runtime version mismatch');
-console.log('PTU Companion Android v2.2.0-beta.24 visual/navigation verification: OK');
+ok(app.includes("['trainer','🪪','Trainer'],['rosters'"), 'Trainer is not in Android quick nav');ok(app.includes("route('creature')\">🐾 Creatures"), 'Creatures is not preserved in More menu');ok(css.includes('.ability-choice{display:grid'), 'Ability alignment CSS missing');ok(runtime.includes("version:'2.2.0-android-beta.25'"),'Runtime version mismatch');
+console.log('PTU Companion Android v2.2.0-beta.25 visual/navigation verification: OK');

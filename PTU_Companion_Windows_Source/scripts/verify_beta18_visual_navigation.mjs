@@ -13,4 +13,4 @@ ok(app.includes('openPokemonProgressAbilityInfo'), 'Ability details modal action
 ok(app.includes('openPokemonProgressMoveInfo'), 'Move details modal action missing');
 ok(app.includes('🐾 Open in Creatures'), 'Direct Creatures navigation missing');
 ok(css.includes('.ability-choice{display:grid'), 'Ability alignment styles missing');
-console.log('PTU Companion Beta v2.1.0-beta.22 visual/navigation verification: OK');
+console.log('PTU Companion Beta v2.1.0-beta.23 visual/navigation verification: OK');

@@ -103,7 +103,7 @@ docker compose run --rm android-arm64-release-apk
 Expected output for the current documented Android beta:
 
 ```text
-dist/android/PTU-Companion-v2.2.0-beta.18-arm64-release.apk
+dist/android/PTU-Companion-v2.2.0-beta.25-arm64-release.apk
 ```
 
 > Do not publish the private beta signing keystore. A public release should use a separate release key kept outside the repository.
