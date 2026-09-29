@@ -10,7 +10,7 @@ import {
   POKEMON_FORM_SCHEMA_VERSION,BASE_FORM_ID,normalizeSpeciesForms,normalizePokemonFormState,
   applyFormOperation,evaluateFormRequirements,resolvePokemonForms
 } from '../rules/pokemon-forms.mjs';
-import {mergeBuiltInSpeciesForms} from '../rules/pokemon-form-builtins.mjs';
+import {getBuiltInFormItem,mergeBuiltInSpeciesForms} from '../rules/pokemon-form-builtins.mjs';
 
 assert.equal(POKEMON_FORM_SCHEMA_VERSION,1);
 assert.equal(BASE_FORM_ID,'base');
@@ -84,10 +84,13 @@ const sableyeForms=mergeBuiltInSpeciesForms('sableye',[]);
 assert.equal(sableyeForms.length,1,'Mega Sableye must be registered when the selected content pack predates Stage B Forms');
 assert.equal(sableyeForms[0].name,'Mega Sableye');
 assert.equal(sableyeForms[0].mode,'transformation');
-assert.equal(sableyeForms[0].requirements.all[0].value,'mega-evolution-sableye-mega');
+assert.deepEqual(sableyeForms[0].requirements.all.map(x=>x.kind),['held_item','manual']);
+assert.equal(sableyeForms[0].requirements.all[0].value,'sableye-mega-stone');
+assert.equal(sableyeForms[0].requirements.all[1].value.label,'Trainer has the Mega Ring');
 assert.deepEqual(sableyeForms[0].overrides.baseStats.add,{attack:1,defense:5,special_attack:2,special_defense:5,speed:-3});
 assert.equal(mergeBuiltInSpeciesForms('sableye',[{id:'mega',name:'Campaign Mega Sableye'}])[0].name,'Campaign Mega Sableye','Explicit pack definitions must take precedence over the built-in fallback');
-const sableyeResolution=resolvePokemonForms({species:{id:'sableye',name:'Sableye',baseStats:{hp:5,attack:5,defense:5,special_attack:5,special_defense:5,speed:5},forms:sableyeForms},formState:{activeFormId:'mega'},context:{manualApprovals:['mega-evolution-sableye-mega']}});
+const sableyeResolution=resolvePokemonForms({species:{id:'sableye',name:'Sableye',baseStats:{hp:5,attack:5,defense:5,special_attack:5,special_defense:5,speed:5},forms:sableyeForms},formState:{activeFormId:'mega'},context:{heldItemId:'sableye-mega-stone',manualApprovals:['mega-evolution-sableye-mega']}});
+assert.equal(getBuiltInFormItem('sableye-mega-stone')?.raw?.pokemon_held_usable,true);
 assert.equal(sableyeResolution.valid,true,sableyeResolution.errors.join('; '));
 assert.deepEqual(sableyeResolution.species.baseStats,{hp:5,attack:6,defense:10,special_attack:7,special_defense:10,speed:2});
 const definitionRepository=new DefinitionRepository(fileURLToPath(new URL('../seed/definitions/ptu_seed_v1.0.sqlite3',import.meta.url)));
@@ -96,6 +99,7 @@ try{
   assert.ok(ruleset,'Bundled Ruleset fixture must be available');
   const registeredSableye=definitionRepository.getResolved({rulesetId:ruleset.id,kind:'species',id:'sableye'});
   assert.ok(registeredSableye?.forms.some(form=>form.id==='mega'&&form.name==='Mega Sableye'),'The actual bundled Species lookup must expose Mega Sableye');
+  assert.equal(definitionRepository.getResolved({rulesetId:ruleset.id,kind:'items',id:'sableye-mega-stone'}).name,'Sableye Mega Stone','The catalog item fallback must resolve without editing seed content packs');
 }finally{definitionRepository.close();}
 
 // Campaign persistence deliberately reuses pokemon.details_json: no save-schema migration is required.

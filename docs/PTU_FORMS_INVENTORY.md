@@ -95,6 +95,7 @@ These candidates are the original first-pass census. The hardened discovery repo
 
 - Core item records matching Mega-related heuristics: **3**.
 - Exact Mega Stone IDs are intentionally not fabricated. Requirements will bind only to stable source-backed item definitions; otherwise the generic Forms requirement system must expose a source-backed/manual condition.
+- The built-in Sableye catalog fallback is an app-level helper named **Sableye Mega Stone**, with internal ID `sableye-mega-stone` and Core p.206 attribution. It is not presented as a separately priced Core catalog record and has no automatic item effect. Mega Sableye requires it as the Pokémon's Held Item; the Trainer-worn Mega Ring remains a manual table confirmation because the supplied item catalog has no resolvable Mega Ring definition.
 
 ## Conversion gate
 

@@ -1,6 +1,6 @@
 import { DatabaseSync } from 'node:sqlite';
 import {normalizeCapabilities} from '../rules/capability-normalization.mjs';
-import {mergeBuiltInSpeciesForms} from '../rules/pokemon-form-builtins.mjs';
+import {getBuiltInFormItem,mergeBuiltInSpeciesForms} from '../rules/pokemon-form-builtins.mjs';
 
 const safeJson = (value, fallback={}) => {
   try { return value == null ? fallback : JSON.parse(value); }
@@ -78,17 +78,18 @@ export class DefinitionRepository {
   countResolved({rulesetId,kind,q=''}){
     this._validateKind(kind);
     const needle=`%${String(q||'').trim().toLowerCase()}%`;
-    return Number(this.db.prepare(`${this._resolvedCte()}
+    const count=Number(this.db.prepare(`${this._resolvedCte()}
       SELECT COUNT(*) AS c FROM candidates
       WHERE rn=1 AND (?='' OR lower(logical_id) LIKE ? OR lower(raw_json) LIKE ?)`)
       .get(rulesetId,kind,String(q||'').trim(),needle,needle)?.c||0);
+    return count;
   }
 
   getResolved({rulesetId,kind,id}){
     this._validateKind(kind);
     const row=this.db.prepare(`${this._resolvedCte()}
       SELECT * FROM candidates WHERE rn=1 AND logical_id=? LIMIT 1`).get(rulesetId,kind,id);
-    return row?this._formatRow(row,true):null;
+    return row?this._formatRow(row,true):(kind==='items'?getBuiltInFormItem(id):null);
   }
 
   getVersions({kind,id}){

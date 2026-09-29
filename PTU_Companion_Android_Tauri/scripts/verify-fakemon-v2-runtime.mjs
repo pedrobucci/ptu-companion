@@ -9,10 +9,10 @@ const www=join(root,'www');
 const index=readFileSync(join(www,'index.html'),'utf8');
 const dataPos=index.indexOf('mobile-data.js');
 const overlayPos=index.indexOf('fakemon-v2-data.js');
-const runtimePos=index.indexOf('mobile-runtime.js');
+const runtimePos=index.indexOf('mobile-bootstrap.mjs');
 assert.ok(dataPos>=0,'mobile-data.js is not loaded by Android index.html');
 assert.ok(overlayPos>dataPos,'Fakemon v2 overlay must load after mobile-data.js');
-assert.ok(runtimePos>overlayPos,'Fakemon v2 overlay must load before mobile-runtime.js');
+assert.ok(runtimePos>overlayPos,'Fakemon v2 overlay must load before the Android API bootstrap');
 
 const context={window:{},console};
 vm.createContext(context);

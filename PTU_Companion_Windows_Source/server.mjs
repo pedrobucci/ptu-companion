@@ -18,6 +18,7 @@ import {itemUsageMetadata} from './rules/item-metadata.mjs';
 import {normalizePokemonFormState,resolvePokemonForms,resolvePokemonPresentation} from './rules/pokemon-forms.mjs';
 import {applyPokemonFormTransitionEvent} from './rules/pokemon-form-events.mjs';
 import {applyPokemonFormGameEvent} from './rules/pokemon-form-campaign-state.mjs';
+import {getBuiltInFormItem,listBuiltInFormItems} from './rules/pokemon-form-builtins.mjs';
 
 const projectRoot=fileURLToPath(new URL('.',import.meta.url));
 const staticRoot=join(projectRoot,'static-preview');
@@ -525,7 +526,7 @@ async function handleApi(req,res,url){
     return json(res,200,{ok:true,desktopSession});
   }
   if(req.method==='GET' && url.pathname==='/api/health'){
-    return json(res,200,{ok:true,version:'2.1.0-beta.21',persistence:'sqlite',database:dbPath,schemaVersion:5,definitions:{database:definitionsPath,persistent:true,activeRuleset:getActiveRuleset()}});
+    return json(res,200,{ok:true,version:'2.1.0-beta.22',persistence:'sqlite',database:dbPath,schemaVersion:5,definitions:{database:definitionsPath,persistent:true,activeRuleset:getActiveRuleset()}});
   }
   if(req.method==='GET' && url.pathname==='/api/rulesets'){
     const activeRulesetId=getActiveRuleset();
@@ -598,10 +599,12 @@ async function handleApi(req,res,url){
     const rulesetId=String(url.searchParams.get('ruleset')||getActiveRuleset());
     const q=String(url.searchParams.get('q')||'').trim();
     if(!definitions.getRuleset(rulesetId)) throw Object.assign(new Error('Unknown ruleset'),{status:400});
-    const total=definitions.countResolved({rulesetId,kind:'items',q});
+    const query=q.toLowerCase();
+    const builtInItems=listBuiltInFormItems().filter(item=>!query||`${item.id} ${item.name} ${item.category} ${item.effect}`.toLowerCase().includes(query));
+    const total=definitions.countResolved({rulesetId,kind:'items',q})+builtInItems.length;
     const summaries=[];
     for(let offset=0; offset<total; offset+=200) summaries.push(...definitions.listResolved({rulesetId,kind:'items',q,limit:200,offset}));
-    const items=summaries.map(summary=>inventoryItemFromDefinition(definitions.getResolved({rulesetId,kind:'items',id:summary.id})));
+    const items=[...summaries.map(summary=>inventoryItemFromDefinition(definitions.getResolved({rulesetId,kind:'items',id:summary.id}))),...builtInItems.map(item=>inventoryItemFromDefinition(getBuiltInFormItem(item.id)))];
     return json(res,200,{rulesetId,total,items});
   }
   const defMatch=url.pathname.match(/^\/api\/definitions\/([a-z_]+)\/([^/]+)$/);
@@ -1290,7 +1293,7 @@ const server=createServer(async(req,res)=>{
 
 const port=Number(process.env.PTU_PORT||4173);
 server.listen(port,'127.0.0.1',()=>{
-  console.log(`PTU Companion Beta v2.1.0-beta.21: http://127.0.0.1:${port}`);
+  console.log(`PTU Companion Beta v2.1.0-beta.22: http://127.0.0.1:${port}`);
   console.log(`Campaign SQLite: ${dbPath}`);
   console.log(`Persistent Definition SQLite: ${definitionsPath}`);
   console.log(`Active ruleset: ${getActiveRuleset()}`);

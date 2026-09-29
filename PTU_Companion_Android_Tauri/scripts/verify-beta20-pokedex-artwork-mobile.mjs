@@ -59,8 +59,8 @@ for(const [id,entry] of Object.entries(manifest.species)){
   assert.equal(bytes.subarray(0,8).toString('hex'),'89504e470d0a1a0a');
   assert.equal(createHash('sha256').update(bytes).digest('hex'),entry.sha256,id);
 }
-const html=read('www/index.html');assert(html.indexOf('pokemon-sprites.js')<html.indexOf('mobile-runtime.js'));
+const html=read('www/index.html');assert(html.indexOf('pokemon-sprites.js')<html.indexOf('mobile-bootstrap.mjs'));
 const pkg=JSON.parse(read('package.json')),tauri=JSON.parse(read('src-tauri/tauri.conf.json'));
-assert.equal(pkg.version,'2.2.0-beta.23');assert.equal(tauri.version,pkg.version);assert.equal(tauri.bundle.android.versionCode,2002023);
-assert.equal((await(await context.fetch('/api/health')).json()).version,'2.2.0-android-beta.23');
+assert.equal(pkg.version,'2.2.0-beta.24');assert.equal(tauri.version,pkg.version);assert.equal(tauri.bundle.android.versionCode,2002024);
+assert.equal((await(await context.fetch('/api/health')).json()).version,'2.2.0-android-beta.24');
 console.log(`PTU Android beta.21 artwork/mobile: OK (${Object.keys(sprites).length} mapped IDs, pack priority, regional forms, list/detail, bounded fallback, mobile CSS, version)`);

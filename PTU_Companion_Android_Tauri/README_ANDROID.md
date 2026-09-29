@@ -1,12 +1,12 @@
-# PTU Companion Android v2.2.0-beta.23
+# PTU Companion Android v2.2.0-beta.24
 
 Hydration and Ice Body now use their February 2016 Playtest definitions in Combat. Combat weather and manually tracked Status Afflictions support these actions; Ice Body healing is integrated with the shared action ledger.
 
-# PTU Companion v2.2.0-android-beta.23
+# PTU Companion v2.2.0-android-beta.24
 
 ## Beta.23 — Combat source precedence: Hydration + Ice Body
 
-Hydration e Ice Body seguem a definição vencedora do February 2016 Playtest Packet. Rainy Weather ignora apenas a frequência de Hydration; Hail e HP controlam a disponibilidade de Ice Body. O `versionCode` Android avançou para `2002023`.
+Hydration e Ice Body seguem a definição vencedora do February 2016 Playtest Packet. Rainy Weather ignora apenas a frequência de Hydration; Hail e HP controlam a disponibilidade de Ice Body. O `versionCode` Android avançou para `2002024`.
 
 ## Beta.16 — Weapons v2 e Arcane Weapons
 
