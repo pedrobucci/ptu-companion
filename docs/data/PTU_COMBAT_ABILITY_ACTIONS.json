@@ -1,0 +1,84 @@
+{
+  "schema_version": 1,
+  "name": "PTU Combat Ability Actions",
+  "shared_non_move_resource_ledger": true,
+  "target_model": "abstract",
+  "physical_dice_only": true,
+  "source_guard": "active Ability effect text must match the audited conservative signature before automation is exposed",
+  "allowlist": {
+    "dodge": {
+      "action_cost": "Free Action",
+      "frequency": "Daily",
+      "trigger": "user is hit by a Damaging Move",
+      "effect": "triggering Move instead misses",
+      "source": "Pokemon Tabletop United 1.05 Core p.316"
+    },
+    "parry": {
+      "action_cost": "Free Action",
+      "frequency": "Scene",
+      "trigger": "user is hit by a Melee Attack",
+      "effect": "attack instead misses",
+      "source": "Pokemon Tabletop United 1.05 Core p.325"
+    },
+    "effect_spore": {
+      "action_cost": "Free Action",
+      "frequency": "Scene",
+      "trigger": "user is hit by a Melee Attack",
+      "physical_roll": "1d6",
+      "effect": {
+        "1-2": "abstract attacker Poisoned",
+        "3-4": "abstract attacker Paralyzed",
+        "5-6": "abstract attacker Asleep"
+      },
+      "persist_target_state": false,
+      "source": "Pokemon Tabletop United 1.05 Core p.316"
+    },
+    "stalwart": {
+      "action_cost": "Free Action",
+      "frequency": "Scene",
+      "trigger": "user receives Massive Damage",
+      "effect": "controlled user Attack, Special Attack, Defense and Special Defense +1 CS",
+      "source": "New Abilities and Moves p.3"
+    }
+  },
+  "resolved_source_actions": {
+    "prime_fury": {
+      "action_cost": "Swift Action",
+      "frequency": "Scene",
+      "effect": "controlled user becomes Enraged; Attack and Special Attack +1 CS",
+      "source": "February 2016 Playtest Packet p.8"
+    },
+    "hydration": {
+      "action_cost": "Swift Action",
+      "frequency": "Scene (ignored during Rainy Weather)",
+      "effect": "cure one manually tracked Status Affliction",
+      "weather": "Rainy Weather ignores frequency but not Swift Action",
+      "source": "February 2016 Playtest Packet p.6"
+    },
+    "ice_body": {
+      "action_cost": "Swift Action",
+      "frequency": "Daily x5",
+      "effect": "heal one Tick (1/10 max HP); usable below 50% HP or in Hailing Weather; immune to HP loss from Hail",
+      "source": "February 2016 Playtest Packet p.6; PTU Core p.237 (Tick)"
+    }
+  },
+  "deferred_conflicting_or_composite": {
+    "regal_challenge": "Core definition is active but requires a physical AC4 attack against an abstract target",
+    "sprint": "integrated by the composite Sprint Maneuver layer: Standard Action Maneuver + Scene – Swift Action Ability; it is not exposed as a standalone Ability action"
+  },
+  "non_goals": [
+    "No generic Ability prose interpreter.",
+    "No enemy/NPC entity or persistent target status.",
+    "No generated dice.",
+    "Resource Undo does not rewind Ability effects.",
+    "No default .ptucp mutation."
+  ],
+  "composite_integrations": {
+    "quick_curl_defense_curl": {
+      "ability": "Quick Curl · Scene – Free Action",
+      "move_override": "Defense Curl as Standard Action Interrupt",
+      "resource_ledger": "shared non-Move action/frequency API",
+      "source_guard": true
+    }
+  }
+}

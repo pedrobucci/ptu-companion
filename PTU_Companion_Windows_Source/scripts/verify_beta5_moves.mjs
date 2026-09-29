@@ -1,7 +1,8 @@
 import {readFileSync} from 'node:fs';
+import {fileURLToPath} from 'node:url';
 import {DefinitionRepository} from '../definitions/repository.mjs';
 
-const root=new URL('..',import.meta.url).pathname;
+const root=fileURLToPath(new URL('..',import.meta.url));
 const defs=new DefinitionRepository(`${root}/seed/definitions/ptu_seed_v1.0.sqlite3`);
 const rulesetId='all-provided-material';
 const move=defs.getResolved({rulesetId,kind:'moves',id:'thunder-fang'});

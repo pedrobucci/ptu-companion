@@ -27,13 +27,14 @@ const ctx={
   styledForm:async()=>nextForm,
   uid:()=> 'history-test',
   tempHpValue:holder=>Math.max(0,Number(holder?.tempHp||0)),
+  syncPokemonTempHpPersistence:holder=>{holder.details=holder.details||{};holder.details.tempHp=Math.max(0,Number(holder.tempHp||0));holder.details.formTempHpBySource=holder.details.formTempHpBySource||{};},
   normalizePokemonGender:value=>{const raw=String(value??'').trim().toLowerCase();if(['male','m','masculino','♂'].includes(raw))return 'Male';if(['female','f','feminino','♀'].includes(raw))return 'Female';return 'None';},
   ensureTrainerDetails:()=>trainerObj.details,
   trainerDerived:()=>({maxHp:50}),
   console,
 };
 vm.createContext(ctx);
-vm.runInContext(extract('changeHp'),ctx);
+vm.runInContext(extract('changeHp',true),ctx);
 vm.runInContext(extract('changeTrainerHp'),ctx);
 vm.runInContext(extract('editPokemonIdentity',true),ctx);
 

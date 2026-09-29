@@ -1,0 +1,124 @@
+name: Stage B Combat Non-Move Resources
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - content/ptu-parametrized-forms-catalog
+    paths:
+      - '.github/workflows/stage-b-combat-non-move-resources.yml'
+      - 'PTU_Companion_Windows_Source/scripts/apply_stage_b_combat_session_fixups.py'
+      - 'PTU_Companion_Windows_Source/scripts/apply_stage_b_combat_manual_physical_dice.py'
+      - 'PTU_Companion_Windows_Source/scripts/apply_stage_b_combat_move_outcomes.py'
+      - 'PTU_Companion_Windows_Source/scripts/apply_stage_b_combat_self_outcomes.py'
+      - 'PTU_Companion_Windows_Source/scripts/apply_stage_b_combat_non_move_resources.py'
+      - 'PTU_Companion_Windows_Source/scripts/apply_stage_b_combat_ability_actions.py'
+      - 'PTU_Companion_Windows_Source/scripts/apply_stage_b_combat_non_move_session_docs.py'
+      - 'PTU_Companion_Windows_Source/scripts/verify_stage_b_combat_session_ledger.mjs'
+      - 'PTU_Companion_Windows_Source/scripts/verify_stage_b_combat_move_outcomes.mjs'
+      - 'PTU_Companion_Windows_Source/scripts/verify_stage_b_combat_self_outcomes.mjs'
+      - 'PTU_Companion_Windows_Source/scripts/verify_stage_b_combat_non_move_resources.mjs'
+      - 'PTU_Companion_Windows_Source/scripts/verify_stage_b_combat_ability_actions.mjs'
+      - 'PTU_Companion_Windows_Source/static-preview/app.js'
+      - 'PTU_Companion_Android_Tauri/www/app.js'
+      - 'docs/PTU_COMBAT_SESSION_LEDGER.md'
+      - 'docs/data/PTU_COMBAT_SESSION_LEDGER.json'
+      - 'docs/PTU_COMBAT_MOVE_OUTCOMES.md'
+      - 'docs/data/PTU_COMBAT_MOVE_OUTCOMES.json'
+      - 'docs/PTU_COMBAT_NON_MOVE_RESOURCES.md'
+      - 'docs/data/PTU_COMBAT_NON_MOVE_RESOURCES.json'
+      - 'docs/PTU_COMBAT_ABILITY_ACTIONS.md'
+      - 'docs/data/PTU_COMBAT_ABILITY_ACTIONS.json'
+
+permissions:
+  contents: write
+
+jobs:
+  non-move-resources:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: content/ptu-parametrized-forms-catalog
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Rebuild deterministic Combat layers
+        run: python PTU_Companion_Windows_Source/scripts/apply_stage_b_combat_session_fixups.py
+      - name: Verify shared Combat ledger
+        run: node PTU_Companion_Windows_Source/scripts/verify_stage_b_combat_session_ledger.mjs
+      - name: Verify Move outcomes v2
+        run: |
+          node PTU_Companion_Windows_Source/scripts/verify_stage_b_combat_move_outcomes.mjs
+          node PTU_Companion_Windows_Source/scripts/verify_stage_b_combat_self_outcomes.mjs
+      - name: Verify Ability/Form resource ledger
+        run: node PTU_Companion_Windows_Source/scripts/verify_stage_b_combat_non_move_resources.mjs
+      - name: Verify source-explicit Ability actions
+        run: node PTU_Companion_Windows_Source/scripts/verify_stage_b_combat_ability_actions.mjs
+      - name: Verify Windows regressions
+        working-directory: PTU_Companion_Windows_Source
+        run: npm run verify
+      - name: Verify Android regressions
+        working-directory: PTU_Companion_Android_Tauri
+        run: npm run verify
+      - name: Check non-Move resource invariants
+        run: |
+          grep -q 'function pokemonCombatSpendNonMoveResource' PTU_Companion_Windows_Source/static-preview/app.js
+          grep -q 'function pokemonCombatSpendNonMoveResource' PTU_Companion_Android_Tauri/www/app.js
+          grep -q 'function pokemonCombatRefundNonMoveResourceCore' PTU_Companion_Windows_Source/static-preview/app.js
+          grep -q 'function pokemonCombatRefundNonMoveResourceCore' PTU_Companion_Android_Tauri/www/app.js
+          grep -q 'Schooling · Daily Free Action' PTU_Companion_Windows_Source/static-preview/app.js
+          grep -q 'Power Construct · Daily Swift Action' PTU_Companion_Android_Tauri/www/app.js
+          grep -q 'const POKEMON_COMBAT_ABILITY_ACTION_ALLOWLIST=' PTU_Companion_Windows_Source/static-preview/app.js
+          grep -q 'Effect roll · physical d6' PTU_Companion_Android_Tauri/www/app.js
+          grep -q '"shared_with_moves": true' docs/data/PTU_COMBAT_NON_MOVE_RESOURCES.json
+          grep -q '"shares_move_action_frequency_ledger": true' docs/data/PTU_COMBAT_SESSION_LEDGER.json
+          grep -q '"ability_action_automation"' docs/data/PTU_COMBAT_SESSION_LEDGER.json
+          grep -q 'Form / Ability resource integration' docs/PTU_COMBAT_SESSION_LEDGER.md
+          grep -q 'Source-explicit Combat Ability actions' docs/PTU_COMBAT_SESSION_LEDGER.md
+          grep -q 'Weapon Bond' docs/PTU_COMBAT_NON_MOVE_RESOURCES.md
+          grep -q '"physical_dice_only": true' docs/data/PTU_COMBAT_ABILITY_ACTIONS.json
+          ! grep -q 'async async function ' PTU_Companion_Windows_Source/static-preview/app.js
+          ! grep -q 'async async function ' PTU_Companion_Android_Tauri/www/app.js
+          git diff --exit-code -- '*.ptucp'
+          git diff --check
+      - name: Commit deterministic runtime/docs refresh
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          BRANCH='content/ptu-parametrized-forms-catalog'
+          GENERATED=(
+            PTU_Companion_Windows_Source/static-preview/app.js
+            PTU_Companion_Android_Tauri/www/app.js
+            docs/PTU_COMBAT_SESSION_LEDGER.md
+            docs/data/PTU_COMBAT_SESSION_LEDGER.json
+            docs/PTU_COMBAT_MOVE_OUTCOMES.md
+            docs/data/PTU_COMBAT_MOVE_OUTCOMES.json
+            docs/PTU_COMBAT_NON_MOVE_RESOURCES.md
+            docs/data/PTU_COMBAT_NON_MOVE_RESOURCES.json
+            docs/PTU_COMBAT_ABILITY_ACTIONS.md
+            docs/data/PTU_COMBAT_ABILITY_ACTIONS.json
+          )
+          for attempt in 1 2 3; do
+            git add "${GENERATED[@]}"
+            if git diff --cached --quiet; then
+              echo 'Non-Move Combat resource runtime already current.'
+              exit 0
+            fi
+            git commit -m 'feat(combat): integrate Ability and Form resource ledger [skip ci]'
+            if git push origin HEAD:"$BRANCH"; then
+              exit 0
+            fi
+            echo "Generated push raced with another workflow; refreshing from origin (attempt $attempt/3)."
+            git fetch origin "$BRANCH"
+            git reset --hard "origin/$BRANCH"
+            python PTU_Companion_Windows_Source/scripts/apply_stage_b_combat_session_fixups.py
+          done
+          echo 'Unable to publish deterministic Combat refresh after 3 attempts.' >&2
+          exit 1

@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "name": "PTU Combat Non-Move Resource Ledger",
+  "shared_with_moves": true,
+  "physical_dice_only": true,
+  "sources": {
+    "schooling": {
+      "kind": "ability",
+      "action_cost": "Free Action",
+      "frequency": "Daily",
+      "source": "SuMo References p.4"
+    },
+    "power_construct": {
+      "kind": "ability",
+      "action_cost": "Swift Action",
+      "frequency": "Daily",
+      "source": "SuMo References p.3"
+    },
+    "stance_change_manual": {
+      "kind": "form action",
+      "action_cost": "Full Action",
+      "frequency": "At-Will",
+      "source": "Pokemon Tabletop United 1.05 Core p.331"
+    },
+    "ice_face_hail_restore": {
+      "kind": "ability effect",
+      "action_cost": "Standard Action",
+      "frequency": "At-Will",
+      "condition": "Hail",
+      "source": "New Abilities and Moves p.1"
+    },
+    "weapon_bond": {
+      "kind": "capability",
+      "action_cost": "Extended Action",
+      "frequency": "At-Will",
+      "tracked_as_turn_action": false,
+      "source": "New Abilities and Moves p.1"
+    }
+  },
+  "resource_keys": "namespaced by source kind and source key so Move, Ability, Form and Capability uses do not collide",
+  "refund": {
+    "supported": true,
+    "scope": "only the action/frequency tokens created by that transaction",
+    "boundary_behavior": "already-reset round/scene/day resources are not resurrected"
+  },
+  "non_goals": [
+    "No generic Ability prose interpreter.",
+    "No conversion of Extended Actions into Standard/Shift/Swift actions.",
+    "No generated dice.",
+    "No default .ptucp mutation."
+  ]
+}

@@ -1,0 +1,147 @@
+{
+  "schema_version": 2,
+  "name": "PTU Pokémon Combat Session Ledger",
+  "storage": "state.ui.combat",
+  "platforms": [
+    "windows",
+    "android"
+  ],
+  "menu": "Combat",
+  "shared_resources": {
+    "turn_actions": [
+      "Standard Action",
+      "Shift Action",
+      "Swift Action",
+      "Free Action",
+      "Full Action"
+    ],
+    "frequencies": [
+      "At-Will",
+      "EOT",
+      "Scene",
+      "Scene xN",
+      "Daily",
+      "Daily xN"
+    ],
+    "future": [
+      "Extended Action progress"
+    ],
+    "non_move_sources": {
+      "enabled": true,
+      "kinds": [
+        "Ability",
+        "Form action",
+        "Capability",
+        "Maneuver"
+      ],
+      "source_keyed": true,
+      "shares_move_action_frequency_ledger": true,
+      "refund_supported": true,
+      "extended_action": "source-labeled/informational; not converted into Standard/Shift/Swift actions"
+    }
+  },
+  "combat_state": [
+    "live Pokémon HP/THP",
+    "Form state through existing lifecycle engine",
+    "Combat Stages",
+    "Curled Up",
+    "Rollout chain"
+  ],
+  "roll_resolution": {
+    "physical_dice_only": true,
+    "digital_rng": false,
+    "accuracy_die": "manual natural d20 result from a physical die when an Accuracy Roll exists",
+    "automatic_hit_miss": false,
+    "final_hit_miss": "user-confirmed authoritative outcome",
+    "critical_hit": "user-confirmed authoritative outcome; natural d20 remains recorded for effect/critical-range rules",
+    "damage_roll": "manual physical Damage Base roll; the Companion adds only known local attacking Stat and local bonuses",
+    "target_damage": "optional user-entered actual damage taken by the abstract target for Move effects that depend on damage actually dealt"
+  },
+  "first_complex_interaction": {
+    "moves": [
+      "Defense Curl",
+      "Rollout"
+    ],
+    "defense_curl": "Curled Up; Critical immunity; DR 10; -4 Accuracy and Slowed except Rollout/Ice Ball exception; Rollout/Ice Ball +10 damage while Curled Up.",
+    "rollout": "DB 3; +4 DB after each successful use to max DB 15; continues on later turns until miss or no target."
+  },
+  "persistence": {
+    "local_and_export": true,
+    "sqlite_ui_state": true,
+    "revision_hash_includes_combat": true
+  },
+  "source_policy": "Only source-explicit PTU mechanics are automated. Unknown frequency/action semantics remain informational rather than guessed.",
+  "target_model": "abstract; opposing creatures are not persisted or resolved as campaign entities",
+  "form_resource_spending": {
+    "enabled_subset": [
+      "Schooling",
+      "Power Construct",
+      "Aegislash manual Stance Change",
+      "Ice Face Hail restoration",
+      "Weapon Bond entry/relinquish"
+    ],
+    "policy": "only source-explicit action/frequency metadata is consumed; failed/no-op lifecycle events refund reserved resources"
+  },
+  "ability_action_automation": {
+    "model_version": 1,
+    "enabled_subset": [
+      "Dodge",
+      "Parry",
+      "Effect Spore",
+      "Stalwart",
+      "Hydration",
+      "Ice Body"
+    ],
+    "source_signature_guard": true,
+    "physical_dice_only": true,
+    "abstract_target": true,
+    "resource_ledger": "shared non-Move per-Pokémon action/frequency ledger",
+    "excluded_conflicts": [
+      "Regal Challenge"
+    ],
+    "deferred_composite": [],
+    "composite_integrations": [
+      "Sprint"
+    ]
+  },
+  "maneuver_automation": {
+    "model_version": 1,
+    "enabled_subset": [
+      "Sprint"
+    ],
+    "source": "Pokemon Tabletop United 1.05 Core p.242 / Sprint Ability p.331",
+    "shared_resource_ledger": true,
+    "composite_ability": "Sprint",
+    "plain_maneuver_action": "Standard Action",
+    "ability_cost": "Scene – Swift Action",
+    "standard_to_swift_during_composite": false
+  },
+  "composite_integrations": {
+    "quick_curl_defense_curl": {
+      "ability": "Quick Curl",
+      "move": "Defense Curl",
+      "ability_cost": "Scene – Free Action",
+      "overridden_move_cost": "Standard Action Interrupt",
+      "standard_to_swift_when_valid": false,
+      "normal_move_path_preserved": true,
+      "source_signature_guard": true,
+      "resource_only_refund": true
+    }
+  },
+  "triggered_connections": {
+    "vicious_hone_claws": {
+      "ability": "Vicious · Scene – Special",
+      "trigger_move": "Hone Claws · At-Will · Self",
+      "choices": [
+        "another Standard Action this round",
+        "Critical Hit Range +2 for the remainder of the encounter"
+      ],
+      "extra_standard_shared_action_api": true,
+      "standard_to_swift_or_shift": true,
+      "bonus_standard_satisfies_full_action": false,
+      "source_signature_guard": true,
+      "physical_dice_only": true,
+      "resource_only_refund": true
+    }
+  }
+}

@@ -3,6 +3,7 @@ import {readFile} from 'node:fs/promises';
 import {
   POKEMON_FORM_SCHEMA_VERSION,normalizeSpeciesForms,normalizePokemonFormState,resolvePokemonForms
 } from '../www/rules/pokemon-forms.mjs';
+import {mergeBuiltInSpeciesForms} from '../www/rules/pokemon-form-builtins.mjs';
 
 assert.equal(POKEMON_FORM_SCHEMA_VERSION,1);
 const rawForms=[
@@ -10,6 +11,16 @@ const rawForms=[
   {id:'battle-shift',name:'Battle Shift',mode:'transformation',requirements:{all:[{kind:'min_level',value:20},{kind:'manual',value:'battle-shift'}]},overrides:{types:{add:['Dark']},baseStats:{add:{speed:2}}}}
 ];
 const forms=normalizeSpeciesForms(rawForms);
+const sableyeForms=mergeBuiltInSpeciesForms('sableye',[]);
+assert.equal(sableyeForms.length,1,'Mega Sableye must be registered when the selected content pack predates Stage B Forms');
+assert.equal(sableyeForms[0].name,'Mega Sableye');
+assert.equal(sableyeForms[0].mode,'transformation');
+assert.equal(sableyeForms[0].requirements.all[0].value,'mega-evolution-sableye-mega');
+assert.deepEqual(sableyeForms[0].overrides.baseStats.add,{attack:1,defense:5,special_attack:2,special_defense:5,speed:-3});
+assert.equal(mergeBuiltInSpeciesForms('sableye',[{id:'mega',name:'Campaign Mega Sableye'}])[0].name,'Campaign Mega Sableye','Explicit pack definitions must take precedence over the built-in fallback');
+const sableyeResolution=resolvePokemonForms({species:{id:'sableye',name:'Sableye',baseStats:{hp:5,attack:5,defense:5,special_attack:5,special_defense:5,speed:5},forms:sableyeForms},formState:{activeFormId:'mega'},context:{manualApprovals:['mega-evolution-sableye-mega']}});
+assert.equal(sableyeResolution.valid,true,sableyeResolution.errors.join('; '));
+assert.deepEqual(sableyeResolution.species.baseStats,{hp:5,attack:6,defense:10,special_attack:7,special_defense:10,speed:2});
 assert.equal(forms.length,2);
 assert.equal(forms[0].overrides.baseStats.add.hp,1);
 const species={
@@ -37,7 +48,7 @@ const windowsModule=await readFile(new URL('../../PTU_Companion_Windows_Source/r
 const androidModule=await readFile(new URL('../www/rules/pokemon-forms.mjs',import.meta.url),'utf8');
 assert.equal(androidModule,windowsModule,'Windows and Android must share byte-identical Pokémon Form resolver semantics');
 assert.match(apiSource,/forms:normalizeSpeciesForms\(raw\.forms\|\|raw\.form_definitions\|\|\[\]\)/,'Android imported .ptucp Species must normalize Forms');
-assert.match(apiSource,/out\.forms=normalizeSpeciesForms/,'Android bundled/resolved Species must expose Forms');
+assert.match(apiSource,/out\.forms=mergeBuiltInSpeciesForms\(id,out\.forms\|\|out\.raw\?\.forms\|\|out\.raw\?\.form_definitions\|\|\[\]\)/,'Android bundled/resolved Species must expose built-in Stage B forms');
 assert.match(apiSource,/function resolveSpeciesFormState/,'Android runtime must use one central Species Form resolver adapter');
 assert.match(apiSource,/\/api\/pokemon\/forms\/resolve/,'Android must expose the same Form resolution endpoint contract');
 assert.match(apiSource,/const buildFormResolution=resolveSpeciesFormState/,'Android Pokémon creation preview must be Form-aware');

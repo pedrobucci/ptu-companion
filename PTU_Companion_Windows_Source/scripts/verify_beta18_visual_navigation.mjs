@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
-const root=path.resolve(new URL('..',import.meta.url).pathname);
+import {fileURLToPath} from 'node:url';
+const root=path.resolve(fileURLToPath(new URL('..',import.meta.url)));
 const app=fs.readFileSync(path.join(root,'static-preview/app.js'),'utf8');
 const css=fs.readFileSync(path.join(root,'static-preview/styles.css'),'utf8');
 const repo=fs.readFileSync(path.join(root,'definitions/repository.mjs'),'utf8');
@@ -12,4 +13,4 @@ ok(app.includes('openPokemonProgressAbilityInfo'), 'Ability details modal action
 ok(app.includes('openPokemonProgressMoveInfo'), 'Move details modal action missing');
 ok(app.includes('🐾 Open in Creatures'), 'Direct Creatures navigation missing');
 ok(css.includes('.ability-choice{display:grid'), 'Ability alignment styles missing');
-console.log('PTU Companion Beta v2.1.0-beta.20 visual/navigation verification: OK');
+console.log('PTU Companion Beta v2.1.0-beta.21 visual/navigation verification: OK');

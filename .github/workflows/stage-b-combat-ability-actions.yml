@@ -1,0 +1,97 @@
+name: Stage B Combat Ability Actions
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - content/ptu-parametrized-forms-catalog
+    paths:
+      - '.github/workflows/stage-b-combat-ability-actions.yml'
+      - 'PTU_Companion_Windows_Source/scripts/apply_stage_b_combat_session_fixups.py'
+      - 'PTU_Companion_Windows_Source/scripts/apply_stage_b_combat_manual_physical_dice.py'
+      - 'PTU_Companion_Windows_Source/scripts/apply_stage_b_combat_move_outcomes.py'
+      - 'PTU_Companion_Windows_Source/scripts/apply_stage_b_combat_self_outcomes.py'
+      - 'PTU_Companion_Windows_Source/scripts/apply_stage_b_combat_non_move_resources.py'
+      - 'PTU_Companion_Windows_Source/scripts/apply_stage_b_combat_ability_actions.py'
+      - 'PTU_Companion_Windows_Source/scripts/apply_stage_b_combat_non_move_session_docs.py'
+      - 'PTU_Companion_Windows_Source/scripts/verify_stage_b_combat_session_ledger.mjs'
+      - 'PTU_Companion_Windows_Source/scripts/verify_stage_b_combat_non_move_resources.mjs'
+      - 'PTU_Companion_Windows_Source/scripts/verify_stage_b_combat_ability_actions.mjs'
+      - 'PTU_Companion_Windows_Source/static-preview/app.js'
+      - 'PTU_Companion_Android_Tauri/www/app.js'
+      - 'docs/PTU_COMBAT_SESSION_LEDGER.md'
+      - 'docs/data/PTU_COMBAT_SESSION_LEDGER.json'
+      - 'docs/PTU_COMBAT_NON_MOVE_RESOURCES.md'
+      - 'docs/data/PTU_COMBAT_NON_MOVE_RESOURCES.json'
+      - 'docs/PTU_COMBAT_ABILITY_ACTIONS.md'
+      - 'docs/data/PTU_COMBAT_ABILITY_ACTIONS.json'
+
+permissions:
+  contents: write
+
+jobs:
+  ability-actions:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: content/ptu-parametrized-forms-catalog
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Rebuild deterministic Combat layers
+        run: python PTU_Companion_Windows_Source/scripts/apply_stage_b_combat_session_fixups.py
+      - name: Verify shared Combat ledger
+        run: node PTU_Companion_Windows_Source/scripts/verify_stage_b_combat_session_ledger.mjs
+      - name: Verify shared non-Move resources
+        run: node PTU_Companion_Windows_Source/scripts/verify_stage_b_combat_non_move_resources.mjs
+      - name: Verify source-explicit Ability actions
+        run: node PTU_Companion_Windows_Source/scripts/verify_stage_b_combat_ability_actions.mjs
+      - name: Verify Windows regressions
+        working-directory: PTU_Companion_Windows_Source
+        run: npm run verify
+      - name: Verify Android regressions
+        working-directory: PTU_Companion_Android_Tauri
+        run: npm run verify
+      - name: Check Ability action invariants
+        run: |
+          grep -q 'const POKEMON_COMBAT_ABILITY_ACTION_ALLOWLIST=' PTU_Companion_Windows_Source/static-preview/app.js
+          grep -q 'const POKEMON_COMBAT_ABILITY_ACTION_ALLOWLIST=' PTU_Companion_Android_Tauri/www/app.js
+          grep -q "section('AVAILABLE ABILITIES'" PTU_Companion_Windows_Source/static-preview/app.js
+          grep -q "section('AVAILABLE ABILITIES'" PTU_Companion_Android_Tauri/www/app.js
+          grep -q 'Effect roll · physical d6' PTU_Companion_Windows_Source/static-preview/app.js
+          grep -q 'No opponent state was persisted.' PTU_Companion_Android_Tauri/www/app.js
+          grep -q '"physical_dice_only": true' docs/data/PTU_COMBAT_ABILITY_ACTIONS.json
+          grep -q '"target_model": "abstract"' docs/data/PTU_COMBAT_ABILITY_ACTIONS.json
+          grep -q '"ability_action_automation"' docs/data/PTU_COMBAT_SESSION_LEDGER.json
+          grep -q '"Dodge"' docs/data/PTU_COMBAT_SESSION_LEDGER.json
+          grep -q 'Source-explicit Combat Ability actions' docs/PTU_COMBAT_SESSION_LEDGER.md
+          grep -q 'Sprint Maneuver' docs/PTU_COMBAT_ABILITY_ACTIONS.md
+          ! grep -q 'async async function ' PTU_Companion_Windows_Source/static-preview/app.js
+          ! grep -q 'async async function ' PTU_Companion_Android_Tauri/www/app.js
+          git diff --exit-code -- '*.ptucp'
+          git diff --check
+      - name: Commit Ability action runtime/docs refresh
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add \
+            PTU_Companion_Windows_Source/static-preview/app.js \
+            PTU_Companion_Android_Tauri/www/app.js \
+            docs/PTU_COMBAT_SESSION_LEDGER.md \
+            docs/data/PTU_COMBAT_SESSION_LEDGER.json \
+            docs/PTU_COMBAT_NON_MOVE_RESOURCES.md \
+            docs/data/PTU_COMBAT_NON_MOVE_RESOURCES.json \
+            docs/PTU_COMBAT_ABILITY_ACTIONS.md \
+            docs/data/PTU_COMBAT_ABILITY_ACTIONS.json
+          if git diff --cached --quiet; then
+            echo 'Combat Ability action runtime already current.'
+          else
+            git commit -m 'feat(combat): integrate source-explicit Ability actions [skip ci]'
+            git push origin HEAD:content/ptu-parametrized-forms-catalog
+          fi

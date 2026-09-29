@@ -16,6 +16,8 @@ import {resolveTrainerModel} from './rules/trainer-engine.mjs';
 import {previewTrainerProgression,applyTrainerProgression,previewTrainerXpPurchase,applyTrainerXpPurchase} from './rules/trainer-progression-engine.mjs';
 import {itemUsageMetadata} from './rules/item-metadata.mjs';
 import {normalizePokemonFormState,resolvePokemonForms,resolvePokemonPresentation} from './rules/pokemon-forms.mjs';
+import {applyPokemonFormTransitionEvent} from './rules/pokemon-form-events.mjs';
+import {applyPokemonFormGameEvent} from './rules/pokemon-form-campaign-state.mjs';
 
 const projectRoot=fileURLToPath(new URL('.',import.meta.url));
 const staticRoot=join(projectRoot,'static-preview');
@@ -54,10 +56,23 @@ const getActiveRuleset=()=>db.prepare("SELECT value FROM app_meta WHERE key='act
 
 function pokemonFormContext({pokemon={},payload={}}={}){
   const details=pokemon?.details||{};
+  const previousFormState=normalizePokemonFormState(details.formState||{});
+  const knownMoves=payload.knownMoves??payload.selectedMoves??details.moves??pokemon.moves??[];
+  const tempHpBySource=payload.tempHpBySource??details.formTempHpBySource??details.tempHpBySource??{};
   return {
     level:Number(payload.level??pokemon.level??1),gender:payload.gender??details.gender??pokemon.gender??null,
     heldItemId:details.heldItemDefinitionId||null,heldItemName:pokemon.heldItem||null,heldItem:pokemon.heldItem||null,
-    abilities:details.abilities||[],capabilities:details.capabilities||[],tags:details.formTags||[],flags:details.formFlags||{},
+    triggerItemId:payload.formTriggerItemId??payload.triggerItemId??null,
+    triggerItemName:payload.formTriggerItemName??payload.triggerItemName??null,
+    triggerItem:payload.formTriggerItem??payload.triggerItem??null,
+    currentHp:payload.currentHp??pokemon.hp??details.currentHp??null,
+    maxHp:payload.maxHp??pokemon.maxHp??details.maxHp??null,
+    tempHp:payload.tempHp??pokemon.tempHp??details.tempHp??0,
+    tempHpBySource,
+    inCombat:!!(payload.inCombat??details.inCombat??pokemon.inCombat??false),
+    knownMoves,
+    abilities:payload.selectedAbilities??details.abilities??[],capabilities:details.capabilities||[],tags:details.formTags||[],flags:details.formFlags||{},
+    previousBaseFormId:previousFormState.baseFormId,previousActiveFormId:previousFormState.activeFormId,
     manualApprovals:payload.manualFormApprovals||details.manualFormApprovals||[]
   };
 }
@@ -510,7 +525,7 @@ async function handleApi(req,res,url){
     return json(res,200,{ok:true,desktopSession});
   }
   if(req.method==='GET' && url.pathname==='/api/health'){
-    return json(res,200,{ok:true,version:'2.1.0-beta.20',persistence:'sqlite',database:dbPath,schemaVersion:5,definitions:{database:definitionsPath,persistent:true,activeRuleset:getActiveRuleset()}});
+    return json(res,200,{ok:true,version:'2.1.0-beta.21',persistence:'sqlite',database:dbPath,schemaVersion:5,definitions:{database:definitionsPath,persistent:true,activeRuleset:getActiveRuleset()}});
   }
   if(req.method==='GET' && url.pathname==='/api/rulesets'){
     const activeRulesetId=getActiveRuleset();
@@ -660,6 +675,43 @@ async function handleApi(req,res,url){
   if(req.method==='GET' && url.pathname==='/api/pokemon/evolution-guidance'){
     return json(res,200,definitions.getEvolutionGuidance());
   }
+  if(req.method==='POST' && url.pathname==='/api/pokemon/forms/apply-event'){
+    const payload=await bodyJson(req);
+    const rulesetId=String(payload.rulesetId||getActiveRuleset());
+    if(!definitions.getRuleset(rulesetId)) throw Object.assign(new Error('Unknown ruleset'),{status:400});
+    const pokemon=payload.pokemon||{}; const details=pokemon.details||{};
+    const speciesId=String(payload.speciesId||details.speciesDefinitionId||'');
+    const baseSpecies=definitions.getResolved({rulesetId,kind:'species',id:speciesId});
+    if(!baseSpecies)return json(res,404,{error:'Species definition not found in active ruleset'});
+    const result=applyPokemonFormGameEvent({
+      species:baseSpecies,
+      pokemon,
+      event:payload.event||{},
+      context:pokemonFormContext({pokemon,payload}),
+      allowUnmet:!!payload.gmOverride
+    });
+    return json(res,result.valid?200:400,{rulesetId,baseSpecies:{id:baseSpecies.id,name:baseSpecies.name,forms:baseSpecies.forms||[]},...result});
+  }
+
+  if(req.method==='POST' && url.pathname==='/api/pokemon/forms/transition'){
+    const payload=await bodyJson(req);
+    const rulesetId=String(payload.rulesetId||getActiveRuleset());
+    if(!definitions.getRuleset(rulesetId)) throw Object.assign(new Error('Unknown ruleset'),{status:400});
+    const pokemon=payload.pokemon||{}; const details=pokemon.details||{};
+    const speciesId=String(payload.speciesId||details.speciesDefinitionId||'');
+    const baseSpecies=definitions.getResolved({rulesetId,kind:'species',id:speciesId});
+    if(!baseSpecies)return json(res,404,{error:'Species definition not found in active ruleset'});
+    const requested=payload.formState||details.formState||{baseFormId:payload.baseFormId,activeFormId:payload.activeFormId};
+    const result=applyPokemonFormTransitionEvent({
+      species:baseSpecies,
+      formState:requested,
+      context:pokemonFormContext({pokemon,payload}),
+      event:payload.event||{},
+      allowUnmet:!!payload.gmOverride
+    });
+    return json(res,result.valid?200:400,{rulesetId,baseSpecies:{id:baseSpecies.id,name:baseSpecies.name,forms:baseSpecies.forms||[]},...result});
+  }
+
   if(req.method==='POST' && url.pathname==='/api/pokemon/forms/resolve'){
     const payload=await bodyJson(req);
     const rulesetId=String(payload.rulesetId||getActiveRuleset());
@@ -1238,7 +1290,7 @@ const server=createServer(async(req,res)=>{
 
 const port=Number(process.env.PTU_PORT||4173);
 server.listen(port,'127.0.0.1',()=>{
-  console.log(`PTU Companion Beta v2.1.0-beta.20: http://127.0.0.1:${port}`);
+  console.log(`PTU Companion Beta v2.1.0-beta.21: http://127.0.0.1:${port}`);
   console.log(`Campaign SQLite: ${dbPath}`);
   console.log(`Persistent Definition SQLite: ${definitionsPath}`);
   console.log(`Active ruleset: ${getActiveRuleset()}`);

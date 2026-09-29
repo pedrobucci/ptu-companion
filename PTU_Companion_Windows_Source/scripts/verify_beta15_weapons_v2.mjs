@@ -2,12 +2,13 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
+import {fileURLToPath} from 'node:url';
 import {importContentPack,inspectContentPack} from '../definitions/pack-importer.mjs';
 import {DefinitionRepository} from '../definitions/repository.mjs';
 import {itemUsageMetadata} from '../rules/item-metadata.mjs';
 import {resolveTrainerModel} from '../rules/trainer-engine.mjs';
 
-const root=path.resolve(path.dirname(new URL(import.meta.url).pathname),'..');
+const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const packPath=process.env.PTU_WEAPONS_PACK||path.join(root,'test-fixtures/content-packs/campaign-homebrew-custom-weapons-2.1.0.ptucp');
 assert(fs.existsSync(packPath),`Missing weapons pack: ${packPath}`);
 const inspected=inspectContentPack(fs.readFileSync(packPath));

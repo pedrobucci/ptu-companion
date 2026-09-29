@@ -1,0 +1,44 @@
+{
+  "schema_version": 1,
+  "name": "PTU Combat Vicious + Hone Claws",
+  "shared_combat_ledger": true,
+  "physical_dice_only": true,
+  "target_model": "self; no opponent entity",
+  "ability": {
+    "name": "Vicious",
+    "source": "Pokemon Tabletop United 1.05 Core p.335",
+    "frequency": "Scene",
+    "action_cost": "Special",
+    "trigger": "The user uses Hone Claws",
+    "choices": [
+      "Gain another Standard Action this round.",
+      "Increase Critical Hit Range on all attacks by +2 for the remainder of the encounter."
+    ]
+  },
+  "move": {
+    "name": "Hone Claws",
+    "source": "Pokemon Tabletop United 1.05 Core p.351",
+    "frequency": "At-Will",
+    "range": "Self",
+    "effect": "Accuracy +1 and Attack +1 Combat Stage.",
+    "normal_move_path": "preserved"
+  },
+  "runtime_policy": {
+    "trigger_window": "opens only after a source-matched Hone Claws use; expires after another Move or the round/Scene/Day boundary",
+    "extra_standard": "adds one Standard Action token to the current turn; the shared action API may spend it as Standard or convert it to Swift/Shift under the normal PTU conversion rule",
+    "full_action": "bonus Standard does not satisfy Full Action in v1; Full Action still requires the base Standard + Shift pair",
+    "critical_range": "records +2 as controlled-Pokemon combat state until the Pokémon leaves the current Combat session; hit/critical outcome remains manually confirmed",
+    "frequency": "one Vicious activation per Scene; resource-only Undo does not rewind the selected effect and an applied-effect marker prevents double activation in that Scene"
+  },
+  "source_conflicts_observed_while_selecting_candidate": {
+    "Electrodash": "Core: Scene – Free Action, Sprint as Swift; Feb 2016 playtest: Scene x2 – Swift Action, Sprint as Free plus additional bonuses. Rejected for this pass.",
+    "Quick Curl": "Core and Feb 2016 playtest contain conflicting definitions. Existing Quick Curl automation remains Core-signature-gated and therefore disables itself when the active Ruleset definition differs."
+  },
+  "non_goals": [
+    "No opponent entity.",
+    "No digital RNG.",
+    "No generic Ability/Move prose parser.",
+    "No automatic determination of Critical Hits.",
+    "No bundled/default .ptucp mutation."
+  ]
+}

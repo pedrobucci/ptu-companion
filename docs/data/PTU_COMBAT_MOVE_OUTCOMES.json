@@ -1,0 +1,75 @@
+{
+  "schema_version": 2,
+  "name": "PTU Combat Move Outcome Handlers",
+  "target_model": "abstract",
+  "physical_dice_only": true,
+  "handlers": {
+    "drain_half": {
+      "moves": [
+        "Absorb",
+        "Drain Punch",
+        "Draining Kiss",
+        "Dream Eater",
+        "Giga Drain",
+        "Horn Leech",
+        "Leech Life",
+        "Mega Drain"
+      ],
+      "input": "damage actually taken by target",
+      "effect": "controlled user gains floor(target damage / 2) HP",
+      "rounding": "PTU Core general decimal rule: round down"
+    },
+    "fury_cutter": {
+      "inputs": [
+        "reported hit/miss",
+        "damage actually taken by target",
+        "same abstract target when a chain exists"
+      ],
+      "base_db": [
+        4,
+        8,
+        12,
+        16
+      ],
+      "reset": [
+        "miss",
+        "failed to damage",
+        "different Move",
+        "Scene/Day boundary"
+      ],
+      "target_identity": "not persisted; same-target continuity is user-confirmed"
+    },
+    "fell_stinger": {
+      "input": "did this Move knock out the target?",
+      "effect": "on confirmed successful knockout, raise controlled user Attack by 2 Combat Stages, capped by normal CS bounds"
+    },
+    "close_combat": {
+      "input": "reported successful hit",
+      "effect": "controlled user Defense -1 CS and Special Defense -1 CS",
+      "source_semantics": "self stage change from the supplied Move effect"
+    },
+    "leaf_storm": {
+      "input": "did the Move actually deal damage?",
+      "effect": "on confirmed damage, controlled user Special Attack -2 CS"
+    },
+    "petal_dance": {
+      "input": "did the Move actually deal damage?",
+      "effect": "on confirmed damage, controlled user becomes Enraged and Confused",
+      "tracking": "combat-session condition flags; no enemy state"
+    },
+    "charge_beam": {
+      "inputs": [
+        "reported successful hit",
+        "extra physical d20 effect roll"
+      ],
+      "threshold": "7+",
+      "effect": "controlled user Special Attack +1 CS on 7+",
+      "digital_rng": false
+    }
+  },
+  "non_goals": [
+    "No enemy/NPC entity or HP ledger.",
+    "No generated d20 or damage dice.",
+    "No generic prose interpreter for Move effects."
+  ]
+}

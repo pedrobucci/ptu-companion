@@ -2,10 +2,11 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
+import {fileURLToPath} from 'node:url';
 import {importContentPack,inspectContentPack} from '../definitions/pack-importer.mjs';
 import {DefinitionRepository} from '../definitions/repository.mjs';
 
-const root=path.resolve(path.dirname(new URL(import.meta.url).pathname),'..');
+const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const packPath=path.join(root,'test-fixtures/content-packs/campaign-homebrew-custom-weapons-2.1.0.ptucp');
 const inspected=inspectContentPack(fs.readFileSync(packPath));
 assert.equal(inspected.manifest.version,'2.1.0');
@@ -33,4 +34,4 @@ assert(app.includes("shops.includes('Weapon Store')"),'Weapon Store metadata fil
 assert(app.includes('ensureInventoryItemForPurchase'),'Weapon Store checkout must create backpack items from catalog definitions');
 const server=fs.readFileSync(path.join(root,'server.mjs'),'utf8');
 assert(server.includes('shopCategories:Array.isArray(raw.shop_categories)'),'item catalog must expose shop metadata');
-console.log(`PTU Companion Beta v2.1.0-beta.20 bundled Weapon Store verification: OK (${before} -> ${after} items after update)`);
+console.log(`PTU Companion Beta v2.1.0-beta.21 bundled Weapon Store verification: OK (${before} -> ${after} items after update)`);

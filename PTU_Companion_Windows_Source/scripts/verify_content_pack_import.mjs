@@ -3,6 +3,7 @@ import {join} from 'node:path';
 import {tmpdir} from 'node:os';
 import {fileURLToPath} from 'node:url';
 import {spawn} from 'node:child_process';
+import {once} from 'node:events';
 import {createHash} from 'node:crypto';
 import {inspectContentPack,importContentPack} from '../definitions/pack-importer.mjs';
 import {DefinitionRepository} from '../definitions/repository.mjs';
@@ -36,7 +37,7 @@ let stderr='';child.stderr.on('data',d=>stderr+=d);
 async function wait(){for(let i=0;i<100;i++){try{const r=await fetch(`http://127.0.0.1:${port}/api/health`);if(r.ok)return r.json()}catch{} await new Promise(r=>setTimeout(r,80));}throw new Error(`Server failed: ${stderr}`)}
 try{
  const health=await wait();
- assert(health.version==='2.1.0-beta.20','beta.6 server version mismatch');
+ assert(health.version==='2.1.0-beta.21','beta.6 server version mismatch');
  assert(health.definitions?.persistent===true,'Definitions are not using persistent desktop storage');
  const persistentDb=join(testData,'definitions','ptu_definitions.sqlite3');
  assert(existsSync(persistentDb)&&statSync(persistentDb).size>1_000_000,'Persistent definitions database was not created');
@@ -48,7 +49,7 @@ try{
  assert(packs.packs.some(p=>p.id==='campaign-homebrew-chickute'&&p.enabled),'Imported pack not active in current Ruleset');
  const seedHashAfter=createHash('sha256').update(readFileSync(seedDb)).digest('hex');
  assert(seedHashAfter===seedHash,'Bundled seed database was mutated by desktop import');
-} finally {child.kill('SIGTERM');rmSync(testData,{recursive:true,force:true});}
+} finally {const stopped=child.exitCode===null?once(child,'exit'):Promise.resolve();child.kill('SIGTERM');await stopped;rmSync(testData,{recursive:true,force:true,maxRetries:5,retryDelay:200});}
 
 const app=readFileSync(join(root,'static-preview','app.js'),'utf8');
 for(const token of ['Import .ptucp','importContentPackFile','contentPackManager','/api/content-packs/import']) assert(app.includes(token),`Desktop Content Pack UI missing: ${token}`);

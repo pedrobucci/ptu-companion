@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { spawn } from 'node:child_process';
 import vm from 'node:vm';
 import { DefinitionRepository } from '../definitions/repository.mjs';
+import { readZipEntries } from '../definitions/pack-importer.mjs';
 import { resolveTrainerModel, trainerDefinitionRepeatability } from '../rules/trainer-engine.mjs';
 
 const root=fileURLToPath(new URL('..',import.meta.url));
@@ -14,6 +15,9 @@ const pkg=JSON.parse(readFileSync(join(root,'package.json'),'utf8'));
 const definitions=new DefinitionRepository(join(root,'seed','definitions','ptu_seed_v1.0.sqlite3'));
 const rulesetId='all-provided-material';
 const assert=(ok,msg)=>{if(!ok)throw new Error(msg)};
+const runtimeBundle=readZipEntries(readFileSync(join(root,'desktop','runtime_bundle.zip')));
+for(const entry of ['definitions/repository.mjs','rules/pokemon-form-builtins.mjs','static-preview/app.js','rules/pokemon-forms.mjs'])assert(runtimeBundle.has(entry),`Windows runtime bundle is missing ${entry}`);
+assert(!runtimeBundle.get('static-preview/app.js').toString('utf8').includes('definitionPayload('),'Windows runtime bundle must not ship the broken Move keyword helper');
 const skills=['Acrobatics','Athletics','Combat','Intimidate','Stealth','Survival','General Education','Medicine Education','Occult Education','Pokémon Education','Technology Education','Guile','Perception','Charm','Command','Focus','Intuition'];
 const emptyRanks=()=>Object.fromEntries(skills.map(k=>[k,2]));
 const sword={id:'two-handed-sword',name:'Two-Handed Sword',inventoryItemId:'two-handed-sword',mechanics:{kind:'weapon',quality:'Fine',weaponClass:'large_melee',hands:2,metal:true,range:'Melee',acModifier:1,dbModifier:2,weaponMoves:{adept:'backswing',master:'slice'},tags:['Melee','Large Melee','Two-Handed','Sword']}};
@@ -68,7 +72,7 @@ for(const token of ['backgroundSkillRankMap','syncBackgroundSkillRanks','trainer
 assert(app.includes("id==='elemental-connection'")&&app.includes("id==='type-ace'"),'Repeatable typed choices are missing from Trainer selection UI');
 assert(styles.includes('.trainer-choice-summary'),'Selected-choice card styling is missing');
 assert(seed.inventory.some(i=>i.id==='two-handed-sword'&&i.price===6000&&i.mechanics?.hands===2),'Two-Handed Sword is missing from the seed shop catalog');
-assert(pkg.version==='2.1.0-beta.20','package.json version is not the beta version');
+assert(pkg.version==='2.1.0-beta.21','package.json version is not the beta version');
 
 
 
@@ -117,7 +121,7 @@ const child=spawn(process.execPath,['server.mjs'],{cwd:root,env:{...process.env,
 let stderr='';child.stderr.on('data',d=>stderr+=d);
 async function waitServer(){for(let i=0;i<50;i++){try{const r=await fetch(`http://127.0.0.1:${port}/api/health`);if(r.ok)return r.json();}catch{}await new Promise(r=>setTimeout(r,100));}throw new Error(`Server did not start: ${stderr}`)}
 try{
-  const health=await waitServer();assert(health.version==='2.1.0-beta.20','Server health version is not the beta version');
+  const health=await waitServer();assert(health.version==='2.1.0-beta.21','Server health version is not the beta version');
   const noEquipment=trainer();delete noEquipment.equipment;
   const r=await fetch(`http://127.0.0.1:${port}/api/trainer/reference-data`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({trainer:noEquipment})});
   const body=await r.json();assert(r.ok&&body.resolvedTrainer?.skills?.Athletics?.rank===4,'Real Trainer reference endpoint failed Background/no-equipment regression case');

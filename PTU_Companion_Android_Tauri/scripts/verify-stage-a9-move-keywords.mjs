@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
+import vm from 'node:vm';
 
 const appSource=await readFile(new URL('../www/app.js',import.meta.url),'utf8');
 const catalog=JSON.parse(await readFile(new URL('../../PTU_Companion_Windows_Source/rules/move-keywords-core-1.05.json',import.meta.url),'utf8'));
@@ -16,6 +17,14 @@ assert.ok(!byName.has('Burst'),'Range Keywords are outside Stage A.9 scope');
 const match=appSource.match(/\/\* STAGE_A9_MOVE_KEYWORD_CATALOG_START \*\/([\s\S]*?)\/\* STAGE_A9_MOVE_KEYWORD_CATALOG_END \*\//);
 assert.ok(match,'Android must contain the generated built-in Move Keyword catalog');
 const block=match[1];
+assert.ok(!block.includes('definitionPayload('),'Move keyword detection must not call an undefined helper');
+const helper=appSource.match(/function moveKeywordSourceText\(move=\{\}\)\{[\s\S]*?\n\}/)?.[0];
+assert.ok(helper,'Move keyword source extraction helper must exist');
+const read=vm.runInNewContext(`${helper}; moveKeywordSourceText`);
+assert.match(read({keyword:'Hone Claws'}),/Hone Claws/);
+assert.match(read({raw:{effect:'Hone Claws'}}),/Hone Claws/);
+assert.match(read({payload:{tags:['Five Strike']}}),/Five Strike/);
+assert.equal(read(null),'','Null move definitions must not crash Creature rendering');
 for(const name of ['Aura','Interrupt','Priority','Shield','Weight Class'])assert.match(block,new RegExp(`"name":"${name.replace(' ','\\s?')}"`),`Android runtime must embed ${name}`);
 
 assert.match(appSource,/\['move_keywords','Move Keywords'\]/,'Android Pokédex & Rules must expose Move Keywords');
@@ -25,5 +34,6 @@ assert.match(appSource,/function moveKeywordEntries\(move=\{\}\)/,'Android must 
 assert.match(appSource,/moveKeywordReferenceHtml\(def\|\|m\)/,'Android Creature Move cards must show keyword references');
 assert.match(appSource,/event\.stopPropagation\(\);openMoveKeywordInfo/,'Keyword buttons must not trigger parent card actions');
 assert.match(appSource,/PTU Core 1\.05 keyword reference/,'Keyword modal must identify the source ruleset');
+assert.match(appSource,/function openMobileMore\(\)\{[\s\S]*?route\('combat'\)/,'Android compact navigation must expose the Combat screen under More');
 
 console.log('Stage A.9 Android Move Keyword regression OK');

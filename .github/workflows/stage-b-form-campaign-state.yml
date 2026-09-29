@@ -1,0 +1,201 @@
+name: Stage B Form Campaign State
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - content/ptu-parametrized-forms-catalog
+    paths:
+      - '.github/workflows/stage-b-form-campaign-state.yml'
+      - 'PTU_Companion_Windows_Source/rules/pokemon-form-campaign-state.mjs'
+      - 'PTU_Companion_Android_Tauri/www/rules/pokemon-form-campaign-state.mjs'
+      - 'PTU_Companion_Windows_Source/rules/pokemon-form-events.mjs'
+      - 'PTU_Companion_Android_Tauri/www/rules/pokemon-form-events.mjs'
+      - 'PTU_Companion_Windows_Source/scripts/prepare_stage_b_form_campaign_state_idempotency.py'
+      - 'PTU_Companion_Windows_Source/scripts/apply_stage_b_form_campaign_state.py'
+      - 'PTU_Companion_Windows_Source/scripts/apply_stage_b_form_campaign_hardening.py'
+      - 'PTU_Companion_Windows_Source/scripts/apply_stage_b_form_persistence_feedback.py'
+      - 'PTU_Companion_Windows_Source/scripts/apply_stage_b_form_combat_ergonomics.py'
+      - 'PTU_Companion_Windows_Source/scripts/apply_stage_b_combat_session_ledger.py'
+      - 'PTU_Companion_Windows_Source/scripts/apply_stage_b_combat_session_fixups.py'
+      - 'PTU_Companion_Windows_Source/scripts/apply_stage_b_combat_manual_physical_dice.py'
+      - 'PTU_Companion_Windows_Source/scripts/apply_stage_b_combat_move_outcomes.py'
+      - 'PTU_Companion_Windows_Source/scripts/apply_stage_b_combat_quick_curl.py'
+      - 'PTU_Companion_Windows_Source/scripts/apply_stage_b_combat_vicious.py'
+      - 'PTU_Companion_Windows_Source/scripts/verify_stage_b_form_campaign_state.mjs'
+      - 'PTU_Companion_Windows_Source/scripts/verify_stage_b_form_campaign_hardening.mjs'
+      - 'PTU_Companion_Windows_Source/scripts/verify_stage_b_form_persistence_feedback.mjs'
+      - 'PTU_Companion_Windows_Source/scripts/verify_stage_b_form_combat_ergonomics.mjs'
+      - 'PTU_Companion_Windows_Source/scripts/verify_stage_b_combat_session_ledger.mjs'
+      - 'PTU_Companion_Windows_Source/scripts/verify_stage_b_combat_move_outcomes.mjs'
+      - 'PTU_Companion_Windows_Source/scripts/verify_stage_b_combat_quick_curl.mjs'
+      - 'PTU_Companion_Windows_Source/scripts/verify_stage_b_combat_vicious.mjs'
+      - 'PTU_Companion_Windows_Source/scripts/verify_beta8_hp_identity.mjs'
+      - 'PTU_Companion_Android_Tauri/scripts/verify-beta8-hp-identity.mjs'
+      - 'PTU_Companion_Windows_Source/scripts/augment_ptu_form_lifecycle_events.py'
+      - 'PTU_Companion_Windows_Source/server.mjs'
+      - 'PTU_Companion_Android_Tauri/www/mobile-api.mjs'
+      - 'PTU_Companion_Windows_Source/static-preview/app.js'
+      - 'PTU_Companion_Android_Tauri/www/app.js'
+      - 'PTU_Companion_Windows_Source/persistence/repository.mjs'
+      - 'docs/PTU_FORMS_HP_MUTATION_AUDIT.md'
+      - 'docs/data/PTU_FORMS_HP_MUTATION_AUDIT.json'
+      - 'docs/PTU_FORMS_COMBAT_RESOURCE_AUDIT.md'
+      - 'docs/data/PTU_FORMS_COMBAT_RESOURCE_AUDIT.json'
+      - 'docs/PTU_COMBAT_SESSION_LEDGER.md'
+      - 'docs/data/PTU_COMBAT_SESSION_LEDGER.json'
+      - 'docs/PTU_COMBAT_MOVE_OUTCOMES.md'
+      - 'docs/data/PTU_COMBAT_MOVE_OUTCOMES.json'
+      - 'docs/PTU_COMBAT_QUICK_CURL.md'
+      - 'docs/data/PTU_COMBAT_QUICK_CURL.json'
+      - 'docs/PTU_COMBAT_VICIOUS.md'
+      - 'docs/data/PTU_COMBAT_VICIOUS.json'
+
+permissions:
+  contents: write
+
+jobs:
+  campaign-state:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: content/ptu-parametrized-forms-catalog
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Keep campaign-state source patch idempotent after Combat ledger
+        run: python PTU_Companion_Windows_Source/scripts/prepare_stage_b_form_campaign_state_idempotency.py
+      - name: Integrate Form lifecycle with campaign state and UI
+        run: python PTU_Companion_Windows_Source/scripts/apply_stage_b_form_campaign_state.py
+      - name: Harden storage, healing and lifecycle feedback
+        run: python PTU_Companion_Windows_Source/scripts/apply_stage_b_form_campaign_hardening.py
+      - name: Close HP mutation audit and readable Form feedback
+        run: python PTU_Companion_Windows_Source/scripts/apply_stage_b_form_persistence_feedback.py
+      - name: Audit combat resources and expose compact Form state
+        run: python PTU_Companion_Windows_Source/scripts/apply_stage_b_form_combat_ergonomics.py
+      - name: Refresh source lifecycle metadata
+        run: python PTU_Companion_Windows_Source/scripts/augment_ptu_form_lifecycle_events.py
+      - name: Verify campaign-state lifecycle model
+        run: node PTU_Companion_Windows_Source/scripts/verify_stage_b_form_campaign_state.mjs
+      - name: Verify campaign hardening model
+        run: node PTU_Companion_Windows_Source/scripts/verify_stage_b_form_campaign_hardening.mjs
+      - name: Verify Form persistence/readable feedback model
+        run: node PTU_Companion_Windows_Source/scripts/verify_stage_b_form_persistence_feedback.mjs
+      - name: Verify pre-ledger combat audit and compact Form feedback
+        run: node PTU_Companion_Windows_Source/scripts/verify_stage_b_form_combat_ergonomics.mjs
+      - name: Build shared Pokémon combat session ledger
+        run: |
+          python PTU_Companion_Windows_Source/scripts/apply_stage_b_combat_session_ledger.py
+          python PTU_Companion_Windows_Source/scripts/apply_stage_b_combat_session_fixups.py
+      - name: Verify shared Pokémon combat session ledger
+        run: node PTU_Companion_Windows_Source/scripts/verify_stage_b_combat_session_ledger.mjs
+      - name: Verify source-explicit Move outcome handlers
+        run: node PTU_Companion_Windows_Source/scripts/verify_stage_b_combat_move_outcomes.mjs
+      - name: Verify Quick Curl composite Ability/Move override
+        run: node PTU_Companion_Windows_Source/scripts/verify_stage_b_combat_quick_curl.mjs
+      - name: Verify Vicious triggered Ability/Move connection
+        run: node PTU_Companion_Windows_Source/scripts/verify_stage_b_combat_vicious.mjs
+      - name: Verify Windows regressions
+        working-directory: PTU_Companion_Windows_Source
+        run: npm run verify
+      - name: Verify Android regressions
+        working-directory: PTU_Companion_Android_Tauri
+        run: npm run verify
+      - name: Check campaign-state invariants
+        run: |
+          cmp PTU_Companion_Windows_Source/rules/pokemon-form-campaign-state.mjs PTU_Companion_Android_Tauri/www/rules/pokemon-form-campaign-state.mjs
+          cmp PTU_Companion_Windows_Source/rules/pokemon-form-events.mjs PTU_Companion_Android_Tauri/www/rules/pokemon-form-events.mjs
+          grep -q '/api/pokemon/forms/apply-event' PTU_Companion_Windows_Source/server.mjs
+          grep -q '/api/pokemon/forms/apply-event' PTU_Companion_Android_Tauri/www/mobile-api.mjs
+          grep -q 'applyPokemonFormGameEventUi' PTU_Companion_Windows_Source/static-preview/app.js
+          grep -q 'applyPokemonFormGameEventUi' PTU_Companion_Android_Tauri/www/app.js
+          grep -q 'clearPokemonFormTempHpTracking' PTU_Companion_Windows_Source/static-preview/app.js
+          grep -q 'clearPokemonFormTempHpTracking' PTU_Companion_Android_Tauri/www/app.js
+          grep -q "title:'Pokémon Form changed'" PTU_Companion_Windows_Source/static-preview/app.js
+          grep -q "title:'Pokémon Form changed'" PTU_Companion_Android_Tauri/www/app.js
+          grep -q 'function pokemonFormStateLabel(formState={},forms=\[\])' PTU_Companion_Windows_Source/static-preview/app.js
+          grep -q 'function pokemonFormStateLabel(formState={},forms=\[\])' PTU_Companion_Android_Tauri/www/app.js
+          grep -q 'pokemonFormCombatIndicator' PTU_Companion_Windows_Source/static-preview/app.js
+          grep -q 'pokemonFormCombatIndicator' PTU_Companion_Android_Tauri/www/app.js
+          grep -q "\['combat','⚔','Combat'\]" PTU_Companion_Windows_Source/static-preview/app.js
+          grep -q "\['combat','⚔','Combat'\]" PTU_Companion_Android_Tauri/www/app.js
+          grep -q 'function pokemonCombatScreen' PTU_Companion_Windows_Source/static-preview/app.js
+          grep -q 'function pokemonCombatScreen' PTU_Companion_Android_Tauri/www/app.js
+          grep -q 'function pokemonCombatResolveMove' PTU_Companion_Windows_Source/static-preview/app.js
+          grep -q 'function pokemonCombatResolveMove' PTU_Companion_Android_Tauri/www/app.js
+          grep -q 'function pokemonCombatApplyMoveOutcome' PTU_Companion_Windows_Source/static-preview/app.js
+          grep -q 'function pokemonCombatApplyMoveOutcome' PTU_Companion_Android_Tauri/www/app.js
+          grep -q 'function pokemonCombatQuickCurlAbilityResourceSpec' PTU_Companion_Windows_Source/static-preview/app.js
+          grep -q 'function pokemonCombatQuickCurlAbilityResourceSpec' PTU_Companion_Android_Tauri/www/app.js
+          grep -q 'function pokemonCombatViciousAbilityResourceSpec' PTU_Companion_Windows_Source/static-preview/app.js
+          grep -q 'function pokemonCombatViciousAbilityResourceSpec' PTU_Companion_Android_Tauri/www/app.js
+          grep -q 'function pokemonCombatStandardRemaining' PTU_Companion_Windows_Source/static-preview/app.js
+          grep -q 'function pokemonCombatStandardRemaining' PTU_Companion_Android_Tauri/www/app.js
+          grep -q 'async function applyPokemonProgression' PTU_Companion_Windows_Source/static-preview/app.js
+          grep -q 'async function applyPokemonProgression' PTU_Companion_Android_Tauri/www/app.js
+          grep -q 'async function useItem' PTU_Companion_Windows_Source/static-preview/app.js
+          grep -q 'async function useItem' PTU_Companion_Android_Tauri/www/app.js
+          grep -q 'usePokemonMoveForForms' PTU_Companion_Windows_Source/static-preview/app.js
+          grep -q 'usePokemonMoveForForms' PTU_Companion_Android_Tauri/www/app.js
+          grep -q 'setPokemonBattleState' PTU_Companion_Windows_Source/static-preview/app.js
+          grep -q 'setPokemonBattleState' PTU_Companion_Android_Tauri/www/app.js
+          grep -q 'target_form_base_hp' docs/data/PTU_FORMS_STAGE_B.json
+          grep -q '"uncovered_linked_surfaces": 0' docs/data/PTU_FORMS_HP_MUTATION_AUDIT.json
+          grep -q 'Uncovered linked surfaces: \*\*0\*\*' docs/PTU_FORMS_HP_MUTATION_AUDIT.md
+          grep -q '"status": "historical_pre_ledger_snapshot"' docs/data/PTU_FORMS_COMBAT_RESOURCE_AUDIT.json
+          grep -q 'Historical checkpoint:' docs/PTU_FORMS_COMBAT_RESOURCE_AUDIT.md
+          grep -q '"menu": "Combat"' docs/data/PTU_COMBAT_SESSION_LEDGER.json
+          grep -q 'First complex Move interaction: Defense Curl + Rollout' docs/PTU_COMBAT_SESSION_LEDGER.md
+          grep -q '"physical_dice_only": true' docs/data/PTU_COMBAT_MOVE_OUTCOMES.json
+          grep -q 'Fury Cutter' docs/PTU_COMBAT_MOVE_OUTCOMES.md
+          grep -q '"physical_dice_only": true' docs/data/PTU_COMBAT_QUICK_CURL.json
+          grep -q 'Quick Curl + Defense Curl' docs/PTU_COMBAT_QUICK_CURL.md
+          grep -q '"physical_dice_only": true' docs/data/PTU_COMBAT_VICIOUS.json
+          grep -q 'Vicious + Hone Claws' docs/PTU_COMBAT_VICIOUS.md
+          grep -q 'Electrodash was rejected' docs/PTU_COMBAT_VICIOUS.md
+          grep -q 'combat: semanticState.ui?.combat ?? null' PTU_Companion_Windows_Source/persistence/repository.mjs
+          grep -q 'tempHp:Number(p.tempHp??p.details?.tempHp??0)' PTU_Companion_Windows_Source/persistence/repository.mjs
+          grep -q "extract('changeHp',true)" PTU_Companion_Windows_Source/scripts/verify_beta8_hp_identity.mjs
+          grep -q "extract('changeHp',true)" PTU_Companion_Android_Tauri/scripts/verify-beta8-hp-identity.mjs
+          git diff --exit-code -- '*.ptucp'
+          git diff --check
+      - name: Commit campaign-state runtime integration
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add \
+            PTU_Companion_Windows_Source/server.mjs \
+            PTU_Companion_Android_Tauri/www/mobile-api.mjs \
+            PTU_Companion_Windows_Source/static-preview/app.js \
+            PTU_Companion_Android_Tauri/www/app.js \
+            PTU_Companion_Windows_Source/persistence/repository.mjs \
+            PTU_Companion_Windows_Source/rules/pokemon-form-events.mjs \
+            PTU_Companion_Android_Tauri/www/rules/pokemon-form-events.mjs \
+            PTU_Companion_Windows_Source/scripts/apply_stage_b_form_campaign_state.py \
+            PTU_Companion_Windows_Source/scripts/augment_ptu_form_lifecycle_events.py \
+            docs/PTU_FORMS_STAGE_B.md \
+            docs/data/PTU_FORMS_STAGE_B.json \
+            docs/PTU_FORMS_HP_MUTATION_AUDIT.md \
+            docs/data/PTU_FORMS_HP_MUTATION_AUDIT.json \
+            docs/PTU_FORMS_COMBAT_RESOURCE_AUDIT.md \
+            docs/data/PTU_FORMS_COMBAT_RESOURCE_AUDIT.json \
+            docs/PTU_COMBAT_SESSION_LEDGER.md \
+            docs/data/PTU_COMBAT_SESSION_LEDGER.json \
+            docs/PTU_COMBAT_MOVE_OUTCOMES.md \
+            docs/data/PTU_COMBAT_MOVE_OUTCOMES.json \
+            docs/PTU_COMBAT_QUICK_CURL.md \
+            docs/data/PTU_COMBAT_QUICK_CURL.json \
+            docs/PTU_COMBAT_VICIOUS.md \
+            docs/data/PTU_COMBAT_VICIOUS.json
+          if git diff --cached --quiet; then
+            echo 'Campaign-state Form integration already current.'
+          else
+            git commit -m 'feat(combat): integrate Vicious triggered connection [skip ci]'
+            git push origin HEAD:content/ptu-parametrized-forms-catalog
+          fi

@@ -3,10 +3,11 @@ import {mkdtemp, copyFile, mkdir, readFile, rm} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {DatabaseSync} from 'node:sqlite';
+import {fileURLToPath} from 'node:url';
 import {importContentPack} from '../definitions/pack-importer.mjs';
 import {getContentPackManagementInfo,setContentPackEnabled,uninstallContentPack} from '../definitions/pack-manager.mjs';
 
-const root=new URL('..',import.meta.url).pathname;
+const root=fileURLToPath(new URL('..',import.meta.url));
 const work=await mkdtemp(join(tmpdir(),'ptu-pack-manager-beta7-'));
 const dbPath=join(work,'definitions','ptu_definitions.sqlite3');
 const backupDir=join(work,'definitions','backups');

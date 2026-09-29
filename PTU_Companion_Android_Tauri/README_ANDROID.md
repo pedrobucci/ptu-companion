@@ -1,12 +1,12 @@
-# PTU Companion Android v2.2.0-beta.21
+# PTU Companion Android v2.2.0-beta.23
 
-Fakemon 1 leva v2.0.0 bundled defaults + offline artwork, preserving the beta.20 Pokédex artwork fixes.
+Hydration and Ice Body now use their February 2016 Playtest definitions in Combat. Combat weather and manually tracked Status Afflictions support these actions; Ice Body healing is integrated with the shared action ledger.
 
-# PTU Companion v2.2.0-android-beta.21
+# PTU Companion v2.2.0-android-beta.23
 
-## Beta.21 — Fakemon 1 leva v2
+## Beta.23 — Combat source precedence: Hydration + Ice Body
 
-A build inclui `campaign-homebrew-fakemon-1-leva` v2.0.0 como conteúdo padrão. Os 13 Pokémon da campanha, 8 Moves, 3 Abilities e retratos offline são carregados pelo runtime embutido; não é necessário importar o `.ptucp` manualmente. Hisuian Zorua e Hisuian Zoroark permanecem formas regionais separadas. O `versionCode` Android foi elevado para `2002021` para permitir atualização sobre a beta.20 quando o APK for assinado com o mesmo certificado.
+Hydration e Ice Body seguem a definição vencedora do February 2016 Playtest Packet. Rainy Weather ignora apenas a frequência de Hydration; Hail e HP controlam a disponibilidade de Ice Body. O `versionCode` Android avançou para `2002023`.
 
 ## Beta.16 — Weapons v2 e Arcane Weapons
 

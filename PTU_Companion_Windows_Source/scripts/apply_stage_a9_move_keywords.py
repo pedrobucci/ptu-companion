@@ -44,8 +44,9 @@ function localMoveKeywordRows(query=''){{
   return MOVE_KEYWORD_CATALOG.filter(entry=>`${{entry.name}} ${{entry.effect}} ${{entry.reference||''}}`.toLowerCase().includes(needle));
 }}
 function moveKeywordSourceText(move={{}}){{
-  const payload=definitionPayload(move);
-  const values=[payload.keyword,payload.keywords,payload.tags,payload.range,payload.frequency,payload.effect,move.keyword,move.keywords,move.tags,move.range,move.frequency,move.effect];
+  const source=move&&typeof move==='object'?move:{{}};
+  const payload=source.payload&&typeof source.payload==='object'?source.payload:source.raw&&typeof source.raw==='object'?source.raw:source;
+  const values=[payload.keyword,payload.keywords,payload.tags,payload.range,payload.frequency,payload.effect,source.keyword,source.keywords,source.tags,source.range,source.frequency,source.effect];
   return values.flatMap(value=>Array.isArray(value)?value:[value]).filter(value=>value!=null).map(value=>typeof value==='object'?JSON.stringify(value):String(value)).join(' ');
 }}
 function moveKeywordEntries(move={{}}){{

@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "sources": [
+    {"id":"ptu-core-1.05","rank":100,"label":"PTU 1.05 Core"},
+    {"id":"ptu-1.05-editation","rank":110,"label":"PTU 1.05 Editation"},
+    {"id":"ptu-may-2015-playtest","rank":120,"label":"PTU May 2015 Playtest Packet"},
+    {"id":"ptu-september-2015-playtest","rank":130,"label":"PTU September 2015 Playtest Packet"},
+    {"id":"ptu-february-2016-playtest","rank":140,"label":"February 2016 Playtest Packet"}
+  ],
+  "resolution": "highest-rank-then-later-record",
+  "guard": "winning-definition-only",
+  "overrides": {
+    "quick-curl": {
+      "sourceId": "ptu-february-2016-playtest",
+      "frequency": "Scene – Free Action",
+      "effect": "Connection – Defense Curl. The user may activate this Ability to use Defense Curl as a Standard Action Interrupt and gain +10 Damage Reduction for 1 full round."
+    },
+    "electrodash": {
+      "sourceId": "ptu-february-2016-playtest",
+      "frequency": "Scene x2 – Swift Action",
+      "effect": "The user may make a Sprint Action as a Free Action.",
+      "bonus": "The user may free itself from the Stuck condition as a Shift Action. The user does not provoke Attacks of Opportunity when Sprinting."
+    },
+    "prime-fury": {
+      "sourceId": "ptu-february-2016-playtest",
+      "frequency": "Scene – Swift Action",
+      "effect": "The user becomes Enraged, and gains +1 Combat Stage in each of Attack and Special Attack."
+    },
+    "hydration": {
+      "sourceId": "ptu-february-2016-playtest",
+      "frequency": "Scene – Swift Action",
+      "effect": "The user is cured of one Status Affliction. Hydration’s Frequency is ignored if used during Rainy Weather."
+    },
+    "ice-body": {
+      "sourceId": "ptu-february-2016-playtest",
+      "frequency": "Daily x5 – Swift Action",
+      "effect": "The user gains a Tick of Hit Points. Ice Body may only be used while the user is under 50% Hit Points or in Hailing Weather.",
+      "bonus": "The user is immune to Hit Point loss from Hail."
+    }
+  },
+  "affected": {
+    "quick-curl": {"winner":"ptu-february-2016-playtest","automation":"standard-action-interrupt-plus-dr-10-round"},
+    "electrodash": {"winner":"ptu-february-2016-playtest","automation":"free-sprint-swift-scene-x2"},
+    "prime-fury": {"winner":"ptu-february-2016-playtest","automation":"enraged-plus-attack-and-special-attack-1-cs"},
+    "hydration": {"winner":"ptu-february-2016-playtest","automation":"cure-one-tracked-status-affliction-rain-ignores-frequency"},
+    "ice-body": {"winner":"ptu-february-2016-playtest","automation":"daily-x5-heal-one-tick-under-half-hp-or-hail-hail-immunity"},
+    "vicious": {"winner":"latest-enabled-definition","automation":"shared-ledger"},
+    "hone-claws": {"winner":"latest-enabled-definition","automation":"shared-ledger"}
+  }
+}
