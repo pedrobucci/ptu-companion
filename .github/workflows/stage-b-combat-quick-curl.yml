@@ -60,13 +60,13 @@ jobs:
         run: |
           grep -q 'function pokemonCombatQuickCurlAbilityResourceSpec' PTU_Companion_Windows_Source/static-preview/app.js
           grep -q 'function pokemonCombatQuickCurlAbilityResourceSpec' PTU_Companion_Android_Tauri/www/app.js
-          grep -q 'Quick Curl + Defense Curl · Scene Free + Swift' PTU_Companion_Windows_Source/static-preview/app.js
-          grep -q 'Quick Curl + Defense Curl · Scene Free + Swift' PTU_Companion_Android_Tauri/www/app.js
+          grep -q 'Defense Curl · Standard Interrupt + DR 10' PTU_Companion_Windows_Source/static-preview/app.js
+          grep -q 'Defense Curl · Standard Interrupt + DR 10' PTU_Companion_Android_Tauri/www/app.js
           grep -q "section('QUICK CURL · DEFENSE CURL'" PTU_Companion_Windows_Source/static-preview/app.js
           grep -q "section('QUICK CURL · DEFENSE CURL'" PTU_Companion_Android_Tauri/www/app.js
           grep -q '"normal_move_path_preserved": true' docs/data/PTU_COMBAT_SESSION_LEDGER.json
           grep -q '"physical_dice_only": true' docs/data/PTU_COMBAT_QUICK_CURL.json
-          grep -q 'Standard → Swift' docs/PTU_COMBAT_QUICK_CURL.md
+          grep -q 'Standard Action Interrupt' docs/PTU_COMBAT_QUICK_CURL.md
           ! grep -q 'async async function ' PTU_Companion_Windows_Source/static-preview/app.js
           ! grep -q 'async async function ' PTU_Companion_Android_Tauri/www/app.js
           git diff --exit-code -- '*.ptucp'
