@@ -38,4 +38,4 @@ Regal Challenge retains its Core definition but remains gated pending a physical
 
 ## Composite Quick Curl + Defense Curl
 
-Quick Curl is integrated through a dedicated composite layer rather than the standalone Ability allowlist. Its `Scene – Free Action` resource and Defense Curl's overridden Swift Action are spent through the same shared ledger. The normal Defense Curl Move remains unchanged. See `PTU_COMBAT_QUICK_CURL.md`.
+Quick Curl is integrated through a dedicated composite layer rather than the standalone Ability allowlist. Its February 2016 precedence winner spends `Scene – Free Action` and Defense Curl's `Standard Action Interrupt` through the shared ledger. The normal Defense Curl Move remains unchanged. See `PTU_COMBAT_QUICK_CURL.md`.
