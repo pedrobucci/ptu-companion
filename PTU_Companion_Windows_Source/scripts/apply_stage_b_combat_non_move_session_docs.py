@@ -31,12 +31,12 @@ def patch_json() -> bool:
     }
     data['ability_action_automation']={
         'model_version':1,
-        'enabled_subset':['Dodge','Parry','Effect Spore','Stalwart'],
+        'enabled_subset':['Dodge','Parry','Effect Spore','Stalwart','Hydration','Ice Body'],
         'source_signature_guard':True,
         'physical_dice_only':True,
         'abstract_target':True,
         'resource_ledger':'shared non-Move per-Pokémon action/frequency ledger',
-        'excluded_conflicts':['Prime Fury','Hydration','Ice Body','Regal Challenge'],
+        'excluded_conflicts':['Regal Challenge'],
         'deferred_composite':['Sprint'],
     }
     rendered=json.dumps(data,indent=2,ensure_ascii=False)+'\n'
@@ -53,13 +53,16 @@ def patch_md() -> bool:
     if start<0 or end<0:raise SystemExit('Combat ledger Form integration documentation anchors drifted')
     section='''## Form / Ability resource integration\n\n- Entering/leaving the Combat session dispatches the existing Form `battle-start` / `battle-end` events.\n- Resolved Move use dispatches the existing `move-used` Form event.\n- HP controls continue to use the existing HP/Form lifecycle path.\n- Source-explicit non-Move actions consume the **same per-Pokémon action/frequency ledger** used by Moves; there is no second resource system.\n- Enabled exact Form/lifecycle subset: Schooling (`Daily – Free Action`), Power Construct (`Daily – Swift Action`), Aegislash manual Stance Change (`Full Action`), Ice Face Hail restoration (`Standard Action`), and Weapon Bond entry/relinquish (`Extended Action`).\n- Ability/Form/Capability frequency keys are namespaced by source kind and source key, preventing collisions with Moves or similarly named sources.\n- Resource spending is atomic around lifecycle events: an invalid or no-op event refunds the reserved action/frequency.\n- Recent non-Move resource transactions expose a resource-only correction/refund control. It restores only tokens/counters spent by that transaction and does not rewind HP, Form state, Move outcomes, Ability effects, or later game state.\n- Weapon Bond's Extended Action remains faithfully labeled but is not converted into Standard/Shift/Swift turn economy; Extended Action progress is still not modeled.\n\n### Source-explicit Combat Ability actions\n\n- The first general Ability action allowlist is **Dodge, Parry, Effect Spore, and Stalwart**.\n- Each Ability uses the shared non-Move resource ledger with its audited Scene/Daily and action cost; no parallel Ability resource system exists.\n- Triggers are confirmed manually. Effect Spore's `1d6` is rolled physically and entered manually.\n- Dodge/Parry and Effect Spore keep the triggering opponent abstract; no enemy entity or persistent target condition is created.\n- Stalwart changes only the controlled Pokémon's Combat Stages.\n- Automation is hidden/disabled when the active Ruleset effect text no longer matches the audited source signature.\n- Prime Fury, Hydration, Ice Body, and Regal Challenge remain manual because supplied definitions conflict. Sprint remains deferred until its triggering Standard Action Sprint Maneuver can be represented without undercounting action economy.\n\n'''
     md=md[:start]+section+md[end:]
+    md=md.replace('Prime Fury, Hydration, Ice Body, and Regal Challenge remain manual because supplied definitions conflict.','Prime Fury, Hydration, and Ice Body use their February 2016 precedence winners; Regal Challenge remains gated pending an abstract-target physical attack workflow.')
+    md=md.replace('\n## PTU source anchors','\n- Hydration: cure one explicitly marked Status Affliction; Rain ignores frequency, not the Swift Action. Ice Body: `Daily x5 – Swift Action`, heal one Tick (1/10 max HP) below half HP or in Hail; Hail immunity remains a manual incoming-damage reminder.\n\n## PTU source anchors')
+    md=md.replace('\n## PTU source anchors','\n- Sprint was the first composite Maneuver + Ability integration: the Maneuver costs a Standard Action and the optional Ability costs Scene – Swift Action; both remain in the shared ledger.\n\n## PTU source anchors')
     md=md.replace('- Extended Action progress is reserved for a later shared-ledger layer.','- Extended Actions remain source-labeled/informational; multi-step Extended Action progress is not modeled as turn actions.')
     if md!=original:DOC_MD.write_text(md,encoding='utf-8');return True
     return False
 
 
 def main() -> None:
-    print({'combat_session_non_move_docs':2,'json_changed':patch_json(),'md_changed':patch_md(),'ability_actions':['Dodge','Parry','Effect Spore','Stalwart']})
+    print({'combat_session_non_move_docs':2,'json_changed':patch_json(),'md_changed':patch_md(),'ability_actions':['Dodge','Parry','Effect Spore','Stalwart','Hydration','Ice Body']})
 
 
 if __name__=='__main__':main()

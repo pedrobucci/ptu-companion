@@ -2,12 +2,13 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
+import {fileURLToPath} from 'node:url';
 import {importContentPack} from '../definitions/pack-importer.mjs';
 import {DefinitionRepository} from '../definitions/repository.mjs';
 import {itemUsageMetadata} from '../rules/item-metadata.mjs';
 import {resolveTrainerModel} from '../rules/trainer-engine.mjs';
 
-const root=path.resolve(path.dirname(new URL(import.meta.url).pathname),'..');
+const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const tmp=fs.mkdtempSync(path.join(os.tmpdir(),'ptu-hustle-'));
 const db=path.join(tmp,'defs.sqlite3');
 fs.copyFileSync(path.join(root,'seed/definitions/ptu_seed_v1.0.sqlite3'),db);

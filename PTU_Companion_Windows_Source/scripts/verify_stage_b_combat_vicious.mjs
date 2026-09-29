@@ -58,6 +58,7 @@ for(const name of ['pokemonCombatNonMoveSpec','pokemonCombatNonMoveResourceKey',
   if(!ctx[name])vm.runInContext(extractFunction(sources[0],name),ctx);
 }
 for(const name of viciousFunctions)vm.runInContext(extractFunction(sources[0],name),ctx);
+ctx.pokemonCombatResolveDefinition=(rows,name)=>(rows||[]).find(row=>ctx.pokemonCombatSlug(row?.name||row?.definition?.name||row?.record?.name)===ctx.pokemonCombatSlug(name))||null;
 
 const viciousRow={name:'Vicious',definition:{name:'Vicious',frequency:'Scene – Special',effect:'Connection – Hone Claws. When this Ability is activated, choose one effect; the user gains another Standard Action this round; or the user increase their Critical Hit Range on all attacks by +2 for the remainder of the encounter.'}};
 const honeRow={definition:{id:'hone-claws',name:'Hone Claws',frequency:'At-Will',ac:null,class:'Status',range:'Self',effect:'The user’s Accuracy is raised by +1, and the user gains +1 Attack Combat Stage.'}};

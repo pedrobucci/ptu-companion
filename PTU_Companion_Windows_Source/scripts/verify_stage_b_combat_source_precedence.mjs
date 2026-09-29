@@ -5,7 +5,8 @@ import vm from 'node:vm';
 const repo=path.resolve(import.meta.dirname,'..','..');
 const files=[path.join(repo,'PTU_Companion_Windows_Source','static-preview','app.js'),path.join(repo,'PTU_Companion_Android_Tauri','www','app.js')];
 const win=fs.readFileSync(files[0],'utf8');
-for(const file of files){const s=fs.readFileSync(file,'utf8');assert.match(s,/const PTU_COMBAT_SOURCE_PRECEDENCE=/);assert.match(s,/const PTU_COMBAT_SOURCE_OVERRIDES=/);assert.match(s,/function pokemonCombatSourceOverride/);assert.match(s,/function pokemonCombatElectrodashResourceSpec/);assert.match(s,/function pokemonCombatPrimeFuryAvailability/);assert.match(s,/Prime Fury · Swift Action · Scene/);assert.match(s,/pokemonCombatApplySelfStatuses\(id,\['Enraged'\],'Prime Fury'\)/);assert.match(s,/pokemonCombatApplyCombatStages\(id,\{attack:1,spAttack:1\},'Prime Fury'\)/);assert.equal((s.match(/<strong>Quick Curl<\/strong><small>\+10 Damage Reduction for this round\.<\/small>/g)||[]).length,1,'Quick Curl condition must not be duplicated');assert.match(s,/Scene x2 – Swift Action/);assert.match(s,/Standard Action Interrupt/);assert.match(s,/function pokemonCombatQuickCurlVariant/);assert.match(s,/function pokemonCombatUseElectrodashSprint/);assert.match(s,/function pokemonCombatElectrodashClearStuckAvailability/);assert.match(s,/function pokemonCombatUseElectrodashClearStuck/);assert.match(s,/Mark Stuck/);assert.match(s,/function pokemonCombatSourcePrecedencePanel/);assert.match(s,/RULESET SOURCE RESOLUTION/);}
+function extractFunction(src,name){const match=new RegExp(`(?:async\\s+)?function\\s+${name}\\s*\\(`).exec(src);assert.ok(match,`Missing ${name}`);const start=match.index,tail=src.slice(start+1),next=/\n(?:(?:async\s+)?function\s+[A-Za-z_$][\w$]*\s*\(|const\s+POKEMON_COMBAT_[A-Z0-9_]+\s*=)/.exec(tail);return src.slice(start,next?start+1+next.index:src.length).trim();}
+for(const file of files){const s=fs.readFileSync(file,'utf8');assert.match(s,/const PTU_COMBAT_SOURCE_PRECEDENCE=/);assert.match(s,/const PTU_COMBAT_SOURCE_OVERRIDES=/);assert.match(s,/function pokemonCombatSourceOverride/);assert.match(s,/function pokemonCombatElectrodashResourceSpec/);assert.match(s,/function pokemonCombatPrimeFuryAvailability/);assert.match(s,/function pokemonCombatHydrationAvailability/);assert.match(s,/function pokemonCombatIceBodyAvailability/);assert.match(s,/function pokemonCombatUseHydration/);assert.match(s,/function pokemonCombatUseIceBody/);assert.match(s,/Daily x5 · Swift Action/);assert.match(s,/frequency is ignored during Rainy Weather/);assert.match(s,/Prime Fury · Swift Action · Scene/);assert.match(s,/pokemonCombatApplySelfStatuses\(id,\['Enraged'\],'Prime Fury'\)/);assert.match(s,/pokemonCombatApplyCombatStages\(id,\{attack:1,spAttack:1\},'Prime Fury'\)/);assert.equal((s.match(/<strong>Quick Curl<\/strong><small>\+10 Damage Reduction for this round\.<\/small>/g)||[]).length,1,'Quick Curl condition must not be duplicated');assert.match(s,/Scene x2 – Swift Action/);assert.match(s,/Standard Action Interrupt/);assert.match(s,/function pokemonCombatQuickCurlVariant/);assert.match(s,/function pokemonCombatUseElectrodashSprint/);assert.match(s,/function pokemonCombatElectrodashClearStuckAvailability/);assert.match(s,/function pokemonCombatUseElectrodashClearStuck/);assert.match(s,/Mark Stuck/);assert.match(s,/function pokemonCombatSourcePrecedencePanel/);assert.match(s,/RULESET SOURCE RESOLUTION/);}
 const doc=JSON.parse(fs.readFileSync(path.join(repo,'docs','data','PTU_COMBAT_SOURCE_PRECEDENCE.json'),'utf8'));
 assert.deepEqual(doc.sources.map(s=>s.id),['ptu-core-1.05','ptu-1.05-editation','ptu-may-2015-playtest','ptu-september-2015-playtest','ptu-february-2016-playtest']);
 assert.equal(doc.resolution,'highest-rank-then-later-record');
@@ -13,6 +14,12 @@ assert.equal(doc.affected.electrodash.winner,'ptu-february-2016-playtest');
 assert.equal(doc.overrides['quick-curl'].sourceId,'ptu-february-2016-playtest');
 assert.match(doc.overrides.electrodash.bonus,/Stuck condition/);
 assert.match(doc.overrides['prime-fury'].effect,/Special Attack/);
+assert.equal(doc.overrides.hydration.sourceId,'ptu-february-2016-playtest');
+assert.match(doc.overrides.hydration.effect,/Rainy Weather/);
+assert.equal(doc.overrides['ice-body'].sourceId,'ptu-february-2016-playtest');
+assert.match(doc.overrides['ice-body'].frequency,/Daily x5/);
+assert.equal(doc.affected.hydration.winner,'ptu-february-2016-playtest');
+assert.equal(doc.affected['ice-body'].winner,'ptu-february-2016-playtest');
 const start=win.indexOf('const PTU_COMBAT_SOURCE_PRECEDENCE=');
 const end=win.indexOf('function pokemonCombatElectrodashResourceSpec');
 const context={pokemonCombatSlug:value=>String(value||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')};
@@ -26,4 +33,14 @@ assert.equal(quick.definition.sourceId,'ptu-february-2016-playtest');
 assert.match(electro.definition.frequency,/Scene x2/);
 assert.match(electro.definition.effect,/Sprint Action as a Free Action/);
 assert.match(fury.definition.effect,/becomes Enraged/);
+const hydration=context.pokemonCombatResolveDefinition([{name:'Hydration',definition:{name:'Hydration',effect:'Core text'}}],'Hydration');
+const ice=context.pokemonCombatResolveDefinition([{name:'Ice Body',definition:{name:'Ice Body',effect:'Core text'}}],'Ice Body');
+assert.match(hydration.definition.effect,/cured of one Status Affliction/);
+assert.match(ice.definition.frequency,/Daily x5/);
+assert.match(ice.definition.bonus,/immune to Hit Point loss from Hail/);
+for(const name of ['pokemonCombatHydrationRow','pokemonCombatIceBodyRow','pokemonCombatHydrationAvailability','pokemonCombatIceBodyAvailability'])vm.runInContext(extractFunction(win,name),context);
+context.pokemonCombatNonMoveSpec=(kind,key,label,actionCost,frequency)=>({kind,key,label,actionCost,frequency});context.pokemonCombatNonMoveAvailability=(id,resource)=>({valid:true,resource});context.pokemonCombatParticipant=()=>({conditions:{statusAfflictions:['Burned']}});context.state={ui:{weather:'rain'}};context.pokemon=()=>({hp:49,maxHp:100});
+const hydrationData={abilities:[{name:'Hydration',definition:{name:'Hydration',effect:'Core text'}}]},iceData={abilities:[{name:'Ice Body',definition:{name:'Ice Body',effect:'Core text'}}]};
+const hydrationRain=context.pokemonCombatHydrationAvailability('p',hydrationData);assert.equal(hydrationRain.valid,true);assert.equal(hydrationRain.resource.frequency,'At-Will');assert.equal(hydrationRain.resource.actionCost,'Swift Action');context.state.ui.weather='clear';assert.equal(context.pokemonCombatHydrationAvailability('p',hydrationData).resource.frequency,'Scene');
+const iceLow=context.pokemonCombatIceBodyAvailability('p',iceData);assert.equal(iceLow.valid,true);assert.equal(iceLow.tick,10);assert.equal(iceLow.resource.frequency,'Daily x5');context.pokemon=()=>({hp:50,maxHp:100});assert.equal(context.pokemonCombatIceBodyAvailability('p',iceData).valid,false,'exactly 50% HP does not satisfy below 50%');context.state.ui.weather='hail';assert.equal(context.pokemonCombatIceBodyAvailability('p',iceData).valid,true,'Hail allows Ice Body at 50% or higher');
 console.log('Combat source precedence: passed');

@@ -88,16 +88,15 @@
       "Dodge",
       "Parry",
       "Effect Spore",
-      "Stalwart"
+      "Stalwart",
+      "Hydration",
+      "Ice Body"
     ],
     "source_signature_guard": true,
     "physical_dice_only": true,
     "abstract_target": true,
     "resource_ledger": "shared non-Move per-Pokémon action/frequency ledger",
     "excluded_conflicts": [
-      "Prime Fury",
-      "Hydration",
-      "Ice Body",
       "Regal Challenge"
     ],
     "deferred_composite": [],
@@ -122,8 +121,8 @@
       "ability": "Quick Curl",
       "move": "Defense Curl",
       "ability_cost": "Scene – Free Action",
-      "overridden_move_cost": "Swift Action",
-      "standard_to_swift_when_valid": true,
+      "overridden_move_cost": "Standard Action Interrupt",
+      "standard_to_swift_when_valid": false,
       "normal_move_path_preserved": true,
       "source_signature_guard": true,
       "resource_only_refund": true

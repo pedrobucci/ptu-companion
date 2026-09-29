@@ -6,30 +6,30 @@
   "target_model": "self; no opponent entity",
   "ability": {
     "name": "Quick Curl",
-    "source": "Pokemon Tabletop United 1.05 Core p.327",
+    "source": "February 2016 Playtest Packet p.6 (overrides PTU Core p.327)",
     "frequency": "Scene",
     "action_cost": "Free Action",
-    "effect": "Connection - Defense Curl; activate Quick Curl to use Defense Curl as a Swift Action"
+    "effect": "Connection - Defense Curl; use Defense Curl as a Standard Action Interrupt and gain +10 Damage Reduction for one full round"
   },
   "move": {
     "name": "Defense Curl",
-    "source": "Pokemon Tabletop United 1.05 Core p.394",
+    "source": "PTU Core p.394 Move text; Quick Curl cost overridden by February 2016 Playtest Packet p.6",
     "frequency": "At-Will",
     "normal_action_cost": "Standard Action",
-    "quick_curl_action_cost": "Swift Action",
+    "quick_curl_action_cost": "Standard Action Interrupt",
     "effect_state": "Curled Up",
     "existing_runtime": "critical immunity, DR 10, Slowed/Accuracy interactions, Rollout/Ice Ball exceptions remain owned by the existing Combat condition model"
   },
   "composite_policy": {
     "quick_curl_resource": "ability:combat-quick-curl · Scene · Free Action",
-    "defense_curl_override_resource": "move:defense-curl-quick-curl · Swift Action · At-Will",
-    "standard_to_swift": "allowed only through the shared ledger when Swift is spent and Standard remains available",
+    "defense_curl_override_resource": "move:defense-curl-quick-curl · Standard Action Interrupt · At-Will",
+    "interrupt_cost": "spends the shared Standard Action token",
     "ordinary_defense_curl": "unchanged and still uses its normal Move path/action cost",
     "transactions": "Ability and overridden Move action create separate namespaced transactions linked by compositeId",
     "refund": "resource-only Undo may correct either spend independently and never clears Curled Up"
   },
   "source_guards": [
-    "Quick Curl effect signature must match the audited Core wording.",
+    "Resolve Quick Curl by the documented source precedence, then guard the February 2016 winning definition.",
     "Defense Curl must remain At-Will/Self and match the audited Curled Up effect signature."
   ],
   "non_goals": [

@@ -47,13 +47,24 @@
       "frequency": "Scene",
       "effect": "controlled user becomes Enraged; Attack and Special Attack +1 CS",
       "source": "February 2016 Playtest Packet p.8"
+    },
+    "hydration": {
+      "action_cost": "Swift Action",
+      "frequency": "Scene (ignored during Rainy Weather)",
+      "effect": "cure one manually tracked Status Affliction",
+      "weather": "Rainy Weather ignores frequency but not Swift Action",
+      "source": "February 2016 Playtest Packet p.6"
+    },
+    "ice_body": {
+      "action_cost": "Swift Action",
+      "frequency": "Daily x5",
+      "effect": "heal one Tick (1/10 max HP); usable below 50% HP or in Hailing Weather; immune to HP loss from Hail",
+      "source": "February 2016 Playtest Packet p.6; PTU Core p.237 (Tick)"
     }
   },
   "deferred_conflicting_or_composite": {
-    "hydration": "supplied Core Static behavior conflicts with February 2016 Scene/Swift behavior",
-    "ice_body": "supplied Core Static behavior conflicts with February 2016 Daily x5/Swift behavior",
     "regal_challenge": "Core definition is active but requires a physical AC4 attack against an abstract target",
-    "sprint": "Ability trigger is use of the Sprint Maneuver; the Sprint Maneuver itself costs a Standard Action and is not yet modeled in the Ability action surface"
+    "sprint": "integrated by the composite Sprint Maneuver layer: Standard Action Maneuver + Scene – Swift Action Ability; it is not exposed as a standalone Ability action"
   },
   "non_goals": [
     "No generic Ability prose interpreter.",
@@ -61,5 +72,13 @@
     "No generated dice.",
     "Resource Undo does not rewind Ability effects.",
     "No default .ptucp mutation."
-  ]
+  ],
+  "composite_integrations": {
+    "quick_curl_defense_curl": {
+      "ability": "Quick Curl · Scene – Free Action",
+      "move_override": "Defense Curl as Standard Action Interrupt",
+      "resource_ledger": "shared non-Move action/frequency API",
+      "source_guard": true
+    }
+  }
 }

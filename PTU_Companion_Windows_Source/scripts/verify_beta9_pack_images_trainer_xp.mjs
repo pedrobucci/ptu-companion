@@ -2,11 +2,12 @@ import assert from 'node:assert/strict';
 import {readFileSync,copyFileSync,mkdtempSync,rmSync,mkdirSync} from 'node:fs';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
+import {fileURLToPath} from 'node:url';
 import {DefinitionRepository} from '../definitions/repository.mjs';
 import {inspectContentPack,importContentPack} from '../definitions/pack-importer.mjs';
 import {previewTrainerProgression,applyTrainerProgression,previewTrainerXpPurchase,applyTrainerXpPurchase} from '../rules/trainer-progression-engine.mjs';
 
-const root=new URL('..',import.meta.url).pathname;
+const root=fileURLToPath(new URL('..',import.meta.url));
 const seedDb=join(root,'seed','definitions','ptu_seed_v1.0.sqlite3');
 const packPath=join(root,'bundled-packs','campaign-homebrew-fakemon-1-leva-2.0.1.ptucp');
 const pack=inspectContentPack(readFileSync(packPath));
@@ -54,5 +55,5 @@ buy=previewTrainerXpPurchase({trainer:xpTrainer,kind:'features',id:feature.id,ru
 assert.equal(buy.cost,2);assert.equal(buy.valid,true,JSON.stringify(buy.errors));
 xpTrainer=applyTrainerXpPurchase({trainer:xpTrainer,kind:'features',id:feature.id,preview:buy,getDefinition,rulesetId:'all-provided-material'});assert.equal(xpTrainer.exp,7);assert(xpTrainer.details.features.some(x=>x.id===feature.id&&x.purchasedWithXp));
 
-rmSync(temp,{recursive:true,force:true});
+importedDefs.close();defs.close();rmSync(temp,{recursive:true,force:true,maxRetries:5,retryDelay:200});
 console.log('PTU Companion Beta v2.1.0-beta.11 pack images + Trainer XP verification: OK');

@@ -25,6 +25,17 @@ Ability frequency and action costs use `pokemonCombatSpendNonMoveResource`, incl
 
 **Prime Fury** resolves to the February 2016 definition: `Scene – Swift Action`, becoming Enraged and gaining +1 Attack and +1 Special Attack Combat Stage. It is an explicit controlled-Pokémon action using the same ledger; Undo remains resource-only.
 
+## Resolved February 2016 actions
+
+- **Hydration** — `Scene – Swift Action`; cures one Status Affliction. During Rainy Weather its frequency is ignored, but the Swift Action remains. Weather and the supported Status Afflictions are tracked explicitly; no prose parser or inferred condition detection is used.
+- **Ice Body** — `Daily x5 – Swift Action`; heals one Tick (1/10 maximum HP, rounded down to whole HP with a minimum of 1). Usable only below 50% HP or during Hail. Its Hail HP-loss immunity is displayed as a rules reminder; damage resolution remains manual. Source: February 2016 Playtest Packet p.6; Tick value from PTU Core p.237.
+
+These later definitions supersede the earlier Core definitions under the documented source order. Both use the shared ledger; resource Undo does not rewind cured afflictions or HP.
+
 ## Conservative exclusions
 
-Hydration and Ice Body resolve to February 2016 but remain gated pending explicit weather/healing session semantics. Regal Challenge retains its Core definition but remains gated pending a physical AC4 attack against an abstract target. Sprint is also deferred even though its Ability text agrees across supplied sources: its trigger is the separate Sprint Maneuver, which costs a Standard Action in PTU Core, and that Maneuver is not yet modeled in this Ability action surface.
+Regal Challenge retains its Core definition but remains gated pending a physical AC4 attack against an abstract target. Sprint is deferred: its trigger is the Sprint Maneuver, which costs a Standard Action in PTU Core, and that Maneuver is not yet modeled in this Ability action surface.
+
+## Composite Quick Curl + Defense Curl
+
+Quick Curl is integrated through a dedicated composite layer rather than the standalone Ability allowlist. Its `Scene – Free Action` resource and Defense Curl's overridden Swift Action are spent through the same shared ledger. The normal Defense Curl Move remains unchanged. See `PTU_COMBAT_QUICK_CURL.md`.

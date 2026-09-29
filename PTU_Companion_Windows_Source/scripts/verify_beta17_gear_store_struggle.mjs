@@ -2,12 +2,13 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
+import {fileURLToPath} from 'node:url';
 import {importContentPack,inspectContentPack} from '../definitions/pack-importer.mjs';
 import {DefinitionRepository} from '../definitions/repository.mjs';
 import {itemUsageMetadata} from '../rules/item-metadata.mjs';
 import {resolveTrainerModel} from '../rules/trainer-engine.mjs';
 
-const root=path.resolve(path.dirname(new URL(import.meta.url).pathname),'..');
+const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const gearPath=path.join(root,'test-fixtures/content-packs/campaign-homebrew-trainer-gear-1.0.0.ptucp');
 const weaponsPath=path.join(root,'test-fixtures/content-packs/campaign-homebrew-custom-weapons-2.1.0.ptucp');
 const bundledRepo=new DefinitionRepository(path.join(root,'seed/definitions/ptu_seed_v1.0.sqlite3'));
@@ -73,4 +74,4 @@ for(const token of ["setShopPreset('Gear Store',0)",'function isGearStoreItem','
 const server=fs.readFileSync(path.join(root,'server.mjs'),'utf8');
 assert(server.includes('raw.icon_data_url||raw.icon_url||raw.icon'));
 assert(server.includes('equipmentConfig:raw.equipment_config||null'));
-console.log('PTU Companion Beta v2.1.0-beta.20 gear + Gear Store + Struggle Attack verification: OK');
+console.log('PTU Companion Beta v2.1.0-beta.21 gear + Gear Store + Struggle Attack verification: OK');

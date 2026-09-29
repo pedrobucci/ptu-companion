@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 from pathlib import Path
+import re
 
 from apply_stage_b_combat_manual_physical_dice import main as apply_manual_physical_dice
 from apply_stage_b_combat_move_outcomes import main as apply_move_outcomes
@@ -54,9 +55,9 @@ apply_source_precedence()
 # after all deterministic layers so full rebuilds remain syntactically idempotent.
 for path in TARGETS:
     text=path.read_text(encoding='utf-8')
-    bad='async async function pokemonCombatOpenMove('
-    if bad in text:
-        text=text.replace(bad,'async function pokemonCombatOpenMove(',1)
+    normalized=re.sub(r'(?:async\s+){2,}function pokemonCombatOpenMove\(', 'async function pokemonCombatOpenMove(', text)
+    if normalized!=text:
+        text=normalized
         path.write_text(text,encoding='utf-8')
     if 'async async function ' in text:
         raise SystemExit(f'Duplicate async declaration remains after Combat fixups: {path}')

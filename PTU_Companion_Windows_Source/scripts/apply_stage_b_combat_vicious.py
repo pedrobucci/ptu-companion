@@ -98,9 +98,13 @@ def patch_client(path: Path) -> bool:
     dispatch_new = "async function pokemonCombatDispatchMoveFormEvent(id,row){const p=pokemon(id),def=row?.definition||{};if(!p)return;pokemonCombatViciousRecordMoveUse(id,row);"
     text = replace_once(text, dispatch_old, dispatch_new, 'Move trigger recorder', path)
 
-    condition_old = "const parts=[];if(row?.conditions?.curledUp)"
-    condition_new = "const parts=[];if(Number(row?.conditions?.viciousCriticalRangeBonus||0)>0)parts.push(`<div class=\"flow-note\"><strong>Vicious</strong><small>Critical Hit Range +${Number(row.conditions.viciousCriticalRangeBonus)} for all attacks · remains until this Pokémon leaves the current Combat session.</small></div>`);if(row?.conditions?.curledUp)"
-    text = replace_once(text, condition_old, condition_new, 'Vicious condition feedback', path)
+    condition_start=text.find('function pokemonCombatConditionPanel(')
+    condition_end=text.find('\nfunction ',condition_start+1) if condition_start>=0 else -1
+    condition_panel=text[condition_start:condition_end] if condition_start>=0 and condition_end>condition_start else ''
+    if 'viciousCriticalRangeBonus' not in condition_panel:
+        condition_old = "const parts=[];if(row?.conditions?.stuck)"
+        condition_new = "const parts=[];if(Number(row?.conditions?.viciousCriticalRangeBonus||0)>0)parts.push(`<div class=\"flow-note\"><strong>Vicious</strong><small>Critical Hit Range +${Number(row.conditions.viciousCriticalRangeBonus)} for all attacks · remains until this Pokémon leaves the current Combat session.</small></div>`);if(row?.conditions?.stuck)"
+        text = replace_once(text, condition_old, condition_new, 'Vicious condition feedback', path)
 
     vicious_section = "const vicious=data?pokemonCombatViciousPanel(active.id,data):'';if(vicious)body+=section('VICIOUS · HONE CLAWS',vicious);"
     if vicious_section not in text:

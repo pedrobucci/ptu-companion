@@ -66,7 +66,11 @@ Shared combat-state foundation for Windows and Android. This replaces a Form-onl
 - Dodge/Parry and Effect Spore keep the triggering opponent abstract; no enemy entity or persistent target condition is created.
 - Stalwart changes only the controlled Pokémon's Combat Stages.
 - Automation is hidden/disabled when the active Ruleset effect text no longer matches the audited source signature.
-- Prime Fury, Hydration, Ice Body, and Regal Challenge remain manual because supplied definitions conflict. **Sprint is now the first composite Maneuver + Ability integration**: Sprint spends a Standard Action, while optional Sprint Ability activation separately spends `Scene – Swift Action`; the Standard Action cannot be reused as the Swift conversion in that composite activation.
+- Prime Fury, Hydration, and Ice Body use their February 2016 precedence winners; Regal Challenge remains gated pending an abstract-target physical attack workflow. Sprint remains deferred until its triggering Standard Action Sprint Maneuver can be represented without undercounting action economy.
+
+- Hydration: cure one explicitly marked Status Affliction; Rain ignores frequency, not the Swift Action. Ice Body: `Daily x5 – Swift Action`, heal one Tick (1/10 max HP) below half HP or in Hail; Hail immunity remains a manual incoming-damage reminder.
+
+- Sprint was the first composite Maneuver + Ability integration: the Maneuver costs a Standard Action and the optional Ability costs Scene – Swift Action; both remain in the shared ledger.
 
 ## PTU source anchors
 

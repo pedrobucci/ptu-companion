@@ -71,29 +71,29 @@ def write_docs() -> list[str]:
         'physical_dice_only': True,
         'target_model': 'self; no opponent entity',
         'ability': {
-            'name': 'Quick Curl', 'source': 'Pokemon Tabletop United 1.05 Core p.327',
+            'name': 'Quick Curl', 'source': 'February 2016 Playtest Packet p.6 (overrides PTU Core p.327)',
             'frequency': 'Scene', 'action_cost': 'Free Action',
-            'effect': 'Connection - Defense Curl; activate Quick Curl to use Defense Curl as a Swift Action',
+            'effect': 'Connection - Defense Curl; use Defense Curl as a Standard Action Interrupt and gain +10 Damage Reduction for one full round',
         },
         'move': {
-            'name': 'Defense Curl', 'source': 'Pokemon Tabletop United 1.05 Core p.394',
-            'frequency': 'At-Will', 'normal_action_cost': 'Standard Action', 'quick_curl_action_cost': 'Swift Action',
+            'name': 'Defense Curl', 'source': 'PTU Core p.394 Move text; Quick Curl cost overridden by February 2016 Playtest Packet p.6',
+            'frequency': 'At-Will', 'normal_action_cost': 'Standard Action', 'quick_curl_action_cost': 'Standard Action Interrupt',
             'effect_state': 'Curled Up',
             'existing_runtime': 'critical immunity, DR 10, Slowed/Accuracy interactions, Rollout/Ice Ball exceptions remain owned by the existing Combat condition model',
         },
         'composite_policy': {
             'quick_curl_resource': 'ability:combat-quick-curl · Scene · Free Action',
-            'defense_curl_override_resource': 'move:defense-curl-quick-curl · Swift Action · At-Will',
-            'standard_to_swift': 'allowed only through the shared ledger when Swift is spent and Standard remains available',
+            'defense_curl_override_resource': 'move:defense-curl-quick-curl · Standard Action Interrupt · At-Will',
+            'interrupt_cost': 'spends the shared Standard Action token',
             'ordinary_defense_curl': 'unchanged and still uses its normal Move path/action cost',
             'transactions': 'Ability and overridden Move action create separate namespaced transactions linked by compositeId',
             'refund': 'resource-only Undo may correct either spend independently and never clears Curled Up',
         },
-        'source_guards': ['Quick Curl effect signature must match the audited Core wording.', 'Defense Curl must remain At-Will/Self and match the audited Curled Up effect signature.'],
+        'source_guards': ['Resolve Quick Curl by the documented source precedence, then guard the February 2016 winning definition.', 'Defense Curl must remain At-Will/Self and match the audited Curled Up effect signature.'],
         'non_goals': ['No opponent entity.', 'No generated dice.', 'No generic Ability/Move prose parser.', 'No default .ptucp mutation.'],
     }
     rendered = json.dumps(payload, indent=2, ensure_ascii=False) + '\n'
-    md = '''# PTU Combat Quick Curl + Defense Curl\n\nThis layer adds the first source-explicit **Ability that overrides a Move action cost** while reusing the same per-Pokémon Combat action/frequency ledger.\n\n## Source rules\n\nPTU Core p.327 defines **Quick Curl** as `Scene – Free Action`: Connection – Defense Curl; activating it lets the user use Defense Curl as a **Swift Action**. PTU Core p.394 defines **Defense Curl** as `At-Will`, AC None, Status, Self, creating the persistent **Curled Up** state already modeled by the Combat ledger.\n\n## Composite resource behavior\n\nThe assisted path spends two source-keyed resources: `ability:combat-quick-curl` for the Ability's Scene/Free cost and `move:defense-curl-quick-curl` for Defense Curl's overridden Swift Action. The ordinary Defense Curl path is unchanged and still uses the normal Move action cost.\n\nIf Swift is already spent but Standard is still available, the existing shared ledger may perform `Standard → Swift`. If both Swift and Standard are unavailable, Quick Curl + Defense Curl is blocked before the Scene use is spent.\n\n## Curled Up and correction\n\nA successful composite activation uses the existing Defense Curl condition behavior: Curled Up, Critical immunity, DR 10, Slowed/Accuracy interactions, and the existing Rollout/Ice Ball exceptions. Resource transactions are linked by a composite identifier but remain independently correctable. Undo is deliberately resource-only and never clears an already-applied Curled Up state.\n\n## Conservative gates\n\nAutomation appears only when both active Ruleset definitions match conservative audited source signatures. No opponent state or random roll is introduced, and no generic prose interpreter is used.\n'''
+    md = '''# PTU Combat Quick Curl + Defense Curl\n\nThis layer adds a source-explicit **Ability that overrides a Move action cost** while reusing the same per-Pokémon Combat action/frequency ledger.\n\n## Source precedence and rules\n\nPTU Core p.327 provides the base Quick Curl definition, but the later February 2016 Playtest Packet p.6 wins: `Scene – Free Action`; Connection – Defense Curl; use Defense Curl as a **Standard Action Interrupt** and gain **+10 Damage Reduction for one full round**. PTU Core p.394 still supplies Defense Curl's `At-Will`, AC None, Status, Self Move definition and Curled Up effect. Only the cost/effect specifically changed by Quick Curl is overridden.\n\n## Shared resource behavior\n\nThe assisted path spends two source-keyed resources: `ability:combat-quick-curl` for Quick Curl's Scene/Free cost and `move:defense-curl-quick-curl` for the Standard Action Interrupt. The ordinary Defense Curl path is unchanged and keeps its normal Move cost. The +10 DR reminder is tracked for the current round.\n\nThe interrupt uses the same Standard token as all other actions and is blocked if that token is unavailable.\n\n## Curled Up and correction\n\nA successful activation uses the existing Defense Curl condition behavior: Curled Up, Critical immunity, DR 10, Slowed/Accuracy interactions, and Rollout/Ice Ball exceptions. The additional Quick Curl +10 DR is recorded separately. Resource transactions are linked by a composite identifier but remain independently correctable. Undo is resource-only and never clears an already-applied effect.\n\n## Source signature guard\n\nThe resolver first selects the precedence winner, then checks its February 2016 signature. Defense Curl must remain At-Will/Self and match the audited Curled Up effect signature. No opponent state, random roll, or generic prose interpreter is introduced.\n'''
     changed = []
     if not DOC_JSON.exists() or DOC_JSON.read_text(encoding='utf-8') != rendered:
         DOC_JSON.write_text(rendered, encoding='utf-8'); changed.append(str(DOC_JSON.relative_to(REPO)))
@@ -108,7 +108,7 @@ def patch_shared_docs() -> list[str]:
     composites = ability.setdefault('composite_integrations', {})
     composites['quick_curl_defense_curl'] = {
         'ability': 'Quick Curl · Scene – Free Action',
-        'move_override': 'Defense Curl as Swift Action',
+        'move_override': 'Defense Curl as Standard Action Interrupt',
         'resource_ledger': 'shared non-Move action/frequency API',
         'source_guard': True,
     }
@@ -117,16 +117,18 @@ def patch_shared_docs() -> list[str]:
         ABILITY_JSON.write_text(rendered, encoding='utf-8'); changed.append(str(ABILITY_JSON.relative_to(REPO)))
 
     amd = ABILITY_MD.read_text(encoding='utf-8')
-    appendix = '''\n## Composite Quick Curl + Defense Curl\n\nQuick Curl is integrated through a dedicated composite layer rather than the standalone Ability allowlist. Its `Scene – Free Action` resource and Defense Curl's overridden Swift Action are spent through the same shared ledger. The normal Defense Curl Move remains unchanged. See `PTU_COMBAT_QUICK_CURL.md`.\n'''
-    if '## Composite Quick Curl + Defense Curl' not in amd:
-        ABILITY_MD.write_text(amd.rstrip() + '\n' + appendix, encoding='utf-8'); changed.append(str(ABILITY_MD.relative_to(REPO)))
+    old_appendix = '''\n## Composite Quick Curl + Defense Curl\n\nQuick Curl is integrated through a dedicated composite layer rather than the standalone Ability allowlist. Its `Scene – Free Action` resource and Defense Curl's overridden Swift Action are spent through the same shared ledger. The normal Defense Curl Move remains unchanged. See `PTU_COMBAT_QUICK_CURL.md`.\n'''
+    appendix = '''\n## Composite Quick Curl + Defense Curl\n\nQuick Curl is integrated through a dedicated composite layer rather than the standalone Ability allowlist. Its February 2016 precedence winner spends `Scene – Free Action` and Defense Curl's `Standard Action Interrupt` through the shared ledger. The normal Defense Curl Move remains unchanged. See `PTU_COMBAT_QUICK_CURL.md`.\n'''
+    updated = amd.replace(old_appendix, appendix) if old_appendix in amd else amd if '## Composite Quick Curl + Defense Curl' in amd else amd.rstrip() + '\n' + appendix
+    if updated != amd:
+        ABILITY_MD.write_text(updated, encoding='utf-8'); changed.append(str(ABILITY_MD.relative_to(REPO)))
 
     session = json.loads(SESSION_JSON.read_text(encoding='utf-8'))
     composites = session.setdefault('composite_integrations', {})
     composites['quick_curl_defense_curl'] = {
         'ability': 'Quick Curl', 'move': 'Defense Curl',
-        'ability_cost': 'Scene – Free Action', 'overridden_move_cost': 'Swift Action',
-        'standard_to_swift_when_valid': True, 'normal_move_path_preserved': True,
+        'ability_cost': 'Scene – Free Action', 'overridden_move_cost': 'Standard Action Interrupt',
+        'standard_to_swift_when_valid': False, 'normal_move_path_preserved': True,
         'source_signature_guard': True, 'resource_only_refund': True,
     }
     srendered = json.dumps(session, indent=2, ensure_ascii=False) + '\n'

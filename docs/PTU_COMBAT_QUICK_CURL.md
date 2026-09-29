@@ -1,21 +1,21 @@
 # PTU Combat Quick Curl + Defense Curl
 
-This layer adds the first source-explicit **Ability that overrides a Move action cost** while reusing the same per-Pokémon Combat action/frequency ledger.
+This layer adds a source-explicit **Ability that overrides a Move action cost** while reusing the same per-Pokémon Combat action/frequency ledger.
 
-## Source rules
+## Source precedence and rules
 
-PTU Core p.327 defines **Quick Curl** as `Scene – Free Action`: Connection – Defense Curl; activating it lets the user use Defense Curl as a **Swift Action**. PTU Core p.394 defines **Defense Curl** as `At-Will`, AC None, Status, Self, creating the persistent **Curled Up** state already modeled by the Combat ledger.
+PTU Core p.327 provides the base Quick Curl definition, but the later February 2016 Playtest Packet p.6 wins: `Scene – Free Action`; Connection – Defense Curl; use Defense Curl as a **Standard Action Interrupt** and gain **+10 Damage Reduction for one full round**. PTU Core p.394 still supplies Defense Curl's `At-Will`, AC None, Status, Self Move definition and Curled Up effect. Only the cost/effect specifically changed by Quick Curl is overridden.
 
-## Composite resource behavior
+## Shared resource behavior
 
-The assisted path spends two source-keyed resources: `ability:combat-quick-curl` for the Ability's Scene/Free cost and `move:defense-curl-quick-curl` for Defense Curl's overridden Swift Action. The ordinary Defense Curl path is unchanged and still uses the normal Move action cost.
+The assisted path spends two source-keyed resources: `ability:combat-quick-curl` for Quick Curl's Scene/Free cost and `move:defense-curl-quick-curl` for the Standard Action Interrupt. The ordinary Defense Curl path is unchanged and keeps its normal Move cost. The +10 DR reminder is tracked for the current round.
 
-If Swift is already spent but Standard is still available, the existing shared ledger may perform `Standard → Swift`. If both Swift and Standard are unavailable, Quick Curl + Defense Curl is blocked before the Scene use is spent.
+The interrupt uses the same Standard token as all other actions and is blocked if that token is unavailable.
 
 ## Curled Up and correction
 
-A successful composite activation uses the existing Defense Curl condition behavior: Curled Up, Critical immunity, DR 10, Slowed/Accuracy interactions, and the existing Rollout/Ice Ball exceptions. Resource transactions are linked by a composite identifier but remain independently correctable. Undo is deliberately resource-only and never clears an already-applied Curled Up state.
+A successful activation uses the existing Defense Curl condition behavior: Curled Up, Critical immunity, DR 10, Slowed/Accuracy interactions, and Rollout/Ice Ball exceptions. The additional Quick Curl +10 DR is recorded separately. Resource transactions are linked by a composite identifier but remain independently correctable. Undo is resource-only and never clears an already-applied effect.
 
-## Conservative gates
+## Source signature guard
 
-Automation appears only when both active Ruleset definitions match conservative audited source signatures. No opponent state or random roll is introduced, and no generic prose interpreter is used.
+The resolver first selects the precedence winner, then checks its February 2016 signature. Defense Curl must remain At-Will/Self and match the audited Curled Up effect signature. No opponent state, random roll, or generic prose interpreter is introduced.
