@@ -59,6 +59,13 @@ for(const [id,entry] of Object.entries(manifest.species)){
   assert.equal(bytes.subarray(0,8).toString('hex'),'89504e470d0a1a0a');
   assert.equal(createHash('sha256').update(bytes).digest('hex'),entry.sha256,id);
 }
+const builder=app.slice(app.indexOf('function pokemonBuilderScreen(){'),app.indexOf('function createPokemonFromBuilder(){'));
+assert(builder.includes('builder-species-portrait')&&builder.includes('definitionArtworkSrc(selected)'),'Species builder must render resolved artwork');
+assert(builder.includes('localSpeciesArtwork(selected.id)')&&builder.includes('pokemonArtworkFallback(this)'),'Species builder image must fall back to its local sprite');
+assert.equal(context.definitionArtworkSrc((await(await context.fetch('/api/definitions/species/abra')).json()).definition),'pokemon-sprites/63.png');
+const builderResponsive=css.slice(css.lastIndexOf('@media(max-width:1100px)'));
+for(const rule of ['.pokemon-builder-layout.v05{grid-template-columns:minmax(0,1fr)}','.pokemon-builder-layout.v05>.section-card:nth-child(n+2){grid-column:1}','grid-template-columns:repeat(2,minmax(0,1fr))'])assert(builderResponsive.includes(rule),rule);
+assert(css.includes('.builder-species-portrait{width:80px;height:80px'),'Species builder portrait styling missing');
 const html=read('www/index.html');assert(html.indexOf('pokemon-sprites.js')<html.indexOf('mobile-bootstrap.mjs'));
 const pkg=JSON.parse(read('package.json')),tauri=JSON.parse(read('src-tauri/tauri.conf.json'));
 assert.equal(pkg.version,'2.2.0-beta.26');assert.equal(tauri.version,pkg.version);assert.equal(tauri.bundle.android.versionCode,2002026);
