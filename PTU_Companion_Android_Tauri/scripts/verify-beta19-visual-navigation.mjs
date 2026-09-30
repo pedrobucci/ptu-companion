@@ -7,4 +7,5 @@ ok(app.includes('definitionArtworkHtml(d)'), 'Rules Library artwork helper missi
 ok(app.includes('<span>Adjusted Base</span><span>Existing alloc.</span>'), 'Adjusted Base column missing');
 ok(app.includes('openPokemonProgressAbilityInfo'), 'Ability details action missing');ok(app.includes('openPokemonProgressMoveInfo'), 'Move details action missing');ok(app.includes('🐾 Open in Creatures'), 'Open in Creatures action missing');
 ok(app.includes("['trainer','🪪','Trainer'],['rosters'"), 'Trainer is not in Android quick nav');ok(app.includes("route('creature')\">🐾 Creatures"), 'Creatures is not preserved in More menu');ok(css.includes('.ability-choice{display:grid'), 'Ability alignment CSS missing');ok(runtime.includes("version:'2.2.0-android-beta.27'"),'Runtime version mismatch');
+ok(app.includes('const nestedScroll=previous&&preserveScroll&&sameScreen?'),'Nested horizontal/vertical scroll capture missing');ok(app.includes('saved.path.reduce((parent,index)=>parent?.children[index]??null,current)'),'Nested scroll restoration after render missing');
 console.log('PTU Companion Android v2.2.0-beta.27 visual/navigation verification: OK');

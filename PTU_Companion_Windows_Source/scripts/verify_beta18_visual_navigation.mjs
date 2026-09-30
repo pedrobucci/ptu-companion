@@ -13,4 +13,6 @@ ok(app.includes('openPokemonProgressAbilityInfo'), 'Ability details modal action
 ok(app.includes('openPokemonProgressMoveInfo'), 'Move details modal action missing');
 ok(app.includes('🐾 Open in Creatures'), 'Direct Creatures navigation missing');
 ok(css.includes('.ability-choice{display:grid'), 'Ability alignment styles missing');
+ok(app.includes('const nestedScroll=previous&&preserveScroll&&sameScreen?'), 'Nested horizontal/vertical scroll capture missing');
+ok(app.includes('saved.path.reduce((parent,index)=>parent?.children[index]??null,current)'), 'Nested scroll restoration after render missing');
 console.log('PTU Companion Beta v2.1.0-beta.25 visual/navigation verification: OK');
