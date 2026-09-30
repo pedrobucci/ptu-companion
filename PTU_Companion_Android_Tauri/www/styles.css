@@ -808,3 +808,4 @@ body.ptu-android-body #app{width:100%;max-width:100vw;overflow-x:hidden}
   .pokemon-builder-layout.v05>.section-card:nth-child(2) .form-grid select{box-sizing:border-box;width:100%;min-width:0}
 }
 .builder-species-portrait{width:80px;height:80px;flex:none;object-fit:contain;border-radius:18px;background:#fff;border:4px solid #e5f3ff}
+.creature-roster-memberships{display:flex;flex-wrap:wrap;gap:3px;margin-top:3px}.creature-roster-memberships .chip{font-size:9px;padding:2px 5px}.creature-roster-memberships.empty{color:var(--muted);font-size:9px}

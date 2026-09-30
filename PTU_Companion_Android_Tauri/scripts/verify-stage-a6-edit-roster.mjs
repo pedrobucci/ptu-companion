@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 
 const appSource=await readFile(new URL('../www/app.js',import.meta.url),'utf8');
+const cssSource=await readFile(new URL('../www/styles.css',import.meta.url),'utf8');
 
 assert.match(appSource,/async function editRoster\(id=state\.selectedRosterId\)/,'Android must expose an editor for the selected Roster');
 assert.match(appSource,/Roster identity and capacity can change without removing Pokémon memberships\./,'Android Roster editor must state its non-destructive membership behavior');
@@ -13,5 +14,10 @@ assert.match(appSource,/r\.name=name; r\.role=role; r\.maxMembers=max; r\.active
 assert.match(appSource,/✎ Edit Roster/,'Android Roster screen must expose Edit Roster');
 assert.match(appSource,/chip\('HIDDEN','chip-neutral'\)/,'Android must identify hidden Rosters while keeping them manageable');
 assert.match(appSource,/createRoster,editRoster[^}]*storePokemon/s,'Android Roster editor must remain exposed to inline UI actions even when later Roster handlers are added');
+assert.match(appSource,/function creatureRosterMembershipHtml\(p\)/,'Android creature cards must derive roster labels from the current creature state');
+assert.match(appSource,/new Set\(p\.rosterIds\|\|\[\]\)/,'Android roster labels must not repeat duplicate membership IDs');
+assert.match(appSource,/creatureRosterMembershipHtml\(p\)/,'Full Android creature cards must show their roster labels');
+assert.match(appSource,/>No roster</,'Android cards without roster memberships must show an explicit empty state');
+assert.match(cssSource,/\.creature-roster-memberships\{display:flex;flex-wrap:wrap/,'Android roster membership labels must wrap within narrow cards');
 
 console.log('Stage A.6 Android Roster edit regression OK');
