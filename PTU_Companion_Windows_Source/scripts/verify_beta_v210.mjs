@@ -23,6 +23,12 @@ for(const token of ['openBackpackItemPicker','addCatalogItemToBackpack','createC
 assert(styles.includes('.catalog-add-list')&&styles.includes('.owned-item-actions')&&styles.includes('.item-primary-action'),'Beta inventory action styling missing');
 assert(app.includes('pokemon-progress-stat-row')&&app.includes('pokemon-progress-stepper')&&app.includes("const label=statDisplayName(k)"),'Pokémon progression Stat allocator markup/labels missing');
 assert(styles.includes('.pokemon-progress-stat-head,.pokemon-progress-stat-row')&&styles.includes('.pokemon-progress-stepper'),'Pokémon progression Stat allocator styling missing');
+const builder=app.slice(app.indexOf('function pokemonBuilderScreen(){'),app.indexOf('function createPokemonFromBuilder(){'));
+assert(builder.includes('builder-species-portrait')&&builder.includes('definitionArtworkSrc(selected)'),'Species builder must render the species portrait');
+assert(builder.includes("this.src='creatures/default.svg'"),'Species builder image needs a bounded fallback');
+const builderResponsive=styles.slice(styles.lastIndexOf('@media(max-width:1100px)'));
+for(const rule of ['.pokemon-builder-layout.v05{grid-template-columns:minmax(0,1fr)}','.pokemon-builder-layout.v05>.section-card:nth-child(n+2){grid-column:1}','grid-template-columns:repeat(2,minmax(0,1fr))'])assert(builderResponsive.includes(rule),rule);
+assert(styles.includes('.builder-species-portrait{width:80px;height:80px'),'Species builder portrait styling missing');
 assert(styles.includes('.trainer-progress-layout .progress-stat-row')&&!styles.includes('.progress-stat-list{display:grid;gap:6px}.progress-stat-row{'),'Trainer progression CSS still leaks into Pokémon progression Stat rows');
 assert(app.includes('uploadTrainerPortrait')&&app.includes('uploadNpcPortrait')&&app.includes('portraitDataUrlFromFile'),'Trainer/NPC portrait upload UI missing');
 assert(styles.includes('local Trainer/NPC portraits')&&styles.includes('.has-portrait img'),'Trainer/NPC portrait styling missing');
