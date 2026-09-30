@@ -5,6 +5,7 @@ $version = (Get-Content (Join-Path $projectRoot 'VERSION.txt') -Raw).Trim()
 $outputDir = Join-Path $projectRoot 'dist'
 $outputName = "PTU-Companion-Windows-v$version.exe"
 $containerOutput = "/src/dist/$outputName"
+& (Join-Path $PSScriptRoot 'package-runtime.ps1')
 
 New-Item -ItemType Directory -Path $outputDir -Force | Out-Null
 docker run --rm `
