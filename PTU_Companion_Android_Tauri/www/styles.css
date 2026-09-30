@@ -808,3 +808,6 @@ body.ptu-android-body #app{width:100%;max-width:100vw;overflow-x:hidden}
   .pokemon-builder-layout.v05>.section-card:nth-child(2) .form-grid select{box-sizing:border-box;width:100%;min-width:0}
 }
 .builder-species-portrait{width:80px;height:80px;flex:none;object-fit:contain;border-radius:18px;background:#fff;border:4px solid #e5f3ff}
+.creature-detail-grid .section-title .btn-ghost{color:#1765ad}
+.creature-detail-grid .section-title .btn-ghost:focus-visible{outline:2px solid #fff;outline-offset:2px}
+.creature-detail-grid .section-title .btn-ghost:disabled{color:#536b7e;opacity:1;background:#dbe5ed}
