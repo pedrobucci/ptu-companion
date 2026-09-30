@@ -1,7 +1,8 @@
-import { readFileSync } from 'node:fs';
+import { readFileSync, mkdtempSync, rmSync } from 'node:fs';
 import { join } from 'node:path';
+import { tmpdir } from 'node:os';
 import { fileURLToPath } from 'node:url';
-import { spawn } from 'node:child_process';
+import { spawn, execFileSync } from 'node:child_process';
 import vm from 'node:vm';
 import { DefinitionRepository } from '../definitions/repository.mjs';
 import { readZipEntries } from '../definitions/pack-importer.mjs';
@@ -16,8 +17,16 @@ const pkg=JSON.parse(readFileSync(join(root,'package.json'),'utf8'));
 const definitions=new DefinitionRepository(join(root,'seed','definitions','ptu_seed_v1.0.sqlite3'));
 const rulesetId='all-provided-material';
 const assert=(ok,msg)=>{if(!ok)throw new Error(msg)};
-const runtimeBundle=readZipEntries(readFileSync(join(root,'desktop','runtime_bundle.zip')));
+const bundleDir=mkdtempSync(join(tmpdir(),'ptu-runtime-verify-'));
+const bundlePath=join(bundleDir,'runtime_bundle.zip');
+let runtimeBundle;
+try{
+  const powershell=process.platform==='win32'?'powershell.exe':'pwsh';
+  execFileSync(powershell,['-NoProfile','-ExecutionPolicy','Bypass','-File',join(root,'scripts','package-runtime.ps1'),'-OutputPath',bundlePath],{stdio:'pipe'});
+  runtimeBundle=readZipEntries(readFileSync(bundlePath));
+}finally{rmSync(bundleDir,{recursive:true,force:true});}
 for(const entry of ['definitions/repository.mjs','rules/pokemon-form-builtins.mjs','static-preview/app.js','rules/pokemon-forms.mjs'])assert(runtimeBundle.has(entry),`Windows runtime bundle is missing ${entry}`);
+for(const entry of ['server.mjs','VERSION.txt','static-preview/index.html','static-preview/app.js','static-preview/styles.css','seed/default-state.json','seed/definitions/ptu_seed_v1.0.sqlite3'])assert(runtimeBundle.get(entry)?.equals(readFileSync(join(root,entry))),`Windows runtime bundle is stale: ${entry}`);
 assert(runtimeBundle.has('rules/mega-form-runtime-data.mjs'),'Windows runtime bundle is missing the generated Mega Form catalog');
 const megaForms=Object.values(MEGA_FORM_CATALOG).flat();
 assert(megaForms.length===48,'Windows runtime catalog must contain all 48 Mega Forms');
@@ -77,7 +86,7 @@ for(const token of ['backgroundSkillRankMap','syncBackgroundSkillRanks','trainer
 assert(app.includes("id==='elemental-connection'")&&app.includes("id==='type-ace'"),'Repeatable typed choices are missing from Trainer selection UI');
 assert(styles.includes('.trainer-choice-summary'),'Selected-choice card styling is missing');
 assert(seed.inventory.some(i=>i.id==='two-handed-sword'&&i.price===6000&&i.mechanics?.hands===2),'Two-Handed Sword is missing from the seed shop catalog');
-assert(pkg.version==='2.1.0-beta.24','package.json version is not the beta version');
+assert(pkg.version==='2.1.0-beta.25','package.json version is not the beta version');
 
 
 
@@ -126,7 +135,7 @@ const child=spawn(process.execPath,['server.mjs'],{cwd:root,env:{...process.env,
 let stderr='';child.stderr.on('data',d=>stderr+=d);
 async function waitServer(){for(let i=0;i<50;i++){try{const r=await fetch(`http://127.0.0.1:${port}/api/health`);if(r.ok)return r.json();}catch{}await new Promise(r=>setTimeout(r,100));}throw new Error(`Server did not start: ${stderr}`)}
 try{
-  const health=await waitServer();assert(health.version==='2.1.0-beta.24','Server health version is not the beta version');
+  const health=await waitServer();assert(health.version==='2.1.0-beta.25','Server health version is not the beta version');
   const noEquipment=trainer();delete noEquipment.equipment;
   const r=await fetch(`http://127.0.0.1:${port}/api/trainer/reference-data`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({trainer:noEquipment})});
   const body=await r.json();assert(r.ok&&body.resolvedTrainer?.skills?.Athletics?.rank===4,'Real Trainer reference endpoint failed Background/no-equipment regression case');
