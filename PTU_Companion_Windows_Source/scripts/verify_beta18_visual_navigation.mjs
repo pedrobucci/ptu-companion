@@ -13,6 +13,8 @@ ok(app.includes('openPokemonProgressAbilityInfo'), 'Ability details modal action
 ok(app.includes('openPokemonProgressMoveInfo'), 'Move details modal action missing');
 ok(app.includes('🐾 Open in Creatures'), 'Direct Creatures navigation missing');
 ok(css.includes('.ability-choice{display:grid'), 'Ability alignment styles missing');
+ok(app.includes('const nestedScroll=previous&&preserveScroll&&sameScreen?'), 'Nested horizontal/vertical scroll capture missing');
+ok(app.includes('saved.path.reduce((parent,index)=>parent?.children[index]??null,current)'), 'Nested scroll restoration after render missing');
 ok(css.includes('.creature-detail-grid .section-title .btn-ghost{color:#1765ad}'), 'Creature edit button contrast missing');
 ok(css.includes('.creature-detail-grid .section-title .btn-ghost:focus-visible{outline:2px solid #fff;outline-offset:2px}'), 'Creature edit button focus indicator missing');
 ok(css.includes('.creature-detail-grid .section-title .btn-ghost:disabled{color:#536b7e;opacity:1;background:#dbe5ed}'), 'Creature edit button disabled contrast missing');

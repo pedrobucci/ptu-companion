@@ -2215,6 +2215,7 @@ function render({preserveScroll=true}={}){
   const previous=document.querySelector('.screen-content');
   const sameScreen=lastRenderedScreen===state.ui.screen;
   const scroll=previous&&preserveScroll&&sameScreen?{top:previous.scrollTop,left:previous.scrollLeft}:null;
+  const nestedScroll=previous&&preserveScroll&&sameScreen?[...previous.querySelectorAll('*')].flatMap(el=>{if(!el.scrollTop&&!el.scrollLeft)return[];const path=[];for(let node=el;node&&node!==previous;node=node.parentElement)path.unshift(Array.prototype.indexOf.call(node.parentElement.children,node));return[{path,top:el.scrollTop,left:el.scrollLeft}];}):[];
   const active=document.activeElement;
   const focusState=active&&active.id?{id:active.id,start:active.selectionStart,end:active.selectionEnd}:null;
   document.getElementById('app').innerHTML=shell(f());
@@ -2223,6 +2224,7 @@ function render({preserveScroll=true}={}){
     const current=document.querySelector('.screen-content');
     if(current){ if(scroll){current.scrollTop=scroll.top;current.scrollLeft=scroll.left;} else current.scrollTop=0; }
     if(focusState){ const el=document.getElementById(focusState.id); if(el){el.focus(); try{if(focusState.start!=null)el.setSelectionRange(focusState.start,focusState.end??focusState.start)}catch{}} }
+    if(current){for(const saved of nestedScroll){const el=saved.path.reduce((parent,index)=>parent?.children[index]??null,current);if(el){el.scrollTop=saved.top;el.scrollLeft=saved.left;}}}
   });
 }
 
