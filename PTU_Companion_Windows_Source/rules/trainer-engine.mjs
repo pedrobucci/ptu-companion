@@ -123,7 +123,7 @@ function grantEntity(model,{entityKind,entityId,entityName,source,automatic=true
     let id=entityId||slug(entityName); const moveAliases={'faint-attack':'feint-attack'}; id=moveAliases[id]||id; const def=resolveDefinition(getDefinition,rulesetId,'moves',id);
     if(!def){ model.unresolvedChoices.push({source:slimSource(source),type:'missing_move_definition',message:`Move ${entityName||id} could not be resolved.`}); return; }
     const key=def.id||slug(def.name); let move=model._moveMap.get(key);
-    const sourceEntry={kind:source.kind,id:source.id,name:source.name,label:source.sourceLabel||source.name,automatic,metadata};
+    const sourceEntry={kind:source.kind,id:source.id,name:source.name,label:source.sourceLabel||source.name,automatic,metadata:{...metadata,meleeWeaponAttack:source.kind==='feature'&&/\bmay use these(?: Moves)? as Weapon Attacks when wielding Melee Weapons\b/i.test(String(source.effect||''))}};
     if(!move){move={id:key,name:def.name,definition:def,sources:[],automatic:true};model._moveMap.set(key,move);} 
     if(!move.sources.some(s=>s.kind===sourceEntry.kind&&s.id===sourceEntry.id&&s.name===sourceEntry.name))move.sources.push(sourceEntry);
     move.automatic=move.automatic&&automatic;
@@ -453,7 +453,7 @@ function resolveMoveDamageForTrainer(model,move,trainer,getDamageBase){
   const def=move.definition; const category=String(def?.category||def?.raw?.class||'').toLowerCase();
   if(!def||category==='status'||def.damageBase==null)return {damaging:false,category:def?.category||null,expression:null,breakdown:[],baseDb:def?.damageBase??null,finalDb:def?.damageBase??null,stab:false,accuracyModifier:num(model.accuracyBonus)};
   let db=num(def.damageBase); const breakdown=[{label:'Move Damage Base',value:`DB ${db}`}];
-  const weaponSource=(move.sources||[]).find(s=>s.metadata?.weapon);const weapon=weaponSource?.metadata?.weapon||null;
+  const weaponSource=(move.sources||[]).find(s=>s.metadata?.weapon);const weapon=weaponSource?.metadata?.weapon||((move.sources||[]).some(s=>s.metadata?.meleeWeaponAttack)?(model.weapons.find(w=>w.slot==='mainHand'&&String(w.weaponClass||'').includes('melee'))||model.weapons.find(w=>String(w.weaponClass||'').includes('melee'))):null)||null;
   let resolvedAc=def.ac??null,resolvedRange=def.range||null;
   if(weapon){db+=num(weapon.dbModifier);if(resolvedAc!=null)resolvedAc=num(resolvedAc)+num(weapon.acModifier);if(/\bWR\b/i.test(String(resolvedRange||'')))resolvedRange=String(resolvedRange).replace(/\bWR\b/gi,weapon.range||'Melee');breakdown.push({label:`${weapon.name} · ${weapon.weaponClassLabel}`,value:`${weapon.dbModifier>=0?'+':''}${weapon.dbModifier} DB${weapon.acModifier?`, ${weapon.acModifier>0?'+':''}${weapon.acModifier} AC`:''}`});}
   if(def.id==='flail'){const injuries=Math.max(0,num(trainer.details?.injuries));if(injuries){db+=injuries;breakdown.push({label:'Flail · Injuries',value:`+${injuries} DB`});}}

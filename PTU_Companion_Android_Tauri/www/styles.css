@@ -813,3 +813,7 @@ body.ptu-android-body #app{width:100%;max-width:100vw;overflow-x:hidden}
 .creature-detail-grid .section-title .btn-ghost{color:#1765ad}
 .creature-detail-grid .section-title .btn-ghost:focus-visible{outline:2px solid #fff;outline-offset:2px}
 .creature-detail-grid .section-title .btn-ghost:disabled{color:#536b7e;opacity:1;background:#dbe5ed}
+
+.creature-selector-accordion > summary{cursor:pointer;display:list-item;list-style-position:inside;font-weight:700}
+.creature-selector-accordion > summary:focus-visible{outline:2px solid #1765ad;outline-offset:2px}
+#creature-portrait{scroll-margin-top:16px}
