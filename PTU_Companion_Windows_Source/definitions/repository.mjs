@@ -185,7 +185,7 @@ export class DefinitionRepository {
         conditionText:row.condition_text||null,mappingConfidence:row.mapping_confidence||null,sourceId:row.source_id||null,
         evolutionRulesSource:'ptu_material',sourceTitle:row.source_title||row.source_id||'PTU material',sourceKind:row.source_kind||null,
         target:{id:target.id,name:target.name,versionId:target.versionId,contentPackId:target.contentPackId,sourceId:target.sourceId,
-          types:target.types||[],baseStats:target.baseStats||null,abilities:target.abilities||[],levelUpMoves:target.levelUpMoves||[],capabilities:target.capabilities||[],skills:target.skills||null}
+          types:target.types||[],baseStats:target.baseStats||null,abilities:target.abilities||[],levelUpMoves:target.levelUpMoves||[],eggMoves:target.eggMoves||[],capabilities:target.capabilities||[],skills:target.skills||null}
       });
     }
     return out;
@@ -248,7 +248,7 @@ export class DefinitionRepository {
       seen.add(key);
       ancestors.push({
         id:ancestor.id,name:ancestor.name,sourceId:ancestor.sourceId,contentPackId:ancestor.contentPackId,
-        levelUpMoves:ancestor.levelUpMoves||[],
+        levelUpMoves:ancestor.levelUpMoves||[],eggMoves:ancestor.eggMoves||[],
         evolutionEdge:{
           fromSpeciesName:edge.from_species_name,toSpeciesName:edge.to_species_name,
           toMinLevel:edge.to_min_level??null,conditionText:edge.condition_text||null,sourceId:edge.source_id||null

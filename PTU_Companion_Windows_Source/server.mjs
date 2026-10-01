@@ -50,6 +50,18 @@ let desktopHeartbeatSeen=false;
 const db=openDatabase(dbPath);
 const repo=new CampaignRepository(db);
 const definitions=new DefinitionRepository(definitionsPath);
+function evolutionLineEggMoves(species,rulesetId){
+  if(!species)return [];
+  const ancestry=definitions.getEvolutionAncestry({rulesetId,speciesName:species.name,sourceId:species.sourceId});
+  const root=ancestry.at(-1)||species,queue=[root],seenSpecies=new Set(),seenMoves=new Set(),moves=[];
+  while(queue.length&&seenSpecies.size<64){
+    const current=queue.shift(),key=String(current.name||current.id||'').toLowerCase();
+    if(!key||seenSpecies.has(key))continue;seenSpecies.add(key);
+    for(const move of current.eggMoves||[]){const id=String(move.move_id||move.id||move.move||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');if(id&&!seenMoves.has(id)){seenMoves.add(id);moves.push(move);}}
+    for(const evolution of definitions.getOutgoingEvolutions({rulesetId,speciesName:current.name,sourceId:current.sourceId}))if(evolution.target)queue.push(evolution.target);
+  }
+  return moves;
+}
 const rulesets=definitions.getRulesets();
 const configuredRuleset=db.prepare("SELECT value FROM app_meta WHERE key='active_ruleset_id'").get()?.value;
 const defaultRuleset=rulesets.some(r=>r.id===configuredRuleset)?configuredRuleset:(rulesets.some(r=>r.id==='all-provided-material')?'all-provided-material':rulesets[0]?.id);
@@ -1070,6 +1082,7 @@ async function handleApi(req,res,url){
     const trainingFormResolution=resolveSpeciesFormState({species:baseSpecies,pokemon,payload,includeActive:false});
     if(!trainingFormResolution.valid)return json(res,400,{error:'Stored permanent Pokémon Form state is not valid.',formResolution:trainingFormResolution});
     const species=trainingFormResolution.species;
+    const eggTutorMoves=evolutionLineEggMoves(species,rulesetId);
     const activeFormResolution=resolveSpeciesFormState({species:baseSpecies,pokemon,payload,includeActive:true});
     const activeSpecies=activeFormResolution.valid?activeFormResolution.species:species;
     const activeHeldItem=resolvePokemonHeldItem({rulesetId,pokemon,species:baseSpecies}).effect;
@@ -1095,8 +1108,9 @@ async function handleApi(req,res,url){
     const moveTeaching={
       tm_hm:(species.tmMoves||[]).map(m=>resolveMove(m,'tm_hm')),
       tutor:(species.tutorMoves||[]).map(m=>resolveMove(m,'tutor')),
-      egg_tutor:(species.eggMoves||[]).map(m=>resolveMove(m,'egg_tutor'))
+      egg_tutor:eggTutorMoves.map(m=>resolveMove(m,'egg_tutor'))
     };
+    const eggTutorUsed=(details.trainingHistory||[]).some(entry=>entry.action==='learn_move'&&entry.record?.source==='egg_tutor')||knownMoves.some(move=>move.source==='egg_tutor');
     const edgeRows=definitions.listResolved({rulesetId,kind:'poke_edges',q:'',limit:200,offset:0});
     const owned=Array.isArray(details.pokeEdges)?details.pokeEdges:[];
     const abilityKeywordLookup=(abilityName,keyword)=>{
@@ -1131,7 +1145,7 @@ async function handleApi(req,res,url){
     }
     return json(res,200,{rulesetId,species:{id:species.id,name:species.name,types:species.types||[]},tutorPoints:{earned,spent,remaining},
       tutorMovePool:{used:poolUsed,limit:poolLimit,remaining:Math.max(0,poolLimit-poolUsed)},september2015TutorRestrictions:september2015Enabled,
-      moveSlots:{used:pokemonMoveSlotsUsed(knownMoves),limit:resolvePokemonMoveLimit({base:details.moveLimitBase??6,modifier:details.moveLimitModifier??0,abilities:currentAbilityRecords}).effective},edges,moveTeaching});
+moveSlots:{used:pokemonMoveSlotsUsed(knownMoves),limit:resolvePokemonMoveLimit({base:details.moveLimitBase??6,modifier:details.moveLimitModifier??0,abilities:currentAbilityRecords}).effective},eggTutorUsed,edges,moveTeaching});
   }
   if(req.method==='POST' && url.pathname==='/api/pokemon/training-action-preview'){
     const payload=await bodyJson(req);
@@ -1144,6 +1158,7 @@ async function handleApi(req,res,url){
     const trainingActionFormResolution=resolveSpeciesFormState({species:baseSpecies,pokemon,payload,includeActive:false});
     if(!trainingActionFormResolution.valid)return json(res,400,{error:'Stored permanent Pokémon Form state is not valid.',formResolution:trainingActionFormResolution});
     const species=trainingActionFormResolution.species;
+    const eggTutorMoves=evolutionLineEggMoves(species,rulesetId);
     const activeFormResolution=resolveSpeciesFormState({species:baseSpecies,pokemon,includeActive:true});
     const activeSpecies=activeFormResolution.valid?activeFormResolution.species:species;
     const activeHeldItem=resolvePokemonHeldItem({rulesetId,pokemon,species:baseSpecies}).effect;
@@ -1252,7 +1267,9 @@ async function handleApi(req,res,url){
       }
     } else if(payload.action==='learn_move'){
       const method=String(payload.method||'tm_hm'); const moveId=String(payload.moveId||'');
-      const sourceList=method==='tutor'?(species.tutorMoves||[]):method==='egg_tutor'?(species.eggMoves||[]):(species.tmMoves||[]);
+      const sourceList=method==='tutor'?(species.tutorMoves||[]):method==='egg_tutor'?eggTutorMoves:(species.tmMoves||[]);
+      const eggTutorUsed=details.trainingHistory.some(entry=>entry.action==='learn_move'&&entry.record?.source==='egg_tutor')||details.moves.some(move=>move.source==='egg_tutor');
+      if(method==='egg_tutor'&&eggTutorUsed&&!payload.gmOverride)errors.push('A Pokémon can only be targeted by Egg Tutor once.');
       const source=sourceList.find(m=>String(m.move_id||m.move||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')===moveId);
       if(!source && !payload.gmOverride) errors.push('Move is not compatible through the selected teaching method.');
       const move=definitions.getResolved({rulesetId,kind:'moves',id:moveId}); if(!move) errors.push('Move definition is unavailable in the active Ruleset.');
