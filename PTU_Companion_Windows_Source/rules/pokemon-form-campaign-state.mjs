@@ -45,7 +45,9 @@ export function applyPokemonHpDelta(pokemon,delta){
   const beforeHp=p.hp,beforeTemp=p.tempHp;
   let blockedTempHp=0;
   if(amount>0){
-    const missing=Math.max(0,(finite(p.maxHp)??0)-p.hp);
+    const injuries=Math.max(0,Math.min(10,Math.trunc(finite(p.injuries)??0)));
+    const healingLimit=Math.floor((finite(p.maxHp)??0)*(10-injuries)/10);
+    const missing=Math.max(0,healingLimit-p.hp);
     const restored=Math.min(amount,missing);p.hp+=restored;
     const overflow=Math.max(0,amount-restored);
     if(overflow>0){
