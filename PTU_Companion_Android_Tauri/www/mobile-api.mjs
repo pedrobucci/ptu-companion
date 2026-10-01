@@ -153,7 +153,7 @@ class MobileDefinitions {
   getRuleset(id){ return deep((data.rulesets||[]).find(r=>r.id===id)||null); }
   getPacks(){ return deep(data.packs||[]); }
   _map(rs,kind){ return data.resolved?.[rs]?.[kind]||{}; }
-  getResolved({rulesetId,kind,id}){ const vid=this._map(rulesetId,kind)[id],record=data.records?.[vid]; if(!record)return kind==='items'?getBuiltInFormItem(id):null; const out={...deep(record),kind}; if(kind==='species'){out.capabilities=normalizeCapabilities(out.capabilities||out.raw?.capabilities);out.forms=mergeBuiltInSpeciesForms(id,out.forms||out.raw?.forms||out.raw?.form_definitions||[]);} return out; }
+  getResolved({rulesetId,kind,id,versionId=null}){ const vid=versionId||this._map(rulesetId,kind)[id],record=data.records?.[vid]; if(!record||record.id!==id||(versionId&&!(data.versionGroups?.[`${kind}:${id}`]||[]).includes(versionId)))return versionId?null:kind==='items'?getBuiltInFormItem(id):null; const out={...deep(record),kind}; if(kind==='species'){out.capabilities=normalizeCapabilities(out.capabilities||out.raw?.capabilities);out.forms=mergeBuiltInSpeciesForms(id,out.forms||out.raw?.forms||out.raw?.form_definitions||[]);} return out; }
   listResolved({rulesetId,kind,q='',limit=60,offset=0}){
     const needle=norm(q); const ids=[...new Set([...Object.keys(this._map(rulesetId,kind)),...(kind==='items'?listBuiltInFormItems().map(item=>item.id):[])])]; const rows=[];
     for(const id of ids){ const row=this.getResolved({rulesetId,kind,id}); if(!row)continue; if(needle && !norm(`${id} ${row.name||''} ${row.effect||''} ${JSON.stringify(row.raw||{})}`).includes(needle))continue; rows.push(row); }

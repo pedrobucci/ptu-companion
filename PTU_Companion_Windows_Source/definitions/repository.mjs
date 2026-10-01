@@ -85,8 +85,12 @@ export class DefinitionRepository {
     return count;
   }
 
-  getResolved({rulesetId,kind,id}){
+  getResolved({rulesetId,kind,id,versionId=null}){
     this._validateKind(kind);
+    if(versionId){
+      const version=this.getVersions({kind,id}).find(row=>row.versionId===versionId);
+      return version||null;
+    }
     const row=this.db.prepare(`${this._resolvedCte()}
       SELECT * FROM candidates WHERE rn=1 AND logical_id=? LIMIT 1`).get(rulesetId,kind,id);
     return row?this._formatRow(row,true):(kind==='items'?getBuiltInFormItem(id):null);

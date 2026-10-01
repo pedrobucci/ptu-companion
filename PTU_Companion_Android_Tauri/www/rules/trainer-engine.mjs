@@ -110,9 +110,11 @@ function addCapability(model,key,value,source,{contextual=false,note=null}={}){
   pushModifier(model,{target:`capability.${key}`,value,source,contextual,note});
 }
 
-function resolveDefinition(getDefinition,rulesetId,kind,id){
+function resolveDefinition(getDefinition,rulesetId,kind,idOrRecord){
+  const record=typeof idOrRecord==='object'&&idOrRecord?idOrRecord:null;
+  const id=record?.id||idOrRecord;
   if(!id)return null;
-  try{return getDefinition({rulesetId,kind,id:String(id)})||null;}catch{return null;}
+  try{return getDefinition({rulesetId,kind,id:String(id),versionId:record?.definitionVersionId||null})||null;}catch{return null;}
 }
 
 function grantEntity(model,{entityKind,entityId,entityName,source,automatic=true,getDefinition,rulesetId,metadata={}}){
@@ -542,7 +544,7 @@ function resolveTrainerModel({trainer,rulesetId,getDefinition,getDamageBase}){
   for(const [kind,records] of [['feature',details.features||[]],['edge',details.edges||[]]]){
     const defKind=kind==='feature'?'features':'edges';
     for(const record of records){
-      const definition=resolveDefinition(getDefinition,rulesetId,defKind,record.id)||null;
+      const definition=resolveDefinition(getDefinition,rulesetId,defKind,record)||null;
       const source=sourceRecord({kind,record,definition}); sources.push(source);
       if(kind==='feature')applyFeatureTags(model,source);
       for(const effect of definition?.compiledEffects||record.compiledEffects||[])applyCompiledEffect(model,effect,source,ctx);
@@ -643,7 +645,7 @@ function evaluateTrainerPrerequisiteAst(ast,{trainer={},resolvedTrainer=null,rul
   };
   const resolveRecordDef=(kind,record)=>{
     if(typeof getDefinition!=='function'||!rulesetId)return null;
-    return resolveDefinition(getDefinition,rulesetId,kind,record?.id||slug(record?.name));
+    return resolveDefinition(getDefinition,rulesetId,kind,record||record?.id||slug(record?.name));
   };
   const selectedTypes=()=>[...features,...edges].flatMap(r=>{
     const sel=r?.selections||{}; return [sel.type,sel.chosenType,sel.parameter, ...(Array.isArray(sel.types)?sel.types:[])].filter(Boolean).map(String);
