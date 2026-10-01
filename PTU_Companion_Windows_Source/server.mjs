@@ -382,6 +382,30 @@ function buildPokeEdgeTargetOptions({edge,pokemon,species,rulesetId}={}){
   const edgeId=capabilityKey(edge?.id||edge?.name);
   const owned=(Array.isArray(details.pokeEdges)?details.pokeEdges:[]).filter(e=>capabilityKey(e?.id||e?.name)===edgeId);
   const used=new Set(owned.map(e=>capabilityKey(normalizeEdgeTarget(e))).filter(Boolean));
+  if(edgeId==='ability-mastery'){
+    for(const name of Array.isArray(details.abilities)?details.abilities:[]) used.add(abilitySlug(name));
+    for(const record of Array.isArray(details.abilityRecords)?details.abilityRecords:[]) if(['species_starting','level_choice','native_extra'].includes(String(record?.sourceKind||''))) used.add(abilitySlug(record?.name));
+    for(const entry of Array.isArray(details.grantedAbilities)?details.grantedAbilities:[]) used.add(abilitySlug(typeof entry==='string'?entry:entry?.name));
+    return nativeAbilitySlotsForSpecies(species,pokemon?.level).flatMap(slot=>slot.options)
+      .map(ability=>({id:abilitySlug(ability.name),label:ability.name,kind:'ability'}))
+      .filter(option=>option.id&&!used.has(option.id));
+  }
+  if(edgeId==='advanced-connection'){
+    const active=resolveSpeciesFormState({species,pokemon,includeActive:true});
+    const abilitySpecies=active.valid?active.species:species;
+    const held=resolvePokemonHeldItem({rulesetId,pokemon,species}).effect;
+    const abilities=resolveCreatureAbilityRecords({pokemon,species:abilitySpecies,rulesetId,heldItemEffect:held});
+    return abilities.flatMap(ability=>{
+      const text=`${ability.definition?.effect||''} ${ability.definition?.rawText||''}`;
+      const match=text.match(/\bConnection\s*[-–—:]\s*([^.;\n]+)/i);
+      if(!match)return [];
+      const moveName=match[1].trim().replace(/[“”"'’]+$/g,'');
+      const moveId=capabilityKey(moveName);
+      const move=definitions.getResolved({rulesetId,kind:'moves',id:moveId});
+      if(!move)return [];
+      return [{id:ability.id,label:`${ability.name} → ${move.name}`,kind:'ability',connectionMoveId:move.id,connectionMoveName:move.name,connectionMoveVersionId:move.versionId||null}];
+    }).filter(option=>option.id&&!used.has(option.id));
+  }
   if(edgeId==='advanced-mobility'){
     const resolved=resolvePokemonCapabilities(species,details).capabilities;
     return resolved.filter(c=>c?.kind==='movement').map(c=>({id:capabilityKey(c.capability_id||c.name),label:`${c.name} ${c.value??''}`.trim(),kind:'capability',currentValue:Number(c.value)||0})).filter(o=>!used.has(o.id));
@@ -418,6 +442,14 @@ function buildPokeEdgeTargetOptions({edge,pokemon,species,rulesetId}={}){
 }
 function removeDerivedEffectsForRefund(details,removedEdge){
   const id=capabilityKey(removedEdge?.id||removedEdge?.name);
+  if(id==='advanced-connection'){
+    details.moves=(details.moves||[]).flatMap(move=>{
+      if(String(move?.connectionGrant?.edgeInstanceId||'')!==String(removedEdge?.instanceId||''))return [move];
+      if(move.source==='advanced_connection')return [];
+      const next={...move}; delete next.connectionGrant; return [next];
+    });
+  }
+  if(id==='ability-mastery') details.grantedAbilities=(details.grantedAbilities||[]).filter(a=>!(capabilityKey(typeof a==='string'?a:a?.name)===capabilityKey(removedEdge?.targetId||removedEdge?.targetNote) && capabilityKey(a?.sourceId||'')==='ability-mastery'));
   if(id==='mixed-power'){
     const stillOwned=(details.pokeEdges||[]).some(e=>capabilityKey(e?.id||e?.name)==='mixed-power');
     if(!stillOwned){
@@ -426,6 +458,7 @@ function removeDerivedEffectsForRefund(details,removedEdge){
   }
   details.baseRelationExemptStats=relationExemptionsFromPokeEdges(details.pokeEdges||[]);
 }
+function pokemonMoveSlotsUsed(moves){return (Array.isArray(moves)?moves:[]).filter(move=>!move?.connectionGrant?.moveSlotExempt).length;}
 function nativeAbilitySlotsForSpecies(species,level){
   const native=eligibleAbilities(species?.abilities||species?.ability_slots||[]);
   return levelAbilitySlots(level).map((slot,index)=>({
@@ -455,7 +488,7 @@ function resolveCreatureAbilityRecords({pokemon,species,rulesetId,heldItemEffect
   granted.forEach((entry,index)=>{
     const obj=typeof entry==='string'?{name:entry}:entry||{};
     if(!obj.name) return;
-    records.push({name:String(obj.name),sourceKind:obj.source||'granted',sourceLabel:obj.sourceId==='mixed-power'?'Granted by Mixed Power':'Granted Ability',unlockLevel:null,selectedAtLevel:null,sourceId:obj.sourceId||null,sourceVersionId:obj.sourceVersionId||null,grantSource:obj,index:nativeNames.length+index});
+    records.push({name:String(obj.name),sourceKind:obj.source||'granted',sourceLabel:obj.sourceId==='mixed-power'?'Granted by Mixed Power':obj.sourceId==='ability-mastery'?'Granted by Ability Mastery':'Granted Ability',unlockLevel:null,selectedAtLevel:null,sourceId:obj.sourceId||null,sourceVersionId:obj.sourceVersionId||null,grantSource:obj,index:nativeNames.length+index});
   });
   const appliedForms=Array.isArray(species?.formState?.applied)?species.formState.applied:[];
   for(const applied of appliedForms){
@@ -949,6 +982,13 @@ async function handleApi(req,res,url){
     details.abilityCorrectionHistory=Array.isArray(details.abilityCorrectionHistory)?details.abilityCorrectionHistory:[];
     details.abilityCorrectionHistory.push({date:new Date().toISOString(),level:Number(pokemon.level||1),abilities:[...details.abilities],gmOverride:!!payload.gmOverride});
     const correctedPokemon={...pokemon,details};
+    const activeResolution=resolveSpeciesFormState({species:baseSpecies,pokemon:correctedPokemon,includeActive:true});
+    const held=resolvePokemonHeldItem({rulesetId,pokemon:correctedPokemon,species:baseSpecies}).effect;
+    const activeAbilities=new Set(resolveCreatureAbilityRecords({pokemon:correctedPokemon,species:activeResolution.valid?activeResolution.species:species,rulesetId,heldItemEffect:held}).map(record=>record.id));
+    const removedConnections=[];
+    details.pokeEdges=Array.isArray(details.pokeEdges)?details.pokeEdges:[];
+    for(let i=details.pokeEdges.length-1;i>=0;i--){const edge=details.pokeEdges[i];if(capabilityKey(edge?.id)==='advanced-connection'&&!activeAbilities.has(capabilityKey(edge.connectionAbilityId||edge.targetId))){details.pokeEdges.splice(i,1);const refund=Math.max(0,Number(edge.cost||0));details.tutorPointsSpent=Math.max(0,Number(details.tutorPointsSpent||0)-refund);removeDerivedEffectsForRefund(details,edge);removedConnections.push({...edge,refundedTutorPoints:refund});}}
+    details.tutorPointsRemaining=Math.max(0,Number(details.tutorPointsEarned||0)-Number(details.tutorPointsSpent||0));
     return json(res,200,{valid:true,details,abilitySlots:slots,abilities:resolveCreatureAbilityRecords({pokemon:correctedPokemon,species,rulesetId})});
   }
 
@@ -1015,6 +1055,10 @@ async function handleApi(req,res,url){
     const trainingFormResolution=resolveSpeciesFormState({species:baseSpecies,pokemon,payload,includeActive:false});
     if(!trainingFormResolution.valid)return json(res,400,{error:'Stored permanent Pokémon Form state is not valid.',formResolution:trainingFormResolution});
     const species=trainingFormResolution.species;
+    const activeFormResolution=resolveSpeciesFormState({species:baseSpecies,pokemon,payload,includeActive:true});
+    const activeSpecies=activeFormResolution.valid?activeFormResolution.species:species;
+    const activeHeldItem=resolvePokemonHeldItem({rulesetId,pokemon,species:baseSpecies}).effect;
+    const currentAbilityRecords=resolveCreatureAbilityRecords({pokemon,species:activeSpecies,rulesetId,heldItemEffect:activeHeldItem});
     const ruleset=definitions.getRuleset(rulesetId);
     const september2015Enabled=!!ruleset?.packs?.some(p=>p.enabled && p.pack_id==='ptu-september-2015-playtest');
     const earned=Number(details.tutorPointsEarned??0); const spent=Number(details.tutorPointsSpent??0); const remaining=Math.max(0,earned-spent);
@@ -1051,13 +1095,13 @@ async function handleApi(req,res,url){
       const previous=owned.filter(x=>x.id===edge.id); const nextRank=previous.length+1;
       const repeatable=/may be taken multiple times|may be taken up to|\[ranked/i.test(`${edge.effect||''} ${edge.rawText||''}`) || !!edge.prerequisiteSemantics?.rank_asts?.length;
       const maxRank=edge.prerequisiteSemantics?.rank_asts?.length||(/up to three times/i.test(edge.effect||'')?3:(repeatable?99:1));
-      const prereq=evaluatePokeEdgePrerequisite(edge,{level:pokemon.level,capabilities:species.capabilities||[],abilities:details.abilities||[],abilityKeywordLookup,rank:nextRank,ownedPokeEdges:owned,statAllocations:details.statAllocations||{}});
+      const prereq=evaluatePokeEdgePrerequisite(edge,{level:pokemon.level,capabilities:species.capabilities||[],abilities:capabilityKey(edge.id)==='advanced-connection'?currentAbilityRecords.map(record=>record.name):(details.abilities||[]),abilityKeywordLookup,rank:nextRank,ownedPokeEdges:owned,statAllocations:details.statAllocations||{}});
       const cost=parseTutorPointCost(edge.raw?.cost_text||edge.raw?.cost||'') || parseTutorPointCost(edge.rawText||'') || 1;
       const exhausted=previous.length>=maxRank;
       const targetOptions=buildPokeEdgeTargetOptions({edge,pokemon,species,rulesetId});
       const edgeKey=capabilityKey(edge.id);
-      const targetRequired=['advanced-mobility','capability-training','accuracy-training','skill-improvement'].includes(edgeKey);
-      const targetKind=edgeKey==='accuracy-training'?'move':edgeKey==='skill-improvement'?'skill':targetRequired?'capability':null;
+      const targetRequired=['advanced-mobility','capability-training','accuracy-training','skill-improvement','ability-mastery','advanced-connection'].includes(edgeKey);
+      const targetKind=edgeKey==='accuracy-training'?'move':edgeKey==='skill-improvement'?'skill':['ability-mastery','advanced-connection'].includes(edgeKey)?'ability':targetRequired?'capability':null;
       const allocationMeta=statAllocationTargetMeta(edge,species,details);
       return {id:edge.id,name:edge.name,cost,prerequisites:edge.prerequisites||edge.raw?.prerequisites_text||null,effect:edge.effect||edge.raw?.effect_text||null,
         sourceId:edge.sourceId,sourcePage:edge.sourcePage,automationLevel:edge.semanticAutomation?.level||'manual_text',prerequisite:prereq,
@@ -1072,7 +1116,7 @@ async function handleApi(req,res,url){
     }
     return json(res,200,{rulesetId,species:{id:species.id,name:species.name,types:species.types||[]},tutorPoints:{earned,spent,remaining},
       tutorMovePool:{used:poolUsed,limit:poolLimit,remaining:Math.max(0,poolLimit-poolUsed)},september2015TutorRestrictions:september2015Enabled,
-      edges,moveTeaching});
+      moveSlots:{used:pokemonMoveSlotsUsed(knownMoves),limit:Math.max(0,Number(details.moveLimitEffective??6))},edges,moveTeaching});
   }
   if(req.method==='POST' && url.pathname==='/api/pokemon/training-action-preview'){
     const payload=await bodyJson(req);
@@ -1085,6 +1129,10 @@ async function handleApi(req,res,url){
     const trainingActionFormResolution=resolveSpeciesFormState({species:baseSpecies,pokemon,payload,includeActive:false});
     if(!trainingActionFormResolution.valid)return json(res,400,{error:'Stored permanent Pokémon Form state is not valid.',formResolution:trainingActionFormResolution});
     const species=trainingActionFormResolution.species;
+    const activeFormResolution=resolveSpeciesFormState({species:baseSpecies,pokemon,includeActive:true});
+    const activeSpecies=activeFormResolution.valid?activeFormResolution.species:species;
+    const activeHeldItem=resolvePokemonHeldItem({rulesetId,pokemon,species:baseSpecies}).effect;
+    const currentAbilityRecords=()=>resolveCreatureAbilityRecords({pokemon:{...pokemon,details},species:activeSpecies,rulesetId,heldItemEffect:activeHeldItem});
     details.moves=Array.isArray(details.moves)?details.moves:[]; details.pokeEdges=Array.isArray(details.pokeEdges)?details.pokeEdges:[];
     details.grantedAbilities=Array.isArray(details.grantedAbilities)?details.grantedAbilities:[];
     details.trainingHistory=Array.isArray(details.trainingHistory)?details.trainingHistory:[];
@@ -1101,7 +1149,7 @@ async function handleApi(req,res,url){
         const maxRank=edge.prerequisiteSemantics?.rank_asts?.length||(/up to three times/i.test(edge.effect||'')?3:(repeatable?99:1));
         if(previous.length>=maxRank) errors.push(`${edge.name} cannot be taken another time.`);
         const abilityKeywordLookup=(abilityName,keyword)=>{ const slug=String(abilityName||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,''); const a=definitions.getResolved({rulesetId,kind:'abilities',id:slug}); return `${a?.effect||''} ${a?.rawText||''}`.toLowerCase().includes(String(keyword||'').toLowerCase()); };
-        const prereq=evaluatePokeEdgePrerequisite(edge,{level:pokemon.level,capabilities:species.capabilities||[],abilities:details.abilities||[],abilityKeywordLookup,rank:nextRank,ownedPokeEdges:owned,statAllocations:details.statAllocations||{}});
+        const prereq=evaluatePokeEdgePrerequisite(edge,{level:pokemon.level,capabilities:species.capabilities||[],abilities:capabilityKey(edge.id)==='advanced-connection'?currentAbilityRecords().map(record=>record.name):(details.abilities||[]),abilityKeywordLookup,rank:nextRank,ownedPokeEdges:owned,statAllocations:details.statAllocations||{}});
         if(prereq.valid===false && !payload.gmOverride) errors.push(...prereq.reasons);
         if(prereq.valid==null && !payload.manualConfirm && !payload.gmOverride) errors.push('This Poké Edge has a prerequisite that requires manual confirmation.');
         cost=edge.id==='mixed-power'?2:(parseTutorPointCost(edge.raw?.cost_text||edge.rawText||'')||1);
@@ -1115,11 +1163,11 @@ async function handleApi(req,res,url){
           else errors.push('Attack Conflict must be permanently linked to Attack or Special Attack.');
           if(details.pokeEdges.some(x=>x.id==='attack-conflict')) errors.push('Attack Conflict is already owned.');
           targetId=targetStat||''; targetLabel=targetStat?(targetStat==='attack'?'Attack':'Special Attack'):''; targetKind='stat';
-        } else if(['advanced-mobility','capability-training','accuracy-training','skill-improvement'].includes(edgeKey)){
+        } else if(['advanced-mobility','capability-training','accuracy-training','skill-improvement','ability-mastery','advanced-connection'].includes(edgeKey)){
           const options=buildPokeEdgeTargetOptions({edge,pokemon:{...pokemon,details},species,rulesetId});
           targetId=capabilityKey(payload.targetId||payload.targetNote||'');
           const selected=options.find(o=>o.id===targetId);
-          const targetName=edgeKey==='accuracy-training'?'Move':edgeKey==='skill-improvement'?'Skill':'Capability';
+          const targetName=edgeKey==='accuracy-training'?'Move':edgeKey==='skill-improvement'?'Skill':['ability-mastery','advanced-connection'].includes(edgeKey)?'Ability':'Capability';
           if(!selected) errors.push(`${edge.name} requires a valid unused ${targetName} target.`);
           else { targetLabel=selected.label; targetKind=selected.kind; }
         } else {
@@ -1135,7 +1183,8 @@ async function handleApi(req,res,url){
         }
         if(!errors.length){
           const targetNote=targetLabel || (targetStat?(targetStat==='attack'?'Attack':'Special Attack'):String(payload.targetNote||''));
-          resultRecord={instanceId:`edge-${Date.now()}-${Math.random().toString(36).slice(2,8)}`,id:edge.id,name:edge.name,rank:nextRank,cost:payload.freeGrant?0:cost,targetNote,targetId,targetKind,targetStat,statAllocation,statAllocationPoints:allocationMeta.allocationRequired?allocationMeta.allocationPoints:null,sourceVersionId:edge.versionId,sourceId:edge.sourceId,
+          const selectedOption=edgeKey==='advanced-connection'?buildPokeEdgeTargetOptions({edge,pokemon:{...pokemon,details},species,rulesetId}).find(option=>option.id===targetId):null;
+          resultRecord={instanceId:`edge-${Date.now()}-${Math.random().toString(36).slice(2,8)}`,id:edge.id,name:edge.name,rank:nextRank,cost:payload.freeGrant?0:cost,targetNote,targetId,targetKind,targetStat,connectionAbilityId:selectedOption?.id||null,connectionMoveId:selectedOption?.connectionMoveId||null,connectionMoveName:selectedOption?.connectionMoveName||null,connectionMoveVersionId:selectedOption?.connectionMoveVersionId||null,statAllocation,statAllocationPoints:allocationMeta.allocationRequired?allocationMeta.allocationPoints:null,sourceVersionId:edge.versionId,sourceId:edge.sourceId,
             prerequisites:edge.prerequisites||edge.raw?.prerequisites_text||null,effect:edge.effect||edge.raw?.effect_text||null,gmOverride:!!payload.gmOverride,manualConfirmed:!!payload.manualConfirm,acquiredAt:new Date().toISOString()};
           const projectedDetails=JSON.parse(JSON.stringify(details)); projectedDetails.pokeEdges.push(resultRecord);
           if(['realized-potential','mixed-sweeper','underdogs-strength'].includes(edgeKey)){
@@ -1144,6 +1193,15 @@ async function handleApi(req,res,url){
           }
           if(errors.length) resultRecord=null;
           else details.pokeEdges.push(resultRecord);
+          if(resultRecord && edgeKey==='ability-mastery'){
+            details.grantedAbilities.push({name:targetLabel,source:'poke_edge',sourceId:'ability-mastery',sourceVersionId:edge.versionId,grantedAt:new Date().toISOString()});
+          }
+          if(resultRecord&&edgeKey==='advanced-connection'){
+            const existing=details.moves.find(move=>String(move.id||move.name||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')===resultRecord.connectionMoveId);
+            const connectionGrant={edgeInstanceId:resultRecord.instanceId,abilityId:resultRecord.connectionAbilityId,moveSlotExempt:true};
+            if(existing)existing.connectionGrant=connectionGrant;
+            else details.moves.push({id:resultRecord.connectionMoveId,name:resultRecord.connectionMoveName,source:'advanced_connection',learnedAt:pokemon.level,countsAsNatural:false,cost:0,connectionGrant});
+          }
           if(resultRecord && edge.id==='mixed-power' && !details.grantedAbilities.some(a=>String(typeof a==='string'?a:a?.name).toLowerCase()==='twisted power')){
             details.grantedAbilities.push({name:'Twisted Power',source:'poke_edge',sourceId:'mixed-power',sourceVersionId:edge.versionId,grantedAt:new Date().toISOString()});
           }
@@ -1151,6 +1209,12 @@ async function handleApi(req,res,url){
           if(resultRecord && !payload.freeGrant){details.tutorPointsSpent=spent+cost; remaining-=cost;}
         }
       }
+    } else if(payload.action==='revalidate_connections'){
+      const available=new Set(currentAbilityRecords().map(record=>record.id));
+      const removed=[];
+      for(let i=details.pokeEdges.length-1;i>=0;i--){const edge=details.pokeEdges[i];if(capabilityKey(edge?.id)==='advanced-connection'&&!available.has(capabilityKey(edge.connectionAbilityId||edge.targetId))){details.pokeEdges.splice(i,1);const refund=Math.max(0,Number(edge.cost||0));details.tutorPointsSpent=Math.max(0,Number(details.tutorPointsSpent||0)-refund);removeDerivedEffectsForRefund(details,edge);removed.push({...edge,refundedTutorPoints:refund});}}
+      remaining=Math.max(0,earned-Number(details.tutorPointsSpent||0));
+      resultRecord={removedConnections:removed,refundedTutorPoints:removed.reduce((sum,edge)=>sum+edge.refundedTutorPoints,0)};
     } else if(payload.action==='refund_edge'){
       const instanceId=String(payload.edgeInstanceId||'');
       let idx=instanceId?details.pokeEdges.findIndex(e=>String(e.instanceId||'')===instanceId):-1;
@@ -1162,6 +1226,11 @@ async function handleApi(req,res,url){
         details.pokeEdges.splice(idx,1);
         details.tutorPointsSpent=Math.max(0,spent-refund); remaining=Math.max(0,earned-details.tutorPointsSpent);
         removeDerivedEffectsForRefund(details,removed);
+      if(capabilityKey(removed?.id)==='ability-mastery'){
+          const available=new Set(currentAbilityRecords().map(record=>record.id));
+          for(let i=details.pokeEdges.length-1;i>=0;i--){const edge=details.pokeEdges[i];if(capabilityKey(edge?.id)==='advanced-connection'&&!available.has(capabilityKey(edge.connectionAbilityId||edge.targetId))){details.pokeEdges.splice(i,1);const edgeRefund=Math.max(0,Number(edge.cost||0));details.tutorPointsSpent=Math.max(0,Number(details.tutorPointsSpent||0)-edgeRefund);removeDerivedEffectsForRefund(details,edge);}}
+          remaining=Math.max(0,earned-Number(details.tutorPointsSpent||0));
+        }
         resultRecord={...removed,refundedTutorPoints:refund,refundedAt:new Date().toISOString()};
       }
     } else if(payload.action==='learn_move'){
@@ -1174,8 +1243,9 @@ async function handleApi(req,res,url){
       if(details.moves.some(m=>slug(m.id||m.name)===moveId)) errors.push(`${move?.name||moveId} is already known.`);
       let replaceIndex=-1;
       if(payload.replaceMoveId) replaceIndex=details.moves.findIndex(m=>slug(m.id||m.name)===String(payload.replaceMoveId));
+      if(replaceIndex>=0&&details.moves[replaceIndex]?.connectionGrant?.moveSlotExempt) errors.push('A Move granted by Advanced Connection cannot be replaced while its Poké Edge is active.');
       const moveLimit=Math.max(0,Number(details.moveLimitEffective??6));
-      if(details.moves.length>=moveLimit && replaceIndex<0) errors.push(`Current Move Limit is ${moveLimit}; choose a known Move to replace.`);
+      if(pokemonMoveSlotsUsed(details.moves)>=moveLimit && replaceIndex<0) errors.push(`Current Move Limit is ${moveLimit}; choose a known Move to replace.`);
       const natural=method==='tutor' && isNaturalTutorMove(species,source?.move||move?.name||moveId);
       const levelUpIds=new Set((species.levelUpMoves||[]).map(m=>slug(m.move_id||m.move)));
       const countsAsNatural=natural||levelUpIds.has(moveId); const poolLimit=Math.max(0,Number(details.tutorMovePoolLimit??3));
