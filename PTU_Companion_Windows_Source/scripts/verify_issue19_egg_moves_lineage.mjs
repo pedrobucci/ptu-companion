@@ -34,4 +34,4 @@ try{
     assert(source.includes("method==='egg_tutor'?eggTutorMoves"),'Egg Tutor preview does not use inherited list in '+name);
   }
   console.log('Issue #19 verified: Zoroark inherits Memento, duplicate moves are removed, first Egg Tutor is accepted, second is blocked, and Windows/Android rule paths match.');
-}finally{child.kill();await rm(dataDir,{recursive:true,force:true});}
+}finally{if(child.exitCode===null){child.kill();await new Promise(resolve=>child.once('exit',resolve));}await rm(dataDir,{recursive:true,force:true});}
