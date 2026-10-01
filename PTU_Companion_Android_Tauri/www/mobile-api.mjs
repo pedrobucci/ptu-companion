@@ -1,4 +1,4 @@
-import {buildPokemonPreview, buildPokemonProgressionPreview, buildPokemonRestatPreview, autoBalancedAllocations, NATURES, parseTutorPointCost, evaluatePokeEdgePrerequisite, moveTrainingPoolUsage, isNaturalTutorMove, tutorRestrictionForMove, relationExemptionsFromPokeEdges, isUnderdogPokemon, pokeEdgeRequiresUnderdog, levelAbilitySlots, eligibleAbilities, applyNature, normalizeBaseStats, normalizeAllocations, STAT_KEYS, validateBaseRelations} from './rules/pokemon-engine.mjs';
+import {buildPokemonPreview, buildPokemonProgressionPreview, buildPokemonRestatPreview, resolvePokemonMoveLimit, autoBalancedAllocations, NATURES, parseTutorPointCost, evaluatePokeEdgePrerequisite, moveTrainingPoolUsage, isNaturalTutorMove, tutorRestrictionForMove, relationExemptionsFromPokeEdges, isUnderdogPokemon, pokeEdgeRequiresUnderdog, levelAbilitySlots, eligibleAbilities, applyNature, normalizeBaseStats, normalizeAllocations, STAT_KEYS, validateBaseRelations} from './rules/pokemon-engine.mjs';
 import {getPokemonModifierSummary, resolveMoveDamage} from './rules/modifier-engine.mjs';
 import {resolveHeldItemEffect, applyHeldItemToTypeProfile, applyHeldItemToEffectiveStats} from './rules/held-item-engine.mjs';
 import {resolveTrainerModel} from './rules/trainer-engine.mjs';
@@ -400,6 +400,7 @@ function resolvePokemonHeldItem({rulesetId,pokemon,species=null}={}){
 }
 
 const abilitySlug=v=>String(v||'').trim().toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+function moveLimitAbilityDefinitions(rulesetId,names=[]){return [...new Set((names||[]).map(value=>abilitySlug(typeof value==='string'?value:value?.name)).filter(Boolean))].map(id=>definitions.getResolved({rulesetId,kind:'abilities',id})).filter(Boolean);}
 function abilitySourceForIndex(index){
   if(index===0) return {kind:'species_starting',label:'Starting Ability',unlockLevel:1};
   if(index===1) return {kind:'level_choice',label:'Level 20 Ability',unlockLevel:20};
@@ -702,7 +703,7 @@ function resolvedCreatureModel({pokemon,species,rulesetId,heldItemEffect=null,he
     pokemonId:pokemon?.id||null,speciesId:species?.id||null,level:Number(pokemon?.level||1),
     stats:{stored:{...(details.finalStats||{})},permanent:{...edgeStats.permanentFinal},effective:effectiveStats,breakdown:edgeStats},
     skills:skillResolution.skills,skillModifiers:skillResolution.applied,
-    moveLimit:{base:Number(details.moveLimitBase??6),modifier:Number(details.moveLimitModifier??0),effective:Number(details.moveLimitEffective??6)},
+    moveLimit:resolvePokemonMoveLimit({base:details.moveLimitBase??6,modifier:details.moveLimitModifier??0,abilities}),
     abilities,modifierSummary,
     capabilities:capabilityResolution.capabilities,capabilityModifiers:capabilityResolution.applied,accuracyTraining,
     heldItem:pokemon?.heldItem?{name:pokemon.heldItem,definition:heldItemDefinition,effect:heldItemEffect}:null,
@@ -900,17 +901,18 @@ async function handleApi(req,res,url){
     const allocations=payload.autoAllocate
       ? autoBalancedAllocations({baseStats:species.baseStats,nature:payload.nature,level:payload.level})
       : payload.allocations;
+    const moveLimitAbilities=moveLimitAbilityDefinitions(rulesetId,payload.selectedAbilities||[]);
     let preview=buildPokemonPreview({
       species,level:payload.level,nature:payload.nature,allocations,
       selectedAbilities:payload.selectedAbilities,selectedMoves:payload.autoSelectMoves?[]:payload.selectedMoves,
-      incomingEvolution,preEvolutionSpecies,gmMoves:payload.gmMoves,
+      incomingEvolution,preEvolutionSpecies,gmMoves:payload.gmMoves,moveLimitAbilities,
       moveLimitModifier:payload.moveLimitModifier,gmOverride:payload.gmOverride
     });
     if(payload.autoSelectMoves){
       preview=buildPokemonPreview({
         species,level:payload.level,nature:payload.nature,allocations,
         selectedAbilities:payload.selectedAbilities,selectedMoves:preview.defaultMoves,
-        incomingEvolution,preEvolutionSpecies,gmMoves:payload.gmMoves,
+        incomingEvolution,preEvolutionSpecies,gmMoves:payload.gmMoves,moveLimitAbilities,
         moveLimitModifier:payload.moveLimitModifier,gmOverride:payload.gmOverride
       });
     }
@@ -940,12 +942,13 @@ async function handleApi(req,res,url){
       if(!selectedEvolution) return json(res,400,{error:'Selected evolution is not an outgoing evolution from the current Species'});
     }
     const experienceTable=definitions.getPokemonExperienceTable();
+    const moveLimitNames=[...(payload.selectedAbilities||details.abilities||[]),...(details.grantedAbilities||[])];
     const preview=buildPokemonProgressionPreview({
       pokemon,species,experienceTable,expGain:payload.expGain,targetLevel:payload.targetLevel,newStatAllocations:payload.newStatAllocations,
       selectedAbilities:payload.selectedAbilities,selectedMoves:payload.selectedMoves,
       evolutionTarget:selectedEvolution?.target||null,evolutionEdge:selectedEvolution||null,evolutionAllocations:payload.evolutionAllocations,
       manualEvolutionCondition:!!payload.manualEvolutionCondition,gmOverride:!!payload.gmOverride,
-      baseRelationExemptStats:relationExemptionsFromPokeEdges(details.pokeEdges||[])
+      baseRelationExemptStats:relationExemptionsFromPokeEdges(details.pokeEdges||[]),moveLimitAbilities:moveLimitAbilityDefinitions(rulesetId,moveLimitNames)
     });
     const strengthOwned=(details.pokeEdges||[]).some(e=>capabilityKey(e?.id||e?.name)==='underdogs-strength');
     if(selectedEvolution&&strengthOwned&&!payload.gmOverride){
@@ -1104,7 +1107,9 @@ async function handleApi(req,res,url){
     details.pokeEdges=Array.isArray(details.pokeEdges)?details.pokeEdges:[];
     for(let i=details.pokeEdges.length-1;i>=0;i--){const edge=details.pokeEdges[i];if(capabilityKey(edge?.id)==='advanced-connection'&&!activeAbilities.has(capabilityKey(edge.connectionAbilityId||edge.targetId))){details.pokeEdges.splice(i,1);const refund=Math.max(0,Number(edge.cost||0));details.tutorPointsSpent=Math.max(0,Number(details.tutorPointsSpent||0)-refund);removeDerivedEffectsForRefund(details,edge);removedConnections.push({...edge,refundedTutorPoints:refund});}}
     details.tutorPointsRemaining=Math.max(0,Number(details.tutorPointsEarned||0)-Number(details.tutorPointsSpent||0));
-    return json(res,200,{valid:true,details,abilitySlots:slots,abilities:resolveCreatureAbilityRecords({pokemon:correctedPokemon,species,rulesetId})});
+    const updatedAbilities=resolveCreatureAbilityRecords({pokemon:correctedPokemon,species:activeResolution.valid?activeResolution.species:species,rulesetId,heldItemEffect:held});
+    details.moveLimitEffective=resolvePokemonMoveLimit({base:details.moveLimitBase??6,modifier:details.moveLimitModifier??0,abilities:updatedAbilities}).effective;
+    return json(res,200,{valid:true,details,abilitySlots:slots,abilities:updatedAbilities});
   }
 
 
@@ -1231,7 +1236,7 @@ async function handleApi(req,res,url){
     }
     return json(res,200,{rulesetId,species:{id:species.id,name:species.name,types:species.types||[]},tutorPoints:{earned,spent,remaining},
       tutorMovePool:{used:poolUsed,limit:poolLimit,remaining:Math.max(0,poolLimit-poolUsed)},september2015TutorRestrictions:september2015Enabled,
-      moveSlots:{used:pokemonMoveSlotsUsed(knownMoves),limit:Math.max(0,Number(details.moveLimitEffective??6))},edges,moveTeaching});
+      moveSlots:{used:pokemonMoveSlotsUsed(knownMoves),limit:resolvePokemonMoveLimit({base:details.moveLimitBase??6,modifier:details.moveLimitModifier??0,abilities:currentAbilityRecords}).effective},edges,moveTeaching});
   }
   if(req.method==='POST' && url.pathname==='/api/pokemon/training-action-preview'){
     const payload=await bodyJson(req);
@@ -1248,6 +1253,8 @@ async function handleApi(req,res,url){
     const activeSpecies=activeFormResolution.valid?activeFormResolution.species:species;
     const activeHeldItem=resolvePokemonHeldItem({rulesetId,pokemon,species:baseSpecies}).effect;
     const currentAbilityRecords=()=>resolveCreatureAbilityRecords({pokemon:{...pokemon,details},species:activeSpecies,rulesetId,heldItemEffect:activeHeldItem});
+    const currentMoveLimit=resolvePokemonMoveLimit({base:details.moveLimitBase??6,modifier:details.moveLimitModifier??0,abilities:currentAbilityRecords()});
+    details.moveLimitEffective=currentMoveLimit.effective;
     details.moves=Array.isArray(details.moves)?details.moves:[]; details.pokeEdges=Array.isArray(details.pokeEdges)?details.pokeEdges:[];
     details.grantedAbilities=Array.isArray(details.grantedAbilities)?details.grantedAbilities:[];
     details.trainingHistory=Array.isArray(details.trainingHistory)?details.trainingHistory:[];
@@ -1359,7 +1366,7 @@ async function handleApi(req,res,url){
       let replaceIndex=-1;
       if(payload.replaceMoveId) replaceIndex=details.moves.findIndex(m=>slug(m.id||m.name)===String(payload.replaceMoveId));
       if(replaceIndex>=0&&details.moves[replaceIndex]?.connectionGrant?.moveSlotExempt) errors.push('A Move granted by Advanced Connection cannot be replaced while its Poké Edge is active.');
-      const moveLimit=Math.max(0,Number(details.moveLimitEffective??6));
+      const moveLimit=currentMoveLimit.effective;
       if(pokemonMoveSlotsUsed(details.moves)>=moveLimit && replaceIndex<0) errors.push(`Current Move Limit is ${moveLimit}; choose a known Move to replace.`);
       const natural=method==='tutor' && isNaturalTutorMove(species,source?.move||move?.name||moveId);
       const levelUpIds=new Set((species.levelUpMoves||[]).map(m=>slug(m.move_id||m.move)));
@@ -1383,6 +1390,7 @@ async function handleApi(req,res,url){
     } else errors.push('Unsupported training action.');
     details.tutorPointsEarned=earned; details.tutorPointsRemaining=Math.max(0,earned-Number(details.tutorPointsSpent||spent));
     if(!errors.length) details.trainingHistory.push({date:new Date().toISOString(),action:payload.action,cost:payload.freeGrant?0:cost,record:resultRecord});
+    details.moveLimitEffective=resolvePokemonMoveLimit({base:details.moveLimitBase??6,modifier:details.moveLimitModifier??0,abilities:currentAbilityRecords()}).effective;
     const resolvedStatEffects=resolvePokemonPokeEdgeStats({pokemon:{...pokemon,details},species,detailsOverride:details});
     const resolvedSkills=resolvePokemonSkills(species,details);
     return json(res,200,{valid:errors.length===0,errors,cost,tutorPoints:{earned,spent:Number(details.tutorPointsSpent||spent),remaining:details.tutorPointsRemaining},details,resultRecord,resolvedStatEffects,resolvedSkills});
