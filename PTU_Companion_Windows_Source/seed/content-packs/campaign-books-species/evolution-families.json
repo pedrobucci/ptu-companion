@@ -1,0 +1,449 @@
+[
+  {
+    "id": "evofam-books-alola-lilligant-default",
+    "source_id": "books-alola-lilligant",
+    "edges_status": "safe",
+    "stages": [
+      {
+        "stage": 1,
+        "species_name": "Petilil",
+        "min_level": null,
+        "condition_text": null,
+        "species_ref_key": "petilil"
+      },
+      {
+        "stage": 2,
+        "species_name": "Lilligant",
+        "min_level": 25,
+        "condition_text": null,
+        "species_ref_key": "lilligant"
+      }
+    ],
+    "raw_texts": [
+      "1 - Petilil 2 - Lilligant Minimum 25"
+    ]
+  },
+  {
+    "id": "evofam-books-aron-desert-default",
+    "source_id": "books-aron-desert",
+    "edges_status": "safe",
+    "stages": [
+      {
+        "stage": 1,
+        "species_name": "Aron (Desert)",
+        "min_level": null,
+        "condition_text": null,
+        "species_ref_key": "aron-desert"
+      },
+      {
+        "stage": 2,
+        "species_name": "Lairon (Desert)",
+        "min_level": 30,
+        "condition_text": null,
+        "species_ref_key": "lairon-desert"
+      },
+      {
+        "stage": 3,
+        "species_name": "Aggron",
+        "min_level": 40,
+        "condition_text": null,
+        "species_ref_key": "aggron"
+      }
+    ],
+    "raw_texts": [
+      "1 - Aron 2 - Lairon Minimum 30 3 - Aggron Minimum 40"
+    ]
+  },
+  {
+    "id": "evofam-books-babee-default",
+    "source_id": "books-babee",
+    "edges_status": "safe",
+    "stages": [
+      {
+        "stage": 1,
+        "species_name": "Babee",
+        "min_level": null,
+        "condition_text": null,
+        "species_ref_key": "babee"
+      }
+    ],
+    "raw_texts": [
+      "1 - Babee"
+    ]
+  },
+  {
+    "id": "evofam-books-budice-default",
+    "source_id": "books-budice",
+    "edges_status": "manual",
+    "stages": [
+      {
+        "stage": 1,
+        "species_name": "Budice",
+        "min_level": null,
+        "condition_text": null,
+        "species_ref_key": "budice"
+      },
+      {
+        "stage": 2,
+        "species_name": "Fromint",
+        "min_level": 15,
+        "condition_text": null,
+        "species_ref_key": "fromint"
+      },
+      {
+        "stage": 3,
+        "species_name": "Aromist",
+        "min_level": 30,
+        "condition_text": null,
+        "species_ref_key": null
+      }
+    ],
+    "raw_texts": [
+      "1 - Budice 2 - Fromint Minimum 15 3 - Aromist Minimum 30"
+    ]
+  },
+  {
+    "id": "evofam-books-fire-giant-honedge-default",
+    "source_id": "books-fire-giant-honedge",
+    "edges_status": "safe",
+    "stages": [
+      {
+        "stage": 1,
+        "species_name": "Fire Giant Honedge",
+        "min_level": null,
+        "condition_text": null,
+        "species_ref_key": "fire-giant-honedge"
+      },
+      {
+        "stage": 2,
+        "species_name": "Fire Giant Doublade",
+        "min_level": 25,
+        "condition_text": null,
+        "species_ref_key": "fire-giant-doublade"
+      },
+      {
+        "stage": 3,
+        "species_name": "Fire Giant Aegislash",
+        "min_level": 40,
+        "condition_text": null,
+        "species_ref_key": "fire-giant-aegislash"
+      }
+    ],
+    "raw_texts": [
+      "1 - Honedge 2 - Doublade Minimum 25 3 - Aegislash Minimum 40"
+    ]
+  },
+  {
+    "id": "evofam-books-grifflet-default",
+    "source_id": "books-grifflet",
+    "edges_status": "safe",
+    "stages": [
+      {
+        "stage": 1,
+        "species_name": "Grifflet",
+        "min_level": null,
+        "condition_text": null,
+        "species_ref_key": "grifflet"
+      },
+      {
+        "stage": 2,
+        "species_name": "Gryphault",
+        "min_level": 15,
+        "condition_text": null,
+        "species_ref_key": "gryphault"
+      },
+      {
+        "stage": 3,
+        "species_name": "Seismogryph",
+        "min_level": 30,
+        "condition_text": null,
+        "species_ref_key": "seismogryph"
+      }
+    ],
+    "raw_texts": [
+      "1 - Grifflet 2 - Gryphault Minimum 15 3 - Seismogryph minimum 30"
+    ]
+  },
+  {
+    "id": "evofam-books-icynib-default",
+    "source_id": "books-icynib",
+    "edges_status": "safe",
+    "stages": [
+      {
+        "stage": 1,
+        "species_name": "Icynib",
+        "min_level": null,
+        "condition_text": null,
+        "species_ref_key": "icynib"
+      },
+      {
+        "stage": 2,
+        "species_name": "Featherice",
+        "min_level": 15,
+        "condition_text": null,
+        "species_ref_key": "featherice"
+      },
+      {
+        "stage": 3,
+        "species_name": "Wintryplume",
+        "min_level": 30,
+        "condition_text": null,
+        "species_ref_key": "wintryplume"
+      }
+    ],
+    "raw_texts": [
+      "1 - Icynib 2 - Featherice Minimum 15 3 - Wintryplume Minimum 30"
+    ]
+  },
+  {
+    "id": "evofam-books-izaguiraze-default",
+    "source_id": "books-izaguiraze",
+    "edges_status": "safe",
+    "stages": [
+      {
+        "stage": 1,
+        "species_name": "Scyther",
+        "min_level": null,
+        "condition_text": null,
+        "species_ref_key": "scyther"
+      },
+      {
+        "stage": 2,
+        "species_name": "Izaguiraze",
+        "min_level": 30,
+        "condition_text": null,
+        "species_ref_key": "izaguiraze"
+      }
+    ],
+    "raw_texts": [
+      "1 - Scyther 2 - Izaguiraze minimum 30"
+    ]
+  },
+  {
+    "id": "evofam-books-lopunny-iceland",
+    "source_id": "books-lopunny",
+    "edges_status": "safe",
+    "stages": [
+      {
+        "stage": 1,
+        "species_name": "Buneary (Iceland)",
+        "min_level": null,
+        "condition_text": null,
+        "species_ref_key": "buneary-iceland"
+      },
+      {
+        "stage": 2,
+        "species_name": "Lopunny (Iceland)",
+        "min_level": 20,
+        "condition_text": null,
+        "species_ref_key": "lopunny-iceland"
+      }
+    ],
+    "raw_texts": [
+      "1 - Buneary 2 - Lopunny Minimum 20"
+    ]
+  },
+  {
+    "id": "evofam-books-lopunny-delta",
+    "source_id": "books-lopunny",
+    "edges_status": "manual",
+    "stages": [
+      {
+        "stage": 1,
+        "species_name": "Buneary (Delta)",
+        "min_level": null,
+        "condition_text": null,
+        "species_ref_key": null
+      },
+      {
+        "stage": 2,
+        "species_name": "Lopunny (Delta Alternative)",
+        "min_level": 20,
+        "condition_text": null,
+        "species_ref_key": "lopunny-delta-alternative"
+      }
+    ],
+    "raw_texts": [
+      "1 - Buneary (Delta) 2 - Lopunny Minimum 20"
+    ]
+  },
+  {
+    "id": "evofam-books-lopunny-omega",
+    "source_id": "books-lopunny",
+    "edges_status": "safe",
+    "stages": [
+      {
+        "stage": 1,
+        "species_name": "Buneary (Omega)",
+        "min_level": null,
+        "condition_text": null,
+        "species_ref_key": "buneary-omega"
+      },
+      {
+        "stage": 2,
+        "species_name": "Lopunny (Omega)",
+        "min_level": 20,
+        "condition_text": null,
+        "species_ref_key": "lopunny-omega"
+      }
+    ],
+    "raw_texts": [
+      "1 - Buneary 2 - Lopunny Minimum 20"
+    ]
+  },
+  {
+    "id": "evofam-books-miroboros-default",
+    "source_id": "books-miroboros",
+    "edges_status": "safe",
+    "stages": [
+      {
+        "stage": 1,
+        "species_name": "Miroboros",
+        "min_level": null,
+        "condition_text": null,
+        "species_ref_key": "miroboros"
+      },
+      {
+        "stage": 2,
+        "species_name": "Shieldra",
+        "min_level": 20,
+        "condition_text": null,
+        "species_ref_key": "shieldra"
+      },
+      {
+        "stage": 3,
+        "species_name": "Hydrusa",
+        "min_level": 40,
+        "condition_text": null,
+        "species_ref_key": "hydrusa"
+      }
+    ],
+    "raw_texts": [
+      "1 - Miroboros 2 - Shieldra Level 20 3 - Hydrusa Level 40"
+    ]
+  },
+  {
+    "id": "evofam-books-noirela-default",
+    "source_id": "books-noirela",
+    "edges_status": "safe",
+    "stages": [
+      {
+        "stage": 1,
+        "species_name": "Smoochum",
+        "min_level": null,
+        "condition_text": null,
+        "species_ref_key": "smoochum"
+      },
+      {
+        "stage": 2,
+        "species_name": "Jynx",
+        "min_level": 30,
+        "condition_text": null,
+        "species_ref_key": "jynx"
+      },
+      {
+        "stage": 3,
+        "species_name": "Noirela",
+        "min_level": 40,
+        "condition_text": null,
+        "species_ref_key": "noirela"
+      }
+    ],
+    "raw_texts": [
+      "1 - Smoochum 2 - Jynx Minimum 30 3 - Noirela Minimum 40"
+    ]
+  },
+  {
+    "id": "evofam-books-scarlet-and-violet-default",
+    "source_id": "books-scarlet-and-violet",
+    "edges_status": "safe",
+    "stages": [
+      {
+        "stage": 1,
+        "species_name": "Sprigatito",
+        "min_level": null,
+        "condition_text": null,
+        "species_ref_key": "sprigatito"
+      },
+      {
+        "stage": 2,
+        "species_name": "Floragato",
+        "min_level": 15,
+        "condition_text": null,
+        "species_ref_key": "floragato"
+      },
+      {
+        "stage": 3,
+        "species_name": "Meowscarada",
+        "min_level": 30,
+        "condition_text": null,
+        "species_ref_key": "meowscarada"
+      }
+    ],
+    "raw_texts": [
+      "1 - Sprigatito 2 - Floragato Minimum 15 3 - Meowscarada Minimum 30"
+    ]
+  },
+  {
+    "id": "evofam-books-waifu-pool-2",
+    "source_id": "books-waifu-pool",
+    "edges_status": "safe",
+    "stages": [
+      {
+        "stage": 1,
+        "species_name": "Ralts (Waifu Pool 2)",
+        "min_level": null,
+        "condition_text": null,
+        "species_ref_key": "ralts-waifu-pool-2"
+      },
+      {
+        "stage": 2,
+        "species_name": "Kirlia (Waifu Pool 2)",
+        "min_level": 20,
+        "condition_text": null,
+        "species_ref_key": "kirlia-waifu-pool-2"
+      },
+      {
+        "stage": 3,
+        "species_name": "Gardevoir (Waifu Pool 2)",
+        "min_level": 30,
+        "condition_text": null,
+        "species_ref_key": "gardevoir-waifu-pool-2"
+      }
+    ],
+    "raw_texts": [
+      "1 - Ralts 2 - Kirlia Minimum 20 3 - Gardevoir Minimum 30"
+    ]
+  },
+  {
+    "id": "evofam-books-waifu-pool-3",
+    "source_id": "books-waifu-pool",
+    "edges_status": "safe",
+    "stages": [
+      {
+        "stage": 1,
+        "species_name": "Ralts (Waifu Pool 3)",
+        "min_level": null,
+        "condition_text": null,
+        "species_ref_key": "ralts-waifu-pool-3"
+      },
+      {
+        "stage": 2,
+        "species_name": "Kirlia (Waifu Pool 3)",
+        "min_level": 20,
+        "condition_text": null,
+        "species_ref_key": "kirlia-waifu-pool-3"
+      },
+      {
+        "stage": 3,
+        "species_name": "Gardevoir (Waifu Pool 3)",
+        "min_level": 30,
+        "condition_text": null,
+        "species_ref_key": "gardevoir-waifu-pool-3"
+      }
+    ],
+    "raw_texts": [
+      "1 - Ralts 2 - Kirlia Minimum 20 3 - Gardevoir Minimum 30"
+    ]
+  }
+]
