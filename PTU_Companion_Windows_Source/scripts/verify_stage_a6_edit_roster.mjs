@@ -40,6 +40,7 @@ try {
 }
 
 const appSource=await readFile(new URL('../static-preview/app.js',import.meta.url),'utf8');
+const cssSource=await readFile(new URL('../static-preview/styles.css',import.meta.url),'utf8');
 assert.match(appSource,/async function editRoster\(id=state\.selectedRosterId\)/,'Windows must expose an editor for the selected Roster');
 assert.match(appSource,/Roster identity and capacity can change without removing Pokémon memberships\./,'Roster edit modal must state its non-destructive membership behavior');
 assert.match(appSource,/min:Math\.max\(1,memberCount\)/,'maximum-members input must not encourage a limit below the current membership count');
@@ -50,5 +51,11 @@ assert.match(appSource,/r\.name=name; r\.role=role; r\.maxMembers=max; r\.active
 assert.match(appSource,/✎ Edit Roster/,'Roster screen must expose an Edit Roster action');
 assert.match(appSource,/chip\('HIDDEN','chip-neutral'\)/,'hidden Rosters must remain visible and identifiable in the Roster manager');
 assert.match(appSource,/createRoster,editRoster[^}]*storePokemon/s,'Roster editor must remain exposed to inline UI actions even when later Roster handlers are added');
+assert.match(appSource,/function creatureRosterPortrait\(p\)/,'Creature portraits must derive roster colors from current membership');
+assert.match(appSource,/new Set\(p\.rosterIds\|\|\[\]\)/,'Creature roster rings must not repeat duplicate membership IDs');
+assert.match(appSource,/--roster-ring:conic-gradient\(\$\{stops\}\)/,'Portraits must divide the border among assigned rosters');
+assert.match(appSource,/aria-label="\$\{esc\(`\$\{p\.name\}, Level \$\{p\.level\}, \$\{roster\.label\}`\)\}"/,'Creature cards must announce roster names accessibly');
+assert.match(appSource,/label:'No roster'/,'Cards without roster memberships must expose an accessible empty state');
+assert.match(cssSource,/\.creature-roster-portrait\{[^}]*background:var\(--roster-ring\)/,'Roster colors must appear as a border around the portrait');
 
 console.log('Stage A.6 Windows Roster edit regression OK');
