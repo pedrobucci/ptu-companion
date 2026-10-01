@@ -367,7 +367,7 @@ const TRAINER_STAT_KEYS=['hp','attack','defense','spAttack','spDefense','speed']
 function trainer(){ return state.trainer; }
 function rankValue(name){ return Number(trainer().details?.skillRanks?.[name]||2); }
 function trainerMaxAp(t=trainer()){ return 5+Math.floor(Number(t.level||1)/5); }
-function trainerBoundAp(t=trainer()){return (t?.details?.features||[]).some(f=>slug(f.id||f.name)==='silent-assassin'&&f.bound===true)?2:0;}
+function trainerBoundAp(t=trainer()){return (t?.details?.features||[]).some(f=>pokemonCombatSlug(f.id||f.name)==='silent-assassin'&&f.bound===true)?2:0;}
 function trainerDerived(t=trainer()){
   const resolved=trainerResolved();
   if(resolved?.derived && t?.id===trainer()?.id) return {...resolved.derived,healingHpLimit:injuryHealingHpLimit(resolved.derived.maxHp,t.details?.injuries)};
