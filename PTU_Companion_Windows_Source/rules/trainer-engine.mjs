@@ -351,16 +351,16 @@ function applyEquipment(model,trainer,ctx){
       continue;
     }
 
-    if(!def)continue;
-    const source={kind:'equipment',id:def.id,name:def.name,sourceLabel:def.packName||def.sourceId||'Equipment',effect:def.effect||'',tags:[],selections:typeof value==='object'?(value.config||value.selections||{}):{}};
-    model.equipment.push({slot,definition:def,source});
-    if(definitionMechanics) applyGenericEquipmentMechanics(model,definitionMechanics,source,ctx);
-    for(const effect of def.compiledEffects||[]) applyCompiledEffect(model,effect,source,ctx);
+    if(!def&&!embedded)continue;
+    const source={kind:'equipment',id:def?.id||value?.id||value?.inventoryItemId||slug(value?.name),name:def?.name||value?.name||'Custom Equipment',sourceLabel:def?.packName||def?.sourceId||'Custom Equipment',effect:def?.effect||value?.description||'',tags:[],selections:typeof value==='object'?(value.config||value.selections||{}):{},definition:def||null};
+    model.equipment.push({slot,definition:def||{id:source.id,name:source.name,effect:source.effect,custom:true},source});
+    if(embedded) applyGenericEquipmentMechanics(model,embedded,source,ctx);
+    for(const effect of def?.compiledEffects||[]) applyCompiledEffect(model,effect,source,ctx);
     // Legacy Core definitions predate the structured mechanics payload. Keep
     // their compatibility fallbacks only when the active resolved definition
     // does not already describe its mechanics, otherwise imported packs would
     // apply the same bonus twice.
-    if(!definitionMechanics){
+    if(def&&!definitionMechanics){
       if(def.id==='light-armor')model.damageReduction+=5;
       if(def.id==='heavy-armor'){model.damageReduction+=10; model.defaultCombatStages.speed=Math.min(model.defaultCombatStages.speed,-1);}
       if(def.id==='light-shield'||def.id==='heavy-shield'){

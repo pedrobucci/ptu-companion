@@ -992,7 +992,7 @@ function returnHeldItemToBackpack(p){
   const d=p.details||{}; const invId=d.heldItemInventoryId||d.heldItemDefinitionId||String(p.heldItem).toLowerCase().replace(/[^a-z0-9]+/g,'-');
   let item=state.inventory.find(i=>i.id===invId) || state.inventory.find(i=>i.name===p.heldItem);
   if(item)item.qty+=1; else state.inventory.push({id:invId,icon:'◆',name:p.heldItem,category:'held',price:0,qty:1,consumable:false,equipSlot:null});
-  p.heldItem=null; delete d.heldItemDefinitionId; delete d.heldItemInventoryId; delete d.heldItemConfig; delete d.heldItemEffectSnapshot;
+  p.heldItem=null; delete d.heldItemDefinitionId; delete d.heldItemInventoryId; delete d.heldItemConfig; delete d.heldItemEffectSnapshot; delete d.heldItemDefinitionSnapshot;
 }
 async function equipHeldItem(inventoryId){
   const p=pokemon(), inv=inventoryItem(inventoryId); if(!p||!inv||inv.qty<=0)return toast('Held Item is not available in the Backpack.','error');
@@ -1001,7 +1001,7 @@ async function equipHeldItem(inventoryId){
     const response=await fetch('/api/pokemon/held-item-preview',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({pokemon:p,inventoryItem:inv,config})});
     const payload=await response.json(); if(!response.ok||!payload.valid)return toast((payload.errors||[payload.error||'Held Item configuration is invalid.']).join(' '),'error');
     if(p.heldItem)returnHeldItemToBackpack(p);
-    inv.qty-=1; p.heldItem=inv.name; p.details=p.details||{}; p.details.heldItemDefinitionId=payload.definition.id; p.details.heldItemInventoryId=inv.id; p.details.heldItemConfig=config; p.details.heldItemEffectSnapshot=payload.effect;
+    inv.qty-=1; p.heldItem=inv.name; p.details=p.details||{}; p.details.heldItemDefinitionId=payload.definition.id; p.details.heldItemInventoryId=inv.id; p.details.heldItemConfig=config; p.details.heldItemEffectSnapshot=payload.effect; if(payload.definition.custom)p.details.heldItemDefinitionSnapshot=payload.definition; else delete p.details.heldItemDefinitionSnapshot;
     p.details.heldItemHistory=Array.isArray(p.details.heldItemHistory)?p.details.heldItemHistory:[]; p.details.heldItemHistory.push({date:new Date().toISOString(),action:'equip',item:inv.name,definitionId:payload.definition.id,config});
     closeModal(); creatureReferenceState={pokemonId:null,loading:false,error:null,data:null}; commit(`${inv.name} equipped to ${p.name}.`); await loadCreatureReferenceData(true);
   }catch(e){toast(e.message,'error')}
@@ -1493,7 +1493,7 @@ function inventoryScreen(){
   }).join('');
   return `<div class="page">${heading('ITEMS','Backpack & Equipment','The backpack shows only items the Trainer actually owns. Catalog entries now expose Trainer/Pokémon usability and every known equipment slot.',actions)}<div class="inventory-layout">
   ${section(`BACKPACK · ${owned.length} ITEM TYPES`,`<div class="item-list">${rows||'<div class="empty-state"><p>The backpack is empty.</p><button class="btn btn-primary" onclick="openBackpackItemPicker()">＋ Add an item from the PTU catalog</button></div>'}</div>`)}
-  ${section('EQUIPMENT',`<div class="equipment-grid large">${Object.entries(trainer().equipment||{}).map(([slot,name])=>`<div><small>${esc(ITEM_SLOT_LABELS[slot]||slot)}</small>${equippedItemIcon(name,slot)}<strong>${esc(name&&typeof name==='object'?name.name:(name||'Empty'))}</strong>${name&&!(typeof name==='object'&&name.reservedBy)?`<button class="btn btn-ghost btn-small" onclick="unequipTrainerItem('${slot}')">Unequip</button>`:''}</div>`).join('')}</div><div class="flow-note"><strong>Resolved equipment effects:</strong> equipped items are evaluated by the Trainer Rules Engine and their deterministic bonuses appear on the Trainer Stats, Skills and Combat tabs. Custom Items never apply mechanics automatically.</div>`)}
+  ${section('EQUIPMENT',`<div class="equipment-grid large">${Object.entries(trainer().equipment||{}).map(([slot,name])=>`<div><small>${esc(ITEM_SLOT_LABELS[slot]||slot)}</small>${equippedItemIcon(name,slot)}<strong>${esc(name&&typeof name==='object'?name.name:(name||'Empty'))}</strong>${name&&!(typeof name==='object'&&name.reservedBy)?`<button class="btn btn-ghost btn-small" onclick="unequipTrainerItem('${slot}')">Unequip</button>`:''}</div>`).join('')}</div><div class="flow-note"><strong>Resolved equipment effects:</strong> bonuses from structured custom Trainer equipment appear on the Trainer Skills tab while equipped; other item effects remain manual.</div>`)}
   </div></div>`;
 }
 
@@ -1537,13 +1537,23 @@ function adjustInventoryQuantity(id,delta){
   item.qty=Math.max(0,Number(item.qty||0)+Number(delta||0)); persist(); render();
 }
 async function createCustomItem(){
-  const f=await styledForm({title:'Create Custom Item',subtitle:'Campaign wildcard item. It stores its name and description but never applies automatic mechanics.',submitLabel:'Add to Backpack',tone:'yellow',fields:[
+  const f=await styledForm({title:'Create Custom Item',subtitle:'Set item compatibility and, for Trainer equipment, an optional Skill bonus applied while equipped.',submitLabel:'Add to Backpack',tone:'yellow',fields:[
     {name:'name',label:'Item name',value:'Custom Item',placeholder:'Ancient Key'},
+    {name:'category',label:'Category',value:'Custom',placeholder:'Held Item, medicine, gear…'},
+    {name:'price',label:'Price',type:'number',value:0,min:0,max:999999},
     {name:'description',label:'Description',type:'textarea',rows:5,placeholder:'What the item is, what it does narratively, owner notes…'},
+    {name:'trainerUsable',label:'Can the Trainer equip this item?',type:'select',value:'no',options:[{value:'no',label:'No'},{value:'yes',label:'Yes'}]},
+    {name:'equipmentSlot',label:'Trainer equipment slot',type:'select',value:'accessory',options:Object.entries(ITEM_SLOT_LABELS).map(([value,label])=>({value,label}))},
+    {name:'skillBonusEnabled',label:'Add a Skill bonus while equipped?',type:'select',value:'no',options:[{value:'no',label:'No'},{value:'yes',label:'Yes'}]},
+    {name:'skillBonusSkill',label:'Skill receiving the bonus',type:'select',value:TRAINER_SKILLS[0],options:TRAINER_SKILLS.map(value=>({value,label:value}))},
+    {name:'skillBonusValue',label:'Skill bonus',type:'number',value:1,min:-99,max:99},
+    {name:'pokemonHeldUsable',label:'Can a Pokémon hold this item?',type:'select',value:'no',options:[{value:'no',label:'No'},{value:'yes',label:'Yes'}],help:'This only enables equipping the item. Its effect is resolved separately.'},
     {name:'qty',label:'Quantity',type:'number',value:1,min:1,max:999}
   ]});
   if(!f)return; const name=String(f.name||'').trim(); if(!name)return toast('Custom Item needs a name.','error');
-  state.inventory.push({id:uid('custom-item'),definitionId:null,icon:'◆',name,category:'Custom',price:0,priceText:null,qty:Math.max(1,Number(f.qty)||1),consumable:false,equipSlot:null,description:String(f.description||'').trim(),custom:true,trainerUsable:false,pokemonHeldUsable:false,equipmentSlots:[],mechanics:null,config:{}});
+  const trainerUsable=f.trainerUsable==='yes';
+  const mechanics=f.skillBonusEnabled==='yes'?{skillBonuses:[{skill:String(f.skillBonusSkill||TRAINER_SKILLS[0]),value:Number(f.skillBonusValue)||0}]}:null;
+  state.inventory.push({id:uid('custom-item'),definitionId:null,icon:'◆',name,category:String(f.category||'').trim()||'Custom',price:Math.max(0,Number(f.price)||0),priceText:null,qty:Math.max(1,Number(f.qty)||1),consumable:false,equipSlot:null,description:String(f.description||'').trim(),custom:true,trainerUsable,pokemonHeldUsable:f.pokemonHeldUsable==='yes',equipmentSlots:trainerUsable?[String(f.equipmentSlot||'accessory')]:[],mechanics,config:{}});
   commit(`${name} added to the Backpack.`);
 }
 
