@@ -508,6 +508,7 @@ function roster(id=state.selectedRosterId){ return state.rosters.find(r=>r.id===
 function rosterMembers(id){ return state.pokemon.filter(p=>p.rosterIds.includes(id)); }
 function inventoryItem(id){ return state.inventory.find(i=>i.id===id); }
 function ownedInventory(){ return (state.inventory||[]).filter(i=>Number(i.qty||0)>0); }
+function supportsAutomatedItemUse(item){return ['potion','super-potion','oran-berry'].includes(item?.id);}
 function pokemonPortraitUrl(p){
   const speciesId=String(p?.details?.speciesDefinitionId||'').trim();
   if(speciesId){const formState=p?.details?.formState||{baseFormId:'base',activeFormId:null};const params=new URLSearchParams();if(formState.baseFormId&&formState.baseFormId!=='base')params.set('base',formState.baseFormId);if(formState.activeFormId)params.set('active',formState.activeFormId);if(p?.details?.isShiny)params.set('shiny','1');const qs=params.toString();return `/api/pokemon/portrait/${encodeURIComponent(speciesId)}${qs?'?'+qs:''}`;}
@@ -1467,7 +1468,7 @@ function inventoryScreen(){
   const rows=owned.map(i=>{
     const description=itemDescription(i),slots=itemEquipmentSlots(i);
     const equipLabel=slots.length===1?`Equip · ${ITEM_SLOT_LABELS[slots[0]]||slots[0]}`:'Equip…';
-    const itemAction=i.consumable&&p?`<button class="btn btn-ghost item-primary-action" onclick="useItem('${i.id}','${p.id}')">Use on ${esc(p.name)}</button>`:slots.length?`<button class="btn btn-primary item-primary-action" onclick="equipTrainerItem('${i.id}')">${esc(equipLabel)}</button>`:'';
+    const itemAction=i.consumable&&p?(supportsAutomatedItemUse(i)?`<button class="btn btn-ghost item-primary-action" onclick="useItem('${i.id}','${p.id}')">Use on ${esc(p.name)}</button>`:`<small class="item-use-unavailable" title="No effect or quantity change is automated for this item.">Effect not automated</small>`):slots.length?`<button class="btn btn-primary item-primary-action" onclick="equipTrainerItem('${i.id}')">${esc(equipLabel)}</button>`:'';
     return `<div class="item-row owned-item-row">${itemIconHtml(i.icon,'◆','owned-item-art')}<div class="owned-item-copy"><div class="owned-item-title"><strong>${esc(i.name)}</strong>${i.custom?chip('CUSTOM','chip-purple'):chip(esc(i.category||'Item'))}</div><small>${esc(i.category||'Item')}${Number(i.price||0)>0?` · ₽${Number(i.price).toLocaleString()}`:''}${i.sourcePage?` · p. ${esc(i.sourcePage)}`:''}</small>${itemUsageBadges(i)?`<div class="item-usage-tags">${itemUsageBadges(i)}</div>`:''}${description?`<p>${esc(description)}</p>`:''}</div><div class="owned-item-actions"><div class="item-qty-controls"><button class="mini-action" title="Remove one" onclick="adjustInventoryQuantity('${i.id}',-1)">−</button><b>× ${Number(i.qty||0)}</b><button class="mini-action" title="Add one" onclick="adjustInventoryQuantity('${i.id}',1)">＋</button></div>${itemAction}</div></div>`;
   }).join('');
   return `<div class="page">${heading('ITEMS','Backpack & Equipment','The backpack shows only items the Trainer actually owns. Catalog entries now expose Trainer/Pokémon usability and every known equipment slot.',actions)}<div class="inventory-layout">
@@ -2237,6 +2238,7 @@ function render({preserveScroll=true}={}){
   const previous=document.querySelector('.screen-content');
   const sameScreen=lastRenderedScreen===state.ui.screen;
   const scroll=previous&&preserveScroll&&sameScreen?{top:previous.scrollTop,left:previous.scrollLeft}:null;
+  const nestedScroll=previous&&preserveScroll&&sameScreen?[...previous.querySelectorAll('*')].flatMap(el=>{if(!el.scrollTop&&!el.scrollLeft)return[];const path=[];for(let node=el;node&&node!==previous;node=node.parentElement)path.unshift(Array.prototype.indexOf.call(node.parentElement.children,node));return[{path,top:el.scrollTop,left:el.scrollLeft}];}):[];
   const active=document.activeElement;
   const focusState=active&&active.id?{id:active.id,start:active.selectionStart,end:active.selectionEnd}:null;
   document.getElementById('app').innerHTML=shell(f());
@@ -2245,6 +2247,7 @@ function render({preserveScroll=true}={}){
     const current=document.querySelector('.screen-content');
     if(current){ if(scroll){current.scrollTop=scroll.top;current.scrollLeft=scroll.left;} else current.scrollTop=0; }
     if(focusState){ const el=document.getElementById(focusState.id); if(el){el.focus(); try{if(focusState.start!=null)el.setSelectionRange(focusState.start,focusState.end??focusState.start)}catch{}} }
+    if(current){for(const saved of nestedScroll){const el=saved.path.reduce((parent,index)=>parent?.children[index]??null,current);if(el){el.scrollTop=saved.top;el.scrollLeft=saved.left;}}}
   });
 }
 
@@ -2441,6 +2444,7 @@ async function withdrawPokemon(id){
 /* --- Inventory --- */
 async function useItem(itemId,pid){
   const i=inventoryItem(itemId),p=pokemon(pid);if(!i||i.qty<=0)return toast('No item available.','error');
+  if(supportsAutomatedItemUse(i)&&p.hp>=p.maxHp)return toast(`${p.name} is already at full HP; ${i.name} was not used.`,'error');
   const healing=i.id==='potion'?20:i.id==='super-potion'?50:i.id==='oran-berry'?10:null;
   if(healing==null)return toast(`${i.name} use is not automated in this prototype.`,'error');
   if(p.details?.speciesDefinitionId){

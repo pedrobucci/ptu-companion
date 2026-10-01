@@ -225,6 +225,7 @@ code{background:#eef3f7;border:1px solid #dbe5ec;padding:2px 5px;border-radius:6
 .item-row>.owned-item-actions>.item-qty-controls{display:flex;align-items:center;gap:7px;white-space:nowrap}
 .item-qty-controls .mini-action{margin-left:0;min-width:30px;height:30px;padding:0;display:grid;place-items:center;font-size:16px;line-height:1}
 .item-primary-action{white-space:nowrap;min-width:104px}
+.item-use-unavailable{color:#536b7e;font-size:11px;font-weight:700;line-height:1.3;max-width:150px;text-align:center}
 .item-usage-tags{display:flex;gap:5px;flex-wrap:wrap;margin-top:2px}
 .item-usage-tags .chip{font-size:8px;padding:3px 6px}
 .catalog-add-item .item-usage-tags{margin-top:3px}
@@ -311,3 +312,6 @@ code{background:#eef3f7;border:1px solid #dbe5ec;padding:2px 5px;border-radius:6
   .pokemon-builder-layout.v05>.section-card:nth-child(2) .form-grid select{box-sizing:border-box;width:100%;min-width:0}
 }
 .builder-species-portrait{width:80px;height:80px;flex:none;object-fit:contain;border-radius:18px;background:#fff;border:4px solid #e5f3ff}
+.creature-detail-grid .section-title .btn-ghost{color:#1765ad}
+.creature-detail-grid .section-title .btn-ghost:focus-visible{outline:2px solid #fff;outline-offset:2px}
+.creature-detail-grid .section-title .btn-ghost:disabled{color:#536b7e;opacity:1;background:#dbe5ed}

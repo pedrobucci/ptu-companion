@@ -13,6 +13,9 @@ assert(mobile.rulesets.find(r=>r.id==='all-provided-material')?.packs.some(p=>p.
 assert(app.includes("setShopPreset('Weapon Store',0)"));
 assert(app.includes("shops.includes('Weapon Store')"));
 assert(app.includes('ensureInventoryItemForPurchase'));
+assert(app.includes("function supportsAutomatedItemUse(item){return ['potion','super-potion','oran-berry'].includes(item?.id);}"));
+assert(app.includes('Effect not automated'));
+assert(app.includes('already at full HP'));
 assert(app.includes('async function loadItemCatalog(force=false)'));
 assert(api.includes('shopCategories:Array.isArray(raw.shop_categories)'));
 assert(runtime.includes('shopCategories:Array.isArray(raw.shop_categories)'));
