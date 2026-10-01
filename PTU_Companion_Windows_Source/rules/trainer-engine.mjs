@@ -58,6 +58,7 @@ function sourceRecord({kind,record,definition}){
     tags:Array.isArray(definition?.raw?.tags)?definition.raw.tags:(Array.isArray(record?.tags)?record.tags:[]),
     selections:record?.selections||{},
     rank:num(record?.rank)||1,
+    bound:record?.bound===true,
     definition
   };
 }
@@ -466,7 +467,8 @@ function resolveMoveDamageForTrainer(model,move,trainer,getDamageBase){
   if(model.flags.twistedPower){const opposite=category==='special'?'attack':'spAttack';const twisted=Math.floor(num(model.stats.combat[opposite])/2);flatBonus+=twisted;breakdown.push({label:'Twisted Power',value:`+${twisted} (½ ${STAT_LABELS[opposite]})`});}
   if(model.damageRollBonus){flatBonus+=model.damageRollBonus;breakdown.push({label:'Static damage bonuses',value:`+${model.damageRollBonus}`});}
   const expression=damageDice?addFlatToRoll(damageDice,attackValue+flatBonus):null;
-  return {damaging:true,category:def.category,baseDb:num(def.damageBase),finalDb:db,stab,chart,expression,attackStat:statKeyUsed,attackValue,breakdown,resolvedAc,resolvedRange,weapon,accuracyModifier:num(model.accuracyBonus)};
+  const silentAssassinBound=trainerHasBoundSource(model,'silent-assassin');
+  return {damaging:true,category:def.category,baseDb:num(def.damageBase),finalDb:db,stab,chart,expression,attackStat:statKeyUsed,attackValue,breakdown,resolvedAc,resolvedRange,weapon,accuracyModifier:num(model.accuracyBonus),featureEffects:silentAssassinBound&&weapon?[{source:'Silent Assassin',text:'Flinch on Accuracy Roll 18+; may deal Ghost-Type Damage.'}]:[]};
 }
 
 
@@ -493,8 +495,9 @@ function resolveStruggleAttack(model,trainer,getDamageBase){
   const options=[];const caps=(model.grantedCapabilities||[]).map(c=>slug(c.name));const typed={firestarter:'Fire',fountain:'Water',freezer:'Ice',guster:'Flying',materializer:'Rock',zapper:'Electric'};
   for(const [cap,t] of Object.entries(typed))if(caps.includes(cap))options.push({type:t,category:'Special',stat:'spAttack',source:title(cap)});
   if(caps.includes('telekinetic'))options.push({type:'Normal',category:'Special',stat:'spAttack',range:`${model.skills['Focus']?.rank||2}m`,source:'Telekinetic'});
-  if(primary&&String(primary.weaponClass||'').includes('melee')&&trainerHasSource(model,'silent-assassin'))options.push({type:'Ghost',category:primary.damageClass||'Physical',stat:statKeyUsed,range,source:'Silent Assassin · while Bound'});
-  return {name:'Struggle Attack',type,category,stat:statKeyUsed,ac,baseDb:combatRank>=5?5:4,finalDb:db,range,expression:damageDice?addFlatToRoll(damageDice,attackValue+flat):null,attackValue,accuracyModifier:num(model.accuracyBonus),weapon:primary,qualification:{skill:qualificationSkill,rank:qualificationRank,source:qualificationSource},breakdown,options};
+  const silentAssassinBound=trainerHasBoundSource(model,'silent-assassin');
+  if(primary&&String(primary.weaponClass||'').includes('melee')&&silentAssassinBound)options.push({type:'Ghost',category:primary.damageClass||'Physical',stat:statKeyUsed,range,source:'Silent Assassin · Bound'});
+  return {name:'Struggle Attack',type,category,stat:statKeyUsed,ac,baseDb:combatRank>=5?5:4,finalDb:db,range,expression:damageDice?addFlatToRoll(damageDice,attackValue+flat):null,attackValue,accuracyModifier:num(model.accuracyBonus),weapon:primary,qualification:{skill:qualificationSkill,rank:qualificationRank,source:qualificationSource},breakdown,options,featureEffects:silentAssassinBound?[{source:'Silent Assassin',text:'Flinch on Accuracy Roll 18+; may deal Ghost-Type Damage.'}]:[]};
 }
 
 function backgroundBaseline(details={}){
@@ -506,6 +509,7 @@ function backgroundBaseline(details={}){
 }
 function weaponClassLabel(value){return ({large_melee:'Large Melee',small_melee:'Small Melee',short_range:'Short Range',long_range:'Long Range',arcane_large_melee:'Arcane Large Melee',arcane_small_melee:'Arcane Small Melee',arcane_short_range:'Arcane Short Range',arcane_long_range:'Arcane Long Range'})[value]||title(value);}
 function trainerHasSource(model,id){const s=slug(id);return (model.sourceSummaryRaw||[]).some(x=>slug(x.id||x.name)===s);}
+function trainerHasBoundSource(model,id){const s=slug(id);return (model.sourceSummaryRaw||[]).some(x=>slug(x.id||x.name)===s&&x.bound===true);}
 function weaponQualification(model,mechanics={}){
   const cls=String(mechanics.weaponClass||'');const arcane=mechanics.arcane===true||cls.startsWith('arcane_');const melee=cls.includes('melee');const metal=!!mechanics.metal;
   // PTU 1.05 Editation: Arcane Weapon Moves use Occult Education and the
@@ -574,6 +578,11 @@ function resolveTrainerModel({trainer,rulesetId,getDefinition,getDamageBase}){
     move.sources.push({kind:source.kind,id:source.id,name:source.name,label:source.sourceLabel,automatic:false}); move.automatic=false;
   }
 
+  for(const source of sources.filter(s=>slug(s.id||s.name)==='silent-assassin')){
+    const rank=Math.max(model.skills.Intimidate?.rank||2,model.skills['Occult Education']?.rank||2);
+    addSkillBonus(model,'Stealth',Math.floor(rank/2),source,{note:'Half the higher Rank of Intimidate or Occult Education; always active while the Feature is recorded.'});
+  }
+
   finalizeSkills(model);
   deriveCapabilities(model);
 
@@ -588,12 +597,13 @@ function resolveTrainerModel({trainer,rulesetId,getDefinition,getDamageBase}){
   const level=Math.max(1,num(t.level)||1);
   const maxHp=level*2+model.stats.effective.hp*3+10+model.derivedBonuses.maxHp;
   const maxAp=5+Math.floor(level/5)+model.derivedBonuses.maxAp;
+  const boundAp=sources.reduce((total,source)=>total+(slug(source.id||source.name)==='silent-assassin'&&source.bound?2:0),0);
   const physicalEvasion=Math.min(6,Math.floor(model.stats.combat.defense/5))+model.evasionBonus+model.evasionFixed.physical+num(details.combatStages?.evasion);
   const specialEvasion=Math.min(6,Math.floor(model.stats.combat.spDefense/5))+model.evasionBonus+model.evasionFixed.special+num(details.combatStages?.evasion);
   const speedEvasion=Math.min(6,Math.floor(model.stats.combat.speed/5))+model.evasionBonus+model.evasionFixed.speed+num(details.combatStages?.evasion);
   let initiative=model.stats.combat.speed+model.initiativeBonus;
   if(model.flags.initiativeSkill)initiative+=model.skills[model.flags.initiativeSkill]?.rank||0;
-  model.derived={maxHp,maxAp,physicalEvasion,specialEvasion,speedEvasion,initiative,accuracyBonus:model.accuracyBonus,effectRangeBonus:model.effectRangeBonus,saveCheckBonus:model.saveCheckBonus,saveCheckBonusVolatile:model.saveCheckBonusVolatile,damageReduction:model.damageReduction,damageReductionPhysical:model.damageReduction+model.damageReductionByClass.physical,damageReductionSpecial:model.damageReduction+model.damageReductionByClass.special,...model.capabilities};
+  model.derived={maxHp,maxAp,boundAp,availableMaxAp:Math.max(0,maxAp-boundAp),physicalEvasion,specialEvasion,speedEvasion,initiative,accuracyBonus:model.accuracyBonus,effectRangeBonus:model.effectRangeBonus,saveCheckBonus:model.saveCheckBonus,saveCheckBonusVolatile:model.saveCheckBonusVolatile,damageReduction:model.damageReduction,damageReductionPhysical:model.damageReduction+model.damageReductionByClass.physical,damageReductionSpecial:model.damageReduction+model.damageReductionByClass.special,...model.capabilities};
 
   model.struggleAttack=resolveStruggleAttack(model,t,getDamageBase);
   model.moves=[...model._moveMap.values()].map(move=>({...move,resolvedDamage:resolveMoveDamageForTrainer(model,move,t,getDamageBase)})).sort((a,b)=>a.name.localeCompare(b.name));
