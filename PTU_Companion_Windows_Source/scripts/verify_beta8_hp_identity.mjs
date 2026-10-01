@@ -30,7 +30,8 @@ const ctx={
   syncPokemonTempHpPersistence:holder=>{holder.details=holder.details||{};holder.details.tempHp=Math.max(0,Number(holder.tempHp||0));holder.details.formTempHpBySource=holder.details.formTempHpBySource||{};},
   normalizePokemonGender:value=>{const raw=String(value??'').trim().toLowerCase();if(['male','m','masculino','♂'].includes(raw))return 'Male';if(['female','f','feminino','♀'].includes(raw))return 'Female';return 'None';},
   ensureTrainerDetails:()=>trainerObj.details,
-  trainerDerived:()=>({maxHp:50}),
+  trainerDerived:()=>({maxHp:50,healingHpLimit:50}),
+  injuryHealingHpLimit:(maxHp,injuries)=>Math.floor(maxHp*(10-Math.max(0,Math.min(10,Math.trunc(Number(injuries)||0))))/10),
   console,
 };
 vm.createContext(ctx);
