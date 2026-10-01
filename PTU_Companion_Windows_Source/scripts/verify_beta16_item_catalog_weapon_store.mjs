@@ -34,7 +34,7 @@ assert(app.includes("shops.includes('Weapon Store')"),'Weapon Store metadata fil
 assert(app.includes('ensureInventoryItemForPurchase'),'Weapon Store checkout must create backpack items from catalog definitions');
 assert(app.includes("function supportsAutomatedItemUse(item){return ['potion','super-potion','oran-berry'].includes(item?.id);}"),'only items with implemented effects may expose an automated use action');
 assert(app.includes('Effect not automated'),'unsupported consumables must show a persistent reason instead of a dead action button');
-assert(app.includes('already at full HP'),'healing items must not be consumed when they cannot restore HP');
+assert(app.includes('already at its current healing limit'),'healing items must not be consumed when they cannot restore HP');
 const server=fs.readFileSync(path.join(root,'server.mjs'),'utf8');
 assert(server.includes('shopCategories:Array.isArray(raw.shop_categories)'),'item catalog must expose shop metadata');
 console.log(`PTU Companion Beta v2.1.0-beta.25 bundled Weapon Store verification: OK (${before} -> ${after} items after update)`);
