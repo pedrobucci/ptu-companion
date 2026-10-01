@@ -34,6 +34,7 @@ if(!existsSync(definitionsPath)) await copyFile(bundledDefinitionsPath,definitio
 await syncBundledPackIfNewer({persistentDbPath:definitionsPath,bundledDbPath:bundledDefinitionsPath,packId:'campaign-homebrew-fakemon-1-leva',backupDir:definitionBackupRoot});
 await syncBundledPackIfNewer({persistentDbPath:definitionsPath,bundledDbPath:bundledDefinitionsPath,packId:'campaign-homebrew-custom-weapons',backupDir:definitionBackupRoot});
 await syncBundledPackIfNewer({persistentDbPath:definitionsPath,bundledDbPath:bundledDefinitionsPath,packId:'campaign-homebrew-trainer-gear',backupDir:definitionBackupRoot});
+await syncBundledPackIfNewer({persistentDbPath:definitionsPath,bundledDbPath:bundledDefinitionsPath,packId:'campaign-books-species',backupDir:definitionBackupRoot});
 const portraitCacheRoot=join(dataRoot,'portraits');
 const mime={'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.svg':'image/svg+xml','.png':'image/png','.json':'application/json'};
 
