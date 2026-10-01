@@ -931,7 +931,7 @@ async function handleApi(req,res,url){
     const speciesTypes=species.types||pokemon.types||[];
     const held=resolvePokemonHeldItem({rulesetId,pokemon,species:baseSpecies});
     const edgeStats=resolvePokemonPokeEdgeStats({pokemon,species});
-    const resolvedPokemonForCombat={...pokemon,details:{...details,finalStats:{...edgeStats.permanentFinal}}};
+    const resolvedPokemonForCombat={...pokemon,details:{...details,finalStats:{...edgeStats.permanentFinal},combatStages:pokemon.combatStages||{}}};
     const accuracyMap=accuracyTrainingMap(details);
     const moves=(Array.isArray(details.moves)?details.moves:[]).map(m=>{
       const id=slug(m.id||m.name); const definition=id?definitions.getResolved({rulesetId,kind:'moves',id}):null;
@@ -939,7 +939,7 @@ async function handleApi(req,res,url){
       const accuracyTrainingRanks=accuracyMap.get(id)||0;
       const baseAc=definition?.ac==null?null:Number(definition.ac);
       const effectiveAc=baseAc==null||!Number.isFinite(baseAc)?baseAc:Math.max(0,baseAc-accuracyTrainingRanks);
-      return {record:m,definition,resolvedDamage,accuracyTrainingRanks,effectiveAc};
+      return {record:m,definition,resolvedDamage,accuracyTrainingRanks,accuracyRollBonus:Math.max(-6,Math.min(6,Math.trunc(Number(pokemon.combatStages?.accuracy)||0))),effectiveAc};
     });
     const abilities=resolveCreatureAbilityRecords({pokemon,species,rulesetId,heldItemEffect:held.effect});
     const abilitySlots=nativeAbilitySlotsForSpecies(species,pokemon.level);
