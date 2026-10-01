@@ -10,6 +10,8 @@
  */
 
 const slug=v=>String(v||'').trim().toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+const combatStageMultiplier=stage=>{const cs=Math.max(-6,Math.min(6,Math.trunc(Number(stage)||0)));return Number((cs>=0?1+cs*.2:1+cs*.1).toFixed(1));};
+const applyCombatStage=(value,stage)=>Math.floor((Number(value)||0)*combatStageMultiplier(stage));
 
 export function hasTwistedPowerEffect(details={}){
   const edges=Array.isArray(details.pokeEdges)?details.pokeEdges:[];
@@ -34,6 +36,10 @@ export function getPokemonModifierSummary(pokemon={}, context={}){
   const effectiveStats={...stats};
   for(const [key,val] of Object.entries(heldStatBonuses)) effectiveStats[key]=(Number(effectiveStats[key])||0)+Number(val||0);
   if(held && Number(held.speedMultiplier||1)!==1 && effectiveStats.speed!=null) effectiveStats.speed=Math.floor((Number(effectiveStats.speed)||0)*Number(held.speedMultiplier||1));
+  const combatStages=d.combatStages||{};
+  const combatStats={...effectiveStats};
+  for(const [stat,key] of [['attack','attack'],['defense','defense'],['speed','speed']]) if(combatStats[stat]!=null)combatStats[stat]=applyCombatStage(combatStats[stat],combatStages[key]);
+  for(const [snake,camel,key] of [['special_attack','spAttack','spAttack'],['special_defense','spDefense','spDefense']]){const stat=combatStats[snake]!=null?snake:camel;if(combatStats[stat]!=null)combatStats[stat]=applyCombatStage(combatStats[stat],combatStages[key]);}
   return {
     moveLimit:{base:moveLimitBase,modifier:moveLimitModifier,effective:moveLimitEffective},
     twistedPower: twisted ? {
@@ -44,6 +50,8 @@ export function getPokemonModifierSummary(pokemon={}, context={}){
       note:'Adds half Special Attack to Physical Move damage rolls and half Attack to Special Move damage rolls. It does not change the Move\'s Damage Class or the stored Stats.'
     } : {active:false,physicalDamageBonus:0,specialDamageBonus:0},
     effectiveStats,
+    combatStats,
+    accuracyRollBonus:Math.max(-6,Math.min(6,Math.trunc(Number(combatStages.accuracy)||0))),
     heldItem: held ? {id:held.id,name:held.name,automation:held.automation,effectText:held.effectText,statBonuses:held.statBonuses||{},speedMultiplier:held.speedMultiplier||1,speedEvasionBonus:held.speedEvasionBonus||0,conditionalDamageBonusSuperEffective:held.conditionalDamageBonusSuperEffective||0,preventsEvolution:!!held.preventsEvolution,removeGroundImmunity:!!held.removeGroundImmunity,hpStealRecoveryMultiplier:held.hpStealRecoveryMultiplier||1,defaultCombatStage:held.defaultCombatStage||null,warnings:held.warnings||[]} : null,
     activeEffects:[
       ...(twisted?[{kind:'damage_modifier',id:'twisted-power',source:(d.pokeEdges||[]).some(e=>slug(e?.id||e?.name)==='mixed-power')?'mixed-power':'twisted-power'}]:[]),
@@ -74,15 +82,12 @@ export function resolveMoveDamage({pokemon={},moveDefinition=null,speciesTypes=[
   const finalDb=Math.max(1,Math.min(28,baseDb+stab));
   const chart=getDamageBase(finalDb);
   if(!chart) return null;
-  const d=pokemon.details||{};
-  const stats=d.finalStats||{};
   const modifiers=getPokemonModifierSummary(pokemon,{heldItemEffect});
-  const effective=modifiers.effectiveStats||stats;
-  const attack=Math.max(0,Number(effective.attack)||0);
-  const specialAttack=Math.max(0,Number(effective.special_attack??effective.spAttack)||0);
-  const primary=moveClass==='physical'?attack:specialAttack;
+  const attack=Math.max(0,Number(modifiers.combatStats.attack)||0);
+  const specialAttack=Math.max(0,Number(modifiers.combatStats.special_attack??modifiers.combatStats.spAttack)||0);
+  const primary=moveClass==='physical'?Number(modifiers.combatStats.attack)||0:Number(modifiers.combatStats.special_attack??modifiers.combatStats.spAttack)||0;
   const mixedBonus=modifiers.twistedPower.active
-    ? (moveClass==='physical'?modifiers.twistedPower.physicalDamageBonus:modifiers.twistedPower.specialDamageBonus)
+    ? Math.floor((moveClass==='physical'?specialAttack:attack)/2)
     : 0;
   const flatBonus=primary+mixedBonus;
   return {
@@ -91,7 +96,7 @@ export function resolveMoveDamage({pokemon={},moveDefinition=null,speciesTypes=[
     stabDamageBaseBonus:stab,
     finalDamageBase:finalDb,
     damageChart:chart,
-    primaryStat:{name:moveClass==='physical'?'Attack':'Special Attack',value:primary},
+    primaryStat:{name:moveClass==='physical'?'Attack':'Special Attack',value:primary,combatStage:moveClass==='physical'?Number(pokemon.details?.combatStages?.attack)||0:Number(pokemon.details?.combatStages?.spAttack)||0},
     mixedPowerBonus:mixedBonus,
     heldItemConditionalSuperEffectiveBonus:Number(heldItemEffect?.conditionalDamageBonusSuperEffective||0),
     finalRoll:mergeDiceExpression(chart.rolled_damage,flatBonus),
