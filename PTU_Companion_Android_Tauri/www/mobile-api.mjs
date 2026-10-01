@@ -179,10 +179,22 @@ class MobileDefinitions {
   _edgesTo(name){ return (data.evolutionEdges||[]).filter(e=>norm(e.to_species_name)===norm(name)); }
   _edgesFrom(name){ return (data.evolutionEdges||[]).filter(e=>norm(e.from_species_name)===norm(name)); }
   getIncomingEvolution({speciesName,sourceId=null}={}){ const rows=this._edgesTo(speciesName).sort((a,b)=>(a.source_id===sourceId?-1:0)-(b.source_id===sourceId?-1:0)); const r=rows[0]; return r?{...deep(r),raw:deep(r.raw||{})}:null; }
-  getEvolutionAncestry({rulesetId,speciesName,sourceId=null,maxDepth=8}={}){ const out=[],seen=new Set([norm(speciesName)]);let cur=speciesName,src=sourceId;for(let i=0;i<maxDepth;i++){const e=this.getIncomingEvolution({speciesName:cur,sourceId:src});if(!e)break;let a=e.raw?.from_ref_key?this.getResolved({rulesetId,kind:'species',id:String(e.raw.from_ref_key)}):null;if(!a)a=this.findResolvedSpeciesByName({rulesetId,name:e.from_species_name});if(!a||seen.has(norm(a.name||a.id)))break;seen.add(norm(a.name||a.id));out.push({id:a.id,name:a.name,sourceId:a.sourceId,contentPackId:a.contentPackId,levelUpMoves:a.levelUpMoves||[],evolutionEdge:{fromSpeciesName:e.from_species_name,toSpeciesName:e.to_species_name,toMinLevel:e.to_min_level??null,conditionText:e.condition_text||null,sourceId:e.source_id||null}});cur=a.name;src=a.sourceId||e.source_id||src;}return out; }
-  getOutgoingEvolutions({rulesetId,speciesName,sourceId=null}={}){ const seen=new Set(),out=[];for(const row of this._edgesFrom(speciesName).sort((a,b)=>(a.source_id===sourceId?-1:0)-(b.source_id===sourceId?-1:0))){const raw=row.raw||{},key=norm(raw.to_ref_key||row.to_species_name);if(seen.has(key))continue;seen.add(key);let target=raw.to_ref_key?this.getResolved({rulesetId,kind:'species',id:String(raw.to_ref_key)}):null;if(!target)target=this.findResolvedSpeciesByName({rulesetId,name:row.to_species_name});if(!target)continue;out.push({fromSpeciesName:row.from_species_name,toSpeciesName:row.to_species_name,toMinLevel:row.to_min_level??null,conditionText:row.condition_text||null,mappingConfidence:row.mapping_confidence||null,sourceId:row.source_id||null,evolutionRulesSource:'ptu_material',sourceTitle:row.source_id||'PTU material',sourceKind:null,target:{id:target.id,name:target.name,versionId:target.versionId,contentPackId:target.contentPackId,sourceId:target.sourceId,types:target.types||[],baseStats:target.baseStats||null,abilities:target.abilities||[],levelUpMoves:target.levelUpMoves||[],capabilities:target.capabilities||[],skills:target.skills||null}});}return out; }
+  getEvolutionAncestry({rulesetId,speciesName,sourceId=null,maxDepth=8}={}){ const out=[],seen=new Set([norm(speciesName)]);let cur=speciesName,src=sourceId;for(let i=0;i<maxDepth;i++){const e=this.getIncomingEvolution({speciesName:cur,sourceId:src});if(!e)break;let a=e.raw?.from_ref_key?this.getResolved({rulesetId,kind:'species',id:String(e.raw.from_ref_key)}):null;if(!a)a=this.findResolvedSpeciesByName({rulesetId,name:e.from_species_name});if(!a||seen.has(norm(a.name||a.id)))break;seen.add(norm(a.name||a.id));out.push({id:a.id,name:a.name,sourceId:a.sourceId,contentPackId:a.contentPackId,levelUpMoves:a.levelUpMoves||[],eggMoves:a.eggMoves||[],evolutionEdge:{fromSpeciesName:e.from_species_name,toSpeciesName:e.to_species_name,toMinLevel:e.to_min_level??null,conditionText:e.condition_text||null,sourceId:e.source_id||null}});cur=a.name;src=a.sourceId||e.source_id||src;}return out; }
+  getOutgoingEvolutions({rulesetId,speciesName,sourceId=null}={}){ const seen=new Set(),out=[];for(const row of this._edgesFrom(speciesName).sort((a,b)=>(a.source_id===sourceId?-1:0)-(b.source_id===sourceId?-1:0))){const raw=row.raw||{},key=norm(raw.to_ref_key||row.to_species_name);if(seen.has(key))continue;seen.add(key);let target=raw.to_ref_key?this.getResolved({rulesetId,kind:'species',id:String(raw.to_ref_key)}):null;if(!target)target=this.findResolvedSpeciesByName({rulesetId,name:row.to_species_name});if(!target)continue;out.push({fromSpeciesName:row.from_species_name,toSpeciesName:row.to_species_name,toMinLevel:row.to_min_level??null,conditionText:row.condition_text||null,mappingConfidence:row.mapping_confidence||null,sourceId:row.source_id||null,evolutionRulesSource:'ptu_material',sourceTitle:row.source_id||'PTU material',sourceKind:null,target:{id:target.id,name:target.name,versionId:target.versionId,contentPackId:target.contentPackId,sourceId:target.sourceId,types:target.types||[],baseStats:target.baseStats||null,abilities:target.abilities||[],levelUpMoves:target.levelUpMoves||[],eggMoves:target.eggMoves||[],capabilities:target.capabilities||[],skills:target.skills||null}});}return out; }
 }
 const definitions=new MobileDefinitions();
+function evolutionLineEggMoves(species,rulesetId){
+  if(!species)return [];
+  const ancestry=definitions.getEvolutionAncestry({rulesetId,speciesName:species.name,sourceId:species.sourceId});
+  const root=ancestry.at(-1)||species,queue=[root],seenSpecies=new Set(),seenMoves=new Set(),moves=[];
+  while(queue.length&&seenSpecies.size<64){
+    const current=queue.shift(),key=norm(current.name||current.id);
+    if(!key||seenSpecies.has(key))continue;seenSpecies.add(key);
+    for(const move of current.eggMoves||[]){const id=norm(move.move_id||move.id||move.move).replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');if(id&&!seenMoves.has(id)){seenMoves.add(id);moves.push(move);}}
+    for(const evolution of definitions.getOutgoingEvolutions({rulesetId,speciesName:current.name,sourceId:current.sourceId}))if(evolution.target)queue.push(evolution.target);
+  }
+  return moves;
+}
 window.__PTU_SPECIES_PORTRAIT__=(speciesId)=>{try{return definitions.getResolved({rulesetId:getActiveRuleset(),kind:'species',id:String(speciesId||'')})?.raw?.portrait_data_url||null;}catch{return null;}};
 function loadStore(){ try{return JSON.parse(localStorage.getItem(MOBILE_KEY)||'null');}catch{return null;} }
 function initialStore(){ const states=deep(data.states||{}),profiles=deep(data.profiles||[]); return {activeProfileId:data.activeProfileId||profiles[0]?.id||Object.keys(states)[0]||'alex',profiles,states,revisions:{},activeRulesetId:'all-provided-material',packEnabledOverrides:{}}; }
@@ -1184,6 +1196,7 @@ async function handleApi(req,res,url){
     const trainingFormResolution=resolveSpeciesFormState({species:baseSpecies,pokemon,payload,includeActive:false});
     if(!trainingFormResolution.valid)return json(res,400,{error:'Stored permanent Pokémon Form state is not valid.',formResolution:trainingFormResolution});
     const species=trainingFormResolution.species;
+    const eggTutorMoves=evolutionLineEggMoves(species,rulesetId);
     const activeFormResolution=resolveSpeciesFormState({species:baseSpecies,pokemon,payload,includeActive:true});
     const activeSpecies=activeFormResolution.valid?activeFormResolution.species:species;
     const activeHeldItem=resolvePokemonHeldItem({rulesetId,pokemon,species:baseSpecies}).effect;
@@ -1209,8 +1222,9 @@ async function handleApi(req,res,url){
     const moveTeaching={
       tm_hm:(species.tmMoves||[]).map(m=>resolveMove(m,'tm_hm')),
       tutor:(species.tutorMoves||[]).map(m=>resolveMove(m,'tutor')),
-      egg_tutor:(species.eggMoves||[]).map(m=>resolveMove(m,'egg_tutor'))
+      egg_tutor:eggTutorMoves.map(m=>resolveMove(m,'egg_tutor'))
     };
+    const eggTutorUsed=(details.trainingHistory||[]).some(entry=>entry.action==='learn_move'&&entry.record?.source==='egg_tutor')||knownMoves.some(move=>move.source==='egg_tutor');
     const edgeRows=definitions.listResolved({rulesetId,kind:'poke_edges',q:'',limit:200,offset:0});
     const owned=Array.isArray(details.pokeEdges)?details.pokeEdges:[];
     const abilityKeywordLookup=(abilityName,keyword)=>{
@@ -1245,7 +1259,7 @@ async function handleApi(req,res,url){
     }
     return json(res,200,{rulesetId,species:{id:species.id,name:species.name,types:species.types||[]},tutorPoints:{earned,spent,remaining},
       tutorMovePool:{used:poolUsed,limit:poolLimit,remaining:Math.max(0,poolLimit-poolUsed)},september2015TutorRestrictions:september2015Enabled,
-      moveSlots:{used:pokemonMoveSlotsUsed(knownMoves),limit:resolvePokemonMoveLimit({base:details.moveLimitBase??6,modifier:details.moveLimitModifier??0,abilities:currentAbilityRecords}).effective},edges,moveTeaching});
+moveSlots:{used:pokemonMoveSlotsUsed(knownMoves),limit:resolvePokemonMoveLimit({base:details.moveLimitBase??6,modifier:details.moveLimitModifier??0,abilities:currentAbilityRecords}).effective},eggTutorUsed,edges,moveTeaching});
   }
   if(req.method==='POST' && url.pathname==='/api/pokemon/training-action-preview'){
     const payload=await bodyJson(req);
@@ -1258,6 +1272,7 @@ async function handleApi(req,res,url){
     const trainingActionFormResolution=resolveSpeciesFormState({species:baseSpecies,pokemon,payload,includeActive:false});
     if(!trainingActionFormResolution.valid)return json(res,400,{error:'Stored permanent Pokémon Form state is not valid.',formResolution:trainingActionFormResolution});
     const species=trainingActionFormResolution.species;
+    const eggTutorMoves=evolutionLineEggMoves(species,rulesetId);
     const activeFormResolution=resolveSpeciesFormState({species:baseSpecies,pokemon,includeActive:true});
     const activeSpecies=activeFormResolution.valid?activeFormResolution.species:species;
     const activeHeldItem=resolvePokemonHeldItem({rulesetId,pokemon,species:baseSpecies}).effect;
@@ -1366,7 +1381,9 @@ async function handleApi(req,res,url){
       }
     } else if(payload.action==='learn_move'){
       const method=String(payload.method||'tm_hm'); const moveId=String(payload.moveId||'');
-      const sourceList=method==='tutor'?(species.tutorMoves||[]):method==='egg_tutor'?(species.eggMoves||[]):(species.tmMoves||[]);
+      const sourceList=method==='tutor'?(species.tutorMoves||[]):method==='egg_tutor'?eggTutorMoves:(species.tmMoves||[]);
+      const eggTutorUsed=details.trainingHistory.some(entry=>entry.action==='learn_move'&&entry.record?.source==='egg_tutor')||details.moves.some(move=>move.source==='egg_tutor');
+      if(method==='egg_tutor'&&eggTutorUsed&&!payload.gmOverride)errors.push('A Pokémon can only be targeted by Egg Tutor once.');
       const source=sourceList.find(m=>String(m.move_id||m.move||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')===moveId);
       if(!source && !payload.gmOverride) errors.push('Move is not compatible through the selected teaching method.');
       const move=definitions.getResolved({rulesetId,kind:'moves',id:moveId}); if(!move) errors.push('Move definition is unavailable in the active Ruleset.');
