@@ -196,7 +196,7 @@ function inventoryDefinitionForItem(item,rulesetId){
 }
 function hydrateInventoryItem(item,rulesetId){
   if(!item||typeof item!=='object')return item;
-  if(item.custom)return {...item,equipmentSlots:Array.isArray(item.equipmentSlots)?item.equipmentSlots:[],equipSlot:null,trainerUsable:false,pokemonHeldUsable:false};
+  if(item.custom)return {...item,equipmentSlots:Array.isArray(item.equipmentSlots)?item.equipmentSlots:[],equipSlot:null,trainerUsable:item.trainerUsable===true,pokemonHeldUsable:item.pokemonHeldUsable===true};
   const definition=inventoryDefinitionForItem(item,rulesetId);
   if(!definition)return item;
   const canonical=inventoryItemFromDefinition(definition);
@@ -218,6 +218,15 @@ function hydrateStateForClient(state){
 }
 function resolveHeldItemDefinition({rulesetId,pokemon=null,inventoryItem=null}={}){
   const d=pokemon?.details||{};
+  const snapshot=d.heldItemDefinitionSnapshot;
+  if(snapshot?.custom===true&&snapshot.raw?.pokemon_held_usable===true)return snapshot;
+  if(inventoryItem?.custom){
+    if(inventoryItem.pokemonHeldUsable!==true)return null;
+    const id=String(inventoryItem.id||`custom-item-${itemSlug(inventoryItem.name)}`);
+    const name=String(inventoryItem.name||id);
+    const effect=String(inventoryItem.description||'');
+    return {id,name,effect,sourceId:'custom',custom:true,raw:{id,name,source_id:'custom',effect_text:effect,pokemon_held_usable:true,custom:true}};
+  }
   const candidates=[d.heldItemDefinitionId,inventoryItem?.definitionId,inventoryItem?.id,itemSlug(inventoryItem?.name),itemSlug(pokemon?.heldItem)].filter(Boolean);
   for(const id of candidates){
     const found=definitions.getResolved({rulesetId,kind:'items',id:String(id)});
