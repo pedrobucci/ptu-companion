@@ -19,6 +19,11 @@ for(const path of clients){
   assert.equal(context.classify({definition:{category:'Status'}}),false);
   assert.equal(context.classify({resolvedDamage:{finalRoll:'2d6+5'}}),true);
   assert.ok(source.includes('pokemonFormLifecycleControls(data.species?.forms||[],pokemonFormCurrentState(p),p)'),`${path}: Creature Sheet exposes Form lifecycle actions`);
+  assert.ok(source.includes('const isAegislash=formEventSlug(p?.species).includes(\'aegislash\')'),`${path}: manual control is rendered even if form reference data is unavailable`);
+  assert.ok(source.includes('onclick=\"toggleAegislashStanceManually()\"'),`${path}: direct manual stance toggle is on the sheet`);
+  assert.ok(source.includes('togglePokemonTransformation,toggleAegislashStanceManually,'),`${path}: button handler is exported`);
+  assert.ok(source.includes('form,{manualOverride:true}'),`${path}: manual override bypasses combat/action/condition prerequisites`);
+  assert.ok(!source.includes("button('Stance Change · Full Action'"),`${path}: no combat Full Action button remains as a manual prerequisite`);
   assert.ok(source.includes("payload?.changed&&state.selectedPokemonId===id&&state.ui.screen==='creature')await loadCreatureReferenceData(true)"),`${path}: Creature Sheet refreshes resolved stats after a Form transition`);
   assert.ok(source.includes('payload?.changed&&pokemonCombatReferenceState.pokemonId===id)await loadPokemonCombatReferenceData(id,true)'),`${path}: Combat refreshes resolved stats after a Form transition`);
 }
