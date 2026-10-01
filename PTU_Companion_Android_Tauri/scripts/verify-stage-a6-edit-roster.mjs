@@ -14,10 +14,11 @@ assert.match(appSource,/r\.name=name; r\.role=role; r\.maxMembers=max; r\.active
 assert.match(appSource,/✎ Edit Roster/,'Android Roster screen must expose Edit Roster');
 assert.match(appSource,/chip\('HIDDEN','chip-neutral'\)/,'Android must identify hidden Rosters while keeping them manageable');
 assert.match(appSource,/createRoster,editRoster[^}]*storePokemon/s,'Android Roster editor must remain exposed to inline UI actions even when later Roster handlers are added');
-assert.match(appSource,/function creatureRosterMembershipHtml\(p\)/,'Android creature cards must derive roster labels from the current creature state');
-assert.match(appSource,/new Set\(p\.rosterIds\|\|\[\]\)/,'Android roster labels must not repeat duplicate membership IDs');
-assert.match(appSource,/creatureRosterMembershipHtml\(p\)/,'Full Android creature cards must show their roster labels');
-assert.match(appSource,/>No roster</,'Android cards without roster memberships must show an explicit empty state');
-assert.match(cssSource,/\.creature-roster-memberships\{display:flex;flex-wrap:wrap/,'Android roster membership labels must wrap within narrow cards');
+assert.match(appSource,/function creatureRosterPortrait\(p\)/,'Android creature portraits must derive roster colors from current membership');
+assert.match(appSource,/new Set\(p\.rosterIds\|\|\[\]\)/,'Android roster rings must not repeat duplicate membership IDs');
+assert.match(appSource,/--roster-ring:conic-gradient\(\$\{stops\}\)/,'Android portraits must divide the border among assigned rosters');
+assert.match(appSource,/aria-label="\$\{esc\(`\$\{p\.name\}, Level \$\{p\.level\}, \$\{roster\.label\}`\)\}"/,'Android creature cards must announce roster names accessibly');
+assert.match(appSource,/label:'No roster'/,'Android cards without roster memberships must expose an accessible empty state');
+assert.match(cssSource,/\.creature-roster-portrait\{[^}]*background:var\(--roster-ring\)/,'Android roster colors must appear as a border around the portrait');
 
 console.log('Stage A.6 Android Roster edit regression OK');

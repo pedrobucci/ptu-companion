@@ -546,14 +546,19 @@ function shell(content){
   return `<div class="app-backdrop ${window.PTU_ANDROID_BUILD?'android-build':''}"><div class="pokedex-shell"><aside class="hardware-rail"><div class="lens"><span></span></div><div class="hardware-dots"><i></i><i></i></div></aside><div class="app-window"><header class="topbar"><div class="brand">${window.PTU_ANDROID_BUILD?'<span class="brand-mark"><img src="app-icon.png" alt=""></span>':'<span class="brand-mark">◉</span>'}<strong>PTU Companion</strong><span class="prototype-label functional">${platformLabel}</span><span class="persistence-badge">${window.PTU_ANDROID_BUILD?'Local autosave':persistenceLabel()}</span></div><div class="top-actions"><button onclick="openGlobalActions()">⚙</button><button class="trainer-mini trainer-switcher-button" onclick="openTrainerSwitcher()" title="Switch Trainer">${personPortrait(t,'trainer-mini-avatar','span')}<small>${esc(t.name)}</small><b class="trainer-switch-caret">⌄</b></button></div></header><div class="app-layout"><nav class="sidebar">${visibleNav.map(n=>`<button class="${state.ui.screen===n[0]?'active':''}" onclick="route('${n[0]}')"><span>${n[1]}</span>${n[2]}</button>`).join('')}<div class="sidebar-footer"><button onclick="openSaveTools()">⇄ Save Tools</button></div></nav><main class="screen-content">${content}</main></div><footer class="shell-footer">${window.PTU_ANDROID_BUILD?'Android beta · local autosave':`Desktop beta · ${persistenceLabel()}`} <span>●</span></footer>${mobileBottomNav()}</div><div class="hardware-bottom"></div></div>${toastHtml}<div id="modal-root"></div></div>`;
 }
 
-function creatureRosterMembershipHtml(p){
+function creatureRosterPortrait(p){
   const rosters=[...new Set(p.rosterIds||[])].map(id=>state.rosters.find(r=>r.id===id)).filter(Boolean);
-  return rosters.length?`<div class="creature-roster-memberships" aria-label="Rosters">${rosters.map(r=>chip(esc(r.name),'chip-neutral')).join('')}</div>`:'<small class="creature-roster-memberships empty">No roster</small>';
+  if(!rosters.length)return {html:pokemonPortraitTag(p),label:'No roster'};
+  const colors=rosters.map(r=>/^#[0-9a-f]{6}$/i.test(String(r.color||''))?r.color:'#64748b');
+  const slice=100/colors.length, stops=colors.map((color,index)=>`${color} ${index*slice}% ${(index+1)*slice}%`).join(',');
+  const label=`Rosters: ${rosters.map(r=>String(r.name||'Roster')).join(', ')}`;
+  return {html:`<span class="creature-roster-portrait" title="${esc(label)}" style="--roster-ring:conic-gradient(${stops})">${pokemonPortraitTag(p)}</span>`,label};
 }
 
 function creatureCard(p,compact=false,focusRoster=false){
   const onSelect=focusRoster?`focusRosterPokemon('${p.id}')`:`selectPokemon('${p.id}')`;
-  return `<button class="creature-card ${compact?'compact':''} ${p.storage?'stored':''}" onclick="${onSelect}">${pokemonPortraitTag(p)}<div class="creature-card-meta"><strong>${esc(p.name)}</strong><span>Lv. ${p.level}</span>${compact?'':`<div class="type-row">${p.types.map(typeBadge).join('')}</div>${creatureRosterMembershipHtml(p)}`}</div>${p.injuries>0?`<span class="injury-dot" title="${p.injuries} injuries">${p.injuries}</span>`:''}</button>`;
+  const roster=creatureRosterPortrait(p);
+  return `<button class="creature-card ${compact?'compact':''} ${p.storage?'stored':''}" aria-label="${esc(`${p.name}, Level ${p.level}, ${roster.label}`)}" onclick="${onSelect}">${roster.html}<div class="creature-card-meta"><strong>${esc(p.name)}</strong><span>Lv. ${p.level}</span>${compact?'':`<div class="type-row">${p.types.map(typeBadge).join('')}</div>`}</div>${p.injuries>0?`<span class="injury-dot" title="${p.injuries} injuries">${p.injuries}</span>`:''}</button>`;
 }
 
 function dashboard(){
