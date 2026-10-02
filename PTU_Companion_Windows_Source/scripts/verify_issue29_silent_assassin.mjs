@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {join} from 'node:path';
+import {runInNewContext} from 'node:vm';
 import {fileURLToPath} from 'node:url';
 import {DefinitionRepository} from '../definitions/repository.mjs';
 import {resolveTrainerModel} from '../rules/trainer-engine.mjs';
@@ -43,6 +44,14 @@ try{
   for(const path of ['static-preview/app.js','../PTU_Companion_Android_Tauri/www/app.js']){
     const app=readFileSync(join(root,path),'utf8');
     for(const token of ['function trainerBoundAp','function toggleSilentAssassinBound','Bind · Standard Action · 2 AP','Unbind · Free Action','td.currentAp-=2','td.currentAp+2','Silent Assassin (Bound)','Dead Silent and the Stealth bonus stay active while unbound'])assert.ok(app.includes(token),`${path} is missing ${token}`);
+    const slugFunction=app.match(/function pokemonCombatSlug\(value\)\{[^\r\n]+\}/)?.[0];
+    const boundApFunction=app.match(/function trainerBoundAp\(t=trainer\(\)\)\{[^\r\n]+\}/)?.[0];
+    assert.ok(slugFunction&&boundApFunction,`${path} is missing Trainer Bound AP helpers`);
+    const boundFixture={details:{features:[{id:'shade-caller'},{id:'Silent Assassin',bound:false}]}};
+    const evaluateBoundAp=input=>runInNewContext(`${slugFunction};${boundApFunction};trainerBoundAp(input)`,{input});
+    assert.equal(evaluateBoundAp(boundFixture),0,`${path} loads Trainers with Features when Silent Assassin is unbound`);
+    boundFixture.details.features[1].bound=true;
+    assert.equal(evaluateBoundAp(boundFixture),2,`${path} resolves the Bound AP reservation without a global slug`);
   }
   console.log('Issue #29: Silent Assassin Bonus, Bound-only effects, 2 committed AP, UI persistence hooks and Windows/Android parity passed.');
 }finally{definitions.close();}

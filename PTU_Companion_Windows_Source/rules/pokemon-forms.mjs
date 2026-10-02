@@ -57,12 +57,16 @@ function removeFromValue(current,remove){
 
 export function applyFormOperation(current,spec){
   if(!spec||typeof spec!=='object'||Array.isArray(spec))return deepClone(spec);
-  const isOperation=Object.prototype.hasOwnProperty.call(spec,'replace')||Object.prototype.hasOwnProperty.call(spec,'remove')||Object.prototype.hasOwnProperty.call(spec,'add');
+  const isOperation=Object.prototype.hasOwnProperty.call(spec,'replace')||Object.prototype.hasOwnProperty.call(spec,'remove')||Object.prototype.hasOwnProperty.call(spec,'add')||Object.prototype.hasOwnProperty.call(spec,'swap');
   if(!isOperation)return deepClone(spec);
   let value=deepClone(current);
   if(Object.prototype.hasOwnProperty.call(spec,'replace'))value=deepClone(spec.replace);
   if(Object.prototype.hasOwnProperty.call(spec,'remove'))value=removeFromValue(value,spec.remove);
   if(Object.prototype.hasOwnProperty.call(spec,'add'))value=addToValue(value,spec.add);
+  if(Object.prototype.hasOwnProperty.call(spec,'swap')){
+    value=value&&typeof value==='object'&&!Array.isArray(value)?value:{};
+    for(const pair of (Array.isArray(spec.swap)?spec.swap:[]))if(Array.isArray(pair)&&pair.length===2)[value[pair[0]],value[pair[1]]]=[value[pair[1]],value[pair[0]]];
+  }
   return value;
 }
 
@@ -109,6 +113,7 @@ export function normalizeSpeciesForm(input,index=0){
     activationRequirements:normalizeRequirementNode(raw.activationRequirements||raw.activation_requirements||null),
     persistenceRequirements:normalizeRequirementNode(raw.persistenceRequirements||raw.persistence_requirements||null),
     compatibleBaseForms:uniqueArray((raw.compatibleBaseForms||raw.compatible_base_forms||[]).map(slug).filter(Boolean)),
+    statSwaps:Array.isArray(raw.statSwaps||raw.stat_swaps)?deepClone(raw.statSwaps||raw.stat_swaps):[],
     overrides:normalizedOverrides,
     grantedAbilities:uniqueArray(raw.grantedAbilities||raw.granted_abilities||[]),
     source:raw.source||null,
@@ -240,6 +245,15 @@ export function applySpeciesFormOverrides(species,overrides={}){
   return resolved;
 }
 
+export function applyPokemonFormStatSwaps(breakdown,pairs=[]){
+  const resolved=deepClone(breakdown||{});
+  for(const key of ['speciesBase','baseBonus','modifiedBase','natureAdjusted','levelAllocation','bonusAllocation','permanentFinal']){
+    if(!resolved[key]||typeof resolved[key]!=='object')continue;
+    for(const pair of pairs)if(Array.isArray(pair)&&pair.length===2)[resolved[key][pair[0]],resolved[key][pair[1]]]=[resolved[key][pair[1]],resolved[key][pair[0]]];
+  }
+  return resolved;
+}
+
 export function normalizePokemonFormState(value={}){
   const source=value&&typeof value==='object'?(value.formState&&typeof value.formState==='object'?value.formState:value):{};
   const baseRaw=source.baseFormId??source.permanentFormId??source.base_form_id??BASE_FORM_ID;
@@ -336,7 +350,7 @@ export function resolvePokemonForms({species,formState={},context={},allowUnmet=
       if(!check.eligible&&!allowUnmet)errors.push(...check.unmet);
       else {
         if(!check.eligible)warnings.push(...check.unmet.map(message=>`GM Override: ${message}`));
-        resolved=applySpeciesFormOverrides(resolved,form.overrides); applied.push({id:form.id,name:form.name,mode:form.mode,requirements:check});
+        resolved=applySpeciesFormOverrides(resolved,form.overrides); applied.push({id:form.id,name:form.name,mode:form.mode,requirements:check,statSwaps:deepClone(form.statSwaps)});
       }
     }
   }
@@ -362,7 +376,7 @@ export function resolvePokemonForms({species,formState={},context={},allowUnmet=
       if(!check.eligible&&!allowUnmet)errors.push(...check.unmet);
       else {
         if(!check.eligible)warnings.push(...check.unmet.map(message=>`GM Override: ${message}`));
-        resolved=applySpeciesFormOverrides(resolved,form.overrides); applied.push({id:form.id,name:form.name,mode:form.mode,requirements:check});
+        resolved=applySpeciesFormOverrides(resolved,form.overrides); applied.push({id:form.id,name:form.name,mode:form.mode,requirements:check,statSwaps:deepClone(form.statSwaps)});
       }
     }
   }
