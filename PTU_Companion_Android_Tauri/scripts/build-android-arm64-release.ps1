@@ -10,4 +10,4 @@ try {
 finally {
   Pop-Location
 }
-Write-Host "APK em dist/android/PTU-Companion-v2.2.0-beta.35-arm64-release.apk"
+Write-Host "APK em dist/android/PTU-Companion-v2.2.0-beta.36-arm64-release.apk"
