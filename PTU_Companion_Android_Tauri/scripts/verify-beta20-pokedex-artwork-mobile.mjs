@@ -68,6 +68,6 @@ for(const rule of ['.pokemon-builder-layout.v05{grid-template-columns:minmax(0,1
 assert(css.includes('.builder-species-portrait{width:80px;height:80px'),'Species builder portrait styling missing');
 const html=read('www/index.html');assert(html.indexOf('pokemon-sprites.js')<html.indexOf('mobile-bootstrap.mjs'));
 const pkg=JSON.parse(read('package.json')),tauri=JSON.parse(read('src-tauri/tauri.conf.json'));
-assert.equal(pkg.version,'2.2.0-beta.32');assert.equal(tauri.version,pkg.version);assert.equal(tauri.bundle.android.versionCode,2002032);
-assert.equal((await(await context.fetch('/api/health')).json()).version,'2.2.0-android-beta.32');
+assert.equal(pkg.version,'2.2.0-beta.36');assert.equal(tauri.version,pkg.version);assert.equal(tauri.bundle.android.versionCode,2002036);
+assert.equal((await(await context.fetch('/api/health')).json()).version,'2.2.0-android-beta.36');
 console.log(`PTU Android beta.21 artwork/mobile: OK (${Object.keys(sprites).length} mapped IDs, pack priority, regional forms, list/detail, bounded fallback, mobile CSS, version)`);

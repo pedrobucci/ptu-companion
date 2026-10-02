@@ -15,7 +15,7 @@ import {resolveHeldItemEffect, applyHeldItemToTypeProfile, applyHeldItemToEffect
 import {resolveTrainerModel} from './rules/trainer-engine.mjs';
 import {previewTrainerProgression,applyTrainerProgression,previewTrainerXpPurchase,applyTrainerXpPurchase} from './rules/trainer-progression-engine.mjs';
 import {itemUsageMetadata} from './rules/item-metadata.mjs';
-import {normalizePokemonFormState,resolvePokemonForms,resolvePokemonPresentation} from './rules/pokemon-forms.mjs';
+import {applyPokemonFormStatSwaps,normalizePokemonFormState,resolvePokemonForms,resolvePokemonPresentation} from './rules/pokemon-forms.mjs';
 import {applyPokemonFormTransitionEvent} from './rules/pokemon-form-events.mjs';
 import {applyPokemonFormGameEvent} from './rules/pokemon-form-campaign-state.mjs';
 import {getBuiltInFormItem,listBuiltInFormItems} from './rules/pokemon-form-builtins.mjs';
@@ -545,10 +545,10 @@ function resolveCreatureAbilityRecords({pokemon,species,rulesetId,heldItemEffect
   }
   return merged;
 }
-function resolvedCreatureModel({pokemon,species,rulesetId,heldItemEffect=null,heldItemDefinition=null}){
+function resolvedCreatureModel({pokemon,species,rulesetId,heldItemEffect=null,heldItemDefinition=null,edgeStatsOverride=null}){
   const details=pokemon?.details||{};
   const abilities=resolveCreatureAbilityRecords({pokemon,species,rulesetId,heldItemEffect});
-  const edgeStats=resolvePokemonPokeEdgeStats({pokemon,species});
+  const edgeStats=edgeStatsOverride||resolvePokemonPokeEdgeStats({pokemon,species});
   const resolvedPokemon={...pokemon,details:{...details,finalStats:{...edgeStats.permanentFinal}}};
   const modifierSummary=getPokemonModifierSummary(resolvedPokemon,{heldItemEffect});
   const effectiveStats=applyHeldItemToEffectiveStats(edgeStats.permanentFinal,heldItemEffect);
@@ -954,7 +954,9 @@ async function handleApi(req,res,url){
     const slug=v=>String(v||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
     const speciesTypes=species.types||pokemon.types||[];
     const held=resolvePokemonHeldItem({rulesetId,pokemon,species:baseSpecies});
-    const edgeStats=resolvePokemonPokeEdgeStats({pokemon,species});
+    const formStatSwaps=referenceFormResolution.applied.flatMap(form=>form.statSwaps||[]);
+    const calculatedStats=resolvePokemonPokeEdgeStats({pokemon,species:formStatSwaps.length?baseSpecies:species});
+    const edgeStats=formStatSwaps.length?applyPokemonFormStatSwaps(calculatedStats,formStatSwaps):calculatedStats;
     const resolvedPokemonForCombat={...pokemon,details:{...details,finalStats:{...edgeStats.permanentFinal},combatStages:pokemon.combatStages||{}}};
     const accuracyMap=accuracyTrainingMap(details);
     const moves=(Array.isArray(details.moves)?details.moves:[]).map(m=>{
@@ -973,7 +975,7 @@ async function handleApi(req,res,url){
     const outgoing=definitions.getOutgoingEvolutions({rulesetId,speciesName:baseSpecies.name,sourceId:baseSpecies.sourceId});
     const incoming=definitions.getIncomingEvolution({speciesName:baseSpecies.name,sourceId:baseSpecies.sourceId});
     const typeProfile=applyHeldItemToTypeProfile(definitions.getDefensiveTypeProfile(speciesTypes),held.effect);
-    return json(res,200,{rulesetId,species,formResolution:referenceFormResolution,moves,abilities,abilitySlots,abilitySlotStatus,resolvedCreature:resolvedCreatureModel({pokemon,species,rulesetId,heldItemEffect:held.effect,heldItemDefinition:held.definition}),modifierSummary:getPokemonModifierSummary(resolvedPokemonForCombat,{heldItemEffect:held.effect}),heldItem:{definition:held.definition,effect:held.effect},typeProfile,incomingEvolution:incoming||null,outgoingEvolutions:outgoing});
+    return json(res,200,{rulesetId,species,formResolution:referenceFormResolution,moves,abilities,abilitySlots,abilitySlotStatus,resolvedCreature:resolvedCreatureModel({pokemon,species,rulesetId,heldItemEffect:held.effect,heldItemDefinition:held.definition,edgeStatsOverride:edgeStats}),modifierSummary:getPokemonModifierSummary(resolvedPokemonForCombat,{heldItemEffect:held.effect}),heldItem:{definition:held.definition,effect:held.effect},typeProfile,incomingEvolution:incoming||null,outgoingEvolutions:outgoing});
   }
 
   if(req.method==='POST' && url.pathname==='/api/pokemon/ability-correction-preview'){
