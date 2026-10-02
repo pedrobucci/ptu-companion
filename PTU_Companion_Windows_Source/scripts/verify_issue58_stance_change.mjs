@@ -1,6 +1,34 @@
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
+import {fileURLToPath} from 'node:url';
 import vm from 'node:vm';
+import {DefinitionRepository} from '../definitions/repository.mjs';
+import {resolvePokemonForms} from '../rules/pokemon-forms.mjs';
+import {mergeBuiltInSpeciesForms as mergeAndroidForms} from '../../PTU_Companion_Android_Tauri/www/rules/pokemon-form-builtins.mjs';
+import {resolvePokemonForms as resolveAndroidForms} from '../../PTU_Companion_Android_Tauri/www/rules/pokemon-forms.mjs';
+
+const definitions=new DefinitionRepository(fileURLToPath(new URL('../seed/definitions/ptu_seed_v1.0.sqlite3',import.meta.url)));
+try{
+  const aegislash=definitions.getResolved({rulesetId:'all-provided-material',kind:'species',id:'aegislash'});
+  assert.ok(aegislash,'bundled Aegislash definition exists');
+  const windowsStance=aegislash.forms.find(form=>form.id==='sword-stance');
+  assert.ok(windowsStance,'Windows bundled Aegislash form is available');
+  const androidForms=mergeAndroidForms('aegislash',[]);
+  const androidStance=androidForms.find(form=>form.id==='sword-stance');
+  assert.ok(androidStance,'Android bundled Aegislash form is available');
+  const input={formState:{baseFormId:'base',activeFormId:'sword-stance'},context:{manualApprovals:['aegislash-sword-stance']}};
+  const resolved=resolvePokemonForms({...input,species:aegislash}),resolvedAndroid=resolveAndroidForms({...input,species:{...aegislash,forms:androidForms}});
+  assert.equal(resolved.valid,true,'manual Sword Stance resolves from the bundled species definition');
+  const shield=aegislash.baseStats,sword=resolved.species.baseStats;
+  assert.equal(sword.attack,shield.defense,'Sword Attack uses Shield Defense');
+  assert.equal(sword.defense,shield.attack,'Sword Defense uses Shield Attack');
+  assert.equal(sword.special_attack,shield.special_defense,'Sword Sp. Attack uses Shield Sp. Defense');
+  assert.equal(sword.special_defense,shield.special_attack,'Sword Sp. Defense uses Shield Sp. Attack');
+  assert.deepEqual(windowsStance.overrides.baseStats.swap,[['attack','defense'],['special_attack','special_defense']]);
+  assert.deepEqual(androidStance.overrides.baseStats.swap,[['attack','defense'],['special_attack','special_defense']]);
+  assert.deepEqual(resolved.species.baseStats,sword);
+  assert.deepEqual(resolvedAndroid.species.baseStats,sword,'Windows and Android resolve the same stance stats');
+}finally{definitions.close();}
 
 const clients=[
   '../static-preview/app.js',
@@ -27,4 +55,4 @@ for(const path of clients){
   assert.ok(source.includes("payload?.changed&&state.selectedPokemonId===id&&state.ui.screen==='creature')await loadCreatureReferenceData(true)"),`${path}: Creature Sheet refreshes resolved stats after a Form transition`);
   assert.ok(source.includes('payload?.changed&&pokemonCombatReferenceState.pokemonId===id)await loadPokemonCombatReferenceData(id,true)'),`${path}: Combat refreshes resolved stats after a Form transition`);
 }
-console.log(JSON.stringify({issue:58,moveKinds:['Physical','Special','Status'],clients:['Windows','Android'],formActionsOnCreatureSheet:true,referenceRefresh:true},null,2));
+console.log(JSON.stringify({issue:58,moveKinds:['Physical','Special','Status'],clients:['Windows','Android'],formActionsOnCreatureSheet:true,referenceRefresh:true,bundledAegislashStanceStatsSwap:true},null,2));

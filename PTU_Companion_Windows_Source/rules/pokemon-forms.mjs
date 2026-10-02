@@ -57,12 +57,16 @@ function removeFromValue(current,remove){
 
 export function applyFormOperation(current,spec){
   if(!spec||typeof spec!=='object'||Array.isArray(spec))return deepClone(spec);
-  const isOperation=Object.prototype.hasOwnProperty.call(spec,'replace')||Object.prototype.hasOwnProperty.call(spec,'remove')||Object.prototype.hasOwnProperty.call(spec,'add');
+  const isOperation=Object.prototype.hasOwnProperty.call(spec,'replace')||Object.prototype.hasOwnProperty.call(spec,'remove')||Object.prototype.hasOwnProperty.call(spec,'add')||Object.prototype.hasOwnProperty.call(spec,'swap');
   if(!isOperation)return deepClone(spec);
   let value=deepClone(current);
   if(Object.prototype.hasOwnProperty.call(spec,'replace'))value=deepClone(spec.replace);
   if(Object.prototype.hasOwnProperty.call(spec,'remove'))value=removeFromValue(value,spec.remove);
   if(Object.prototype.hasOwnProperty.call(spec,'add'))value=addToValue(value,spec.add);
+  if(Object.prototype.hasOwnProperty.call(spec,'swap')){
+    value=value&&typeof value==='object'&&!Array.isArray(value)?value:{};
+    for(const pair of (Array.isArray(spec.swap)?spec.swap:[]))if(Array.isArray(pair)&&pair.length===2)[value[pair[0]],value[pair[1]]]=[value[pair[1]],value[pair[0]]];
+  }
   return value;
 }
 
