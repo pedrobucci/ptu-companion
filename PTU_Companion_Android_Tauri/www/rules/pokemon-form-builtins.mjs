@@ -4,6 +4,7 @@ import {MEGA_FORM_CATALOG,MEGA_STONE_CATALOG} from './mega-form-runtime-data.mjs
 const BUILT_IN_SPECIES_FORMS=Object.freeze(MEGA_FORM_CATALOG);
 const AEGISLASH_STANCE_FORM=Object.freeze({
   id:'sword-stance',name:'Sword Stance',mode:'transformation',sortOrder:10,
+  statSwaps:[['attack','defense'],['special_attack','special_defense']],
   requirements:{all:[{kind:'manual',value:'aegislash:sword-stance'}]},
   overrides:{baseStats:{swap:[['attack','defense'],['special_attack','special_defense']]}},
   lifecycle:{model_version:1,source:'Pokemon Tabletop United 1.05 Core p.331',events:[
