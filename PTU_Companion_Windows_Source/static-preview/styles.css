@@ -320,3 +320,7 @@ code{background:#eef3f7;border:1px solid #dbe5ec;padding:2px 5px;border-radius:6
 .creature-selector-accordion > summary{cursor:pointer;display:list-item;list-style-position:inside;font-weight:700}
 .creature-selector-accordion > summary:focus-visible{outline:2px solid #1765ad;outline-offset:2px}
 #creature-portrait{scroll-margin-top:16px}
+
+/* Keep Pokémon progression headings and all five stat fields in one scroll area. */
+.pokemon-progress-stat-table{overflow-x:auto}
+.pokemon-progress-stat-table>.pokemon-progress-stat-list{overflow:visible}
