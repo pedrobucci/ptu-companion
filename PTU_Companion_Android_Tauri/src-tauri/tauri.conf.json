@@ -33,7 +33,7 @@
     "longDescription": "Ficha de Trainer e Pokemon, rosters, itens, storage, shop, NPCs, progressao e regras PTU para uso offline.",
     "android": {
       "minSdkVersion": 24,
-      "versionCode": 2002036
+      "versionCode": 2002037
     },
     "icon": [
       "icons/32x32.png",
