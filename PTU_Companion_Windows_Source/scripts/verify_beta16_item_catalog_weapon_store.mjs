@@ -37,4 +37,4 @@ assert(app.includes('Effect not automated'),'unsupported consumables must show a
 assert(app.includes('already at its current healing limit'),'healing items must not be consumed when they cannot restore HP');
 const server=fs.readFileSync(path.join(root,'server.mjs'),'utf8');
 assert(server.includes('shopCategories:Array.isArray(raw.shop_categories)'),'item catalog must expose shop metadata');
-console.log(`PTU Companion Beta v2.1.0-beta.30 bundled Weapon Store verification: OK (${before} -> ${after} items after update)`);
+console.log(`PTU Companion Beta v2.1.0-beta.31 bundled Weapon Store verification: OK (${before} -> ${after} items after update)`);
