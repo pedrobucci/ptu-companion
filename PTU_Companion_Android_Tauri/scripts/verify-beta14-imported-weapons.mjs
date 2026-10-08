@@ -49,5 +49,5 @@ const runtime=fs.readFileSync(path.join(root,'www/mobile-runtime.js'),'utf8');
 assert(runtime.includes("raw.mechanics&&typeof raw.mechanics==='object'"));
 assert(runtime.includes("def?.raw?.mechanics&&typeof def.raw.mechanics==='object'"));
 assert(runtime.includes('for(const effect of def?.compiledEffects||[]) applyCompiledEffect(model,effect,source,ctx);'));
-assert(runtime.includes("version:'2.2.0-android-beta.37'"));
-console.log('PTU Companion Android v2.2.0-beta.37 imported weapon mechanics verification: OK');
+assert(runtime.includes("version:'2.2.0-android-beta.38'"));
+console.log('PTU Companion Android v2.2.0-beta.38 imported weapon mechanics verification: OK');
