@@ -324,3 +324,5 @@ code{background:#eef3f7;border:1px solid #dbe5ec;padding:2px 5px;border-radius:6
 /* Keep Pokémon progression headings and all five stat fields in one scroll area. */
 .pokemon-progress-stat-table{overflow-x:auto}
 .pokemon-progress-stat-table>.pokemon-progress-stat-list{overflow:visible}
+
+.gm-status{white-space:nowrap;flex-shrink:0}
