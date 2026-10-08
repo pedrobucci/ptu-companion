@@ -23,9 +23,9 @@ for(const resolveTrainerModel of [resolveWindows,resolveAndroid]){
 }
 for(const file of ['../static-preview/app.js','../../PTU_Companion_Android_Tauri/www/app.js']){
   const app=readFileSync(new URL(file,import.meta.url),'utf8');
-  assert.match(app,/pokemonHeldUsable:f\.pokemonHeldUsable==='yes'/,'custom Pokemon Held Item compatibility is saved');
-  assert.match(app,/trainerUsable,pokemonHeldUsable:f\.pokemonHeldUsable==='yes',equipmentSlots:trainerUsable/,'custom Trainer equipment compatibility and slot are saved');
-  assert.match(app,/skillBonuses:\[\{skill:String\(f\.skillBonusSkill\|\|TRAINER_SKILLS\[0\]\),value:Number\(f\.skillBonusValue\)\|\|0\}\]/,'custom structured Skill effect is persisted');
+  assert.match(app,/pokemonHeldUsable=f\.pokemonHeldUsable==='yes'/,'custom Pokemon Held Item compatibility is saved');
+  assert.match(app,/trainerUsable,pokemonHeldUsable,equipmentSlots:trainerUsable/,'custom Trainer equipment compatibility and slot are saved');
+  assert.match(app,/mechanics\.skillBonuses=\[\{skill:String\(f\.skillBonusSkill\|\|TRAINER_SKILLS\[0\]\),value:Number\(f\.skillBonusValue\)\|\|0\}\]/,'custom structured Skill effect is persisted');
 }
 for(const file of ['../server.mjs','../../PTU_Companion_Android_Tauri/www/mobile-api.mjs']){
   const api=readFileSync(new URL(file,import.meta.url),'utf8');

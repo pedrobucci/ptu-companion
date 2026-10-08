@@ -237,7 +237,7 @@ function resolveHeldItemDefinition({rulesetId,pokemon=null,inventoryItem=null}={
     const id=String(inventoryItem.id||`custom-item-${itemSlug(inventoryItem.name)}`);
     const name=String(inventoryItem.name||id);
     const effect=String(inventoryItem.description||'');
-    return {id,name,effect,sourceId:'custom',custom:true,raw:{id,name,source_id:'custom',effect_text:effect,pokemon_held_usable:true,custom:true}};
+    return {id,name,effect,sourceId:'custom',custom:true,mechanics:inventoryItem.mechanics||null,raw:{id,name,source_id:'custom',effect_text:effect,pokemon_held_usable:true,mechanics:inventoryItem.mechanics||null,custom:true}};
   }
   const candidates=[d.heldItemDefinitionId,inventoryItem?.definitionId,inventoryItem?.id,itemSlug(inventoryItem?.name),itemSlug(pokemon?.heldItem)].filter(Boolean);
   for(const id of candidates){
@@ -557,7 +557,7 @@ function resolvedCreatureModel({pokemon,species,rulesetId,heldItemEffect=null,he
   const accuracyTraining=Object.fromEntries(accuracyTrainingMap(details));
   return {
     pokemonId:pokemon?.id||null,speciesId:species?.id||null,level:Number(pokemon?.level||1),
-    stats:{stored:{...(details.finalStats||{})},permanent:{...edgeStats.permanentFinal},effective:effectiveStats,breakdown:edgeStats},
+    stats:{stored:{...(details.finalStats||{})},permanent:{...edgeStats.permanentFinal},effective:effectiveStats,breakdown:{...edgeStats,maxHp:Math.max(1,Number(pokemon?.level||1)+(Number(effectiveStats.hp)||0)*3+10)}},
     skills:skillResolution.skills,skillModifiers:skillResolution.applied,
     moveLimit:resolvePokemonMoveLimit({base:details.moveLimitBase??6,modifier:details.moveLimitModifier??0,abilities}),
     abilities,modifierSummary,
@@ -963,9 +963,10 @@ async function handleApi(req,res,url){
       const id=slug(m.id||m.name); const definition=id?definitions.getResolved({rulesetId,kind:'moves',id}):null;
       const resolvedDamage=definition?resolveMoveDamage({pokemon:resolvedPokemonForCombat,moveDefinition:definition,speciesTypes,getDamageBase:db=>definitions.getDamageBase(db),heldItemEffect:held.effect}):null;
       const accuracyTrainingRanks=accuracyMap.get(id)||0;
+      const accuracyRollBonus=getPokemonModifierSummary(resolvedPokemonForCombat,{heldItemEffect:held.effect}).accuracyRollBonus;
       const baseAc=definition?.ac==null?null:Number(definition.ac);
       const effectiveAc=baseAc==null||!Number.isFinite(baseAc)?baseAc:Math.max(0,baseAc-accuracyTrainingRanks);
-      return {record:m,definition,resolvedDamage,accuracyTrainingRanks,accuracyRollBonus:Math.max(-6,Math.min(6,Math.trunc(Number(pokemon.combatStages?.accuracy)||0))),effectiveAc};
+      return {record:m,definition,resolvedDamage,accuracyTrainingRanks,accuracyRollBonus,effectiveAc};
     });
     const abilities=resolveCreatureAbilityRecords({pokemon,species,rulesetId,heldItemEffect:held.effect});
     const abilitySlots=nativeAbilitySlotsForSpecies(species,pokemon.level);
