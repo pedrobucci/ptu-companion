@@ -1564,6 +1564,22 @@ function trainerDefinitionRepeatability(definition={}){
   return {repeatable:false,maxRanks:1,kind:'single'};
 }
 
+function trainerDefinitionSelectionConflict(definition={},records=[]){
+  const names=new Set([slug(definition.id||''),slug(definition.name||'')].filter(Boolean));
+  const text=String(definition.effect||definition.raw?.effect_text||'');
+  const conflicts=[];
+  const pattern=/you may not take\s+([^.,;]+?)\s+if you have\s+(?:the\s+)?([^.,;]+?)(?=[.,;]|$)/gi;
+  for(const match of text.matchAll(pattern)){
+    const prohibited=slug(match[1].replace(/\s+edge$/i,''));
+    if(!names.has(prohibited))continue;
+    const required=slug(match[2].replace(/\s+edge$/i,''));
+    const existing=(records||[]).find(record=>[record?.id,record?.name].some(value=>slug(String(value||'').replace(/\s+edge$/i,''))===required));
+    if(existing)conflicts.push({name:String(existing.name||match[2].replace(/\s+edge$/i,'')).trim(),record:existing});
+  }
+  const unique=[...new Map(conflicts.map(item=>[slug(item.name),item])).values()];
+  return {blocked:unique.length>0,reasons:unique.map(item=>`Cannot take ${definition.name||definition.id} while you have ${item.name}.`),conflicts:unique};
+}
+
 function evaluateTrainerPrerequisiteAst(ast,{trainer={},resolvedTrainer=null,rulesetId=null,getDefinition=null,gmOverride=false}={}){
   const details=trainer.details||{};
   const features=Array.isArray(details.features)?details.features:[];
@@ -1671,11 +1687,11 @@ function evaluateTrainerDefinitionPrerequisite(definition,context={}){
 }
 
 
-return {resolveTrainerModel, combatStageMultiplier, applyCombatStage, TRAINER_SKILLS, SKILL_CATEGORIES, STAT_KEYS, TYPE_NAMES, rankedLimit, trainerDefinitionRepeatability, evaluateTrainerPrerequisiteAst, evaluateTrainerDefinitionPrerequisite};
+return {resolveTrainerModel, combatStageMultiplier, applyCombatStage, TRAINER_SKILLS, SKILL_CATEGORIES, STAT_KEYS, TYPE_NAMES, rankedLimit, trainerDefinitionRepeatability, trainerDefinitionSelectionConflict, evaluateTrainerPrerequisiteAst, evaluateTrainerDefinitionPrerequisite};
 })();
 
 const __ptu_trainer_progression_engine = (()=>{
-const {resolveTrainerModel,evaluateTrainerDefinitionPrerequisite,trainerDefinitionRepeatability,STAT_KEYS} = __ptu_trainer_engine;
+const {resolveTrainerModel,evaluateTrainerDefinitionPrerequisite,trainerDefinitionRepeatability,trainerDefinitionSelectionConflict,STAT_KEYS} = __ptu_trainer_engine;
 
 const MILESTONE_OPTIONS={
   5:[
@@ -1788,11 +1804,12 @@ function candidateRows({kind,trainer,draft,rulesetId,getDefinition,listDefinitio
     if(filter==='general_feature'&&!isGeneralFeature(def))return null;
     if(filter==='skill_edge'&&!isSkillEdge(def))return null;
     const prereq=evaluateTrainerDefinitionPrerequisite(def,{trainer:projected,resolvedTrainer:resolved,rulesetId,getDefinition,gmOverride});
+    const selectionConflict=kind==='edges'?trainerDefinitionSelectionConflict(def,records):{blocked:false,reasons:[],conflicts:[]};
     const duplicate=duplicateStatus(def,records);
     let classBlocked=false;
     if(kind==='features'&&isClassFeatureDefinition(def)&&classCount>=4&&!records.some(r=>slug(r.id)===slug(def.id))) classBlocked=true;
-    const valid=gmOverride?true:(!duplicate.exhausted&&!classBlocked&&prereq.valid!==false);
-    return {id:def.id,name:def.name,parentClass:def.parentClass||null,tags:def.raw?.tags||[],prerequisites:def.prerequisites||'',effect:def.effect||'',packName:def.packName||def.sourceId,sourcePage:def.sourcePage,semanticAutomation:def.semanticAutomation||null,prerequisite:prereq,duplicate,classBlocked,valid,manual:prereq.valid==null};
+    const valid=gmOverride?true:(!duplicate.exhausted&&!classBlocked&&prereq.valid!==false&&!selectionConflict.blocked);
+    return {id:def.id,name:def.name,parentClass:def.parentClass||null,tags:def.raw?.tags||[],prerequisites:def.prerequisites||'',effect:def.effect||'',packName:def.packName||def.sourceId,sourcePage:def.sourcePage,semanticAutomation:def.semanticAutomation||null,prerequisite:prereq,selectionConflict,duplicate,classBlocked,valid,manual:prereq.valid==null};
   }).filter(Boolean).sort((a,b)=>Number(b.valid)-Number(a.valid)||a.name.localeCompare(b.name));
 }
 function previewTrainerProgression({trainer,draft={},rulesetId,getDefinition,listDefinitions,getDamageBase,gmOverride=false,includeOptions=true}={}){
@@ -1900,7 +1917,7 @@ function previewTrainerXpPurchase({trainer,kind,id,selections={},manualConfirm=f
   if(availableXp<cost)errors.push(`Requires ${cost} Trainer Experience; only ${availableXp} XP remain in the Experience Bank.`);
   const def=normalizedKind?getDefinition({rulesetId,kind:normalizedKind,id}):null;
   if(!def)errors.push('The selected Trainer definition is not available in the active Ruleset.');
-  let prereq={valid:false,reasons:[]},duplicate={nextRank:1,existingRanks:0,exhausted:false,repeatability:{repeatable:false,maxRanks:1}},classBlocked=false;
+  let prereq={valid:false,reasons:[]},duplicate={nextRank:1,existingRanks:0,exhausted:false,repeatability:{repeatable:false,maxRanks:1}},classBlocked=false,selectionConflict={blocked:false,reasons:[],conflicts:[]};
   if(def){
     const projected=clone(trainer); projected.details ||= {}; projected.details.features ||= []; projected.details.edges ||= [];
     const records=normalizedKind==='features'?projected.details.features:projected.details.edges;
@@ -1914,6 +1931,8 @@ function previewTrainerXpPurchase({trainer,kind,id,selections={},manualConfirm=f
     const resolvedTrainer=resolveTrainerModel({trainer:projected,rulesetId,getDefinition,getDamageBase});
     prereq=evaluateTrainerDefinitionPrerequisite(def,{trainer:projected,resolvedTrainer,rulesetId,getDefinition,gmOverride});
     if(prereq.valid===false&&!gmOverride)errors.push(`${def.name}: ${(prereq.reasons||[]).join(' ')||'Prerequisites are not satisfied.'}`);
+    if(normalizedKind==='edges')selectionConflict=trainerDefinitionSelectionConflict(def,records);
+    if(selectionConflict.blocked&&!gmOverride)errors.push(`${def.name}: ${selectionConflict.reasons.join(' ')}`);
     if(prereq.valid==null&&!manualConfirm&&!gmOverride)errors.push(`${def.name}: prerequisite requires manual confirmation.`);
     const same=records.filter(r=>slug(r.id||r.name)===slug(def.id||def.name));
     const rep=trainerDefinitionRepeatability(def);
@@ -1923,7 +1942,7 @@ function previewTrainerXpPurchase({trainer,kind,id,selections={},manualConfirm=f
       if(repeated&&!gmOverride)errors.push(`${def.name} cannot apply its bonus to ${repeated} more than once.`);
     }
   }
-  return {valid:errors.length===0,errors,kind:normalizedKind,id:def?.id||id,name:def?.name||id,cost,availableXp,xpRemaining:Math.max(0,availableXp-cost),rank:duplicate.nextRank||1,manualRequired:prereq.valid==null,prerequisite:prereq,duplicate,classBlocked};
+  return {valid:errors.length===0,errors,kind:normalizedKind,id:def?.id||id,name:def?.name||id,cost,availableXp,xpRemaining:Math.max(0,availableXp-cost),rank:duplicate.nextRank||1,manualRequired:prereq.valid==null,prerequisite:prereq,selectionConflict,duplicate,classBlocked};
 }
 function applyTrainerXpPurchase({trainer,kind,id,selections={},preview,getDefinition,rulesetId}={}){
   if(!preview?.valid)throw new Error('Trainer XP purchase preview is not valid.');
