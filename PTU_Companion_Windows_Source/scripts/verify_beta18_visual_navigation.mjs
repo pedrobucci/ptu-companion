@@ -18,4 +18,4 @@ ok(app.includes('saved.path.reduce((parent,index)=>parent?.children[index]??null
 ok(css.includes('.creature-detail-grid .section-title .btn-ghost{color:#1765ad}'), 'Creature edit button contrast missing');
 ok(css.includes('.creature-detail-grid .section-title .btn-ghost:focus-visible{outline:2px solid #fff;outline-offset:2px}'), 'Creature edit button focus indicator missing');
 ok(css.includes('.creature-detail-grid .section-title .btn-ghost:disabled{color:#536b7e;opacity:1;background:#dbe5ed}'), 'Creature edit button disabled contrast missing');
-console.log('PTU Companion Beta v2.1.0-beta.31 visual/navigation verification: OK');
+console.log('PTU Companion Beta v2.1.0-beta.32 visual/navigation verification: OK');

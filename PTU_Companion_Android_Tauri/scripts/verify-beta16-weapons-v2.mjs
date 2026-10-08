@@ -40,5 +40,5 @@ const runtime=fs.readFileSync(path.join(root,'www/mobile-runtime.js'),'utf8');
 assert(runtime.includes("arcane_short_range:'Arcane Short Range'"));
 assert(runtime.includes("source:'Arcane Weapon rules'"));
 assert(runtime.includes("damageClass:mechanics.damageClass||(arcane?'Special':'Physical')"));
-assert(runtime.includes("version:'2.2.0-android-beta.37'"));
-console.log('PTU Companion Android v2.2.0-beta.37 weapons v2 verification: OK');
+assert(runtime.includes("version:'2.2.0-android-beta.38'"));
+console.log('PTU Companion Android v2.2.0-beta.38 weapons v2 verification: OK');

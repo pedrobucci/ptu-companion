@@ -260,7 +260,7 @@ code{background:#eef3f7;border:1px solid #dbe5ec;padding:2px 5px;border-radius:6
 .android-build .prototype-label,.android-build .persistence-badge{display:none}
 .android-build .top-actions{gap:4px}
 .android-build .top-actions>button{width:36px;height:36px;border:0;background:rgba(255,255,255,.13);color:#fff}
-.android-build .top-actions>button:first-child{display:none}
+.android-build .top-actions>button[onclick="openGlobalActions()"]{display:none}
 .android-build .trainer-mini{width:auto!important;max-width:46px;padding:3px!important;border:0!important;background:transparent!important}
 .android-build .trainer-mini small,.android-build .trainer-switch-caret{display:none}
 .android-build .trainer-mini span,.android-build .trainer-mini img{width:34px!important;height:34px!important;border-radius:50%;object-fit:cover}
@@ -821,3 +821,5 @@ body.ptu-android-body #app{width:100%;max-width:100vw;overflow-x:hidden}
 /* Keep Pokémon progression headings and all five stat fields in one scroll area. */
 .pokemon-progress-stat-table{overflow-x:auto}
 .pokemon-progress-stat-table>.pokemon-progress-stat-list{overflow:visible}
+
+.gm-status{white-space:nowrap;flex-shrink:0}
