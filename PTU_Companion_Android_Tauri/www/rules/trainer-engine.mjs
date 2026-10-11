@@ -48,7 +48,25 @@ function addFlatToRoll(roll,flat){
   return `${p.dice}${total>0?`+${total}`:total<0?String(total):''}`;
 }
 
-function sourceRecord({kind,record,definition}){
+function featureBindingInfo(definition,record={}){
+  const raw=definition?.raw||{};const frequency=raw.frequency||{};
+  const activation=String(raw.activation_text||frequency.raw||'');
+  const costMatch=activation.match(/\bBind\s+(\d+)\s*AP\b/i);
+  const apCost=num(frequency.ap_cost)||Number(costMatch?.[1])||0;
+  if((frequency.ap_mode!=='bind'&&!costMatch)||apCost<=0)return null;
+  const action=Array.isArray(frequency.actions)&&frequency.actions.length?`${title(frequency.actions[0])} Action`:activation.match(/\b(Free|Swift|Shift|Standard|Extended) Action\b/i)?.[0]||'Action';
+  const effectText=`${raw.effect_text||''} ${raw.bonus_text||''}`;
+  const unbindAction=effectText.match(/\bunbind(?:ing)?(?: this Feature)?\s+(?:as\s+)?(?:a\s+)?(Free|Swift|Shift|Standard|Extended) Action\b/i)?.[1]||'Free';
+  const targetText=String(raw.target_text||'');
+  const targetKind=/\btrainer\b/i.test(targetText)&&/\bpok[eé]mon\b/i.test(targetText)?'creature':/\bpok[eé]mon\b/i.test(targetText)?'pokemon':/\btrainer\b/i.test(targetText)?'trainer':targetText?'other':'self';
+  const boundTargetIds=Array.isArray(record.boundTargetIds)?record.boundTargetIds.map(String):[];
+  const tags=Array.isArray(raw.tags)?raw.tags:(Array.isArray(record.tags)?record.tags:[]);
+  return {apCost,perRank:/\bper\s+Rank\b/i.test(activation),action,unbindAction:`${unbindAction} Action`,targetText,targetKind,stratagem:tags.some(tag=>slug(tag)==='stratagem'),boundTargetIds,bound:record.bound===true||(record.bound!==false&&boundTargetIds.length>0)};
+}
+
+function sourceRecord({kind,record,definition,recordIndex}){
+  const binding=kind==='feature'?featureBindingInfo(definition,record):null;
+  const boundTargetIds=Array.isArray(record?.boundTargetIds)?record.boundTargetIds.map(String):[];
   return {
     kind,
     id:record?.id||definition?.id||null,
@@ -58,7 +76,10 @@ function sourceRecord({kind,record,definition}){
     tags:Array.isArray(definition?.raw?.tags)?definition.raw.tags:(Array.isArray(record?.tags)?record.tags:[]),
     selections:record?.selections||{},
     rank:num(record?.rank)||1,
-    bound:record?.bound===true,
+    bound:record?.bound===true||(record?.bound!==false&&boundTargetIds.length>0),
+    boundTargetIds,
+    recordIndex,
+    binding,
     definition
   };
 }
@@ -118,6 +139,42 @@ function resolveDefinition(getDefinition,rulesetId,kind,idOrRecord){
   try{return getDefinition({rulesetId,kind,id:String(id),versionId:record?.definitionVersionId||null})||null;}catch{return null;}
 }
 
+function boundFeatureCombatModifiers(definition){
+  const id=slug(definition?.id||definition?.name),text=String(definition?.raw?.effect_text||definition?.effect||'');
+  const modifiers=(definition?.compiledEffects||[]).filter(effect=>effect?.kind==='modifier'&&['combat.accuracy','combat.damage_bonus','combat.damage_reduction','combat.evasion','combat.initiative'].includes(String(effect.target_path||''))&&Number.isFinite(Number(effect.value))).map(effect=>({targetPath:String(effect.target_path),value:Number(effect.value),sourceText:String(effect.source_text||text),conditional:/\b(?:when|whenever|if|unless|once per|once a round)\b/i.test(String(effect.source_text||text)),moveFilter:'any'}));
+  const add=(targetPath,value,moveFilter='any',conditionText='')=>modifiers.push({targetPath,value,sourceText:text,conditional:!!conditionText,moveFilter,conditionText});
+  if(id==='capricious-whirl'&&/\+(\d+) bonus to its Evasion but deals (\d+) less damage with all damaging attacks/i.test(text)){
+    const m=text.match(/\+(\d+) bonus to its Evasion but deals (\d+) less damage with all damaging attacks/i);add('combat.evasion',Number(m[1]));add('combat.damage_bonus',-Number(m[2]),'damaging');
+  }else if(id==='pinpoint-strike'&&/increase the Accuracy and Effect Range.*?\+(\d+).*?attacks deal (\d+) less damage/i.test(text)){
+    const m=text.match(/increase the Accuracy and Effect Range.*?\+(\d+).*?attacks deal (\d+) less damage/i);add('combat.accuracy',Number(m[1]),'damaging');add('combat.effect_range',Number(m[1]),'damaging');add('combat.damage_bonus',-Number(m[2]),'damaging');
+  }else if(id==='trick-shot'&&/decrease the Accu-?\s*racy Roll.*?damaging ranged attacks by\s+-?(\d+).*?Critical Hit range.*?increased by\s+\+(\d+)/i.test(text)){
+    const m=text.match(/decrease the Accu-?\s*racy Roll.*?damaging ranged attacks by\s+-?(\d+).*?Critical Hit range.*?increased by\s+\+(\d+)/i);add('combat.accuracy',-Number(m[1]),'damaging-ranged-ac');add('combat.critical_range',Number(m[2]),'damaging-ranged-ac');
+  }else if(id==='reckless-advance'&&/increase the damage rolls.*?damaging melee attacks by\s+\+(\d+).*?Trip targets on Accuracy Rolls of (\d+)\+/i.test(text)){
+    const m=text.match(/increase the damage rolls.*?damaging melee attacks by\s+\+(\d+).*?Trip targets on Accuracy Rolls of (\d+)\+/i);add('combat.damage_bonus',Number(m[1]),'damaging-melee');add('combat.trip_on_accuracy',Number(m[2]),'damaging-melee');
+  }else if(id==='sneak-attack'&&/when attacking foes that are Fainted, Flanked, Flinched, Sleeping, Stuck, Tripped, unaware/i.test(text)){
+    if(!modifiers.some(effect=>effect.targetPath==='combat.accuracy'))add('combat.accuracy',2,'any',text);
+    for(const effect of modifiers)if(effect.targetPath==='combat.accuracy'){effect.moveFilter='any';effect.conditional=true;effect.conditionText=text;}
+  }
+  return modifiers;
+}
+
+export function resolveBoundFeatureEffects({trainer,rulesetId,targetId,targetTypes=[],getDefinition}={}){
+  if(!targetId||typeof getDefinition!=='function')return [];
+  const records=trainer?.details?.features||[];
+  return records.flatMap((record,recordIndex)=>{
+    const definition=resolveDefinition(getDefinition,rulesetId,'features',record);
+    const binding=definition?featureBindingInfo(definition,record):null;
+    const boundTargetIds=binding?.boundTargetIds||[];
+    if(!binding?.bound||!['pokemon','creature'].includes(binding.targetKind)||!boundTargetIds.includes(String(targetId)))return [];
+    const raw=definition.raw||{};
+    const semanticText=String(raw.effect_semantics?.unstructured_text||'').trim();
+    const typeTarget=String(binding.targetText||'').match(/\b(?:your|a|an)\s+(Bug|Dark|Dragon|Electric|Fairy|Fighting|Fire|Flying|Ghost|Grass|Ground|Ice|Normal|Poison|Psychic|Rock|Steel|Water)-Type\s+Pok[eé]mon\b/i)?.[1]||null;
+    const targetEligible=typeTarget?targetTypes.some(type=>slug(type)===slug(typeTarget)):null;
+    const combatModifiers=boundFeatureCombatModifiers(definition).map(effect=>({...effect,active:targetEligible!==false}));
+    return [{kind:'feature',id:definition.id||record.id||null,name:definition.name||record.name||'Bound Feature',sourceLabel:record.sourceLabel||definition.packName||definition.sourceId||'Feature',recordIndex,targetId:String(targetId),targetTypeRequirement:typeTarget,targetEligible,binding:{apCost:binding.apCost,perRank:binding.perRank,action:binding.action,unbindAction:binding.unbindAction,targetText:binding.targetText},effectText:String(raw.effect_text||definition.effect||record.effect||''),bonusText:String(raw.bonus_text||''),specialText:String(raw.special_text||''),semanticText,compiledEffects:Array.isArray(definition.compiledEffects)?definition.compiledEffects:[],combatModifiers}];
+  });
+}
+
 function grantEntity(model,{entityKind,entityId,entityName,source,automatic=true,getDefinition,rulesetId,metadata={}}){
   const ek=String(entityKind||'').toLowerCase();
   if(ek==='move'){
@@ -139,6 +196,19 @@ function grantEntity(model,{entityKind,entityId,entityName,source,automatic=true
 
 function applyCompiledEffect(model,effect,source,ctx){
   if(!effect||String(effect.confidence||'high')==='low')return;
+  if(source.kind==='feature'&&source.binding){
+    const sourceField=String(effect.source_field||'');
+    const effectTarget=String(effect.target||'').toLowerCase();
+    if(!source.bound&&!['bonus_text','special_text'].includes(sourceField))return;
+    // Compiler defaults can label an effect as "self" even when its rule text
+    // says the bound Pokémon receives it. Never apply external-target effects
+    // to the Trainer model just because AP was paid.
+    if(source.bound&&source.binding.targetKind!=='self'&&sourceField!=='bonus_text'&&sourceField!=='special_text'){
+      model.contextualEffects.push({source:slimSource(source),target:`bound_${source.binding.targetKind}`,note:effect.source_text||source.effect||source.name,contextual:true,effect});
+      return;
+    }
+    if(source.bound&&effectTarget==='target')return;
+  }
   const kind=effect.kind;
   if(kind==='modifier'){
     const path=String(effect.target_path||''); const value=num(effect.value); const contextual=/contextual/.test(String(effect.duration||''))||/contextual/.test(String(effect.mode||''));
@@ -547,14 +617,15 @@ function resolveTrainerModel({trainer,rulesetId,getDefinition,getDamageBase}){
   const sources=[];
   for(const [kind,records] of [['feature',details.features||[]],['edge',details.edges||[]]]){
     const defKind=kind==='feature'?'features':'edges';
-    for(const record of records){
+    for(let recordIndex=0;recordIndex<records.length;recordIndex++){
+      const record=records[recordIndex];
       const definition=resolveDefinition(getDefinition,rulesetId,defKind,record)||null;
-      const source=sourceRecord({kind,record,definition}); sources.push(source);
+      const source=sourceRecord({kind,record,definition,recordIndex}); sources.push(source);
       if(kind==='feature')applyFeatureTags(model,source);
       for(const effect of definition?.compiledEffects||record.compiledEffects||[])applyCompiledEffect(model,effect,source,ctx);
       applyKnownSemantics(model,source,ctx);
       fallbackDirectGrants(model,source,ctx);
-      if(definition?.semanticAutomation?.level==='manual_text' || definition?.semanticAutomation?.level==='hybrid'){
+      if((!source.binding||source.bound) && (definition?.semanticAutomation?.level==='manual_text' || definition?.semanticAutomation?.level==='hybrid')){
         const unstructured=String(definition?.raw?.effect_semantics?.unstructured_text||'').trim();
         const structured=(definition?.compiledEffects||[]).length>0;
         if(unstructured) model.contextualEffects.push({source:slimSource(source),target:'feature_effect',note:unstructured,contextual:true});
@@ -597,7 +668,11 @@ function resolveTrainerModel({trainer,rulesetId,getDefinition,getDamageBase}){
   const level=Math.max(1,num(t.level)||1);
   const maxHp=level*2+model.stats.effective.hp*3+10+model.derivedBonuses.maxHp;
   const maxAp=5+Math.floor(level/5)+model.derivedBonuses.maxAp;
-  const boundAp=sources.reduce((total,source)=>total+(slug(source.id||source.name)==='silent-assassin'&&source.bound?2:0),0);
+  const boundAp=sources.reduce((total,source)=>{
+    const binding=source.binding;if(!binding||!source.bound)return total;
+    const count=source.boundTargetIds.length||1;
+    return total+binding.apCost*(binding.perRank?source.rank:1)*count;
+  },0);
   const physicalEvasion=Math.min(6,Math.floor(model.stats.combat.defense/5))+model.evasionBonus+model.evasionFixed.physical+num(details.combatStages?.evasion);
   const specialEvasion=Math.min(6,Math.floor(model.stats.combat.spDefense/5))+model.evasionBonus+model.evasionFixed.special+num(details.combatStages?.evasion);
   const speedEvasion=Math.min(6,Math.floor(model.stats.combat.speed/5))+model.evasionBonus+model.evasionFixed.speed+num(details.combatStages?.evasion);
@@ -608,7 +683,7 @@ function resolveTrainerModel({trainer,rulesetId,getDefinition,getDamageBase}){
   model.struggleAttack=resolveStruggleAttack(model,t,getDamageBase);
   model.moves=[...model._moveMap.values()].map(move=>({...move,resolvedDamage:resolveMoveDamageForTrainer(model,move,t,getDamageBase)})).sort((a,b)=>a.name.localeCompare(b.name));
   model.stabTypes=[...model.stabTypes];
-  model.sourceSummary=sources.map(s=>({kind:s.kind,id:s.id,name:s.name,tags:s.tags,selections:s.selections,automation:s.definition?.semanticAutomation||null,rankedLimit:rankedLimit(s.tags)}));
+  model.sourceSummary=sources.map(s=>({kind:s.kind,id:s.id,name:s.name,recordIndex:s.recordIndex,tags:s.tags,selections:s.selections,bound:s.bound,boundTargetIds:s.boundTargetIds,binding:s.binding,automation:s.definition?.semanticAutomation||null,rankedLimit:rankedLimit(s.tags)}));
   delete model.sourceSummaryRaw;
   delete model._moveMap;
   return model;

@@ -12,7 +12,7 @@ import {syncBundledPackIfNewer} from './definitions/bundled-pack-upgrade.mjs';
 import {buildPokemonPreview, buildPokemonProgressionPreview, buildPokemonRestatPreview, resolvePokemonMoveLimit, autoBalancedAllocations, NATURES, parseTutorPointCost, evaluatePokeEdgePrerequisite, moveTrainingPoolUsage, isNaturalTutorMove, tutorRestrictionForMove, relationExemptionsFromPokeEdges, isUnderdogPokemon, pokeEdgeRequiresUnderdog, levelAbilitySlots, eligibleAbilities, applyNature, normalizeBaseStats, normalizeAllocations, STAT_KEYS, validateBaseRelations} from './rules/pokemon-engine.mjs';
 import {getPokemonModifierSummary, resolveMoveDamage} from './rules/modifier-engine.mjs';
 import {resolveHeldItemEffect, applyHeldItemToTypeProfile, applyHeldItemToEffectiveStats} from './rules/held-item-engine.mjs';
-import {resolveTrainerModel} from './rules/trainer-engine.mjs';
+import {resolveTrainerModel,resolveBoundFeatureEffects} from './rules/trainer-engine.mjs';
 import {previewTrainerProgression,applyTrainerProgression,previewTrainerXpPurchase,applyTrainerXpPurchase} from './rules/trainer-progression-engine.mjs';
 import {itemUsageMetadata} from './rules/item-metadata.mjs';
 import {applyPokemonFormStatSwaps,normalizePokemonFormState,resolvePokemonForms,resolvePokemonPresentation} from './rules/pokemon-forms.mjs';
@@ -975,7 +975,8 @@ async function handleApi(req,res,url){
     const outgoing=definitions.getOutgoingEvolutions({rulesetId,speciesName:baseSpecies.name,sourceId:baseSpecies.sourceId});
     const incoming=definitions.getIncomingEvolution({speciesName:baseSpecies.name,sourceId:baseSpecies.sourceId});
     const typeProfile=applyHeldItemToTypeProfile(definitions.getDefensiveTypeProfile(speciesTypes),held.effect);
-    return json(res,200,{rulesetId,species,formResolution:referenceFormResolution,moves,abilities,abilitySlots,abilitySlotStatus,resolvedCreature:resolvedCreatureModel({pokemon,species,rulesetId,heldItemEffect:held.effect,heldItemDefinition:held.definition,edgeStatsOverride:edgeStats}),modifierSummary:getPokemonModifierSummary(resolvedPokemonForCombat,{heldItemEffect:held.effect}),heldItem:{definition:held.definition,effect:held.effect},typeProfile,incomingEvolution:incoming||null,outgoingEvolutions:outgoing});
+    const boundFeatureEffects=resolveBoundFeatureEffects({trainer:payload.trainer,rulesetId,targetId:pokemon.id,targetTypes:speciesTypes,getDefinition:args=>definitions.getResolved(args)});
+    return json(res,200,{rulesetId,species,formResolution:referenceFormResolution,moves,abilities,abilitySlots,abilitySlotStatus,boundFeatureEffects,resolvedCreature:resolvedCreatureModel({pokemon,species,rulesetId,heldItemEffect:held.effect,heldItemDefinition:held.definition,edgeStatsOverride:edgeStats}),modifierSummary:getPokemonModifierSummary(resolvedPokemonForCombat,{heldItemEffect:held.effect}),heldItem:{definition:held.definition,effect:held.effect},typeProfile,incomingEvolution:incoming||null,outgoingEvolutions:outgoing});
   }
 
   if(req.method==='POST' && url.pathname==='/api/pokemon/ability-correction-preview'){
