@@ -1259,9 +1259,11 @@ async function handleApi(req,res,url){
       const prereq=evaluatePokeEdgePrerequisite(mixedPower,{level:pokemon.level,capabilities:species.capabilities||[],abilities:details.abilities||[],ownedPokeEdges:owned,statAllocations:details.statAllocations||{}});
       edges.push({id:'mixed-power',name:'Mixed Power',cost:2,prerequisites:mixedPower.prerequisites,effect:mixedPower.effect,sourceId:'sep2015',sourcePage:mixedPower.sourcePage,automationLevel:'machine_ready',prerequisite:prereq,ownedCount:previous.length,nextRank:1,maxRank:1,repeatable:false,exhausted:previous.length>=1,affordable:remaining>=2,requiresUnderdog:false,isUnderdog:isUnderdogPokemon(species.capabilities||[]),grantsAbility:'Twisted Power',targetRequired:false,targetOptions:[]});
     }
+    const naturalMoves=(species.levelUpMoves||[]).filter(move=>Number(move.level??move.level_learned??0)<=Number(pokemon.level||1)).map(move=>({id:String(move.move_id||move.id||move.move||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,''),name:move.move||move.name||move.move_id,source:'current_species',sourceSpeciesId:species.id,sourceSpeciesName:species.name,learnedAt:Number(move.level??move.level_learned??(pokemon.level||1))})).filter(move=>move.id);
+    for(const ancestor of definitions.getEvolutionAncestry({rulesetId,speciesName:species.name,sourceId:species.sourceId})) for(const move of ancestor.levelUpMoves||[]){const id=String(move.move_id||move.id||move.move||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');if(id&&Number(move.level??move.level_learned??0)<=Number(pokemon.level||1))naturalMoves.push({id,name:move.move||move.name||move.move_id,source:'pre_evolution',sourceSpeciesId:ancestor.id,sourceSpeciesName:ancestor.name,learnedAt:Number(move.level??move.level_learned??(pokemon.level||1))});}
     return json(res,200,{rulesetId,species:{id:species.id,name:species.name,types:species.types||[]},tutorPoints:{earned,spent,remaining},
       tutorMovePool:{used:poolUsed,limit:poolLimit,remaining:Math.max(0,poolLimit-poolUsed)},september2015TutorRestrictions:september2015Enabled,
-moveSlots:{used:pokemonMoveSlotsUsed(knownMoves),limit:resolvePokemonMoveLimit({base:details.moveLimitBase??6,modifier:details.moveLimitModifier??0,abilities:currentAbilityRecords}).effective},eggTutorUsed,edges,moveTeaching});
+moveSlots:{used:pokemonMoveSlotsUsed(knownMoves),limit:resolvePokemonMoveLimit({base:details.moveLimitBase??6,modifier:details.moveLimitModifier??0,abilities:currentAbilityRecords}).effective},eggTutorUsed,edges,naturalMoves,moveTeaching});
   }
   if(req.method==='POST' && url.pathname==='/api/pokemon/training-action-preview'){
     const payload=await bodyJson(req);
@@ -1285,7 +1287,7 @@ moveSlots:{used:pokemonMoveSlotsUsed(knownMoves),limit:resolvePokemonMoveLimit({
     details.grantedAbilities=Array.isArray(details.grantedAbilities)?details.grantedAbilities:[];
     details.trainingHistory=Array.isArray(details.trainingHistory)?details.trainingHistory:[];
     const owned=details.pokeEdges;
-    const earned=Number(details.tutorPointsEarned??0); const spent=Number(details.tutorPointsSpent??0); let remaining=Math.max(0,earned-spent);
+    const earned=Number(details.tutorPointsEarned??0); const spent=Number(details.tutorPointsSpent??0); let remaining=Math.max(0,earned-spent); const poolLimit=Math.max(0,Number(details.tutorMovePoolLimit??3));
     const errors=[]; let cost=0; let resultRecord=null;
     if(payload.action==='acquire_edge'){
       const requestedEdgeId=String(payload.edgeId||'');
@@ -1415,13 +1417,80 @@ moveSlots:{used:pokemonMoveSlotsUsed(knownMoves),limit:resolvePokemonMoveLimit({
         if(replaceIndex>=0) details.moves.splice(replaceIndex,1,resultRecord); else details.moves.push(resultRecord);
         if(!payload.freeGrant){details.tutorPointsSpent=spent+cost; remaining-=cost;}
       }
+    } else if(payload.action==='edit_move'){
+      const index=Number(payload.moveIndex),target=details.moves[index],moveId=String(payload.moveId||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+      if(!Number.isInteger(index)||index<0||!target||String(target.id||target.name||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')!==moveId) errors.push('The selected Move changed. Reload the Pokémon sheet and try again.');
+      const def=definitions.getResolved({rulesetId,kind:'moves',id:moveId}); if(!def)errors.push('Move definition is unavailable in the active Ruleset.');
+      const oldSource=String(target?.source||'').trim(),oldCost=Number(target?.cost),previousMove=target?{...target}:null;
+      const manualCorrection=!oldSource||target?.cost==null||!Number.isFinite(oldCost);
+      let previousSource=oldSource,previousCost=oldCost;
+      if(manualCorrection){
+        if(!payload.gmOverride)errors.push('Enable GM Override to record missing legacy Move origin/cost manually.');
+        previousSource=String(payload.previousSource||'').trim(); previousCost=Number(payload.previousCost);
+        if(!previousSource||!Number.isFinite(previousCost)||previousCost<0)errors.push('Enter the legacy Move origin and its prior Tutor Point cost.');
+      }
+      const newSource=String(payload.newSource||'').trim(),slug=value=>String(value||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+      const find=(rows=[])=>rows.find(row=>slug(row.move_id||row.id||row.move||row.name)===moveId);
+      let sourceRecord=null,newCost=0,countsAsNatural=false,sourceSpeciesId=species.id,sourceSpeciesName=species.name;
+      if(newSource==='current_species'){
+        sourceRecord=find(species.levelUpMoves||[]); if(!sourceRecord||Number(sourceRecord.level??sourceRecord.level_learned??0)>Number(pokemon.level||1))errors.push('This Move is not on the current Species Level-Up list at the Pokémon’s Level.');
+        countsAsNatural=true; newCost=0;
+      }else if(newSource==='pre_evolution'){
+        const ancestor=definitions.getEvolutionAncestry({rulesetId,speciesName:species.name,sourceId:species.sourceId}).find(row=>String(row.id)===String(payload.newSourceSpeciesId));
+        sourceRecord=ancestor?.levelUpMoves?.find(row=>slug(row.move_id||row.id||row.move||row.name)===moveId&&Number(row.level??row.level_learned??0)<=Number(pokemon.level||1));
+        if(!sourceRecord)errors.push('This Move is not on the selected Pre-Evolution Level-Up list in the active Ruleset.');
+        else{sourceSpeciesId=ancestor.id;sourceSpeciesName=ancestor.name;}
+        countsAsNatural=true; newCost=0;
+      }else if(newSource==='tm'){
+        sourceRecord=find(species.tmMoves||[]); if(!sourceRecord)errors.push('This Move is not compatible through TM/HM in the active Ruleset.');
+        countsAsNatural=(species.levelUpMoves||[]).some(row=>slug(row.move_id||row.id||row.move)===moveId&&Number(row.level??row.level_learned??0)<=Number(pokemon.level||1)); newCost=1;
+      }else if(newSource==='tutor'||newSource==='natural_tutor'){
+        sourceRecord=find(species.tutorMoves||[]); if(!sourceRecord)errors.push('This Move is not compatible through the active Species Tutor list.');
+        const naturalTutor=!!sourceRecord&&isNaturalTutorMove(species,sourceRecord.move||def?.name||moveId);
+        if(newSource==='natural_tutor'&&!naturalTutor)errors.push('The active Ruleset does not mark this Tutor Move as natural.');
+        if(newSource==='tutor'&&naturalTutor)errors.push('This Move is marked as a natural Tutor Move; choose Natural Tutor.');
+        countsAsNatural=naturalTutor||(species.levelUpMoves||[]).some(row=>slug(row.move_id||row.id||row.move)===moveId&&Number(row.level??row.level_learned??0)<=Number(pokemon.level||1)); newCost=naturalTutor?1:2;
+      }else if(newSource==='egg_tutor'){
+        sourceRecord=eggTutorMoves.find(row=>slug(row.move_id||row.id||row.move||row.name)===moveId); if(!sourceRecord)errors.push('This Move is not compatible through Egg Tutor in the active Ruleset.');
+        const eggTutorUsed=details.trainingHistory.some(entry=>entry.action==='learn_move'&&entry.record?.source==='egg_tutor')||details.moves.some((row,i)=>i!==index&&row.source==='egg_tutor');
+        if(eggTutorUsed&&target?.source!=='egg_tutor')errors.push('Egg Tutor has already been used for this Pokémon.');
+        countsAsNatural=(species.levelUpMoves||[]).some(row=>slug(row.move_id||row.id||row.move)===moveId&&Number(row.level??row.level_learned??0)<=Number(pokemon.level||1)); newCost=2;
+      }else if(newSource==='gm_override'&&payload.gmOverride){
+        newCost=Number(payload.newCost); if(!Number.isFinite(newCost)||newCost<0)errors.push('Enter a valid GM-approved Tutor Point cost.');
+        sourceSpeciesId=null; sourceSpeciesName=null;
+      }else if(['pre_evolution','evolution','archive_tutor'].includes(newSource)&&newSource===oldSource){
+        newCost=previousCost; countsAsNatural=!!target.countsAsNatural; sourceSpeciesId=target.sourceSpeciesId||null; sourceSpeciesName=target.sourceSpeciesName||null;
+      }else errors.push('Choose a source available for this Move in the active Ruleset.');
+      if(['tutor','egg_tutor'].includes(newSource)&&sourceRecord){
+        const sept=!!definitions.getRuleset(rulesetId)?.packs?.some(pack=>pack.enabled&&pack.pack_id==='ptu-september-2015-playtest');
+        const restriction=tutorRestrictionForMove({level:pokemon.level,move:def,september2015Enabled:sept}); if(!restriction.valid)errors.push(restriction.message);
+      }
+      const recordedCost=manualCorrection?previousCost:oldCost,delta=newCost-recordedCost,nextSpent=spent+delta,shortfall=Math.max(0,nextSpent-earned),shortfallMethod=String(payload.shortfallMethod||'');
+      if(nextSpent<0)errors.push('The recorded Tutor Point refund exceeds the Pokémon’s recorded amount spent.');
+      const poolBefore=moveTrainingPoolUsage(details.moves.filter((_,i)=>i!==index)),isPoolSource=['tm','tutor','egg_tutor','archive_tutor'].includes(newSource);
+      if(isPoolSource&&!countsAsNatural&&poolBefore+1>poolLimit&&!payload.gmOverride)errors.push(`TM/Tutor Move Pool limit is ${poolLimit}.`);
+      if(shortfall>0&&!['gm_grant','negative'].includes(shortfallMethod))errors.push('Choose a GM Tutor Point Grant or explicitly allow the negative balance.');
+      if(shortfall>0&&shortfallMethod==='gm_grant'&&!payload.gmOverride)errors.push('Enable GM Override to record a GM Tutor Point Grant.');
+      if(!errors.length){
+        if(shortfall>0&&shortfallMethod==='gm_grant'){
+          details.tutorPointGrants=Array.isArray(details.tutorPointGrants)?details.tutorPointGrants:[];
+          details.tutorPointGrants.push({id:`grant-${Date.now()}-${Math.random().toString(36).slice(2,8)}`,amount:shortfall,reason:`Move origin correction: ${target.name}`,date:new Date().toISOString(),gmOverride:true});
+          details.tutorPointsEarned=earned+shortfall;
+        }else details.tutorPointsEarned=earned;
+        target.source=newSource; target.cost=newCost; target.countsAsNatural=countsAsNatural;
+        target.sourceSpeciesId=sourceSpeciesId; target.sourceSpeciesName=sourceSpeciesName;
+        target.gmOverride=!!(payload.gmOverride&&(manualCorrection||shortfallMethod==='gm_grant'||newSource==='gm_override'));
+        resultRecord={moveId,moveName:target.name,previousSource,source:newSource,previousCost:recordedCost,cost:newCost,tutorPointDelta:delta,shortfall,shortfallMethod:shortfall?shortfallMethod:null,legacyCorrection:manualCorrection,gmTutorPointGrant:shortfall&&shortfallMethod==='gm_grant'?shortfall:null,gmOverride:target.gmOverride,previous:previousMove};
+        details.tutorPointsSpent=nextSpent; details.tutorPointsRemaining=Number(details.tutorPointsEarned)-nextSpent;
+        cost=delta;
+      }
     } else errors.push('Unsupported training action.');
-    details.tutorPointsEarned=earned; details.tutorPointsRemaining=Math.max(0,earned-Number(details.tutorPointsSpent||spent));
+    if(payload.action!=='edit_move'){details.tutorPointsEarned=earned; details.tutorPointsRemaining=Math.max(0,earned-Number(details.tutorPointsSpent||spent));}
     if(!errors.length) details.trainingHistory.push({date:new Date().toISOString(),action:payload.action,cost:payload.freeGrant?0:cost,record:resultRecord});
     details.moveLimitEffective=resolvePokemonMoveLimit({base:details.moveLimitBase??6,modifier:details.moveLimitModifier??0,abilities:currentAbilityRecords()}).effective;
     const resolvedStatEffects=resolvePokemonPokeEdgeStats({pokemon:{...pokemon,details},species,detailsOverride:details});
     const resolvedSkills=resolvePokemonSkills(species,details);
-    return json(res,200,{valid:errors.length===0,errors,cost,tutorPoints:{earned,spent:Number(details.tutorPointsSpent||spent),remaining:details.tutorPointsRemaining},details,resultRecord,resolvedStatEffects,resolvedSkills});
+    return json(res,200,{valid:errors.length===0,errors,cost,tutorPoints:{earned:Number(details.tutorPointsEarned??earned),spent:Number(details.tutorPointsSpent??spent),remaining:details.tutorPointsRemaining},details,resultRecord,resolvedStatEffects,resolvedSkills});
   }
 
   if(req.method==='GET' && url.pathname==='/api/profiles'){
