@@ -279,6 +279,28 @@ function applyGenericEquipmentMechanics(model,mechanics={},source,ctx){
   const dynamic=mechanics.defaultCombatStageFromConfig;if(dynamic?.field){const stat=statKey(source?.selections?.[dynamic.field]);if(stat)model.defaultCombatStages[stat]=num(dynamic.value);else model.unresolvedChoices.push({source:slimSource(source),type:'equipment_config',message:`${source.name} requires a selected Stat.`});}
   for(const entry of mechanics.skillBonuses||[]){const skill=configValue(source,entry.skill);if(skill)addSkillBonus(model,skill,num(entry.value),source,{cap:entry.cap??null,note:entry.note||`${source.name} equipment bonus.`});else model.unresolvedChoices.push({source:slimSource(source),type:'equipment_config',message:`${source.name} requires a Skill selection.`});}
   for(const entry of mechanics.statBonuses||[]){const stat=statKey(configValue(source,entry.stat));if(stat)addStat(model,stat,num(entry.value),source,{afterCombatStages:!!entry.afterCombatStages,note:entry.note||`${source.name} equipment bonus.`});else model.unresolvedChoices.push({source:slimSource(source),type:'equipment_config',message:`${source.name} requires a Stat selection.`});}
+  for(const entry of mechanics.itemEffects||mechanics.effects||[]){
+    const value=num(entry?.value),type=String(entry?.type||'').toLowerCase(),mode=String(entry?.mode||'points');
+    if(!value)continue;
+    if(type==='stat'){
+      const stat=statKey(entry.stat);
+      if(!stat){model.unresolvedChoices.push({source:slimSource(source),type:'equipment_config',message:`${source.name} requires a Stat selection.`});continue;}
+      if(mode==='combat_stage'){
+        if(stat==='hp'){model.unresolvedChoices.push({source:slimSource(source),type:'equipment_config',message:`${source.name} cannot apply Combat Stages to HP.`});continue;}
+        model.equipmentCombatStageBonuses[stat]=(model.equipmentCombatStageBonuses[stat]||0)+value;
+        pushModifier(model,{target:`combat_stage.${stat}`,value,source,note:`${source.name} equipped Combat Stage modifier.`});
+      }else addStat(model,stat,value,source,{note:`${source.name} equipped Stat modifier.`});
+    }else if(type==='accuracy'||type==='evasion'){
+      if(mode==='combat_stage')model.equipmentCombatStageBonuses[type]=(model.equipmentCombatStageBonuses[type]||0)+value;
+      else if(type==='accuracy')model.accuracyBonus+=value;
+      else model.evasionBonus+=value;
+      pushModifier(model,{target:mode==='combat_stage'?`combat_stage.${type}`:`combat.${type}`,value,source,note:`${source.name} equipped ${mode==='combat_stage'?'Combat Stage':'flat'} modifier.`});
+    }else if(type==='damage'){
+      model.damageRollBonus+=value;pushModifier(model,{target:'combat.damage_roll',value,source,note:`${source.name} equipped damage modifier.`});
+    }else if(type==='damage_base'){
+      model.damageBaseBonus+=value;pushModifier(model,{target:'combat.damage_base',value,source,note:`${source.name} equipped Damage Base modifier.`});
+    }
+  }
   for(const [key,value] of Object.entries(mechanics.capabilityBonuses||{}))addCapability(model,key,num(value),source,{note:`${source.name} equipment capability bonus.`});
   for(const cap of mechanics.capabilityGrants||[])grantEntity(model,{entityKind:'capability',entityName:configValue(source,cap),source,automatic:true,...ctx,metadata:{equipment:true}});
   if(mechanics.dynamicCapability){const name=String(mechanics.dynamicCapability).replace(/\$config\.([A-Za-z0-9_]+)/g,(_,k)=>source?.selections?.[k]||'?');if(!name.includes('?'))grantEntity(model,{entityKind:'capability',entityName:name,source,automatic:true,...ctx,metadata:{equipment:true}});else model.unresolvedChoices.push({source:slimSource(source),type:'equipment_config',message:`${source.name} requires equipment configuration.`});}
@@ -353,7 +375,7 @@ function applyEquipment(model,trainer,ctx){
 
     if(!def&&!embedded)continue;
     const source={kind:'equipment',id:def?.id||value?.id||value?.inventoryItemId||slug(value?.name),name:def?.name||value?.name||'Custom Equipment',sourceLabel:def?.packName||def?.sourceId||'Custom Equipment',effect:def?.effect||value?.description||'',tags:[],selections:typeof value==='object'?(value.config||value.selections||{}):{},definition:def||null};
-    model.equipment.push({slot,definition:def||{id:source.id,name:source.name,effect:source.effect,custom:true},source});
+    model.equipment.push({slot,definition:def||{id:source.id,name:source.name,effect:source.effect,custom:true},source,itemEffects:embedded?.itemEffects||embedded?.effects||[]});
     if(embedded) applyGenericEquipmentMechanics(model,embedded,source,ctx);
     for(const effect of def?.compiledEffects||[]) applyCompiledEffect(model,effect,source,ctx);
     // Legacy Core definitions predate the structured mechanics payload. Keep
@@ -459,6 +481,7 @@ function resolveMoveDamageForTrainer(model,move,trainer,getDamageBase){
   if(weapon){db+=num(weapon.dbModifier);if(resolvedAc!=null)resolvedAc=num(resolvedAc)+num(weapon.acModifier);if(/\bWR\b/i.test(String(resolvedRange||'')))resolvedRange=String(resolvedRange).replace(/\bWR\b/gi,weapon.range||'Melee');breakdown.push({label:`${weapon.name} · ${weapon.weaponClassLabel}`,value:`${weapon.dbModifier>=0?'+':''}${weapon.dbModifier} DB${weapon.acModifier?`, ${weapon.acModifier>0?'+':''}${weapon.acModifier} AC`:''}`});}
   if(def.id==='flail'){const injuries=Math.max(0,num(trainer.details?.injuries));if(injuries){db+=injuries;breakdown.push({label:'Flail · Injuries',value:`+${injuries} DB`});}}
   const type=String(def.type||'').toLowerCase(); const stab=!weapon&&model.stabTypes.has(type); if(stab){db+=2;breakdown.push({label:`STAB · ${def.type}`,value:'+2 DB'}); if(model.flags.adaptability){db+=1;breakdown.push({label:'Adaptability',value:'+1 DB'});}}
+  if(model.damageBaseBonus){db+=model.damageBaseBonus;breakdown.push({label:'Equipped item Damage Base modifiers',value:`${model.damageBaseBonus>0?'+':''}${model.damageBaseBonus} DB`});}
   db=clamp(Math.trunc(db),1,28);
   const chart=getDamageBase(db); const damageDice=chart?.rolled_damage||def.raw?.damage_dice||null;
   const statKeyUsed=category==='special'?'spAttack':'attack'; const attackValue=num(model.stats.combat[statKeyUsed]);
@@ -490,6 +513,7 @@ function resolveStruggleAttack(model,trainer,getDamageBase){
     if(melee&&primary.qualification?.source==='Apparition'&&String(range).toLowerCase().startsWith('melee'))range='Melee (Reach)';
     breakdown.push({label:`${primary.name} · ${primary.weaponClassLabel}`,value:`${primary.dbModifier>=0?'+':''}${primary.dbModifier} DB${primary.acModifier?`, ${primary.acModifier>0?'+':''}${primary.acModifier} AC`:''}`});
   }
+  if(model.damageBaseBonus){db+=model.damageBaseBonus;breakdown.push({label:'Equipped item Damage Base modifiers',value:`${model.damageBaseBonus>0?'+':''}${model.damageBaseBonus} DB`});}
   db=clamp(Math.trunc(db),1,28);const chart=getDamageBase(db);const damageDice=chart?.rolled_damage||null;const attackValue=num(model.stats.combat[statKeyUsed]);let flat=num(model.damageRollBonus);
   breakdown.push({label:STAT_LABELS[statKeyUsed],value:`+${attackValue}`});if(flat)breakdown.push({label:'Static damage bonuses',value:`+${flat}`});
   const options=[];const caps=(model.grantedCapabilities||[]).map(c=>slug(c.name));const typed={firestarter:'Fire',fountain:'Water',freezer:'Ice',guster:'Flying',materializer:'Rock',zapper:'Electric'};
@@ -539,7 +563,7 @@ function resolveTrainerModel({trainer,rulesetId,getDefinition,getDamageBase}){
     skills:Object.fromEntries(TRAINER_SKILLS.map(s=>{const bg=backgroundBaseline(details);const stored=details.skillRanks?.[s];const rank=stored==null?bg[s]:num(stored);return [s,{name:s,rank:clamp(Math.trunc(rank),1,8),dice:'',flatBonus:0,expression:'',sources:[{source:{kind:'background',id:'background',name:details.background?.name||'Background'},value:bg[s],type:'baseline'}],bonusCap:null}]})),
     capabilities:{power:0,overland:0,swim:0,highJump:0,longJump:0,throwingRange:0},capabilityBonuses:{},capabilitySources:{},
     modifiers:[],contextualEffects:[],unresolvedChoices:[],resources:[],abilities:[],grantedCapabilities:[],equipment:[],weapons:[],sourceSummaryRaw:[],
-    defaultCombatStages:{attack:0,defense:0,spAttack:0,spDefense:0,speed:0},evasionBonus:0,evasionFixed:{physical:0,special:0,speed:0},derivedBonuses:{maxHp:0,maxAp:0},damageReduction:0,damageReductionByClass:{physical:0,special:0},damageRollBonus:0,accuracyBonus:0,saveCheckBonus:0,saveCheckBonusVolatile:0,effectRangeBonus:0,initiativeBonus:0,skillAdvantages:[],
+    defaultCombatStages:{attack:0,defense:0,spAttack:0,spDefense:0,speed:0},evasionBonus:0,evasionFixed:{physical:0,special:0,speed:0},derivedBonuses:{maxHp:0,maxAp:0},damageReduction:0,damageReductionByClass:{physical:0,special:0},damageRollBonus:0,damageBaseBonus:0,accuracyBonus:0,equipmentCombatStageBonuses:{attack:0,defense:0,spAttack:0,spDefense:0,speed:0,accuracy:0,evasion:0},saveCheckBonus:0,saveCheckBonusVolatile:0,effectRangeBonus:0,initiativeBonus:0,skillAdvantages:[],
     stabTypes:new Set(),flags:{traveler:false,initiativeSkill:null,twistedPower:false,adaptability:false},_moveMap:new Map()
   };
   const ctx={rulesetId,getDefinition,getDamageBase};
@@ -590,7 +614,7 @@ function resolveTrainerModel({trainer,rulesetId,getDefinition,getDamageBase}){
     model.stats.effective[k]=Math.max(0,baseStats[k]+model.stats.bonus[k]);
     if(k==='hp'){model.stats.combat[k]=model.stats.effective[k];model.stats.stages[k]=0;continue;}
     let stage=num(details.combatStages?.[k]); if(stage===0&&num(model.defaultCombatStages[k])!==0)stage=model.defaultCombatStages[k];
-    stage=clamp(Math.trunc(stage),-6,6); model.stats.stages[k]=stage;
+    stage+=num(model.equipmentCombatStageBonuses[k]);stage=clamp(Math.trunc(stage),-6,6); model.stats.stages[k]=stage;
     model.stats.combat[k]=Math.max(0,applyCombatStage(model.stats.effective[k],stage)+model.stats.afterCombatStage[k]);
   }
 
@@ -598,9 +622,12 @@ function resolveTrainerModel({trainer,rulesetId,getDefinition,getDamageBase}){
   const maxHp=level*2+model.stats.effective.hp*3+10+model.derivedBonuses.maxHp;
   const maxAp=5+Math.floor(level/5)+model.derivedBonuses.maxAp;
   const boundAp=sources.reduce((total,source)=>total+(slug(source.id||source.name)==='silent-assassin'&&source.bound?2:0),0);
-  const physicalEvasion=Math.min(6,Math.floor(model.stats.combat.defense/5))+model.evasionBonus+model.evasionFixed.physical+num(details.combatStages?.evasion);
-  const specialEvasion=Math.min(6,Math.floor(model.stats.combat.spDefense/5))+model.evasionBonus+model.evasionFixed.special+num(details.combatStages?.evasion);
-  const speedEvasion=Math.min(6,Math.floor(model.stats.combat.speed/5))+model.evasionBonus+model.evasionFixed.speed+num(details.combatStages?.evasion);
+  const accuracyStage=clamp(Math.trunc(num(details.combatStages?.accuracy)+num(model.equipmentCombatStageBonuses.accuracy)),-6,6);
+  const evasionStage=clamp(Math.trunc(num(details.combatStages?.evasion)+num(model.equipmentCombatStageBonuses.evasion)),-6,6);
+  model.accuracyBonus+=accuracyStage;
+  const physicalEvasion=Math.min(6,Math.floor(model.stats.combat.defense/5))+model.evasionBonus+model.evasionFixed.physical+evasionStage;
+  const specialEvasion=Math.min(6,Math.floor(model.stats.combat.spDefense/5))+model.evasionBonus+model.evasionFixed.special+evasionStage;
+  const speedEvasion=Math.min(6,Math.floor(model.stats.combat.speed/5))+model.evasionBonus+model.evasionFixed.speed+evasionStage;
   let initiative=model.stats.combat.speed+model.initiativeBonus;
   if(model.flags.initiativeSkill)initiative+=model.skills[model.flags.initiativeSkill]?.rank||0;
   model.derived={maxHp,maxAp,boundAp,availableMaxAp:Math.max(0,maxAp-boundAp),physicalEvasion,specialEvasion,speedEvasion,initiative,accuracyBonus:model.accuracyBonus,effectRangeBonus:model.effectRangeBonus,saveCheckBonus:model.saveCheckBonus,saveCheckBonusVolatile:model.saveCheckBonusVolatile,damageReduction:model.damageReduction,damageReductionPhysical:model.damageReduction+model.damageReductionByClass.physical,damageReductionSpecial:model.damageReduction+model.damageReductionByClass.special,...model.capabilities};

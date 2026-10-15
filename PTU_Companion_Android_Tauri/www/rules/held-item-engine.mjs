@@ -19,8 +19,23 @@ export function resolveHeldItemEffect({itemDefinition=null,config={},pokemon={},
     automation:'manual',valid:true,errors:[],warnings:[],requiresConfig:[],
     statBonuses:{},grantedAbilities:[],speedMultiplier:1,speedEvasionBonus:0,
     conditionalDamageBonusSuperEffective:0,preventsEvolution:false,removeGroundImmunity:false,
-    hpStealRecoveryMultiplier:1,defaultCombatStage:null,statusOnEquip:null
+    hpStealRecoveryMultiplier:1,defaultCombatStage:null,statusOnEquip:null,combatStageBonuses:{},accuracyBonus:0,evasionBonus:0,damageRollBonus:0,damageBaseBonus:0,itemEffects:[]
   };
+  const mechanics=raw.mechanics||itemDefinition.mechanics||{};
+  for(const entry of (Array.isArray(mechanics.itemEffects)?mechanics.itemEffects:Array.isArray(mechanics.effects)?mechanics.effects:[])){
+    const type=String(entry?.type||'').toLowerCase(),mode=String(entry?.mode||'points'),value=Number(entry?.value)||0;if(!value)continue;
+    base.itemEffects.push({...entry});
+    if(type==='stat'){
+      const stat=statKey(entry.stat);if(!STAT_KEYS.includes(stat))continue;
+      if(mode==='combat_stage'){if(stat!=='hp')base.combatStageBonuses[stat]=(base.combatStageBonuses[stat]||0)+value;}
+      else base.statBonuses[stat]=(base.statBonuses[stat]||0)+value;
+    }else if(type==='accuracy'){
+      if(mode==='combat_stage')base.combatStageBonuses.accuracy=(base.combatStageBonuses.accuracy||0)+value;else base.accuracyBonus+=value;
+    }else if(type==='evasion'){
+      if(mode==='combat_stage')base.combatStageBonuses.evasion=(base.combatStageBonuses.evasion||0)+value;else base.evasionBonus+=value;
+    }else if(type==='damage')base.damageRollBonus+=value;
+    else if(type==='damage_base')base.damageBaseBonus+=value;
+  }
   switch(id){
     case 'bright-powder':
       base.automation='automatic'; base.speedEvasionBonus=2; break;
