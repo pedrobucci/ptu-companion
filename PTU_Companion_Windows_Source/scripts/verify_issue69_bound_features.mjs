@@ -51,14 +51,20 @@ for(const engine of engines){
   assert.equal(JSON.stringify(trainer),before,'target effect resolution does not mutate saved Trainer data');
   trainer.details.features[0].bound=false;
   assert.equal(engine.resolveBoundFeatureEffects({trainer,rulesetId:'test',targetId:'p1',getDefinition}).length,0,'unbound Feature has no target combat effect');
-  trainer=trainerFixture([{id:'sneak-attack',name:'Sneak Attack',bound:true,boundTargetIds:['dark-1']}]);
+  trainer=trainerFixture([{id:'type-ace',name:'Type Ace',selections:{type:'Dark',typeLinkedSkill:'Guile'}},{id:'sneak-attack',name:'Sneak Attack',bound:true,boundTargetIds:['dark-1']}]);
   const sneak=engine.resolveBoundFeatureEffects({trainer,rulesetId:'test',targetId:'dark-1',targetTypes:['Dark'],getDefinition})[0];
   assert.equal(sneak.targetEligible,true,'Dark target meets the active Feature target requirement');
   assert.equal(sneak.combatModifiers.find(x=>x.targetPath==='combat.accuracy')?.value,2);
+  assert.equal(sneak.typeLinkedSkill,'Guile');
+  assert.equal(sneak.combatModifiers.find(x=>x.targetPath==='combat.damage_bonus')?.value,2,'Sneak Attack adds the selected Type-Linked Skill Rank to Damage Rolls');
   assert.equal(sneak.combatModifiers.find(x=>x.targetPath==='combat.accuracy')?.conditional,true,'source condition is retained for per-attack confirmation');
   const wrongType=engine.resolveBoundFeatureEffects({trainer,rulesetId:'test',targetId:'dark-1',targetTypes:['Fire'],getDefinition})[0];
   assert.equal(wrongType.targetEligible,false,'target-restricted mechanics stay inactive for the wrong type');
   assert.equal(wrongType.combatModifiers.some(x=>x.active),false);
+  trainer.details.features[0].selections={type:'Dark'};
+  const legacySneak=engine.resolveBoundFeatureEffects({trainer,rulesetId:'test',targetId:'dark-1',targetTypes:['Dark'],getDefinition})[0];
+  assert.equal(legacySneak.typeLinkedSkillMissing,true,'legacy Type Ace records without a linked skill remain visibly unresolved');
+  assert.equal(legacySneak.combatModifiers.some(x=>x.targetPath==='combat.damage_bonus'),false,'missing skill choice never guesses a Sneak Attack damage bonus');
   trainer=trainerFixture([{id:'capricious-whirl',name:'Capricious Whirl',bound:true,boundTargetIds:['p1']}]);
   const capricious=engine.resolveBoundFeatureEffects({trainer,rulesetId:'test',targetId:'p1',getDefinition})[0];
   assert.equal(capricious.combatModifiers.find(x=>x.targetPath==='combat.evasion')?.value,3);
@@ -77,6 +83,12 @@ for(const engine of engines){
 const helper=/function trainerFeatureBoundTargets\(feature\)\{[^\r\n]+\}|function trainerFeatureBindingCost\(binding,feature\)\{[^\r\n]+\}|function trainerFeatureTargetOptions\(binding,feature\)\{[^\r\n]+\}|function trainerFeatureTargetLabel\(id\)\{[^\r\n]+\}|async function toggleTrainerFeatureBinding\(index,targetId=null\)\{[^\r\n]+\}|function releaseTrainerStratagems\(\)\{[^\r\n]+\}/g;
 for(const path of ['static-preview/app.js','../PTU_Companion_Android_Tauri/www/app.js']){
   const app=readFileSync(join(root,path),'utf8');
+  const typeSkillMap=app.match(/const TYPE_LINKED_SKILLS=\{[^\r\n]+\};/);
+  assert.ok(typeSkillMap,`${path} exposes the Type-Linked Skill choices`);
+  const linkedSkills=runInNewContext(`(()=>{${typeSkillMap[0]}; return TYPE_LINKED_SKILLS})()`);
+  assert.equal(JSON.stringify(linkedSkills.dark),JSON.stringify(['Guile','Stealth']),`${path} offers the Core Dark Type skill choices`);
+  assert.ok(app.includes('values.typeLinkedSkill=linked.typeLinkedSkill'),`${path} persists the selected Type-Linked Skill`);
+  assert.ok(app.includes('trainerDefinitionSelections(kind,def,rankNumber,item.selections||{})'),`${path} preserves Type Ace selection while editing`);
   assert.ok(app.includes('pokemonCombatBoundFeatureRollFields(data,row)'),`${path} asks for conditions before applying contextual modifiers`);
   assert.ok(app.includes('Bound Accuracy ${boundAccuracyBonus>0?\'+\':\'\'}${boundAccuracyBonus}'),`${path} records applied Accuracy modifiers`);
   assert.ok(app.includes('Bound Features ${damage.boundBonus>0?\'+\':\'\'}${damage.boundBonus}'),`${path} includes Bound damage modifiers in the combat log`);
