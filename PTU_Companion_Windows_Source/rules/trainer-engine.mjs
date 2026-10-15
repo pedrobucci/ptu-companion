@@ -630,6 +630,22 @@ function trainerDefinitionRepeatability(definition={}){
   return {repeatable:false,maxRanks:1,kind:'single'};
 }
 
+function trainerDefinitionSelectionConflict(definition={},records=[]){
+  const names=new Set([slug(definition.id||''),slug(definition.name||'')].filter(Boolean));
+  const text=String(definition.effect||definition.raw?.effect_text||'');
+  const conflicts=[];
+  const pattern=/you may not take\s+([^.,;]+?)\s+if you have\s+(?:the\s+)?([^.,;]+?)(?=[.,;]|$)/gi;
+  for(const match of text.matchAll(pattern)){
+    const prohibited=slug(match[1].replace(/\s+edge$/i,''));
+    if(!names.has(prohibited))continue;
+    const required=slug(match[2].replace(/\s+edge$/i,''));
+    const existing=(records||[]).find(record=>[record?.id,record?.name].some(value=>slug(String(value||'').replace(/\s+edge$/i,''))===required));
+    if(existing)conflicts.push({name:String(existing.name||match[2].replace(/\s+edge$/i,'')).trim(),record:existing});
+  }
+  const unique=[...new Map(conflicts.map(item=>[slug(item.name),item])).values()];
+  return {blocked:unique.length>0,reasons:unique.map(item=>`Cannot take ${definition.name||definition.id} while you have ${item.name}.`),conflicts:unique};
+}
+
 function evaluateTrainerPrerequisiteAst(ast,{trainer={},resolvedTrainer=null,rulesetId=null,getDefinition=null,gmOverride=false}={}){
   const details=trainer.details||{};
   const features=Array.isArray(details.features)?details.features:[];
@@ -736,4 +752,4 @@ function evaluateTrainerDefinitionPrerequisite(definition,context={}){
   return {...evaluated,status:semantics.status||null,raw:definition?.prerequisites||definition?.raw?.prerequisites_text||''};
 }
 
-export {resolveTrainerModel, combatStageMultiplier, applyCombatStage, TRAINER_SKILLS, SKILL_CATEGORIES, STAT_KEYS, TYPE_NAMES, rankedLimit, trainerDefinitionRepeatability, evaluateTrainerPrerequisiteAst, evaluateTrainerDefinitionPrerequisite};
+export {resolveTrainerModel, combatStageMultiplier, applyCombatStage, TRAINER_SKILLS, SKILL_CATEGORIES, STAT_KEYS, TYPE_NAMES, rankedLimit, trainerDefinitionRepeatability, trainerDefinitionSelectionConflict, evaluateTrainerPrerequisiteAst, evaluateTrainerDefinitionPrerequisite};
