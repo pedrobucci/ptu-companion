@@ -505,7 +505,7 @@ function heading(ey,h,p,action=''){ return `<div class="page-heading"><div><p cl
 
 const nav=[
  ['dashboard','⌂','Home'],['trainer','🪪','Trainer'],['rosters','◉','Rosters'],['combat','⚔','Combat'],['creature','🐾','Creatures'],
- ['storage','▣','Storage'],['inventory','🎒','Items'],['shop','🛒','Shop'],['library','📚','Pokédex & Rules'],['npcs','📓','NPCs'],['levelup','✦','Level Up'],['editor','✎','Editors']
+ ['storage','▣','Storage'],['pokecenter','✚','Pokecenter'],['inventory','🎒','Items'],['shop','🛒','Shop'],['library','📚','Pokédex & Rules'],['npcs','📓','NPCs'],['levelup','✦','Level Up'],['editor','✎','Editors']
 ];
 function route(screen){ if(screen==='pokemonbuilder'){ beginPokemonBuilder(); return; } if(screen==='levelup'){ beginTrainerProgression(); return; } state.ui.screen=screen; persist(); render(); if(screen==='creature') setTimeout(()=>loadCreatureReferenceData(true),0); if(screen==='combat'&&ensurePokemonCombatUi().activePokemonId) setTimeout(()=>loadPokemonCombatReferenceData(ensurePokemonCombatUi().activePokemonId,true),0); if(screen==='trainer') setTimeout(()=>loadTrainerReferenceData(true),0); if(screen==='shop'&&['Weapon Store','Gear Store'].includes(state.shop?.preset))setTimeout(()=>loadItemCatalog().then(render),0); }
 function selectPokemon(id,go=false){ const changed=state.selectedPokemonId!==id; state.selectedPokemonId=id; if(changed){state.ui.creatureTab='sheet'; invalidateCreatureReference();} persist(); if(go) state.ui.screen='creature'; render(); if(go) setTimeout(()=>loadCreatureReferenceData(),0); }
@@ -528,6 +528,7 @@ function openMobileMore(){
     <button class="btn btn-ghost" onclick="closeModal();route('combat')">⚔ Combat</button>
     <button class="btn btn-ghost" onclick="closeModal();route('creature')">🐾 Creatures</button>
     <button class="btn btn-ghost" onclick="closeModal();route('storage')">▣ Storage</button>
+    <button class="btn btn-ghost" onclick="closeModal();route('pokecenter')">✚ Pokecenter</button>
     <button class="btn btn-ghost" onclick="closeModal();route('shop')">🛒 Shop</button>
     <button class="btn btn-ghost" onclick="closeModal();route('library')">📚 Pokédex & Rules</button>
     <button class="btn btn-ghost" onclick="closeModal();route('npcs')">📓 NPCs</button>
@@ -808,6 +809,29 @@ function changeTrainerInjury(delta){const td=ensureTrainerDetails();td.injuries=
 function toggleSilentAssassinBound(index){const td=ensureTrainerDetails(),feature=td.features[index];if(!feature||pokemonCombatSlug(feature.id||feature.name)!=='silent-assassin')return;const d=trainerDerived();if(feature.bound){feature.bound=false;td.currentAp=Math.min(d.maxAp,td.currentAp+2);commit('Silent Assassin unbound; its 2 AP are available again.');return;}if(td.currentAp<2)return toast('Bind Silent Assassin requires 2 available AP.','error');td.currentAp-=2;feature.bound=true;commit('Silent Assassin Bound · 2 AP committed.');}
 function changeTrainerAp(delta){const td=ensureTrainerDetails(),d=trainerDerived();td.currentAp=Math.max(0,Math.min(d.availableMaxAp??(d.maxAp-trainerBoundAp()),td.currentAp+delta));commit();}
 function changeTrainerStage(key,delta){const td=ensureTrainerDetails();td.combatStages[key]=Math.max(-6,Math.min(6,Number(td.combatStages[key]||0)+delta));commit();}
+
+function pokecenterState(){state.ui ||= {};state.ui.pokecenter ||= {pokemonIds:[],serviceCost:0,perPokemon:false,tab:'recovery'};state.ui.pokecenter.pokemonIds=Array.isArray(state.ui.pokecenter.pokemonIds)?state.ui.pokecenter.pokemonIds:[];return state.ui.pokecenter;}
+function pokecenterSelectRoster(id){state.selectedRosterId=id;pokecenterState().pokemonIds=[];persist();render();}
+function pokecenterTogglePokemon(id,checked){const form=pokecenterState(),ids=new Set(form.pokemonIds||[]);checked?ids.add(id):ids.delete(id);form.pokemonIds=[...ids];persist();}
+function pokecenterUpdateCost(value){pokecenterState().serviceCost=String(value);persist();}
+function pokecenterTogglePerPokemon(checked){pokecenterState().perPokemon=!!checked;persist();render();}
+async function pokecenterApplyRecovery(){
+  const form=pokecenterState(),options={pokemonIds:form.pokemonIds,serviceCost:form.serviceCost,perPokemon:form.perPokemon,rosterId:state.selectedRosterId};
+  const preview=previewPokecenterRecovery(state,options);if(!preview.valid)return toast(preview.errors.join(' '),'error');
+  const list=preview.effects.map(row=>`<li><strong>${esc(row.name)}</strong>: HP ${row.hpBefore}/${row.maxHp} → ${row.maxHp}/${row.maxHp}; Injuries ${row.injuriesBefore} → 0; ${row.statusAfflictionsBefore.length} Status Affliction(s) removed.</li>`).join('');
+  const ok=await styledConfirm({title:'Confirm Pokecenter recovery',confirmLabel:'Pay and recover',message:`<p>Service fee: ₽${preview.serviceCost.toLocaleString()} ${preview.perPokemon?`per Pokémon × ${preview.pokemon.length}`:'for this service'}.</p><p>Total: <strong>₽${preview.total.toLocaleString()}</strong>. Trainer balance after payment: ₽${(Number(trainer().money)-preview.total).toLocaleString()}.</p><ul>${list}</ul><div class="dialog-warning">This applies the full recovery to every selected Pokémon at once.</div>`});
+  if(!ok)return;
+  const original=state;
+  try{const applied=applyPokecenterRecovery(state,options);state=applied.state;for(const p of applied.preview.pokemon)if(p.details?.speciesDefinitionId)await revalidatePokemonFormAfterDirectHpMutation(p.id,{hpChanged:true,tempHpChanged:false,silent:true});trainer().history ||= [];trainer().history.push({id:uid('h'),date:new Date().toISOString().slice(0,10),title:'Pokecenter recovery',detail:`${applied.preview.pokemon.map(p=>p.name).join(', ')} · ₽${applied.preview.total}`});pokecenterState().pokemonIds=[];commit(`Recovery complete for ${applied.preview.pokemon.length} Pokémon.`);}
+  catch(error){state=original;toast(error.message||'Recovery failed without applying changes.','error');}
+}
+function pokemonCenterScreen(){
+  const form=pokecenterState(),r=roster(),eligible=state.pokemon.filter(p=>(p.rosterIds||[]).includes(r?.id)),selected=eligible.filter(p=>(form.pokemonIds||[]).includes(p.id));
+  const preview=previewPokecenterRecovery(state,{pokemonIds:form.pokemonIds,serviceCost:form.serviceCost,perPokemon:form.perPokemon,rosterId:r?.id});
+  const groupSelector=`<div class="roster-selector">${state.rosters.filter(x=>x.active!==false).map(x=>`<button class="${x.id===r?.id?'active':''}" style="--accent:${x.color}" onclick="pokecenterSelectRoster('${x.id}')"><strong>${esc(x.name)}</strong><b>${state.pokemon.filter(p=>(p.rosterIds||[]).includes(x.id)).length}</b></button>`).join('')}</div>`;
+  const recovery=`${groupSelector}<div class="form-grid"><label>Service cost (₽)<input type="number" min="0" step="1" value="${Number(form.serviceCost||0)}" oninput="pokecenterUpdateCost(this.value)"/></label><label class="toggle-grid"><span>Charge per Pokémon</span><input type="checkbox" ${form.perPokemon?'checked':''} onchange="pokecenterTogglePerPokemon(this.checked)"/></label></div><div class="available-grid">${eligible.map(p=>`<label class="section-card"><div class="section-body row-between"><span>${pokemonPortraitTag(p)} <strong>${esc(p.name)}</strong> · Lv. ${p.level}<small>HP ${p.hp}/${p.maxHp} · Injuries ${p.injuries||0}</small></span><input type="checkbox" ${form.pokemonIds.includes(p.id)?'checked':''} onchange="pokecenterTogglePokemon('${p.id}',this.checked)" aria-label="Select ${esc(p.name)}"/></div></label>`).join('')||'<p class="muted">The selected roster has no Pokémon.</p>'}</div><section class="section-card"><header class="section-title"><strong>Recovery preview</strong></header><div class="section-body"><p>${selected.length} Pokémon · ₽${Number(form.serviceCost||0).toLocaleString()} ${form.perPokemon?'each':'service fee'} · Total <strong>₽${preview.valid?preview.total.toLocaleString():'—'}</strong></p>${preview.valid?`<ul>${preview.effects.map(x=>`<li>${esc(x.name)}: HP ${x.hpBefore}/${x.maxHp} → ${x.maxHp}; Injuries ${x.injuriesBefore} → 0; clear ${x.statusAfflictionsBefore.length} Status Affliction(s)</li>`).join('')}</ul>`:`<p class="builder-validation bad">${esc(preview.errors.join(' '))}</p>`}<p class="muted">All Injuries and tracked Status Afflictions are removed. HP returns to its maximum even when Injuries currently limit normal healing. Temporary and positional combat conditions remain unchanged.</p><button class="btn btn-primary" onclick="pokecenterApplyRecovery()" ${preview.valid?'':'disabled'}>Confirm and recover</button></div></section>`;
+  return `<div class="page">${heading('POKÉCENTER','Recovery & Mentoring','Restore Pokémon in the selected roster and apply campaign-specific Pokémon Caretaking effects.')}${section('RECOVERY',recovery)}${section('MENTOR','<p>Mentor features are recorded per Pokémon and resolve into that Pokémon’s campaign sheet.</p><p class="muted">The next implementation slice will apply the supplied Pusher, Skill Trainer, This One’s Special, and Re-Balancing effects to Pokémon data.</p>')}</div>`;
+}
 
 function rostersScreen(){
   const r=roster(); const memberIds=new Set(rosterMembers(r.id).map(p=>p.id)); const selected=pokemon();
@@ -2413,7 +2437,7 @@ function editorScreen(){
 
 function render({preserveScroll=true}={}){
   if(window.PTU_ANDROID_BUILD&&state.ui.screen==='editor')state.ui.screen='dashboard';
-  const screens={dashboard,trainer:trainerScreen,rosters:rostersScreen,combat:pokemonCombatScreen,creature:creatureScreen,pokemonbuilder:pokemonBuilderScreen,pokemonprogress:pokemonProgressionScreen,pokemontraining:pokemonTrainingScreen,pokemonrestat:pokemonRestatScreen,storage:storageScreen,inventory:inventoryScreen,shop:shopScreen,library:libraryScreen,npcs:npcsScreen,levelup:levelupScreen,editor:editorScreen};
+  const screens={dashboard,trainer:trainerScreen,rosters:rostersScreen,combat:pokemonCombatScreen,creature:creatureScreen,pokemonbuilder:pokemonBuilderScreen,pokemonprogress:pokemonProgressionScreen,pokemontraining:pokemonTrainingScreen,pokemonrestat:pokemonRestatScreen,storage:storageScreen,pokecenter:pokemonCenterScreen,inventory:inventoryScreen,shop:shopScreen,library:libraryScreen,npcs:npcsScreen,levelup:levelupScreen,editor:editorScreen};
   const f=screens[state.ui.screen]||dashboard;
   const previous=document.querySelector('.screen-content');
   const sameScreen=lastRenderedScreen===state.ui.screen;
