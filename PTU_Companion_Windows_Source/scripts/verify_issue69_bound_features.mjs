@@ -118,4 +118,20 @@ for(const path of ['static-preview/app.js','../PTU_Companion_Android_Tauri/www/a
   const context=runInNewContext(`(async()=>{${code};picked.push('p1');await toggleTrainerFeatureBinding(0);assert.equal(trainerData.details.currentAp,3);assert.equal(JSON.stringify(trainerData.details.features[0].boundTargetIds),'["p1"]');assert.equal(JSON.stringify(snapshots.at(-1).details.features[0].boundTargetIds),'["p1"]');picked.push('p2');await toggleTrainerFeatureBinding(0);assert.equal(trainerData.details.currentAp,1);assert.equal(JSON.stringify(trainerData.details.features[0].boundTargetIds),'["p1","p2"]');picked.push('p1');await toggleTrainerFeatureBinding(1);assert.match(toasts.at(-1),/already has a Bound Stratagem/);assert.equal(trainerData.details.currentAp,1);releaseTrainerStratagems();assert.equal(trainerData.details.currentAp,5);assert.equal(trainerData.details.features[0].bound,false);state.ui.combat.active=false;picked.push('p1');await toggleTrainerFeatureBinding(0);assert.match(toasts.at(-1),/only be Bound during combat/);assert.equal(trainerData.details.currentAp,5);})()`,{...globals,assert});
   await context;
 }
-console.log('Issue #69: Bind/AP source parsing, per-target and per-rank reservation, effect-target classification, and Windows/Android UI parity verified.');
+let incomingResolver=null;
+for(const path of ['static-preview/app.js','../PTU_Companion_Android_Tauri/www/app.js']){
+  const app=readFileSync(join(root,path),'utf8');
+  const match=app.match(/function pokemonCombatIncomingAttackResolution\([\s\S]*?\n(?=async function pokemonCombatRecordIncomingAttack)/);
+  assert.ok(match,`${path} exposes incoming attack resolution`);
+  const code=match[0].trim();
+  if(incomingResolver!==null)assert.equal(code,incomingResolver,'Windows and Android incoming attack calculations match');
+  incomingResolver=code;
+  const resolve=runInNewContext(`(()=>{${code};return pokemonCombatIncomingAttackResolution})()`);
+  assert.deepEqual({...resolve({accuracyRoll:11,baseAc:6,evasion:5,rawDamage:20,defense:7,damageReduction:5,multiplier:1.5})},{hit:true,accuracyCheck:11,afterDefense:8,damage:12},`${path} applies Evasion, Defense, DR, then type effectiveness`);
+  assert.equal(resolve({accuracyRoll:10,baseAc:6,evasion:5,rawDamage:20,defense:7,damageReduction:5,multiplier:1.5}).hit,false,`${path} rejects a roll below the Evasion-adjusted AC`);
+  assert.equal(resolve({baseAc:null,evasion:0,rawDamage:20,defense:7,damageReduction:5,multiplier:0,hasAccuracyCheck:false}).damage,0,`${path} applies immunity after defense`);
+  assert.ok(app.includes('function pokemonCombatIncomingClassChanged()'),`${path} selects the matching Evasion and Defense`);
+  assert.ok(app.includes('pokemonCombatLog(id,resolved.hit?'),`${path} records incoming attack results`);
+  assert.ok(app.includes('applyPokemonFormGameEventUi(id,{kind:\'hp-adjust\',delta:-resolved.damage}'),`${path} persists HP damage through form-aware history`);
+}
+console.log('Issue #69: Bind/AP, incoming Evasion/Defense/DR/effectiveness, persistence hook, and Windows/Android parity verified.');
