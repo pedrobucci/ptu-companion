@@ -5,7 +5,7 @@ import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import vm from 'node:vm';
-import {hasCaretakingFeature,pusherExperienceGain,resolvePushedSkills,previewSkillTrainer,endCaretakingExtendedRest} from '../static-preview/pokemon-caretaking.mjs';
+import {hasCaretakingFeature,pusherExperienceGain,resolvePushedSkills,previewSkillTrainer,endCaretakingExtendedRest,previewRebalancing,applyCaretakingSpecies} from '../static-preview/pokemon-caretaking.mjs';
 
 const root=fileURLToPath(new URL('..',import.meta.url)),repo=fileURLToPath(new URL('../..',import.meta.url));
 const trainer={details:{features:[{id:'pusher'},{id:'skill-trainer'}]}};
@@ -29,6 +29,16 @@ assert.deepEqual(exp(),{base:7,bonus:1,total:8,source:'Pusher'});
 assert.equal(exp({pokemon:{level:25}}).bonus,0);assert.equal(exp({ownedPokemon:[{level:25}]}).bonus,0);
 assert.equal(exp({trainer:{}}).bonus,0);assert.throws(()=>exp({experience:-1}),/whole number/);
 assert.throws(()=>exp({experience:Number.MAX_SAFE_INTEGER}),/supported range/);
+
+const master={details:{features:[{id:'pusher'},{id:'re-balancing'}],skillRanks:{'Pokémon Education':6}}};
+const allStats={hp:1,attack:1,defense:1,special_attack:1,special_defense:1,speed:1};
+const reb=previewRebalancing({trainer:master,pokemon,stats:allStats,day:1});
+assert.equal(reb.trainerCaretaking.rebalancingUsage.uses,1);
+assert.throws(()=>previewRebalancing({trainer:master,pokemon:{...pokemon,details:reb.details},stats:allStats,day:2}),/already received/);
+assert.throws(()=>previewRebalancing({trainer:{details:{...master.details,caretaking:{rebalancingUsage:{day:1,uses:2}}}},pokemon,stats:allStats,day:1}),/no uses/);
+assert.throws(()=>previewRebalancing({trainer:master,pokemon,stats:{attack:2},day:1}),/two different/);
+const species={baseStats:{hp:5,attack:5,defense:5,special_attack:7,special_defense:7,speed:5}};
+const adjusted=applyCaretakingSpecies(species,reb.details);assert.equal(adjusted.baseStats.hp,6);assert.equal(species.baseStats.hp,5);assert.deepEqual(applyCaretakingSpecies(adjusted,reb.details).baseStats,adjusted.baseStats,'Base bonuses never stack during repeated resolution');
 
 const dir=await mkdtemp(join(tmpdir(),'ptu-caretaking-')),port=42189;
 const child=spawn(process.execPath,['server.mjs'],{cwd:root,env:{...process.env,PTU_DATA_DIR:dir,PTU_PORT:String(port)},stdio:['ignore','pipe','pipe']});
@@ -91,10 +101,26 @@ try{
     uiState.ui.pokecenter.pokemonIds=['trained-a'];await ui.pokecenterExtendedRest();
     assert.equal(uiState.pokemon[0].details.caretaking.pushedSkill,undefined);assert(uiState.pokemon[1].details.caretaking.pushedSkill,platform+': rest affects only selected Pokemon');
     const beforeRace=JSON.stringify(uiState.pokemon[0].details);mutateOnConfirm=true;const commitsBeforeRace=commits;await ui.pokecenterTrainSkills();assert.equal(commits,commitsBeforeRace,platform+': stale confirmation does not commit');assert.equal(JSON.stringify(uiState.pokemon[0].details),beforeRace);
+    const originalSpecies=(await call(api,'/api/definitions/species/bulbasaur')).definition;
+    const rebalanced=(await call(api,'/api/pokemon/rebalancing-preview',{pokemon,trainer:master,day:1,stats:allStats,allocations:{hp:20},rulesetId:'all-provided-material'}));
+    assert(rebalanced.valid,platform+': '+JSON.stringify(rebalanced.preview.errors));
+    assert.equal(rebalanced.change.trainerCaretaking.rebalancingUsage.uses,1);
+    const target={...pokemon,details:rebalanced.change.details,maxHp:rebalanced.maxHp};
+    const ref=await call(api,'/api/pokemon/reference-data',{pokemon:target,rulesetId:'all-provided-material'});
+    assert.deepEqual(ref.resolvedCreature.stats.permanent,rebalanced.preview.resolvedFinalStats,platform+': Re-Balancing remains effective on reopen');
+    const persistedRebalance=(await call(api,'/api/state')).state;persistedRebalance.trainer.details ||= {};persistedRebalance.trainer.details.caretaking=rebalanced.change.trainerCaretaking;
+    const index=persistedRebalance.pokemon.findIndex(row=>row.id===target.id);persistedRebalance.pokemon[index]=target;
+    const savedRebalance=await api('/api/state',{method:'PUT',headers:{'content-type':'application/json'},body:JSON.stringify({state:persistedRebalance})});assert(savedRebalance.ok);
+    const restoredRebalance=await call(api,'/api/export');assert.equal(restoredRebalance.trainer.details.caretaking.rebalancingUsage.uses,1);assert.equal(restoredRebalance.pokemon.find(row=>row.id===target.id).details.caretaking.rebalancing.stats.hp,1);
+    const afterSpecies=(await call(api,'/api/definitions/species/bulbasaur')).definition;
+    assert.deepEqual(afterSpecies.baseStats,originalSpecies.baseStats,platform+': individual changes preserve the global Species');
+    const rejected=await api('/api/pokemon/rebalancing-preview',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({pokemon:target,trainer:master,day:2,stats:allStats,allocations:{hp:20},rulesetId:'all-provided-material'})});assert.equal(rejected.status,400,platform+': once-per-Pokemon survives a new day');
+    const corePusher=(await call(api,'/api/definitions/features/pusher?ruleset=ptu-core-only')).definition;assert.equal(corePusher.sourceId,'core',platform+': Core Only retains its source');assert(!/25\s*%/.test([corePusher.effect,corePusher.raw?.bonus_text].filter(Boolean).join(' ')));
+    assert.equal(pusherDefinition.sourceId,'edit',platform+': active supplied Editation takes precedence');
     const denied=await api('/api/pokemon/caretaking-preview',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({...body,trainer:{},skillId:skill.id})});
     assert.equal(denied.status,400,platform+': missing Trainer Features rejected');
   }
-  assert.equal(await readFile(join(root,'static-preview/pokemon-caretaking.mjs'),'utf8'),await readFile(join(repo,'PTU_Companion_Android_Tauri/www/pokemon-caretaking.mjs'),'utf8'));
+  assert.equal((await readFile(join(root,'static-preview/pokemon-caretaking.mjs'),'utf8')).replace(/\r\n/g,'\n'),(await readFile(join(repo,'PTU_Companion_Android_Tauri/www/pokemon-caretaking.mjs'),'utf8')).replace(/\r\n/g,'\n'));
   console.log('Issue #89 Caretaking passed: effective Skills, replacement/rest, EXP rounding, API parity and saved state.');
 }finally{
   child.kill();await new Promise(r=>child.once('exit',r));

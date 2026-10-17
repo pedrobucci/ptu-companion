@@ -1,4 +1,4 @@
-import {pusherExperienceGain,resolvePushedSkills,previewSkillTrainer,hasCaretakingFeature} from './pokemon-caretaking.mjs';
+import {pusherExperienceGain,resolvePushedSkills,previewSkillTrainer,hasCaretakingFeature,applyCaretakingSpecies,previewRebalancing} from './pokemon-caretaking.mjs';
 import {buildPokemonPreview, buildPokemonProgressionPreview, buildPokemonRestatPreview, resolvePokemonMoveLimit, autoBalancedAllocations, NATURES, parseTutorPointCost, evaluatePokeEdgePrerequisite, moveTrainingPoolUsage, isNaturalTutorMove, tutorRestrictionForMove, relationExemptionsFromPokeEdges, isUnderdogPokemon, pokeEdgeRequiresUnderdog, levelAbilitySlots, eligibleAbilities, applyNature, normalizeBaseStats, normalizeAllocations, STAT_KEYS, validateBaseRelations} from './rules/pokemon-engine.mjs';
 import {getPokemonModifierSummary, resolveMoveDamage} from './rules/modifier-engine.mjs';
 import {resolveHeldItemEffect, applyHeldItemToTypeProfile, applyHeldItemToEffectiveStats} from './rules/held-item-engine.mjs';
@@ -265,7 +265,9 @@ function resolveSpeciesFormState({species,pokemon={},payload={},includeActive=tr
   const state=normalizePokemonFormState(requested);
   if(!includeActive)state.activeFormId=null;
   const isShiny=!!(payload.isShiny??details.isShiny??details.is_shiny??false);
-  return resolvePokemonPresentation({species,formState:state,context:pokemonFormContext({pokemon,payload}),allowUnmet:!!payload.gmOverride,isShiny});
+  const presentation=resolvePokemonPresentation({species,formState:state,context:pokemonFormContext({pokemon,payload}),allowUnmet:!!payload.gmOverride,isShiny});
+  if(presentation.species)presentation.species=applyCaretakingSpecies(presentation.species,details);
+  return presentation;
 }
 
 function slugId(value){
@@ -487,12 +489,13 @@ function addStatMaps(...maps){
   return out;
 }
 function speciesBaseStatTotal(species){
-  const base=normalizeBaseStats(species?.baseStats||species?.base_stats||{});
+  const base=normalizeBaseStats(species?.caretakingOriginalBaseStats||species?.baseStats||species?.base_stats||{});
   return STAT_KEYS.reduce((sum,k)=>sum+Number(base[k]||0),0);
 }
 function edgeStatAllocation(edge){ return normalizeAllocations(edge?.statAllocation||edge?.statAllocations||{}); }
 function resolvePokemonPokeEdgeStats({pokemon,species,detailsOverride=null,excludedEdgeInstances=[]}={}){
   const details=detailsOverride||pokemon?.details||{};
+  species=applyCaretakingSpecies(species,details);
   const excluded=new Set((excludedEdgeInstances||[]).map(String));
   const edges=(Array.isArray(details.pokeEdges)?details.pokeEdges:[]).filter(e=>!excluded.has(String(e?.instanceId||'')));
   const base=normalizeBaseStats(species?.baseStats||species?.base_stats||details.baseStats||{});
@@ -526,7 +529,7 @@ function resolvePokemonPokeEdgeStats({pokemon,species,detailsOverride=null,exclu
   const maxHp=Math.max(1,Number(pokemon?.level||1))+(Number(permanentFinal.hp||0)*3)+10;
   const exemptions=relationExemptionsFromPokeEdges(edges);
   const relationViolations=validateBaseRelations(natureAdjusted,permanentFinal,{exemptStats:exemptions});
-  return {speciesBase:base,speciesBaseTotal:speciesBaseStatTotal(species),baseBonus,modifiedBase,natureAdjusted,levelAllocation,bonusAllocation,permanentFinal,maxHp,
+  return {speciesBase:species.caretakingOriginalBaseStats||base,speciesBaseTotal:speciesBaseStatTotal(species),baseBonus:Object.fromEntries(STAT_KEYS.map(key=>[key,baseBonus[key]+Number(species.caretakingBaseBonus?.[key]||0)])),modifiedBase,natureAdjusted,levelAllocation,bonusAllocation,permanentFinal,maxHp,
     evolutionLocked:hasStrength,evolutionLockSource:hasStrength?"Underdog's Strength":null,applied,unresolved,baseRelations:{valid:relationViolations.length===0,violations:relationViolations,exemptStats:exemptions}};
 }
 function resolvePokemonSkills(species,details={}){
@@ -744,7 +747,7 @@ async function handleApi(req,res,url){
     return json(res,200,{ok:true,desktopSession});
   }
   if(req.method==='GET' && url.pathname==='/api/health'){
-    return json(res,200,{ok:true,version:'2.2.0-android-beta.38',persistence:'android-local',database:'app-data/content-packs + WebView local storage',schemaVersion:5,definitions:{database:'embedded mobile bundle + installed .ptucp overlays',activeRuleset:getActiveRuleset()}});
+    return json(res,200,{ok:true,version:'2.2.0-android-beta.39',persistence:'android-local',database:'app-data/content-packs + WebView local storage',schemaVersion:5,definitions:{database:'embedded mobile bundle + installed .ptucp overlays',activeRuleset:getActiveRuleset()}});
   }
   if(req.method==='GET' && url.pathname==='/api/rulesets'){
     const activeRulesetId=getActiveRuleset();
@@ -972,7 +975,7 @@ async function handleApi(req,res,url){
     const preview=buildPokemonProgressionPreview({
       pokemon,species,experienceTable,expGain:experienceGainBreakdown.total,targetLevel:payload.targetLevel,newStatAllocations:payload.newStatAllocations,
       selectedAbilities:payload.selectedAbilities,selectedMoves:payload.selectedMoves,
-      evolutionTarget:selectedEvolution?.target||null,evolutionEdge:selectedEvolution||null,evolutionAllocations:payload.evolutionAllocations,
+      evolutionTarget:selectedEvolution?applyCaretakingSpecies(selectedEvolution.target,details):null,evolutionEdge:selectedEvolution||null,evolutionAllocations:payload.evolutionAllocations,
       manualEvolutionCondition:!!payload.manualEvolutionCondition,gmOverride:!!payload.gmOverride,
       baseRelationExemptStats:relationExemptionsFromPokeEdges(details.pokeEdges||[]),moveLimitAbilities:moveLimitAbilityDefinitions(rulesetId,moveLimitNames)
     });
@@ -1194,6 +1197,24 @@ async function handleApi(req,res,url){
     return json(res,200,{rulesetId,species:{id:species.id,name:species.name,types:species.types||[]},preview});
   }
 
+  if(req.method==='POST' && url.pathname==='/api/pokemon/rebalancing-preview'){
+    const payload=await bodyJson(req),rulesetId=String(payload.rulesetId||getActiveRuleset());
+    const pokemon=payload.pokemon||{},feature=definitions.getResolved({rulesetId,kind:'features',id:'re-balancing'});
+    if(!feature)return json(res,400,{error:'Re-Balancing is not available in the active Ruleset.'});
+    try{
+      const change=previewRebalancing({trainer:payload.trainer,pokemon,stats:payload.stats,day:payload.day});
+      Object.assign(change.record,{sourceVersionId:feature.versionId,sourceId:feature.sourceId,sourcePage:feature.sourcePage});
+      const baseSpecies=definitions.getResolved({rulesetId,kind:'species',id:String(pokemon.details?.speciesDefinitionId||'')});
+      if(!baseSpecies)throw new Error('Link this Pokemon to a Species definition first.');
+      const projected={...pokemon,details:change.details};
+      const resolution=resolveSpeciesFormState({species:baseSpecies,pokemon:projected,payload,includeActive:false});
+      if(!resolution.valid)throw new Error('Resolve Form requirements before Re-Balancing.');
+      const preview=buildPokemonRestatPreview({pokemon:projected,species:resolution.species,allocations:payload.allocations,gmOverride:!!payload.gmOverride,baseRelationExemptStats:relationExemptionsFromPokeEdges(change.details.pokeEdges||[])});
+      applyPokeEdgeStatsToPreview({preview,pokemon:projected,species:resolution.species,gmOverride:!!payload.gmOverride});
+      Object.assign(change.details,{statAllocations:preview.statAllocations,natureAdjustedBaseStats:preview.natureAdjustedBaseStats,finalStats:preview.resolvedFinalStats||preview.finalStats});
+      return json(res,200,{valid:preview.valid,preview,change,maxHp:preview.resolvedMaxHp||preview.maxHp});
+    }catch(error){return json(res,400,{error:error.message});}
+  }
   if(req.method==='POST' && url.pathname==='/api/pokemon/caretaking-preview'){
     const payload=await bodyJson(req),rulesetId=String(payload.rulesetId||getActiveRuleset());
     const pokemon=payload.pokemon||{},details=pokemon.details||{};

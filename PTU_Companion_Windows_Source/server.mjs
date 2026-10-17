@@ -1,4 +1,4 @@
-import {pusherExperienceGain,resolvePushedSkills,previewSkillTrainer,hasCaretakingFeature} from './static-preview/pokemon-caretaking.mjs';
+import {pusherExperienceGain,resolvePushedSkills,previewSkillTrainer,hasCaretakingFeature,applyCaretakingSpecies,previewRebalancing} from './static-preview/pokemon-caretaking.mjs';
 import {createServer} from 'node:http';
 import {readFile, stat, mkdir, writeFile, copyFile} from 'node:fs/promises';
 import {existsSync} from 'node:fs';
@@ -36,6 +36,7 @@ await syncBundledPackIfNewer({persistentDbPath:definitionsPath,bundledDbPath:bun
 await syncBundledPackIfNewer({persistentDbPath:definitionsPath,bundledDbPath:bundledDefinitionsPath,packId:'campaign-homebrew-custom-weapons',backupDir:definitionBackupRoot});
 await syncBundledPackIfNewer({persistentDbPath:definitionsPath,bundledDbPath:bundledDefinitionsPath,packId:'campaign-homebrew-trainer-gear',backupDir:definitionBackupRoot});
 await syncBundledPackIfNewer({persistentDbPath:definitionsPath,bundledDbPath:bundledDefinitionsPath,packId:'campaign-books-species',backupDir:definitionBackupRoot});
+await syncBundledPackIfNewer({persistentDbPath:definitionsPath,bundledDbPath:bundledDefinitionsPath,packId:'ptu-1.05-editation',backupDir:definitionBackupRoot});
 const portraitCacheRoot=join(dataRoot,'portraits');
 const mime={'.mjs':'text/javascript; charset=utf-8','.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.svg':'image/svg+xml','.png':'image/png','.json':'application/json'};
 
@@ -97,7 +98,9 @@ function resolveSpeciesFormState({species,pokemon={},payload={},includeActive=tr
   const state=normalizePokemonFormState(requested);
   if(!includeActive)state.activeFormId=null;
   const isShiny=!!(payload.isShiny??details.isShiny??details.is_shiny??false);
-  return resolvePokemonPresentation({species,formState:state,context:pokemonFormContext({pokemon,payload}),allowUnmet:!!payload.gmOverride,isShiny});
+  const presentation=resolvePokemonPresentation({species,formState:state,context:pokemonFormContext({pokemon,payload}),allowUnmet:!!payload.gmOverride,isShiny});
+  if(presentation.species)presentation.species=applyCaretakingSpecies(presentation.species,details);
+  return presentation;
 }
 
 const seed=JSON.parse(await readFile(seedPath,'utf8'));
@@ -322,12 +325,13 @@ function addStatMaps(...maps){
   return out;
 }
 function speciesBaseStatTotal(species){
-  const base=normalizeBaseStats(species?.baseStats||species?.base_stats||{});
+  const base=normalizeBaseStats(species?.caretakingOriginalBaseStats||species?.baseStats||species?.base_stats||{});
   return STAT_KEYS.reduce((sum,k)=>sum+Number(base[k]||0),0);
 }
 function edgeStatAllocation(edge){ return normalizeAllocations(edge?.statAllocation||edge?.statAllocations||{}); }
 function resolvePokemonPokeEdgeStats({pokemon,species,detailsOverride=null,excludedEdgeInstances=[]}={}){
   const details=detailsOverride||pokemon?.details||{};
+  species=applyCaretakingSpecies(species,details);
   const excluded=new Set((excludedEdgeInstances||[]).map(String));
   const edges=(Array.isArray(details.pokeEdges)?details.pokeEdges:[]).filter(e=>!excluded.has(String(e?.instanceId||'')));
   const base=normalizeBaseStats(species?.baseStats||species?.base_stats||details.baseStats||{});
@@ -361,7 +365,7 @@ function resolvePokemonPokeEdgeStats({pokemon,species,detailsOverride=null,exclu
   const maxHp=Math.max(1,Number(pokemon?.level||1))+(Number(permanentFinal.hp||0)*3)+10;
   const exemptions=relationExemptionsFromPokeEdges(edges);
   const relationViolations=validateBaseRelations(natureAdjusted,permanentFinal,{exemptStats:exemptions});
-  return {speciesBase:base,speciesBaseTotal:speciesBaseStatTotal(species),baseBonus,modifiedBase,natureAdjusted,levelAllocation,bonusAllocation,permanentFinal,maxHp,
+  return {speciesBase:species.caretakingOriginalBaseStats||base,speciesBaseTotal:speciesBaseStatTotal(species),baseBonus:Object.fromEntries(STAT_KEYS.map(key=>[key,baseBonus[key]+Number(species.caretakingBaseBonus?.[key]||0)])),modifiedBase,natureAdjusted,levelAllocation,bonusAllocation,permanentFinal,maxHp,
     evolutionLocked:hasStrength,evolutionLockSource:hasStrength?"Underdog's Strength":null,applied,unresolved,baseRelations:{valid:relationViolations.length===0,violations:relationViolations,exemptStats:exemptions}};
 }
 function resolvePokemonSkills(species,details={}){
@@ -594,7 +598,7 @@ async function handleApi(req,res,url){
     return json(res,200,{ok:true,desktopSession});
   }
   if(req.method==='GET' && url.pathname==='/api/health'){
-    return json(res,200,{ok:true,version:'2.1.0-beta.32',persistence:'sqlite',database:dbPath,schemaVersion:5,definitions:{database:definitionsPath,persistent:true,activeRuleset:getActiveRuleset()}});
+    return json(res,200,{ok:true,version:'2.1.0-beta.33',persistence:'sqlite',database:dbPath,schemaVersion:5,definitions:{database:definitionsPath,persistent:true,activeRuleset:getActiveRuleset()}});
   }
   if(req.method==='GET' && url.pathname==='/api/rulesets'){
     const activeRulesetId=getActiveRuleset();
@@ -858,7 +862,7 @@ async function handleApi(req,res,url){
     const preview=buildPokemonProgressionPreview({
       pokemon,species,experienceTable,expGain:experienceGainBreakdown.total,targetLevel:payload.targetLevel,newStatAllocations:payload.newStatAllocations,
       selectedAbilities:payload.selectedAbilities,selectedMoves:payload.selectedMoves,
-      evolutionTarget:selectedEvolution?.target||null,evolutionEdge:selectedEvolution||null,evolutionAllocations:payload.evolutionAllocations,
+      evolutionTarget:selectedEvolution?applyCaretakingSpecies(selectedEvolution.target,details):null,evolutionEdge:selectedEvolution||null,evolutionAllocations:payload.evolutionAllocations,
       manualEvolutionCondition:!!payload.manualEvolutionCondition,gmOverride:!!payload.gmOverride,
       baseRelationExemptStats:relationExemptionsFromPokeEdges(details.pokeEdges||[]),moveLimitAbilities:moveLimitAbilityDefinitions(rulesetId,moveLimitNames)
     });
@@ -1080,6 +1084,24 @@ async function handleApi(req,res,url){
     return json(res,200,{rulesetId,species:{id:species.id,name:species.name,types:species.types||[]},preview});
   }
 
+  if(req.method==='POST' && url.pathname==='/api/pokemon/rebalancing-preview'){
+    const payload=await bodyJson(req),rulesetId=String(payload.rulesetId||getActiveRuleset());
+    const pokemon=payload.pokemon||{},feature=definitions.getResolved({rulesetId,kind:'features',id:'re-balancing'});
+    if(!feature)return json(res,400,{error:'Re-Balancing is not available in the active Ruleset.'});
+    try{
+      const change=previewRebalancing({trainer:payload.trainer,pokemon,stats:payload.stats,day:payload.day});
+      Object.assign(change.record,{sourceVersionId:feature.versionId,sourceId:feature.sourceId,sourcePage:feature.sourcePage});
+      const baseSpecies=definitions.getResolved({rulesetId,kind:'species',id:String(pokemon.details?.speciesDefinitionId||'')});
+      if(!baseSpecies)throw new Error('Link this Pokemon to a Species definition first.');
+      const projected={...pokemon,details:change.details};
+      const resolution=resolveSpeciesFormState({species:baseSpecies,pokemon:projected,payload,includeActive:false});
+      if(!resolution.valid)throw new Error('Resolve Form requirements before Re-Balancing.');
+      const preview=buildPokemonRestatPreview({pokemon:projected,species:resolution.species,allocations:payload.allocations,gmOverride:!!payload.gmOverride,baseRelationExemptStats:relationExemptionsFromPokeEdges(change.details.pokeEdges||[])});
+      applyPokeEdgeStatsToPreview({preview,pokemon:projected,species:resolution.species,gmOverride:!!payload.gmOverride});
+      Object.assign(change.details,{statAllocations:preview.statAllocations,natureAdjustedBaseStats:preview.natureAdjustedBaseStats,finalStats:preview.resolvedFinalStats||preview.finalStats});
+      return json(res,200,{valid:preview.valid,preview,change,maxHp:preview.resolvedMaxHp||preview.maxHp});
+    }catch(error){return json(res,400,{error:error.message});}
+  }
   if(req.method==='POST' && url.pathname==='/api/pokemon/caretaking-preview'){
     const payload=await bodyJson(req),rulesetId=String(payload.rulesetId||getActiveRuleset());
     const pokemon=payload.pokemon||{},details=pokemon.details||{};
@@ -1507,7 +1529,7 @@ const server=createServer(async(req,res)=>{
 
 const port=Number(process.env.PTU_PORT||4173);
 server.listen(port,'127.0.0.1',()=>{
-  console.log(`PTU Companion Beta v2.1.0-beta.32: http://127.0.0.1:${port}`);
+  console.log(`PTU Companion Beta v2.1.0-beta.33: http://127.0.0.1:${port}`);
   console.log(`Campaign SQLite: ${dbPath}`);
   console.log(`Persistent Definition SQLite: ${definitionsPath}`);
   console.log(`Active ruleset: ${getActiveRuleset()}`);
