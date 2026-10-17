@@ -17,10 +17,18 @@ for(const [platform,path] of clients){
   const context={};vm.runInNewContext(`${helperSource};this.slug=pokemonCombatSlug;`,context);
   assert.equal(context.slug('Silent Assassin'),'silent-assassin');
   assert.equal(context.slug('silent_assassin'),'silent-assassin');
-  assert.ok(source.includes("function trainerBoundAp(t=trainer()){return (t?.details?.features||[]).some(f=>pokemonCombatSlug(f.id||f.name)==='silent-assassin'"),`${platform}: bound AP calculation uses the in-scope helper`);
-  assert.ok(source.includes("isFeatures&&pokemonCombatSlug(f.id||f.name)==='silent-assassin'"),`${platform}: Features tab resolves Silent Assassin without an undefined identifier`);
-  assert.ok(source.includes("kind==='features'&&pokemonCombatSlug(item.id||item.name)==='silent-assassin'"),`${platform}: removing a bound feature uses the in-scope helper`);
-  assert.ok(source.includes("!feature||pokemonCombatSlug(feature.id||feature.name)!=='silent-assassin'"),`${platform}: Bind/Unbind uses the in-scope helper`);
+  const names=['trainerFeatureBoundTargets','trainerFeatureBindingCost','trainerBoundAp'];
+  const helpers=names.map(name=>{const line=source.split(/\r?\n/).find(line=>line.startsWith(`function ${name}(`));assert(line,`${platform}: ${name} exists`);return line;}).join('\n');
+  const fixture={id:'legacy-load-qa',details:{features:[{id:'Silent Assassin',bound:false}]}};
+  const globals={fixture,trainer:()=>fixture,trainerResolved:()=>null,trainerFeatureBinding:()=>null};
+  const ap=()=>vm.runInNewContext(`${helperSource};${helpers};trainerBoundAp(fixture)`,globals);
+  assert.equal(ap(),0,`${platform}: legacy Feature sheet loads unbound without a global slug`);
+  fixture.details.features[0].bound=true;
+  assert.equal(ap(),2,`${platform}: legacy Silent Assassin reserves two AP`);
+  fixture.details.features[0].id='silent_assassin';
+  assert.equal(ap(),2,`${platform}: persisted alternate ID resolves through the shared slug helper`);
+  fixture.details.features.push({id:'other-bound-feature',bound:true,boundApCostEach:1,boundTargetIds:['p1','p2']});
+  assert.equal(ap(),4,`${platform}: generic saved binding costs coexist with legacy Silent Assassin`);
   assert.doesNotMatch(source,/(^|[^\w$.])slug\s*\(/m,`${platform}: no unqualified slug() calls remain in app.js`);
 }
 console.log('Issue #66 Trainer loading and Features/Edges slug regression: Windows + Android OK');

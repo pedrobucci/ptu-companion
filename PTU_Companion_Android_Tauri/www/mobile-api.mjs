@@ -2,7 +2,7 @@ import {pusherExperienceGain,resolvePushedSkills,previewSkillTrainer,hasCaretaki
 import {buildPokemonPreview, buildPokemonProgressionPreview, buildPokemonRestatPreview, resolvePokemonMoveLimit, autoBalancedAllocations, NATURES, parseTutorPointCost, evaluatePokeEdgePrerequisite, moveTrainingPoolUsage, isNaturalTutorMove, tutorRestrictionForMove, relationExemptionsFromPokeEdges, isUnderdogPokemon, pokeEdgeRequiresUnderdog, levelAbilitySlots, eligibleAbilities, applyNature, normalizeBaseStats, normalizeAllocations, STAT_KEYS, validateBaseRelations} from './rules/pokemon-engine.mjs';
 import {getPokemonModifierSummary, resolveMoveDamage} from './rules/modifier-engine.mjs';
 import {resolveHeldItemEffect, applyHeldItemToTypeProfile, applyHeldItemToEffectiveStats} from './rules/held-item-engine.mjs';
-import {resolveTrainerModel} from './rules/trainer-engine.mjs';
+import {resolveTrainerModel,resolveBoundFeatureEffects} from './rules/trainer-engine.mjs';
 import {previewTrainerProgression,applyTrainerProgression,previewTrainerXpPurchase,applyTrainerXpPurchase} from './rules/trainer-progression-engine.mjs';
 import {itemUsageMetadata} from './rules/item-metadata.mjs';
 import {normalizeCapabilities} from './rules/capability-normalization.mjs';
@@ -149,20 +149,37 @@ async function loadNativeContentPacks(){
   catch(error){console.warn('Could not load Android content packs',error);return [];}
 }
 
-class MobileDefinitions {
+export class MobileDefinitions {
   getRulesets(){ return (data.rulesets||[]).map(r=>({id:r.id,name:r.name,version:r.version,description:r.description})); }
   getRuleset(id){ return deep((data.rulesets||[]).find(r=>r.id===id)||null); }
   getPacks(){ return deep(data.packs||[]); }
   _map(rs,kind){ return data.resolved?.[rs]?.[kind]||{}; }
-  getResolved({rulesetId,kind,id,versionId=null}){ const vid=versionId||this._map(rulesetId,kind)[id],record=data.records?.[vid]; if(!record||record.id!==id||(versionId&&!(data.versionGroups?.[`${kind}:${id}`]||[]).includes(versionId)))return versionId?null:kind==='items'?getBuiltInFormItem(id):null; const out={...deep(record),kind}; if(kind==='species'){out.capabilities=normalizeCapabilities(out.capabilities||out.raw?.capabilities);out.forms=mergeBuiltInSpeciesForms(id,out.forms||out.raw?.forms||out.raw?.form_definitions||[]);} return out; }
+  getResolved({rulesetId,kind,id,versionId=null}){
+    const vid=versionId||this._map(rulesetId,kind)[id];
+    let record=data.records?.[vid];
+    if(!record && kind==='edges' && id==='field-clinic' && (!versionId||versionId==='edges:field-clinic@sep2015')) record=this._fieldClinicPlaytestEdge(rulesetId);
+    if(!record||record.id!==id||(versionId&&!(data.versionGroups?.[`${kind}:${id}`]||[]).includes(versionId)&&versionId!==record.versionId))return versionId?null:kind==='items'?getBuiltInFormItem(id):null;
+    const out={...deep(record),kind};
+    if(kind==='species'){out.capabilities=normalizeCapabilities(out.capabilities||out.raw?.capabilities);out.forms=mergeBuiltInSpeciesForms(id,out.forms||out.raw?.forms||out.raw?.form_definitions||[]);}
+    return out;
+  }
+  _fieldClinicPlaytestEdge(rulesetId){
+    const featureVersion=this._map(rulesetId,'features')['field-clinic'];
+    const record=data.records?.[featureVersion];
+    const ruleset=(data.rulesets||[]).find(row=>row.id===rulesetId);
+    const pack=(ruleset?.packs||[]).find(row=>row.pack_id==='ptu-september-2015-playtest'&&row.enabled);
+    if(!record||!pack||record.sourceId!=='sep2015'||record.contentPackId!=='ptu-september-2015-playtest'||record.raw?.record_kind!=='feature')return null;
+    const raw=deep(record.raw); raw.record_kind='edge'; delete raw.parent_class;
+    return {...deep(record),kind:'edges',category:'edge',parentClass:null,versionId:'edges:field-clinic@sep2015',raw};
+  }
   listResolved({rulesetId,kind,q='',limit=60,offset=0}){
-    const needle=norm(q); const ids=[...new Set([...Object.keys(this._map(rulesetId,kind)),...(kind==='items'?listBuiltInFormItems().map(item=>item.id):[])])]; const rows=[];
-    for(const id of ids){ const row=this.getResolved({rulesetId,kind,id}); if(!row)continue; if(needle && !norm(`${id} ${row.name||''} ${row.effect||''} ${JSON.stringify(row.raw||{})}`).includes(needle))continue; rows.push(row); }
+    const needle=norm(q); const ids=[...new Set([...Object.keys(this._map(rulesetId,kind)),...(kind==='edges'&&this._fieldClinicPlaytestEdge(rulesetId)?['field-clinic']:[]),...(kind==='items'?listBuiltInFormItems().map(item=>item.id):[])])]; const rows=[];
+    for(const id of ids){ const row=this.getResolved({rulesetId,kind,id}); if(!row)continue; if(kind==='features'&&id==='field-clinic'&&row.sourceId==='sep2015'&&row.contentPackId==='ptu-september-2015-playtest')continue; if(needle && !norm(`${id} ${row.name||''} ${row.effect||''} ${JSON.stringify(row.raw||{})}`).includes(needle))continue; rows.push(row); }
     rows.sort((a,b)=>String(a.name||a.id).localeCompare(String(b.name||b.id))); return rows.slice(Number(offset)||0,(Number(offset)||0)+(Number(limit)||60));
   }
   countResolved({rulesetId,kind,q=''}){ return this.listResolved({rulesetId,kind,q,limit:100000,offset:0}).length; }
-  getVersions({kind,id}){ const vids=data.versionGroups?.[`${kind}:${id}`]||[]; return vids.map(v=>{const record=data.records[v];if(!record)return null;const out={...deep(record),kind};if(kind==='species'){out.capabilities=normalizeCapabilities(out.capabilities||out.raw?.capabilities);out.forms=mergeBuiltInSpeciesForms(id,out.forms||out.raw?.forms||out.raw?.form_definitions||[]);}return out;}).filter(Boolean); }
-  getCounts(rulesetId){ const out={}; for(const k of ALLOWED_KINDS)out[k]=Object.keys(this._map(rulesetId,k)).length; return out; }
+  getVersions({kind,id}){ const vids=data.versionGroups?.[`${kind}:${id}`]||[]; const versions=vids.map(v=>{const record=data.records[v];if(!record)return null;const out={...deep(record),kind};if(kind==='species'){out.capabilities=normalizeCapabilities(out.capabilities||out.raw?.capabilities);out.forms=mergeBuiltInSpeciesForms(id,out.forms||out.raw?.forms||out.raw?.form_definitions||[]);}return out;}).filter(Boolean); if(kind==='edges'&&id==='field-clinic'&&!versions.length){const edge=this._fieldClinicPlaytestEdge('all-provided-material');return edge?[edge]:[];}return versions; }
+  getCounts(rulesetId){ const out={}; for(const k of ALLOWED_KINDS)out[k]=this.countResolved({rulesetId,kind:k,q:''}); return out; }
   getDamageBase(db){ return deep(data.damageBase?.[String(Number(db))]||null); }
   getTypeMatchups(){ return deep(data.typeMatchups||[]); }
   getTypeEffectivenessScale(){ return deep(data.typeEffectivenessScale||[]); }
@@ -183,7 +200,7 @@ class MobileDefinitions {
   getEvolutionAncestry({rulesetId,speciesName,sourceId=null,maxDepth=8}={}){ const out=[],seen=new Set([norm(speciesName)]);let cur=speciesName,src=sourceId;for(let i=0;i<maxDepth;i++){const e=this.getIncomingEvolution({speciesName:cur,sourceId:src});if(!e)break;let a=e.raw?.from_ref_key?this.getResolved({rulesetId,kind:'species',id:String(e.raw.from_ref_key)}):null;if(!a)a=this.findResolvedSpeciesByName({rulesetId,name:e.from_species_name});if(!a||seen.has(norm(a.name||a.id)))break;seen.add(norm(a.name||a.id));out.push({id:a.id,name:a.name,sourceId:a.sourceId,contentPackId:a.contentPackId,levelUpMoves:a.levelUpMoves||[],eggMoves:a.eggMoves||[],evolutionEdge:{fromSpeciesName:e.from_species_name,toSpeciesName:e.to_species_name,toMinLevel:e.to_min_level??null,conditionText:e.condition_text||null,sourceId:e.source_id||null}});cur=a.name;src=a.sourceId||e.source_id||src;}return out; }
   getOutgoingEvolutions({rulesetId,speciesName,sourceId=null}={}){ const seen=new Set(),out=[];for(const row of this._edgesFrom(speciesName).sort((a,b)=>(a.source_id===sourceId?-1:0)-(b.source_id===sourceId?-1:0))){const raw=row.raw||{},key=norm(raw.to_ref_key||row.to_species_name);if(seen.has(key))continue;seen.add(key);let target=raw.to_ref_key?this.getResolved({rulesetId,kind:'species',id:String(raw.to_ref_key)}):null;if(!target)target=this.findResolvedSpeciesByName({rulesetId,name:row.to_species_name});if(!target)continue;out.push({fromSpeciesName:row.from_species_name,toSpeciesName:row.to_species_name,toMinLevel:row.to_min_level??null,conditionText:row.condition_text||null,mappingConfidence:row.mapping_confidence||null,sourceId:row.source_id||null,evolutionRulesSource:'ptu_material',sourceTitle:row.source_id||'PTU material',sourceKind:null,target:{id:target.id,name:target.name,versionId:target.versionId,contentPackId:target.contentPackId,sourceId:target.sourceId,types:target.types||[],baseStats:target.baseStats||null,abilities:target.abilities||[],levelUpMoves:target.levelUpMoves||[],eggMoves:target.eggMoves||[],capabilities:target.capabilities||[],skills:target.skills||null}});}return out; }
 }
-const definitions=new MobileDefinitions();
+export const definitions=new MobileDefinitions();
 function evolutionLineEggMoves(species,rulesetId){
   if(!species)return [];
   const ancestry=definitions.getEvolutionAncestry({rulesetId,speciesName:species.name,sourceId:species.sourceId});
@@ -1099,7 +1116,8 @@ async function handleApi(req,res,url){
     const outgoing=definitions.getOutgoingEvolutions({rulesetId,speciesName:baseSpecies.name,sourceId:baseSpecies.sourceId});
     const incoming=definitions.getIncomingEvolution({speciesName:baseSpecies.name,sourceId:baseSpecies.sourceId});
     const typeProfile=applyHeldItemToTypeProfile(definitions.getDefensiveTypeProfile(speciesTypes),held.effect);
-    return json(res,200,{rulesetId,species,formResolution:referenceFormResolution,moves,abilities,abilitySlots,abilitySlotStatus,resolvedCreature:resolvedCreatureModel({pokemon,species,rulesetId,heldItemEffect:held.effect,heldItemDefinition:held.definition,edgeStatsOverride:edgeStats}),modifierSummary:getPokemonModifierSummary(resolvedPokemonForCombat,{heldItemEffect:held.effect}),heldItem:{definition:held.definition,effect:held.effect},typeProfile,incomingEvolution:incoming||null,outgoingEvolutions:outgoing});
+    const boundFeatureEffects=resolveBoundFeatureEffects({trainer:payload.trainer,rulesetId,targetId:pokemon.id,targetTypes:speciesTypes,getDefinition:args=>definitions.getResolved(args)});
+    return json(res,200,{rulesetId,species,formResolution:referenceFormResolution,moves,abilities,abilitySlots,abilitySlotStatus,boundFeatureEffects,resolvedCreature:resolvedCreatureModel({pokemon,species,rulesetId,heldItemEffect:held.effect,heldItemDefinition:held.definition,edgeStatsOverride:edgeStats}),modifierSummary:getPokemonModifierSummary(resolvedPokemonForCombat,{heldItemEffect:held.effect}),heldItem:{definition:held.definition,effect:held.effect},typeProfile,incomingEvolution:incoming||null,outgoingEvolutions:outgoing});
   }
 
   if(req.method==='POST' && url.pathname==='/api/pokemon/ability-correction-preview'){
