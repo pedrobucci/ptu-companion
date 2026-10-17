@@ -19,7 +19,7 @@ import (
 	"time"
 )
 
-const appVersion = "2.1.0-beta.32"
+const appVersion = "2.1.0-beta.33"
 
 //go:embed runtime_bundle.zip
 var bundleFS embed.FS

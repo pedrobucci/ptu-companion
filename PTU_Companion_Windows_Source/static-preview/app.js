@@ -1,5 +1,5 @@
 /*
- * PTU Companion — Beta v2.1.0-beta.32
+ * PTU Companion — Beta v2.1.0-beta.33
  * No dependencies, no build step, runs offline in a browser.
  *
  * This is deliberately a UI/domain reference implementation. The final Tauri app
@@ -575,7 +575,7 @@ function heading(ey,h,p,action=''){ return `<div class="page-heading"><div><p cl
 
 const nav=[
  ['dashboard','⌂','Home'],['trainer','🪪','Trainer'],['rosters','◉','Rosters'],['combat','⚔','Combat'],['creature','🐾','Creatures'],
- ['storage','▣','Storage'],['inventory','🎒','Items'],['shop','🛒','Shop'],['library','📚','Pokédex & Rules'],['npcs','📓','NPCs'],['levelup','✦','Level Up'],['editor','✎','Editors']
+ ['storage','▣','Storage'],['pokecenter','✚','Pokecenter'],['inventory','🎒','Items'],['shop','🛒','Shop'],['library','📚','Pokédex & Rules'],['npcs','📓','NPCs'],['levelup','✦','Level Up'],['editor','✎','Editors']
 ];
 function route(screen){ if(screen==='pokemonbuilder'){ beginPokemonBuilder(); return; } if(screen==='levelup'){ beginTrainerProgression(); return; } state.ui.screen=screen; persist(); render(); if(screen==='creature') setTimeout(()=>loadCreatureReferenceData(true),0); if(screen==='combat'&&ensurePokemonCombatUi().activePokemonId) setTimeout(()=>loadPokemonCombatReferenceData(ensurePokemonCombatUi().activePokemonId,true),0); if(screen==='trainer') setTimeout(()=>loadTrainerReferenceData(true),0); if(screen==='shop'&&['Weapon Store','Gear Store'].includes(state.shop?.preset))setTimeout(()=>loadItemCatalog().then(render),0); }
 function selectPokemon(id,go=false){ const changed=state.selectedPokemonId!==id; state.selectedPokemonId=id; if(changed){state.ui.creatureTab='sheet'; invalidateCreatureReference();} persist(); if(go) state.ui.screen='creature'; render(); if(go) setTimeout(()=>loadCreatureReferenceData(),0); }
@@ -585,7 +585,7 @@ function selectNpc(id){ state.selectedNpcId=id; persist(); render(); }
 function shell(content){
   const t=trainer();
   const toastHtml=state.ui.toast?`<div class="toast ${state.ui.toast.type==='error'?'toast-error':''}">${esc(state.ui.toast.message)}</div>`:'';
-  return `<div class="app-backdrop"><div class="pokedex-shell"><aside class="hardware-rail"><div class="lens"><span></span></div><div class="hardware-dots"><i></i><i></i></div></aside><div class="app-window"><header class="topbar"><div class="brand"><span class="brand-mark">◉</span><strong>PTU Companion</strong><span class="prototype-label functional">BETA v2.1.0-beta.32</span><span class="persistence-badge">${persistenceLabel()}</span></div><div class="top-actions"><span class="gm-status chip ${state.ui.gmOverride?'chip-red':'chip-yellow'}" role="status" aria-label="GM Override ${state.ui.gmOverride?'enabled':'disabled'}">GM ${state.ui.gmOverride?'ON':'OFF'}</span><button onclick="openGlobalActions()">⚙</button><button class="trainer-mini trainer-switcher-button" onclick="openTrainerSwitcher()" title="Switch Trainer">${personPortrait(t,'trainer-mini-avatar','span')}<small>${esc(t.name)}</small><b class="trainer-switch-caret">⌄</b></button></div></header><div class="app-layout"><nav class="sidebar">${nav.map(n=>`<button class="${state.ui.screen===n[0]?'active':''}" onclick="route('${n[0]}')"><span>${n[1]}</span>${n[2]}</button>`).join('')}<div class="sidebar-footer"><button onclick="openSaveTools()">⇄ Save Tools</button></div></nav><main class="screen-content">${content}</main></div><footer class="shell-footer">Desktop beta · ${persistenceLabel()} <span>●</span></footer></div><div class="hardware-bottom"></div></div>${toastHtml}<div id="modal-root"></div></div>`;
+  return `<div class="app-backdrop"><div class="pokedex-shell"><aside class="hardware-rail"><div class="lens"><span></span></div><div class="hardware-dots"><i></i><i></i></div></aside><div class="app-window"><header class="topbar"><div class="brand"><span class="brand-mark">◉</span><strong>PTU Companion</strong><span class="prototype-label functional">BETA v2.1.0-beta.33</span><span class="persistence-badge">${persistenceLabel()}</span></div><div class="top-actions"><span class="gm-status chip ${state.ui.gmOverride?'chip-red':'chip-yellow'}" role="status" aria-label="GM Override ${state.ui.gmOverride?'enabled':'disabled'}">GM ${state.ui.gmOverride?'ON':'OFF'}</span><button onclick="openGlobalActions()">⚙</button><button class="trainer-mini trainer-switcher-button" onclick="openTrainerSwitcher()" title="Switch Trainer">${personPortrait(t,'trainer-mini-avatar','span')}<small>${esc(t.name)}</small><b class="trainer-switch-caret">⌄</b></button></div></header><div class="app-layout"><nav class="sidebar">${nav.map(n=>`<button class="${state.ui.screen===n[0]?'active':''}" onclick="route('${n[0]}')"><span>${n[1]}</span>${n[2]}</button>`).join('')}<div class="sidebar-footer"><button onclick="openSaveTools()">⇄ Save Tools</button></div></nav><main class="screen-content">${content}</main></div><footer class="shell-footer">Desktop beta · ${persistenceLabel()} <span>●</span></footer></div><div class="hardware-bottom"></div></div>${toastHtml}<div id="modal-root"></div></div>`;
 }
 
 function creatureRosterPortrait(p){
@@ -846,6 +846,144 @@ function toggleSilentAssassinBound(index,targetId=null){return toggleTrainerFeat
 function changeTrainerAp(delta){const td=ensureTrainerDetails(),d=trainerDerived();td.currentAp=Math.max(0,Math.min(d.availableMaxAp??(d.maxAp-trainerBoundAp()),td.currentAp+delta));commit();}
 function changeTrainerStage(key,delta){const td=ensureTrainerDetails();td.combatStages[key]=Math.max(-6,Math.min(6,Number(td.combatStages[key]||0)+delta));commit();}
 
+function pokecenterState(){state.ui ||= {};state.ui.pokecenter ||= {pokemonIds:[],serviceCost:0,perPokemon:false,tab:'recovery'};state.ui.pokecenter.pokemonIds=Array.isArray(state.ui.pokecenter.pokemonIds)?state.ui.pokecenter.pokemonIds:[];return state.ui.pokecenter;}
+function pokecenterSelectRoster(id){state.selectedRosterId=id;pokecenterState().pokemonIds=[];persist();render();}
+function pokecenterTogglePokemon(id,checked){const form=pokecenterState(),ids=new Set(form.pokemonIds||[]);checked?ids.add(id):ids.delete(id);form.pokemonIds=[...ids];persist();render();}
+function pokecenterUpdateCost(value){pokecenterState().serviceCost=String(value);persist();render();}
+function pokecenterTogglePerPokemon(checked){pokecenterState().perPokemon=!!checked;persist();render();}
+async function pokecenterApplyRecovery(){
+  const form=pokecenterState(),options={pokemonIds:form.pokemonIds,serviceCost:form.serviceCost,perPokemon:form.perPokemon,rosterId:state.selectedRosterId};
+  const preview=previewPokecenterRecovery(state,options);if(!preview.valid)return toast(preview.errors.join(' '),'error');
+  const list=preview.effects.map(row=>`<li><strong>${esc(row.name)}</strong>: HP ${row.hpBefore}/${row.maxHp} → ${row.maxHp}/${row.maxHp}; Injuries ${row.injuriesBefore} → 0; ${row.statusAfflictionsBefore.length} Status Affliction(s) removed.</li>`).join('');
+  const ok=await styledConfirm({title:'Confirm Pokecenter recovery',confirmLabel:'Pay and recover',message:`<p>Service fee: ₽${preview.serviceCost.toLocaleString()} ${preview.perPokemon?`per Pokémon × ${preview.pokemon.length}`:'for this service'}.</p><p>Total: <strong>₽${preview.total.toLocaleString()}</strong>. Trainer balance after payment: ₽${(Number(trainer().money)-preview.total).toLocaleString()}.</p><ul>${list}</ul><div class="dialog-warning">This applies the full recovery to every selected Pokémon at once.</div>`});
+  if(!ok)return;
+  const original=state;
+  try{const applied=applyPokecenterRecovery(state,options);state=applied.state;for(const p of applied.preview.pokemon)if(p.details?.speciesDefinitionId)await revalidatePokemonFormAfterDirectHpMutation(p.id,{hpChanged:true,tempHpChanged:false,silent:true});trainer().history ||= [];trainer().history.push({id:uid('h'),date:new Date().toISOString().slice(0,10),title:'Pokecenter recovery',detail:`${applied.preview.pokemon.map(p=>p.name).join(', ')} · ₽${applied.preview.total}`});pokecenterState().pokemonIds=[];commit(`Recovery complete for ${applied.preview.pokemon.length} Pokémon.`);}
+  catch(error){state=original;toast(error.message||'Recovery failed without applying changes.','error');}
+}
+
+let pokecenterMentorBusy=false;
+function pokecenterSetTab(tab){pokecenterState().tab=tab==='mentor'?'mentor':'recovery';persist();render();}
+function pokecenterSelectedPokemon(){const ids=new Set(pokecenterState().pokemonIds);return state.pokemon.filter(p=>ids.has(p.id)&&(p.rosterIds||[]).includes(state.selectedRosterId));}
+
+function pokecenterMentorSnapshot(){return JSON.stringify({pokemon:pokecenterSelectedPokemon(),features:trainer().details?.features,skills:trainer().details?.skillRanks,caretaking:trainer().details?.caretaking,day:state.ui.day||1,ruleset:catalogState.status?.activeRulesetId});}
+async function pokecenterResolvePusher(p,owner,{required=false}={}){
+  const {hasCaretakingFeature}=await import('./pokemon-caretaking.mjs');
+  const projected=JSON.parse(JSON.stringify(p)),granted=[],pending=[];
+  if(!hasCaretakingFeature(owner,'pusher'))return {pokemon:projected,granted,pending};
+  const rulesetId=p.details?.linkedRulesetId||catalogState.status?.activeRulesetId;
+  const definitionResponse=await fetch(`/api/definitions/features/pusher?ruleset=${encodeURIComponent(rulesetId||'')}`);
+  const definitionPayload=await definitionResponse.json(),definition=definitionPayload.definition;
+  if(!definitionResponse.ok||!definition||!/without having to invest any Tutor Points/i.test(definition.effect||'')){if(required)throw new Error('Pusher automatic Edges are not available from the active Ruleset.');return {pokemon:projected,granted,pending:['Pusher automatic Edges are unavailable in the active Ruleset']};}
+  const ids=new Set(['basic-ranged-attacks','aura-pulse','enticing-bait','extended-invisibility','far-reading','precise-threadings','precise-treadings','seismometer','tk-mastery','trail-sniffer']);
+  const optionsResponse=await fetch('/api/pokemon/training-options',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({pokemon:projected,rulesetId})});
+  const options=await optionsResponse.json();if(!optionsResponse.ok)throw new Error(options.error||'Unable to resolve Pusher Edges.');
+  for(const edge of (options.edges||[]).filter(row=>ids.has(row.id)&&!row.ownedCount)){
+    if(edge.prerequisite?.valid===false)continue;
+    if(edge.prerequisite?.valid!==true||edge.targetRequired||edge.allocationRequired){pending.push(edge.name);continue;}
+    const response=await fetch('/api/pokemon/training-action-preview',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'acquire_edge',pokemon:projected,edgeId:edge.id,freeGrant:true,rulesetId})});
+    const result=await response.json();if(!response.ok||!result.valid)throw new Error(result.error||(result.errors||[]).join(' ')||'Unable to grant a Pusher Edge.');
+    projected.details=result.details;
+    const record=projected.details.pokeEdges.find(row=>row.instanceId===result.resultRecord.instanceId);
+    record.grantSource={featureId:'pusher',sourceVersionId:definition.versionId,sourceId:definition.sourceId,sourcePage:definition.sourcePage};
+    granted.push(edge.name);
+  }
+  return {pokemon:projected,granted,pending};
+}
+async function pokecenterApplyPusher(){
+  if(pokecenterMentorBusy)return;
+  const selected=pokecenterSelectedPokemon();if(!selected.length)return toast('Select Pokemon for Pusher.','error');
+  const owner=trainer(),snapshot=pokecenterMentorSnapshot();pokecenterMentorBusy=true;
+  try{
+    const {hasCaretakingFeature}=await import('./pokemon-caretaking.mjs');if(!hasCaretakingFeature(owner,'pusher'))throw new Error('Pusher must be recorded on the Trainer.');
+    const prepared=[];for(const p of selected)prepared.push({original:p,...await pokecenterResolvePusher(p,owner,{required:true})});
+    const ok=await styledConfirm({title:'Pusher automatic Edges',confirmLabel:'Grant eligible Edges (0 TP)',message:`<ul>${prepared.map(row=>`<li><strong>${esc(row.original.name)}</strong>: ${row.granted.length?row.granted.map(esc).join(', '):'No new eligible Edges'}${row.pending.length?`<br>Needs prerequisite/target verification: ${row.pending.map(esc).join(', ')}`:''}</li>`).join('')}</ul><p>Existing Edges keep their recorded cost. Eligibility is checked using the active Ruleset.</p>`});if(!ok)return;
+    if(trainer()!==owner||snapshot!==pokecenterMentorSnapshot())throw new Error('The Trainer or selected Pokemon changed. Preview Pusher again.');
+    for(const row of prepared)row.original.details=row.pokemon.details;
+    owner.history ||= [];owner.history.push({id:uid('h'),date:new Date().toISOString().slice(0,10),title:'Pusher',detail:prepared.map(row=>`${row.original.name}: ${row.granted.join(', ')||'no new Edges'} (0 TP)`).join('; ')});
+    invalidateCreatureReference();commit('Pusher eligible Edges applied.');
+  }catch(error){toast(error.message,'error');}finally{pokecenterMentorBusy=false;render();}
+}
+
+
+async function pokecenterRebalance(){
+  if(pokecenterMentorBusy)return;
+  const selected=pokecenterSelectedPokemon();if(selected.length!==1)return toast('Select exactly one Pokemon for Re-Balancing.','error');
+  const p=selected[0],owner=trainer(),snapshot=pokecenterMentorSnapshot();pokecenterMentorBusy=true;
+  const stats=['hp','attack','defense','special_attack','special_defense','speed'];
+  try{
+    const choice=await styledForm({title:`Re-Balancing - ${p.name}`,subtitle:'Once per Pokemon; Daily x2. Choose the Base Stat bonus, then redistribute the existing Stat Points.',fields:[{name:'pattern',label:'Base Stat bonus',type:'select',value:'all',options:[{value:'all',label:'+1 to every Base Stat'},{value:'two',label:'+2 to two different Base Stats'},{value:'one',label:'+3 to one Base Stat'}]},{name:'first',label:'First Stat (one/two)',type:'select',value:'attack',options:stats.map(value=>({value,label:statDisplayName(value)}))},{name:'second',label:'Second Stat (two only)',type:'select',value:'speed',options:stats.map(value=>({value,label:statDisplayName(value)}))}],submitLabel:'Redistribute Stat Points'});if(!choice)return;
+    if(choice.pattern==='two'&&choice.first===choice.second)throw new Error('Choose two different Base Stats.');
+    const bonuses=Object.fromEntries(stats.map(key=>[key,choice.pattern==='all'?1:choice.pattern==='two'?[choice.first,choice.second].includes(key)?2:0:key===choice.first?3:0]));
+    let allocations={...(p.details?.statAllocations||{})},errors='';
+    while(true){
+      const form=await styledForm({title:`Re-Balancing - ${p.name}`,subtitle:errors||'Redistribute all existing Level-Up Stat Points. The preview checks Base Relations after the bonus.',fields:stats.map(key=>({name:key,label:statDisplayName(key),type:'number',min:0,value:Number(allocations[key]||0)})),submitLabel:'Preview Re-Balancing'});if(!form)return;
+      allocations=Object.fromEntries(stats.map(key=>[key,Number(form[key]||0)]));
+      const response=await fetch('/api/pokemon/rebalancing-preview',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({pokemon:p,trainer:owner,stats:bonuses,allocations,day:Number(state.ui.day||1),gmOverride:!!state.ui.gmOverride,rulesetId:catalogState.status?.activeRulesetId})});
+      const result=await response.json();if(!response.ok)throw new Error(result.error||'Re-Balancing preview failed.');
+      if(!result.valid){errors=(result.preview.errors||[]).join(' ');continue;}
+      const old=p.details?.finalStats||{},after=result.preview.resolvedFinalStats||result.preview.finalStats;
+      const ok=await styledConfirm({title:'Confirm Re-Balancing',confirmLabel:'Apply Re-Balancing',message:`<p>${esc(p.name)} can receive this Feature only once. Uses today after applying: ${result.change.trainerCaretaking.rebalancingUsage.uses}/2.</p><ul>${stats.map(key=>`<li>${statDisplayName(key)}: Base +${bonuses[key]}; final ${old[key]??'—'} → ${after[key]}</li>`).join('')}</ul><p>Max HP: ${p.maxHp} → ${result.maxHp}. Current HP is not healed.</p>`});if(!ok)return;
+      if(trainer()!==owner||snapshot!==pokecenterMentorSnapshot())throw new Error('The Trainer, day or Pokemon changed. Preview Re-Balancing again.');
+      const before=JSON.parse(JSON.stringify(p)),oldCaretaking=JSON.parse(JSON.stringify(owner.details.caretaking||{}));
+      try{
+        p.details=result.change.details;p.maxHp=result.maxHp;p.hp=Math.min(Number(p.hp||0),p.maxHp);owner.details.caretaking=result.change.trainerCaretaking;
+        const formResult=await revalidatePokemonFormAfterDirectHpMutation(p.id,{hpChanged:true,tempHpChanged:false,silent:true});if(formResult?.valid===false)throw new Error('Could not revalidate the Pokemon Form.');
+        if(trainer()!==owner||!state.pokemon.includes(p))throw new Error('Trainer profile changed while applying Re-Balancing.');
+        owner.history ||= [];owner.history.push({id:uid('h'),date:new Date().toISOString().slice(0,10),title:'Re-Balancing',detail:`${p.name}: ${stats.filter(key=>bonuses[key]).map(key=>`${statDisplayName(key)} +${bonuses[key]}`).join(', ')}; Stat Points redistributed; ${result.change.trainerCaretaking.rebalancingUsage.uses}/2 uses on campaign day ${state.ui.day||1}.`});
+        invalidateCreatureReference();commit('Re-Balancing and redistribution applied.');return;
+      }catch(error){for(const key of Object.keys(p))delete p[key];Object.assign(p,before);owner.details.caretaking=oldCaretaking;throw error;}
+    }
+  }catch(error){toast(error.message,'error');}finally{pokecenterMentorBusy=false;render();}
+}
+
+async function pokecenterTrainSkills(){
+  if(pokecenterMentorBusy)return;
+  const selected=pokecenterSelectedPokemon();if(!selected.length)return toast('Select the Pokemon that were trained.','error');
+  const owner=trainer(),snapshot=pokecenterMentorSnapshot(),prepared=[];pokecenterMentorBusy=true;
+  try{
+    for(const p of selected){
+      const request=await fetch('/api/pokemon/reference-data',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({pokemon:p,rulesetId:catalogState.status?.activeRulesetId})});
+      const reference=await request.json();if(!request.ok)throw new Error(reference.error||'Unable to resolve Skills.');
+      const skills=reference.resolvedCreature?.skills||[];if(!skills.length)throw new Error(`${p.name} has no resolved Skills.`);
+      const choice=await styledForm({title:`Skill Trainer - ${p.name}`,subtitle:'Choose one Skill for this trained Pokemon. A new choice replaces its previous Pushed Skill and lasts until Extended Rest.',fields:[{name:'skillId',label:'Skill',type:'select',value:skills[0].id,options:skills.map(skill=>({value:skill.id,label:skill.name}))}],submitLabel:'Preview Skill'});
+      if(!choice)return;
+      const response=await fetch('/api/pokemon/caretaking-preview',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({pokemon:p,trainer:owner,skillId:choice.skillId,rulesetId:catalogState.status?.activeRulesetId})});
+      const payload=await response.json();if(!response.ok||!payload.valid)throw new Error(payload.error||'Skill Trainer preview failed.');
+      prepared.push({pokemon:p,...payload.preview});
+    }
+    const expression=skill=>`${skill.dice}d6${Number(skill.modifier)>0?'+':''}${Number(skill.modifier)||''}`;
+    const ok=await styledConfirm({title:'Apply Skill Trainer',confirmLabel:'Apply to trained Pokemon',message:`<ul>${prepared.map(row=>`<li>${esc(row.pokemon.name)}: ${esc(row.before.name)} ${expression(row.before)} → ${expression(row.after)} (Pushed until Extended Rest)</li>`).join('')}</ul>`});if(!ok)return;
+    if(trainer()!==owner||snapshot!==pokecenterMentorSnapshot())throw new Error('The Trainer or selected Pokemon changed. Preview the training again.');
+    for(const row of prepared)row.pokemon.details=row.details;
+    owner.history ||= [];owner.history.push({id:uid('h'),date:new Date().toISOString().slice(0,10),title:'Skill Trainer',detail:prepared.map(row=>`${row.pokemon.name}: ${row.before.name} Pushed until Extended Rest`).join('; ')});
+    invalidateCreatureReference();commit('Pushed Skills applied to the selected trained Pokemon.');
+  }catch(error){toast(error.message,'error');}finally{pokecenterMentorBusy=false;render();}
+}
+async function pokecenterExtendedRest(){
+  if(pokecenterMentorBusy)return;
+  const selected=pokecenterSelectedPokemon();if(!selected.length)return toast('Select the Pokemon that completed Extended Rest.','error');
+  const owner=trainer(),snapshot=pokecenterMentorSnapshot();pokecenterMentorBusy=true;
+  try{
+    const ok=await styledConfirm({title:'Record Extended Rest',confirmLabel:'End Pushed Skills',message:`<p>Record Extended Rest for ${selected.map(p=>esc(p.name)).join(', ')} and end their Pushed Skills?</p>`});if(!ok)return;
+    if(trainer()!==owner||snapshot!==pokecenterMentorSnapshot())throw new Error('The Trainer or selected Pokemon changed. Select the resting Pokemon again.');
+    const {endCaretakingExtendedRest}=await import('./pokemon-caretaking.mjs');
+    if(trainer()!==owner||snapshot!==pokecenterMentorSnapshot())throw new Error('The Trainer or selected Pokemon changed.');
+    for(const p of selected)p.details=endCaretakingExtendedRest(p).details;
+    owner.history ||= [];owner.history.push({id:uid('h'),date:new Date().toISOString().slice(0,10),title:'Extended Rest',detail:`${selected.map(p=>p.name).join(', ')}; Pushed Skills ended.`});
+    invalidateCreatureReference();commit('Extended Rest recorded; selected Pushed Skills ended.');
+  }catch(error){toast(error.message,'error');}finally{pokecenterMentorBusy=false;render();}
+}
+
+function pokemonCenterScreen(){
+  const form=pokecenterState(),r=roster(),eligible=state.pokemon.filter(p=>(p.rosterIds||[]).includes(r?.id)),selected=eligible.filter(p=>(form.pokemonIds||[]).includes(p.id));
+  const preview=previewPokecenterRecovery(state,{pokemonIds:form.pokemonIds,serviceCost:form.serviceCost,perPokemon:form.perPokemon,rosterId:r?.id});
+  const groupSelector=`<div class="roster-selector">${state.rosters.filter(x=>x.active!==false).map(x=>`<button class="${x.id===r?.id?'active':''}" style="--accent:${x.color}" onclick="pokecenterSelectRoster('${x.id}')"><strong>${esc(x.name)}</strong><b>${state.pokemon.filter(p=>(p.rosterIds||[]).includes(x.id)).length}</b></button>`).join('')}</div>`;
+  const recovery=`${groupSelector}<div class="form-grid"><label>Service cost (₽)<input type="number" min="0" step="1" value="${Number(form.serviceCost||0)}" onchange="pokecenterUpdateCost(this.value)"/></label><label class="toggle-grid"><span>Charge per Pokémon</span><input type="checkbox" ${form.perPokemon?'checked':''} onchange="pokecenterTogglePerPokemon(this.checked)"/></label></div><div class="available-grid">${eligible.map(p=>`<label class="section-card"><div class="section-body row-between"><span>${pokemonPortraitTag(p)} <strong>${esc(p.name)}</strong> · Lv. ${p.level}<small>HP ${p.hp}/${p.maxHp} · Injuries ${p.injuries||0}</small></span><input type="checkbox" ${form.pokemonIds.includes(p.id)?'checked':''} onchange="pokecenterTogglePokemon('${p.id}',this.checked)" aria-label="Select ${esc(p.name)}"/></div></label>`).join('')||'<p class="muted">The selected roster has no Pokémon.</p>'}</div><section class="section-card"><header class="section-title"><strong>Recovery preview</strong></header><div class="section-body"><p>${selected.length} Pokémon · ₽${Number(form.serviceCost||0).toLocaleString()} ${form.perPokemon?'each':'service fee'} · Total <strong>₽${preview.valid?preview.total.toLocaleString():'—'}</strong></p>${preview.valid?`<ul>${preview.effects.map(x=>`<li>${esc(x.name)}: HP ${x.hpBefore}/${x.maxHp} → ${x.maxHp}; Injuries ${x.injuriesBefore} → 0; clear ${x.statusAfflictionsBefore.length} Status Affliction(s)</li>`).join('')}</ul>`:`<p class="builder-validation bad">${esc(preview.errors.join(' '))}</p>`}<p class="muted">All Injuries and tracked Status Afflictions are removed. HP returns to its maximum even when Injuries currently limit normal healing. Temporary and positional combat conditions remain unchanged.</p><button class="btn btn-primary" onclick="pokecenterApplyRecovery()" ${preview.valid?'':'disabled'}>Confirm and recover</button></div></section>`;
+  const mentor=`${groupSelector}<p>Select the Pokemon that were trained or completed Extended Rest.</p><div class="available-grid">${eligible.map(p=>`<label class="section-card"><div class="section-body row-between"><span><strong>${esc(p.name)}</strong> ${p.details?.caretaking?.pushedSkill?chip(`PUSHED: ${esc(p.details.caretaking.pushedSkill.skillName)}`,'chip-purple'):''}</span><input type="checkbox" ${form.pokemonIds.includes(p.id)?'checked':''} onchange="pokecenterTogglePokemon('${p.id}',this.checked)" aria-label="Select ${esc(p.name)}"/></div></label>`).join('')}</div><div class="row-gap"><button class="btn btn-ghost" onclick="pokecenterApplyPusher()" ${!selected.length||pokecenterMentorBusy?'disabled':''}>Pusher · eligible Edges</button><button class="btn btn-primary" onclick="pokecenterTrainSkills()" ${!selected.length||pokecenterMentorBusy?'disabled':''}>Skill Trainer</button><button class="btn btn-ghost" onclick="pokecenterRebalance()" ${selected.length!==1||pokecenterMentorBusy?'disabled':''}>Re-Balancing</button><button class="btn btn-ghost" onclick="pokecenterExtendedRest()" ${!selected.length||pokecenterMentorBusy?'disabled':''}>Extended Rest · end Pushed</button></div><p class="muted">Skill Trainer requires Pusher and Skill Trainer on this Trainer and the supplied rule in the active Ruleset. One Pushed Skill per Pokemon: +1d6, or +3 when another die would exceed 6d6. Source: PTU 1.05 Editation pp. 13–14.</p><p class="muted">When supported by the active Ruleset definition, Pusher's +25% EXP applies in Pokemon progression when the Trainer owns a Pokemon above Level 25 and the recipient is below Level 25. Fractional bonuses round down.</p>`;
+  return `<div class="page">${heading('POKÉCENTER','Recovery & Mentoring','Recovery and individual Pokemon Caretaking services.')}<div class="tabbar"><button class="${form.tab!=='mentor'?'active':''}" onclick="pokecenterSetTab('recovery')">Recovery</button><button class="${form.tab==='mentor'?'active':''}" onclick="pokecenterSetTab('mentor')">Mentor</button></div>${form.tab==='mentor'?section('MENTOR',mentor):section('RECOVERY',recovery)}</div>`;
+}
+
 function rostersScreen(){
   const r=roster(); const memberIds=new Set(rosterMembers(r.id).map(p=>p.id)); const selected=pokemon();
   return `<div class="page">${heading('ROSTERS','Team Organization','Multiple rosters can be active at once. A Pokémon may belong to several rosters.',`<div class="row-gap"><button class="btn btn-ghost" onclick="editRoster('${r.id}')">✎ Edit Roster</button><button class="btn btn-danger" onclick="deleteRoster('${r.id}')">🗑 Delete Roster</button><button class="btn btn-primary" onclick="createRoster()">＋ Create Roster</button></div>`)}
@@ -955,10 +1093,10 @@ function creatureSpeciesTab(p,data){
   }).join('');
   const resolvedCaps=resolved.capabilities||sp.capabilities||[]; const caps=resolvedCaps.map(c=>chip(esc(formatCapability(c)),String(c.name||'').toLowerCase()==='underdog'?'chip-gold':'chip-blue')).join(' ');
   const resolvedSkills=resolved.skills||[];
-  const skills=(resolvedSkills.length?resolvedSkills:(sp.raw?.skills||[]).map(x=>({name:x.skill,dice:x.dice,modifier:x.modifier,defaultDice:x.dice,pokeEdgeRanks:0}))).map(x=>`<span><b>${esc(x.name||x.skill)}</b> ${x.dice}d6${x.modifier>0?`+${x.modifier}`:x.modifier<0?x.modifier:''}${x.pokeEdgeRanks?` ${chip(`SKILL IMPROVEMENT +${x.pokeEdgeRanks}`,'chip-purple')}`:''}</span>`).join('') || `<span>${esc(sp.raw?.skills_text||'No skills parsed.')}</span>`;
+  const skills=(resolvedSkills.length?resolvedSkills:(sp.raw?.skills||[]).map(x=>({name:x.skill,dice:x.dice,modifier:x.modifier,defaultDice:x.dice,pokeEdgeRanks:0}))).map(x=>`<span><b>${esc(x.name||x.skill)}</b> ${x.dice}d6${x.modifier>0?`+${x.modifier}`:x.modifier<0?x.modifier:''}${x.pokeEdgeRanks?` ${chip(`SKILL IMPROVEMENT +${x.pokeEdgeRanks}`,'chip-purple')}`:''}${x.pushed?` ${chip('PUSHED UNTIL EXTENDED REST','chip-gold')}`:''}</span>`).join('') || `<span>${esc(sp.raw?.skills_text||'No skills parsed.')}</span>`;
   const edges=(d.pokeEdges||[]).map(e=>{const alloc=e.statAllocation||{};const allocated=Object.entries(alloc).filter(([,v])=>Number(v)>0).map(([k,v])=>`${statDisplayName(k)} +${v}`).join(', ');return `<div class="ledger-row"><span>◆</span><div><strong>${esc(e.name)}</strong><small>${e.targetStat?`Bound to ${e.targetStat==='attack'?'Attack':'Special Attack'} · `:''}${e.targetNote?`${esc(e.targetNote)} · `:''}${allocated?`${esc(allocated)} · `:''}${e.cost??0} TP${e.id==='mixed-power'?' · Grants Twisted Power':''}</small></div>${chip(e.id==='attack-conflict'?'BASE RELATION':e.id==='mixed-power'?'DAMAGE MODIFIER':['underdogs-strength','realized-potential','mixed-sweeper'].includes(e.id)?'STAT MODIFIER':e.id==='skill-improvement'?'SKILL MODIFIER':'POKÉ EDGE',e.id==='attack-conflict'?'chip-yellow':e.id==='mixed-power'?'chip-purple':['underdogs-strength','realized-potential','mixed-sweeper','skill-improvement'].includes(e.id)?'chip-gold':'chip-blue')}</div>`}).join('')||'<p class="muted">No Poké Edges.</p>';
   const mixed=data.modifierSummary?.twistedPower?.active?`<div class="modifier-callout"><strong>Mixed Power / Twisted Power</strong><span>Physical damage +${data.modifierSummary.twistedPower.physicalDamageBonus} · Special damage +${data.modifierSummary.twistedPower.specialDamageBonus}</span><small>This modifies damage rolls only; Attack and Special Attack values remain unchanged.</small></div>`:'';
-  const edgeNote=statBreakdown?.applied?.length?`<div class="flow-note"><strong>Resolved Poké Edge Stats:</strong> ${statBreakdown.applied.map(x=>x.kind==='base_stat_bonus'?`${esc(x.name)}: +1 to every Base Stat`:`${esc(x.name)}: ${Object.entries(x.stats||{}).filter(([,v])=>Number(v)>0).map(([k,v])=>`${statDisplayName(k)} +${v}`).join(', ')}`).join(' · ')}</div>`:'';
+  const edgeNote=statBreakdown?.applied?.length?`<div class="flow-note"><strong>Resolved Poké Edge Stats:</strong> ${statBreakdown.applied.map(x=>`${esc(x.name)}: ${Object.entries(x.stats||{}).filter(([,v])=>Number(v)>0).map(([k,v])=>`${statDisplayName(k)} +${v}`).join(', ')}`).join(' · ')}</div>`:'';
   const unresolved=statBreakdown?.unresolved?.length?`<div class="builder-validation bad"><strong>Poké Edge configuration needed.</strong><ul>${statBreakdown.unresolved.map(x=>`<li>${esc(x.name)} requires ${x.expected} allocated Stat Point${x.expected===1?'':'s'}; this legacy record has ${x.spent}.</li>`).join('')}</ul><small>Refund and acquire the Edge again to record its allocation.</small></div>`:'';
   const evolutionLock=resolved.evolutionLocked?`<div class="builder-validation bad"><strong>Evolution locked:</strong> ${esc(resolved.evolutionLockSource||"Underdog's Strength")} prevents this Pokémon from evolving under normal rules.</div>`:'';
   return `<div class="creature-tab-content species-tab-layout">${section('PERMANENT STAT BUILD',`${unresolved}${evolutionLock}<div class="species-stat-table"><div class="head"><strong>Stat</strong><span>Species</span><span>Nature Base</span><span>Allocation</span><b>Final</b><i>Sources</i></div>${rows}</div><div class="flow-note"><strong>Base Relations exemptions:</strong> ${exempt.map(statDisplayName).join(', ')}. Poké Edge Stat bonuses are included in the resolved Final column.</div>${edgeNote}${mixed}<button class="btn btn-primary" onclick="beginPokemonRestat()">↺ Redistribute Stats</button>`)}${section('CAPABILITIES',`<div class="capability-cloud">${caps||'<span class="muted">No parsed Capabilities.</span>'}</div>${resolved.capabilityModifiers?.length?`<div class="flow-note"><strong>Poké Edge modifiers:</strong> ${resolved.capabilityModifiers.map(m=>`${esc(m.targetName)} +${m.value}`).join(' · ')}</div>`:''}`)}${section('SPECIES SKILLS',`<div class="species-skill-grid">${skills}</div>${resolved.skillModifiers?.length?`<div class="flow-note"><strong>Skill Improvement:</strong> ${resolved.skillModifiers.map(m=>`${esc(m.targetName)} +${m.value} Rank`).join(' · ')}</div>`:''}`)}${section('POKÉ EDGES',`<div class="training-ledger">${edges}</div>`)}</div>`;
@@ -2053,7 +2191,7 @@ async function refreshPokemonProgressionPreview({resetSelections=false}={}){
   if(resetSelections){ f.selectedAbilities=null; f.selectedMoves=null; }
   try{
     const response=await fetch('/api/pokemon/progression-preview',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
-      pokemon:p,rulesetId:p.details?.linkedRulesetId||catalogState.status?.activeRulesetId||null,expGain:f.progressMode==='xp'?(Number(f.expGain)||0):0,targetLevel:f.progressMode==='level'?Number(f.targetLevel)||p.level:null,
+      pokemon:p,trainer:trainer(),ownedPokemon:state.pokemon.map(row=>({id:row.id,level:row.level})),rulesetId:p.details?.linkedRulesetId||catalogState.status?.activeRulesetId||null,expGain:f.progressMode==='xp'?(Number(f.expGain)||0):0,targetLevel:f.progressMode==='level'?Number(f.targetLevel)||p.level:null,
       newStatAllocations:f.newStatAllocations,evolutionSpeciesId:f.evolutionSpeciesId||null,evolutionAllocations:f.evolutionAllocations,
       selectedAbilities:f.selectedAbilities,selectedMoves:f.selectedMoves,manualEvolutionCondition:!!f.manualEvolutionCondition,gmOverride:!!state.ui.gmOverride
     })});
@@ -2106,8 +2244,8 @@ function pokemonProgressionScreen(){
   const levelProgress=nextFloor!=null?progress(Math.max(0,Number(pv.totalExperience)-levelFloor),Math.max(1,nextFloor-levelFloor),'blue'):'';
   const progressionInput=f.progressMode==='level'
     ? `<label class="progress-exp-input">Target Level <input type="number" min="${Number(p.level)}" max="100" value="${esc(f.targetLevel??Math.min(100,Number(p.level)+1))}" onchange="setPokemonProgressTargetLevel(this.value)"/></label>`
-    : `<label class="progress-exp-input">EXP to add <input type="number" min="0" value="${esc(f.expGain)}" onchange="setPokemonProgressExp(this.value)"/></label>`;
-  const expBlock=pv?`<div class="progress-mode-toggle"><button class="${f.progressMode==='xp'?'active':''}" onclick="setPokemonProgressMode('xp')">Add EXP</button><button class="${f.progressMode==='level'?'active':''}" onclick="setPokemonProgressMode('level')">Go to Level</button></div><div class="progression-exp-card"><div><small>CURRENT</small><strong>Lv. ${pv.currentLevel}</strong><span>${Number(pv.currentExperience).toLocaleString()} EXP</span></div><b>${f.progressMode==='level'?`TARGET Lv. ${pv.targetLevel}`:`＋ ${Number(pv.experienceGain||0).toLocaleString()} EXP`}</b><div><small>RESULT</small><strong>Lv. ${pv.targetLevel}</strong><span>${Number(pv.totalExperience).toLocaleString()} EXP</span></div></div>${levelProgress}<div class="flow-note"><strong>Resolved gain:</strong> +${Number(pv.experienceGain||0).toLocaleString()} EXP from the PTU Experience table.</div>`:`<p class="muted">Resolving EXP table…</p>`;
+    : `<label class="progress-exp-input">Base EXP to add <input type="number" min="0" value="${esc(f.expGain)}" onchange="setPokemonProgressExp(this.value)"/></label>`;
+  const expBlock=pv?`<div class="progress-mode-toggle"><button class="${f.progressMode==='xp'?'active':''}" onclick="setPokemonProgressMode('xp')">Add EXP</button><button class="${f.progressMode==='level'?'active':''}" onclick="setPokemonProgressMode('level')">Go to Level</button></div><div class="progression-exp-card"><div><small>CURRENT</small><strong>Lv. ${pv.currentLevel}</strong><span>${Number(pv.currentExperience).toLocaleString()} EXP</span></div><b>${f.progressMode==='level'?`TARGET Lv. ${pv.targetLevel}`:`＋ ${Number(pv.experienceGain||0).toLocaleString()} EXP`}</b><div><small>RESULT</small><strong>Lv. ${pv.targetLevel}</strong><span>${Number(pv.totalExperience).toLocaleString()} EXP</span></div></div>${levelProgress}${pv.experienceGainBreakdown?.source?`<p class="flow-note">Pusher: ${pv.experienceGainBreakdown.base} base EXP + ${pv.experienceGainBreakdown.bonus} bonus EXP (25%, rounded down).</p>`:''}${pv.experienceGainBreakdown?.note?`<p class="builder-validation bad">${esc(pv.experienceGainBreakdown.note)}</p>`:''}<div class="flow-note"><strong>Resolved gain:</strong> +${Number(pv.experienceGain||0).toLocaleString()} EXP from the PTU Experience table.</div>`:`<p class="muted">Resolving EXP table…</p>`;
   const rewards=pv?`<div class="reward-grid"><div><span>📈</span><strong>${pv.rewards.statPoints}</strong><small>Stat Point${pv.rewards.statPoints===1?'':'s'}</small></div><div><span>◆</span><strong>+${pv.rewards.tutorPoints}</strong><small>Tutor Points</small></div><div><span>✦</span><strong>${pv.rewards.abilityUnlockLevels.length?pv.rewards.abilityUnlockLevels.join(', '):'—'}</strong><small>Ability unlock levels</small></div><div><span>↟</span><strong>${pv.levelsGained}</strong><small>Levels gained</small></div></div>`:'';
   const evolutionOptions=pv?`<div class="evolution-choice-grid"><button class="evolution-choice ${!f.evolutionSpeciesId?'selected':''}" onclick="selectPokemonEvolution('')"><strong>Stay ${esc(p.species)}</strong><small>Do not evolve during this progression.</small></button>${pokemonProgressState.evolutionCandidates.map(e=>{const edgeLocked=!!e.blockedByPokeEdge&&!state.ui.gmOverride;const locked=(!e.levelEligible&&!state.ui.gmOverride)||edgeLocked;const lockReason=edgeLocked?` · Blocked by ${esc(e.blockedByPokeEdge)}`:(!e.levelEligible&&!state.ui.gmOverride?' · Level requirement not met':'');return `<button class="evolution-choice ${f.evolutionSpeciesId===e.target.id?'selected':''} ${locked?'locked':''}" onclick="selectPokemonEvolution('${esc(e.target.id)}')" ${locked?'disabled':''}><strong>→ ${esc(e.target.name)}</strong><div>${(e.target.types||[]).map(t=>typeBadge(String(t).toLowerCase())).join(' ')}</div><small>${e.toMinLevel!=null?`Minimum Lv. ${e.toMinLevel}`:'Evolution'}${e.conditionText?` · ${esc(e.conditionText)}`:''}${e.sourceTitle?` · PTU source: ${esc(e.sourceTitle)}`:''}${lockReason}</small></button>`}).join('')}</div>`:'';
   const selectedEvolution=pokemonProgressState.evolutionCandidates.find(e=>e.target.id===f.evolutionSpeciesId);
@@ -2229,8 +2367,10 @@ async function applyPokemonProgression(){
   if(trainer()!==owner||!state.pokemon.includes(p))throw new Error('Trainer profile changed while applying progression.');
   d=p.details;
   if(pv.evolved)d.evolutionNotice=null;
+  const pusherGrant=(owner.details?.features||[]).some(feature=>feature.id==='pusher')?await pokecenterResolvePusher(p,owner):{pokemon:p,granted:[],pending:[]};p.details=pusherGrant.pokemon.details;d=p.details;
+  if(trainer()!==owner||!state.pokemon.includes(p))throw new Error('Trainer profile changed while resolving Pusher.');
   d.progressionHistory=Array.isArray(d.progressionHistory)?d.progressionHistory:[];
-  const event={date:new Date().toISOString(),fromLevel:oldLevel,toLevel:p.level,expGain:pv.experienceGain,fromSpecies:oldSpecies,toSpecies:p.species,evolved:pv.evolved,statPointsGained:pv.rewards.statPoints,tutorPointsGained:pv.rewards.tutorPoints,pokeEdgesRemoved:edgeRemovals.map(x=>x.name||x.id),tutorPointsRefunded:edgeRefund,abilityUnlockLevels:pv.rewards.abilityUnlockLevels,abilitiesAfter:[...d.abilities]};
+  const event={date:new Date().toISOString(),fromLevel:oldLevel,toLevel:p.level,pusherEdgesGranted:pusherGrant.granted,pusherEdgesPending:pusherGrant.pending,expGain:pv.experienceGain,experienceGainBreakdown:pv.experienceGainBreakdown||null,fromSpecies:oldSpecies,toSpecies:p.species,evolved:pv.evolved,statPointsGained:pv.rewards.statPoints,tutorPointsGained:pv.rewards.tutorPoints,pokeEdgesRemoved:edgeRemovals.map(x=>x.name||x.id),tutorPointsRefunded:edgeRefund,abilityUnlockLevels:pv.rewards.abilityUnlockLevels,abilitiesAfter:[...d.abilities]};
   const historyEntry={id:uid('h'),date:new Date().toISOString().slice(0,10),title:pv.evolved?'Pokémon evolved':'Pokémon progressed',detail:`${p.name}: ${oldSpecies} Lv. ${oldLevel} → ${p.species} Lv. ${p.level}; +${pv.experienceGain} EXP${connectionPayload?.resultRecord?.refundedTutorPoints?`; Advanced Connection removed; +${connectionPayload.resultRecord.refundedTutorPoints} TP`:''}`};
   event.trainerHistoryId=historyEntry.id;event.trainerHistoryEntry=JSON.parse(JSON.stringify(historyEntry));
   if(oldLevel!==p.level||pv.evolved)event.reversal={schemaVersion:1,pokemonId:p.id,changes:capturePokemonProgressionChanges(before,JSON.parse(JSON.stringify(p)))};
@@ -2450,7 +2590,7 @@ function editorScreen(){
 }
 
 function render({preserveScroll=true}={}){
-  const screens={dashboard,trainer:trainerScreen,rosters:rostersScreen,combat:pokemonCombatScreen,creature:creatureScreen,pokemonbuilder:pokemonBuilderScreen,pokemonprogress:pokemonProgressionScreen,pokemontraining:pokemonTrainingScreen,pokemonrestat:pokemonRestatScreen,storage:storageScreen,inventory:inventoryScreen,shop:shopScreen,library:libraryScreen,npcs:npcsScreen,levelup:levelupScreen,editor:editorScreen};
+  const screens={dashboard,trainer:trainerScreen,rosters:rostersScreen,combat:pokemonCombatScreen,creature:creatureScreen,pokemonbuilder:pokemonBuilderScreen,pokemonprogress:pokemonProgressionScreen,pokemontraining:pokemonTrainingScreen,pokemonrestat:pokemonRestatScreen,storage:storageScreen,pokecenter:pokemonCenterScreen,inventory:inventoryScreen,shop:shopScreen,library:libraryScreen,npcs:npcsScreen,levelup:levelupScreen,editor:editorScreen};
   const f=screens[state.ui.screen]||dashboard;
   const previous=document.querySelector('.screen-content');
   const sameScreen=lastRenderedScreen===state.ui.screen;

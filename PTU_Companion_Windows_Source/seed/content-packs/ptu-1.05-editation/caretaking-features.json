@@ -1,0 +1,44 @@
+{
+  "source_file": "PTU 1.05 Editation.pdf",
+  "source_sha256": "a75c8ac73d9d391311a56a00e613557ea6264f707cfcaecfa88ebbdf22b622e2",
+  "pack_id": "ptu-1.05-editation",
+  "version": "1.0.1",
+  "features": [
+    {
+      "id": "pusher",
+      "name": "Pusher",
+      "source_page": 13,
+      "prerequisites_text": "Novice Pokémon Education",
+      "effect_text": "Your Pokémon gain the Basic Ranged Attacks, Aura Pulse, Enticing Bait, Extended Invisibility, Far Reading, Precise Treadings, Seismometer, TK Mastery, and Trail Sniffer Poke Edges automatically if they qualify for them, without having to invest any Tutor Points.",
+      "bonus_text": "If you own a Pokemon above Level 25, your Pokémon under level 25 gain +25% Experience.",
+      "raw_text": "Pusher\nPrerequisites: Novice Pokémon Education\nStatic\nEffect: Your Pokémon gain the Basic Ranged Attacks, Aura Pulse, Enticing Bait, Extended\nInvisibility, Far Reading, Precise Treadings, Seismometer, TK Mastery, and Trail Sniffer Poke\nEdges automatically if they qualify for them, without having to invest any Tutor Points.\nBonus: If you own a Pokemon above Level 25, your Pokémon under level 25 gain +25%\nExperience."
+    },
+    {
+      "id": "this-ones-special-i-know-it",
+      "name": "This One's Special, I Know It",
+      "source_page": 13,
+      "prerequisites_text": "Pusher",
+      "effect_text": "Choose two of the traits from the list below. The Pokémon is born with these special qualities. This Feature may be activated one time per Pokémon Education Rank above Untrained. Traits: ● Altered Type: Replace one of the Pokémon's Types with a Type of your choice that one of its parents possesses. Ask the GM to help you adjust the Pokemon's Move List and Abilities to properly fit the new Type. ● Altered Ability: The Pokémon's starting Ability is one not normally native to its Species; ask the GM to help you with this. ● Unique Move: The Pokémon knows a Move that matches one of its Types, but that is not normally available to its Species; ask the GM for help determining this Move. ● Exceptionally Powerful: Increase two of the Pokémon's Base Stats by +2 each, and the Pokemon hatches at a Level equal to 5 + your Pokemon Education Rank doubled. ● Savant: The Pokemon gains a Skill Template. You are not limited to the examples in the book, but must follow the same rules as them. Ask your GM for help assigning the Skills. Additionally, the Pokemon may use any Manipulate Maneuver for which it has Ranks in the necessary Skill, and may attempt to improve a wild Pokemon's Disposition if it possesses Ranks in Charm. ● Note: If the Skill Templates optional rule is already in effect, Savant's effect is as follows: The Pokemon is born with +1d6 in two Skills it has access to, or with Novice Ranks and a +2 bonus in two Skills it would not normally have access to. When the Pokemon reaches Levels 25 and 40, it may increase one of these Skills by 1d6 or by +2, and the other Skill by the other value. Additionally, the Pokemon may use any Manipulate Maneuver for which it has Ranks in the necessary Skill, and may attempt to improve a wild Pokemon's Disposition if it possesses Ranks in Charm.",
+      "bonus_text": null,
+      "raw_text": "This One's Special, I Know It\nPrerequisites: Pusher\nSpecial – Free Action\nTarget: A hatching egg.\nEffect: Choose two of the traits from the list below. The Pokémon is born with these special\nqualities. This Feature may be activated one time per Pokémon Education Rank above\nUntrained.\nTraits:\n    ● Altered Type: Replace one of the Pokémon's Types with a Type of your choice that one\n        of its parents possesses. Ask the GM to help you adjust the Pokemon's Move List and\n        Abilities to properly fit the new Type.\n    ● Altered Ability: The Pokémon's starting Ability is one not normally native to its Species;\n        ask the GM to help you with this.\n    ● Unique Move: The Pokémon knows a Move that matches one of its Types, but that is\n        not normally available to its Species; ask the GM for help determining this Move.\n   ●   Exceptionally Powerful: Increase two of the Pokémon's Base Stats by +2 each, and\n       the Pokemon hatches at a Level equal to 5 + your Pokemon Education Rank doubled.\n   ●   Savant: The Pokemon gains a Skill Template. You are not limited to the examples in the\n       book, but must follow the same rules as them. Ask your GM for help assigning the Skills.\n       Additionally, the Pokemon may use any Manipulate Maneuver for which it has Ranks in\n       the necessary Skill, and may attempt to improve a wild Pokemon's Disposition if it\n       possesses Ranks in Charm.\n   ●   Note: If the Skill Templates optional rule is already in effect, Savant's effect is as follows:\n       The Pokemon is born with +1d6 in two Skills it has access to, or with Novice Ranks and\n       a +2 bonus in two Skills it would not normally have access to. When the Pokemon\n       reaches Levels 25 and 40, it may increase one of these Skills by 1d6 or by +2, and the\n       other Skill by the other value. Additionally, the Pokemon may use any Manipulate\n       Maneuver for which it has Ranks in the necessary Skill, and may attempt to improve a\n       wild Pokemon's Disposition if it possesses Ranks in Charm."
+    },
+    {
+      "id": "skill-trainer",
+      "name": "Skill Trainer",
+      "source_page": 14,
+      "prerequisites_text": "Pusher",
+      "effect_text": "For each of your Pokémon that has been Trained during this time, choose a Skill; that Skill becomes Pushed until an Extended Rest is taken. Pokémon roll +1d6 with Pushed Skills, unless that would cause the Pokémon to roll more than 6d6; if so, that Pokémon rolls with a +3 Bonus instead. A Pokémon may have only one Pushed Skill at a time.",
+      "bonus_text": null,
+      "raw_text": "Skill Trainer\nPrerequisites: Pusher\nAt-Will – Free Action\nTrigger: You Train your Pokémon\nEffect: For each of your Pokémon that has been Trained during this time, choose a Skill; that\nSkill becomes Pushed until an Extended Rest is taken. Pokémon roll +1d6 with Pushed Skills,\nunless that would cause the Pokémon to roll more than 6d6; if so, that Pokémon rolls with a +3\nBonus instead. A Pokémon may have only one Pushed Skill at a time."
+    },
+    {
+      "id": "re-balancing",
+      "name": "Re-Balancing",
+      "source_page": 14,
+      "prerequisites_text": "Pusher, Master Pokémon Education",
+      "effect_text": "The target gains one of the following: +1 to all Base Stats, +2 to two different Base Stats, or +3 to a single Base Stat. The target then redistributes their Stat Points. A Pokémon may be targeted by Re-Balancing only once.",
+      "bonus_text": null,
+      "raw_text": "Re-Balancing\nPrerequisites: Pusher, Master Pokémon Education\nDaily x2 – Extended Action\nTarget: A Pokémon\nEffect: The target gains one of the following: +1 to all Base Stats, +2 to two different Base\nStats, or +3 to a single Base Stat. The target then redistributes their Stat Points. A Pokémon\nmay be targeted by Re-Balancing only once."
+    }
+  ]
+}

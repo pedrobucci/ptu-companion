@@ -1,6 +1,72 @@
 /* PTU Companion Android classic runtime bundle. Generated; no ES-module/file:// dependency. */
 (function(){
 'use strict';
+// Pokémon Caretaking, PTU 1.05 Editation pp. 13–14; campaign decisions in #89.
+const skillKey=value=>String(value||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+function hasCaretakingFeature(trainer,id){
+  return (trainer?.details?.features||[]).some(feature=>skillKey(feature.id||feature.name)===id);
+}
+function pusherExperienceGain({trainer,pokemon,ownedPokemon=[],experience=0}={}){
+  const base=Number(experience);
+  if(!Number.isSafeInteger(base)||base<0)throw new Error('Experience must be a non-negative whole number.');
+  const eligible=hasCaretakingFeature(trainer,'pusher')&&Number(pokemon?.level)<25&&ownedPokemon.some(p=>Number(p.level)>25);
+  const bonus=eligible?Math.floor(base/4):0;
+  if(!Number.isSafeInteger(base+bonus))throw new Error('Experience exceeds the supported range.');
+  return {base,bonus,total:base+bonus,source:eligible?'Pusher':null};
+}
+function resolvePushedSkills(skills,details={}){
+  const pushed=details.caretaking?.pushedSkill;
+  return skills.map(skill=>{
+    const result={...skill};
+    if(!pushed||skillKey(skill.id||skill.name)!==pushed.skillId)return result;
+    result.pushedBaseDice=Number(skill.dice);result.pushedBaseModifier=Number(skill.modifier||0);
+    if(result.pushedBaseDice<6)result.dice=result.pushedBaseDice+1;
+    else result.modifier=result.pushedBaseModifier+3;
+    result.pushed=true;return result;
+  });
+}
+function previewSkillTrainer({trainer,pokemon,skills=[],skillId,now=new Date().toISOString()}={}){
+  if(!hasCaretakingFeature(trainer,'pusher')||!hasCaretakingFeature(trainer,'skill-trainer'))throw new Error('Pusher and Skill Trainer must be recorded on the Trainer.');
+  const skill=skills.find(row=>skillKey(row.id||row.name)===skillKey(skillId));
+  if(!skill||!Number.isInteger(Number(skill.dice))||Number(skill.dice)<1)throw new Error('Choose a resolved Skill for this Pokémon.');
+  const details=JSON.parse(JSON.stringify(pokemon?.details||{}));
+  details.caretaking ||= {};
+  details.caretaking.pushedSkill={skillId:skillKey(skill.id||skill.name),skillName:skill.name,featureId:'skill-trainer',source:'PTU 1.05 Editation pp. 13–14',appliedAt:now,expires:'extended-rest'};
+  // The resolver receives skills without the previous Pushed effect, so replacement never stacks.
+  return {details,before:skill,after:resolvePushedSkills([skill],details)[0],record:details.caretaking.pushedSkill};
+}
+function endCaretakingExtendedRest(pokemon){
+  const details=JSON.parse(JSON.stringify(pokemon?.details||{}));
+  const removed=details.caretaking?.pushedSkill||null;
+  if(details.caretaking)delete details.caretaking.pushedSkill;
+  return {details,removed};
+}
+const caretakingStats=['hp','attack','defense','special_attack','special_defense','speed'];
+function applyCaretakingSpecies(species,details={}){
+  if(!species)return species;
+  const bonuses=details.caretaking?.rebalancing?.stats;
+  if(!bonuses)return species;
+  const original=species.caretakingOriginalBaseStats||species.baseStats||{};
+  return {...species,caretakingOriginalBaseStats:{...original},caretakingBaseBonus:{...bonuses},baseStats:Object.fromEntries(caretakingStats.map(key=>[key,Number(original[key]||0)+Number(bonuses[key]||0)]))};
+}
+function previewRebalancing({trainer,pokemon,stats,day=1,now=new Date().toISOString()}={}){
+  if(!hasCaretakingFeature(trainer,'pusher')||!hasCaretakingFeature(trainer,'re-balancing'))throw new Error('Pusher and Re-Balancing must be recorded on the Trainer.');
+  const education=Object.entries(trainer.details?.skillRanks||{}).find(([name])=>skillKey(name)==='pokemon-education');
+  if(Number(education?.[1]||0)<6)throw new Error('Re-Balancing requires Master Pokemon Education.');
+  if(pokemon?.details?.caretaking?.rebalancing)throw new Error('This Pokemon has already received Re-Balancing.');
+  if(!Number.isSafeInteger(day)||day<1)throw new Error('Choose a valid campaign day.');
+  const usage=trainer.details?.caretaking?.rebalancingUsage;
+  const used=usage?.day===day?Number(usage.uses):0;
+  if(!Number.isInteger(used)||used<0||used>=2)throw new Error('Re-Balancing has no uses remaining for this campaign day.');
+  if(!stats||Object.keys(stats).some(key=>!caretakingStats.includes(key)))throw new Error('Choose valid Base Stats.');
+  const values=caretakingStats.map(key=>Number(stats[key]||0));
+  if(!values.every(Number.isInteger)||!((values.every(v=>v===1))||(values.filter(v=>v===2).length===2&&values.every(v=>v===0||v===2))||(values.filter(v=>v===3).length===1&&values.every(v=>v===0||v===3))))throw new Error('Choose +1 to all Base Stats, +2 to two different Base Stats, or +3 to one Base Stat.');
+  const details=JSON.parse(JSON.stringify(pokemon.details||{}));details.caretaking ||= {};
+  details.caretaking.rebalancing={featureId:'re-balancing',stats:Object.fromEntries(caretakingStats.map((key,i)=>[key,values[i]])),appliedAt:now,day};
+  const trainerCaretaking={...JSON.parse(JSON.stringify(trainer.details?.caretaking||{})),rebalancingUsage:{day,uses:used+1}};
+  return {details,trainerCaretaking,record:details.caretaking.rebalancing};
+}
+function resolveSpeciesFormState({species,pokemon={}}){return {valid:true,species:applyCaretakingSpecies(species,pokemon.details||{})};}
 const __ptu_pokemon_engine = (()=>{
 
 /*
@@ -2480,12 +2546,13 @@ function addStatMaps(...maps){
   return out;
 }
 function speciesBaseStatTotal(species){
-  const base=normalizeBaseStats(species?.baseStats||species?.base_stats||{});
+  const base=normalizeBaseStats(species?.caretakingOriginalBaseStats||species?.baseStats||species?.base_stats||{});
   return STAT_KEYS.reduce((sum,k)=>sum+Number(base[k]||0),0);
 }
 function edgeStatAllocation(edge){ return normalizeAllocations(edge?.statAllocation||edge?.statAllocations||{}); }
 function resolvePokemonPokeEdgeStats({pokemon,species,detailsOverride=null,excludedEdgeInstances=[]}={}){
   const details=detailsOverride||pokemon?.details||{};
+  species=applyCaretakingSpecies(species,details);
   const excluded=new Set((excludedEdgeInstances||[]).map(String));
   const edges=(Array.isArray(details.pokeEdges)?details.pokeEdges:[]).filter(e=>!excluded.has(String(e?.instanceId||'')));
   const base=normalizeBaseStats(species?.baseStats||species?.base_stats||details.baseStats||{});
@@ -2519,7 +2586,7 @@ function resolvePokemonPokeEdgeStats({pokemon,species,detailsOverride=null,exclu
   const maxHp=Math.max(1,Number(pokemon?.level||1))+(Number(permanentFinal.hp||0)*3)+10;
   const exemptions=relationExemptionsFromPokeEdges(edges);
   const relationViolations=validateBaseRelations(natureAdjusted,permanentFinal,{exemptStats:exemptions});
-  return {speciesBase:base,speciesBaseTotal:speciesBaseStatTotal(species),baseBonus,modifiedBase,natureAdjusted,levelAllocation,bonusAllocation,permanentFinal,maxHp,
+  return {speciesBase:species.caretakingOriginalBaseStats||base,speciesBaseTotal:speciesBaseStatTotal(species),baseBonus:Object.fromEntries(STAT_KEYS.map(key=>[key,baseBonus[key]+Number(species.caretakingBaseBonus?.[key]||0)])),modifiedBase,natureAdjusted,levelAllocation,bonusAllocation,permanentFinal,maxHp,
     evolutionLocked:hasStrength,evolutionLockSource:hasStrength?"Underdog's Strength":null,applied,unresolved,baseRelations:{valid:relationViolations.length===0,violations:relationViolations,exemptStats:exemptions}};
 }
 function resolvePokemonSkills(species,details={}){
@@ -2531,7 +2598,7 @@ function resolvePokemonSkills(species,details={}){
     const target=capabilityKey(normalizeEdgeTarget(edge)); const rec=byId.get(target); if(!rec)continue;
     rec.dice+=1; rec.pokeEdgeRanks+=1; applied.push({edgeId:'skill-improvement',targetId:target,targetName:rec.name,value:1});
   }
-  return {skills,applied};
+  return {skills:resolvePushedSkills(skills,details),applied};
 }
 function statAllocationTargetMeta(edge,species,details={}){
   const id=capabilityKey(edge?.id||edge?.name);
@@ -2693,7 +2760,7 @@ async function handleApi(req,res,url){
     return json(res,200,{ok:true,desktopSession});
   }
   if(req.method==='GET' && url.pathname==='/api/health'){
-    return json(res,200,{ok:true,version:'2.2.0-android-beta.38',persistence:'android-local',database:'app-data/content-packs + WebView local storage',schemaVersion:5,definitions:{database:'embedded mobile bundle + installed .ptucp overlays',activeRuleset:getActiveRuleset()}});
+    return json(res,200,{ok:true,version:'2.2.0-android-beta.39',persistence:'android-local',database:'app-data/content-packs + WebView local storage',schemaVersion:5,definitions:{database:'embedded mobile bundle + installed .ptucp overlays',activeRuleset:getActiveRuleset()}});
   }
   if(req.method==='GET' && url.pathname==='/api/rulesets'){
     const activeRulesetId=getActiveRuleset();
@@ -2814,7 +2881,7 @@ async function handleApi(req,res,url){
     const rulesetId=String(payload.rulesetId||getActiveRuleset());
     if(!definitions.getRuleset(rulesetId)) throw Object.assign(new Error('Unknown ruleset'),{status:400});
     const speciesId=String(payload.speciesId||'');
-    const species=definitions.getResolved({rulesetId,kind:'species',id:speciesId});
+    const species=applyCaretakingSpecies(definitions.getResolved({rulesetId,kind:'species',id:speciesId}),details);
     if(!species) return json(res,404,{error:'Species definition not found in active ruleset'});
     const incomingEvolution=definitions.getIncomingEvolution({speciesName:species.name,sourceId:species.sourceId});
     const preEvolutionSpecies=definitions.getEvolutionAncestry({rulesetId,speciesName:species.name,sourceId:species.sourceId});
@@ -2850,7 +2917,7 @@ async function handleApi(req,res,url){
     if(!definitions.getRuleset(rulesetId)) throw Object.assign(new Error('Unknown ruleset'),{status:400});
     const pokemon=payload.pokemon||{}; const details=pokemon.details||{};
     const speciesId=String(details.speciesDefinitionId||payload.speciesId||'');
-    const species=definitions.getResolved({rulesetId,kind:'species',id:speciesId});
+    const species=applyCaretakingSpecies(definitions.getResolved({rulesetId,kind:'species',id:speciesId}),details);
     if(!species) return json(res,404,{error:'Current Species definition not found in active ruleset'});
     const evolutions=definitions.getOutgoingEvolutions({rulesetId,speciesName:species.name,sourceId:species.sourceId});
     let selectedEvolution=null;
@@ -2860,13 +2927,18 @@ async function handleApi(req,res,url){
     }
     const experienceTable=definitions.getPokemonExperienceTable();
     const abilityNames=[...(payload.selectedAbilities||details.abilities||[]),...(details.grantedAbilities||[])];
+    const pusher=definitions.getResolved({rulesetId,kind:'features',id:'pusher'});
+    const pusherSupported=!!pusher&&/25\s*%/.test([pusher.effect,pusher.raw?.bonus_text,pusher.rawText].filter(Boolean).join(' '));
+    const experienceGainBreakdown=pusherExperienceGain({trainer:pusherSupported?payload.trainer:null,pokemon,ownedPokemon:payload.ownedPokemon||[],experience:payload.targetLevel==null?Number(payload.expGain||0):0});
+    if(hasCaretakingFeature(payload.trainer,'pusher')&&!pusherSupported)experienceGainBreakdown.note='Pusher EXP bonus is not available from the active Ruleset definition.';
     const preview=buildPokemonProgressionPreview({
-      pokemon,species,experienceTable,expGain:payload.expGain,targetLevel:payload.targetLevel,newStatAllocations:payload.newStatAllocations,
+      pokemon,species,experienceTable,expGain:experienceGainBreakdown.total,targetLevel:payload.targetLevel,newStatAllocations:payload.newStatAllocations,
       selectedAbilities:payload.selectedAbilities,selectedMoves:payload.selectedMoves,
-      evolutionTarget:selectedEvolution?.target||null,evolutionEdge:selectedEvolution||null,evolutionAllocations:payload.evolutionAllocations,
+      evolutionTarget:selectedEvolution?applyCaretakingSpecies(selectedEvolution.target,details):null,evolutionEdge:selectedEvolution||null,evolutionAllocations:payload.evolutionAllocations,
       manualEvolutionCondition:!!payload.manualEvolutionCondition,gmOverride:!!payload.gmOverride,
       baseRelationExemptStats:relationExemptionsFromPokeEdges(details.pokeEdges||[]),moveLimitAbilities:moveLimitAbilityDefinitions(rulesetId,abilityNames)
     });
+    preview.experienceGainBreakdown=experienceGainBreakdown;
     const strengthOwned=(details.pokeEdges||[]).some(e=>capabilityKey(e?.id||e?.name)==='underdogs-strength');
     if(selectedEvolution&&strengthOwned&&!payload.gmOverride){
       preview.errors=[...new Set([...(preview.errors||[]),"Underdog's Strength prevents this Pokémon from evolving."])];
@@ -2956,7 +3028,7 @@ async function handleApi(req,res,url){
     if(!definitions.getRuleset(rulesetId)) throw Object.assign(new Error('Unknown ruleset'),{status:400});
     const pokemon=payload.pokemon||{}; const details=pokemon.details||{};
     const speciesId=String(details.speciesDefinitionId||payload.speciesId||'');
-    const species=definitions.getResolved({rulesetId,kind:'species',id:speciesId});
+    const species=applyCaretakingSpecies(definitions.getResolved({rulesetId,kind:'species',id:speciesId}),details);
     if(!species) return json(res,404,{error:'Current Species definition not found in active ruleset'});
     const slug=v=>String(v||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
     const speciesTypes=species.types||pokemon.types||[];
@@ -2989,7 +3061,7 @@ async function handleApi(req,res,url){
     if(!definitions.getRuleset(rulesetId)) throw Object.assign(new Error('Unknown ruleset'),{status:400});
     const pokemon=payload.pokemon||{}; const details=structuredClone(pokemon.details||{});
     const speciesId=String(details.speciesDefinitionId||payload.speciesId||'');
-    const species=definitions.getResolved({rulesetId,kind:'species',id:speciesId});
+    const species=applyCaretakingSpecies(definitions.getResolved({rulesetId,kind:'species',id:speciesId}),details);
     if(!species) return json(res,404,{error:'Current Species definition not found in active ruleset'});
     const slots=nativeAbilitySlotsForSpecies(species,pokemon.level);
     const selected=Array.isArray(payload.selectedAbilities)?payload.selectedAbilities.map(String):[];
@@ -3055,20 +3127,56 @@ async function handleApi(req,res,url){
     if(!definitions.getRuleset(rulesetId)) throw Object.assign(new Error('Unknown ruleset'),{status:400});
     const pokemon=payload.pokemon||{}; const details=pokemon.details||{};
     const speciesId=String(details.speciesDefinitionId||payload.speciesId||'');
-    const species=definitions.getResolved({rulesetId,kind:'species',id:speciesId});
+    const species=applyCaretakingSpecies(definitions.getResolved({rulesetId,kind:'species',id:speciesId}),details);
     if(!species) return json(res,404,{error:'Current Species definition not found in active ruleset'});
     const preview=buildPokemonRestatPreview({pokemon,species,allocations:payload.allocations,gmOverride:!!payload.gmOverride,baseRelationExemptStats:relationExemptionsFromPokeEdges(details.pokeEdges||[])});
     applyPokeEdgeStatsToPreview({preview,pokemon,species,gmOverride:!!payload.gmOverride});
     return json(res,200,{rulesetId,species:{id:species.id,name:species.name,types:species.types||[]},preview});
   }
 
+  if(req.method==='POST' && url.pathname==='/api/pokemon/rebalancing-preview'){
+    const payload=await bodyJson(req),rulesetId=String(payload.rulesetId||getActiveRuleset());
+    const pokemon=payload.pokemon||{},feature=definitions.getResolved({rulesetId,kind:'features',id:'re-balancing'});
+    if(!feature)return json(res,400,{error:'Re-Balancing is not available in the active Ruleset.'});
+    try{
+      const change=previewRebalancing({trainer:payload.trainer,pokemon,stats:payload.stats,day:payload.day});
+      Object.assign(change.record,{sourceVersionId:feature.versionId,sourceId:feature.sourceId,sourcePage:feature.sourcePage});
+      const baseSpecies=definitions.getResolved({rulesetId,kind:'species',id:String(pokemon.details?.speciesDefinitionId||'')});
+      if(!baseSpecies)throw new Error('Link this Pokemon to a Species definition first.');
+      const projected={...pokemon,details:change.details};
+      const resolution=resolveSpeciesFormState({species:baseSpecies,pokemon:projected,payload,includeActive:false});
+      if(!resolution.valid)throw new Error('Resolve Form requirements before Re-Balancing.');
+      const preview=buildPokemonRestatPreview({pokemon:projected,species:resolution.species,allocations:payload.allocations,gmOverride:!!payload.gmOverride,baseRelationExemptStats:relationExemptionsFromPokeEdges(change.details.pokeEdges||[])});
+      applyPokeEdgeStatsToPreview({preview,pokemon:projected,species:resolution.species,gmOverride:!!payload.gmOverride});
+      Object.assign(change.details,{statAllocations:preview.statAllocations,natureAdjustedBaseStats:preview.natureAdjustedBaseStats,finalStats:preview.resolvedFinalStats||preview.finalStats});
+      return json(res,200,{valid:preview.valid,preview,change,maxHp:preview.resolvedMaxHp||preview.maxHp});
+    }catch(error){return json(res,400,{error:error.message});}
+  }
+  if(req.method==='POST' && url.pathname==='/api/pokemon/caretaking-preview'){
+    const payload=await bodyJson(req),rulesetId=String(payload.rulesetId||getActiveRuleset());
+    const pokemon=payload.pokemon||{},details=pokemon.details||{};
+    const pusher=definitions.getResolved({rulesetId,kind:'features',id:'pusher'});
+    const feature=definitions.getResolved({rulesetId,kind:'features',id:'skill-trainer'});
+    if(!pusher||!feature||!/Pushed/i.test(feature.effect||''))return json(res,400,{error:'The supplied Skill Trainer rule is not available in the active Ruleset.'});
+    const baseSpecies=definitions.getResolved({rulesetId,kind:'species',id:String(details.speciesDefinitionId||'')});
+    if(!baseSpecies)return json(res,400,{error:'Link this Pokemon to a Species definition first.'});
+    const formResolution=resolveSpeciesFormState({species:baseSpecies,pokemon,payload});
+    if(!formResolution.valid)return json(res,400,{error:'Resolve the Pokemon Form requirements before training.'});
+    const baseline={...details,caretaking:{...details.caretaking,pushedSkill:null}};
+    const skills=resolvePokemonSkills(formResolution.species,baseline).skills;
+    try{
+      const preview=previewSkillTrainer({trainer:payload.trainer,pokemon,skills,skillId:payload.skillId});
+      Object.assign(preview.record,{sourceVersionId:feature.versionId,sourceId:feature.sourceId,sourcePage:feature.sourcePage,source:feature.packName||feature.sourceId});
+      return json(res,200,{valid:true,preview,feature:{id:feature.id,name:feature.name,sourceId:feature.sourceId,sourcePage:feature.sourcePage}});
+    }catch(error){return json(res,400,{error:error.message});}
+  }
   if(req.method==='POST' && url.pathname==='/api/pokemon/training-options'){
     const payload=await bodyJson(req);
     const rulesetId=String(payload.rulesetId||getActiveRuleset());
     if(!definitions.getRuleset(rulesetId)) throw Object.assign(new Error('Unknown ruleset'),{status:400});
     const pokemon=payload.pokemon||{}; const details=pokemon.details||{};
     const speciesId=String(details.speciesDefinitionId||payload.speciesId||'');
-    const species=definitions.getResolved({rulesetId,kind:'species',id:speciesId});
+    const species=applyCaretakingSpecies(definitions.getResolved({rulesetId,kind:'species',id:speciesId}),details);
     if(!species) return json(res,404,{error:'Current Species definition not found in active ruleset'});
     const ruleset=definitions.getRuleset(rulesetId);
     const september2015Enabled=!!ruleset?.packs?.some(p=>p.enabled && p.pack_id==='ptu-september-2015-playtest');
@@ -3140,7 +3248,7 @@ async function handleApi(req,res,url){
     if(!definitions.getRuleset(rulesetId)) throw Object.assign(new Error('Unknown ruleset'),{status:400});
     const pokemon=payload.pokemon||{}; const details=JSON.parse(JSON.stringify(pokemon.details||{}));
     const speciesId=String(details.speciesDefinitionId||payload.speciesId||'');
-    const species=definitions.getResolved({rulesetId,kind:'species',id:speciesId});
+    const species=applyCaretakingSpecies(definitions.getResolved({rulesetId,kind:'species',id:speciesId}),details);
     if(!species) return json(res,404,{error:'Current Species definition not found in active ruleset'});
     const eggTutorMoves=species.eggMoves||[];
     details.moves=Array.isArray(details.moves)?details.moves:[]; details.pokeEdges=Array.isArray(details.pokeEdges)?details.pokeEdges:[];

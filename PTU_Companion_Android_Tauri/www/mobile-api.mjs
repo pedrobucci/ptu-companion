@@ -1,3 +1,4 @@
+import {pusherExperienceGain,resolvePushedSkills,previewSkillTrainer,hasCaretakingFeature,applyCaretakingSpecies,previewRebalancing} from './pokemon-caretaking.mjs';
 import {buildPokemonPreview, buildPokemonProgressionPreview, buildPokemonRestatPreview, resolvePokemonMoveLimit, autoBalancedAllocations, NATURES, parseTutorPointCost, evaluatePokeEdgePrerequisite, moveTrainingPoolUsage, isNaturalTutorMove, tutorRestrictionForMove, relationExemptionsFromPokeEdges, isUnderdogPokemon, pokeEdgeRequiresUnderdog, levelAbilitySlots, eligibleAbilities, applyNature, normalizeBaseStats, normalizeAllocations, STAT_KEYS, validateBaseRelations} from './rules/pokemon-engine.mjs';
 import {getPokemonModifierSummary, resolveMoveDamage} from './rules/modifier-engine.mjs';
 import {resolveHeldItemEffect, applyHeldItemToTypeProfile, applyHeldItemToEffectiveStats} from './rules/held-item-engine.mjs';
@@ -281,7 +282,9 @@ function resolveSpeciesFormState({species,pokemon={},payload={},includeActive=tr
   const state=normalizePokemonFormState(requested);
   if(!includeActive)state.activeFormId=null;
   const isShiny=!!(payload.isShiny??details.isShiny??details.is_shiny??false);
-  return resolvePokemonPresentation({species,formState:state,context:pokemonFormContext({pokemon,payload}),allowUnmet:!!payload.gmOverride,isShiny});
+  const presentation=resolvePokemonPresentation({species,formState:state,context:pokemonFormContext({pokemon,payload}),allowUnmet:!!payload.gmOverride,isShiny});
+  if(presentation.species)presentation.species=applyCaretakingSpecies(presentation.species,details);
+  return presentation;
 }
 
 function slugId(value){
@@ -503,12 +506,13 @@ function addStatMaps(...maps){
   return out;
 }
 function speciesBaseStatTotal(species){
-  const base=normalizeBaseStats(species?.baseStats||species?.base_stats||{});
+  const base=normalizeBaseStats(species?.caretakingOriginalBaseStats||species?.baseStats||species?.base_stats||{});
   return STAT_KEYS.reduce((sum,k)=>sum+Number(base[k]||0),0);
 }
 function edgeStatAllocation(edge){ return normalizeAllocations(edge?.statAllocation||edge?.statAllocations||{}); }
 function resolvePokemonPokeEdgeStats({pokemon,species,detailsOverride=null,excludedEdgeInstances=[]}={}){
   const details=detailsOverride||pokemon?.details||{};
+  species=applyCaretakingSpecies(species,details);
   const excluded=new Set((excludedEdgeInstances||[]).map(String));
   const edges=(Array.isArray(details.pokeEdges)?details.pokeEdges:[]).filter(e=>!excluded.has(String(e?.instanceId||'')));
   const base=normalizeBaseStats(species?.baseStats||species?.base_stats||details.baseStats||{});
@@ -542,7 +546,7 @@ function resolvePokemonPokeEdgeStats({pokemon,species,detailsOverride=null,exclu
   const maxHp=Math.max(1,Number(pokemon?.level||1))+(Number(permanentFinal.hp||0)*3)+10;
   const exemptions=relationExemptionsFromPokeEdges(edges);
   const relationViolations=validateBaseRelations(natureAdjusted,permanentFinal,{exemptStats:exemptions});
-  return {speciesBase:base,speciesBaseTotal:speciesBaseStatTotal(species),baseBonus,modifiedBase,natureAdjusted,levelAllocation,bonusAllocation,permanentFinal,maxHp,
+  return {speciesBase:species.caretakingOriginalBaseStats||base,speciesBaseTotal:speciesBaseStatTotal(species),baseBonus:Object.fromEntries(STAT_KEYS.map(key=>[key,baseBonus[key]+Number(species.caretakingBaseBonus?.[key]||0)])),modifiedBase,natureAdjusted,levelAllocation,bonusAllocation,permanentFinal,maxHp,
     evolutionLocked:hasStrength,evolutionLockSource:hasStrength?"Underdog's Strength":null,applied,unresolved,baseRelations:{valid:relationViolations.length===0,violations:relationViolations,exemptStats:exemptions}};
 }
 function resolvePokemonSkills(species,details={}){
@@ -554,7 +558,7 @@ function resolvePokemonSkills(species,details={}){
     const target=capabilityKey(normalizeEdgeTarget(edge)); const rec=byId.get(target); if(!rec)continue;
     rec.dice+=1; rec.pokeEdgeRanks+=1; applied.push({edgeId:'skill-improvement',targetId:target,targetName:rec.name,value:1});
   }
-  return {skills,applied};
+  return {skills:resolvePushedSkills(skills,details),applied};
 }
 function statAllocationTargetMeta(edge,species,details={}){
   const id=capabilityKey(edge?.id||edge?.name);
@@ -760,7 +764,7 @@ async function handleApi(req,res,url){
     return json(res,200,{ok:true,desktopSession});
   }
   if(req.method==='GET' && url.pathname==='/api/health'){
-    return json(res,200,{ok:true,version:'2.2.0-android-beta.38',persistence:'android-local',database:'app-data/content-packs + WebView local storage',schemaVersion:5,definitions:{database:'embedded mobile bundle + installed .ptucp overlays',activeRuleset:getActiveRuleset()}});
+    return json(res,200,{ok:true,version:'2.2.0-android-beta.39',persistence:'android-local',database:'app-data/content-packs + WebView local storage',schemaVersion:5,definitions:{database:'embedded mobile bundle + installed .ptucp overlays',activeRuleset:getActiveRuleset()}});
   }
   if(req.method==='GET' && url.pathname==='/api/rulesets'){
     const activeRulesetId=getActiveRuleset();
@@ -981,13 +985,18 @@ async function handleApi(req,res,url){
     }
     const experienceTable=definitions.getPokemonExperienceTable();
     const moveLimitNames=[...(payload.selectedAbilities||details.abilities||[]),...(details.grantedAbilities||[])];
+    const pusher=definitions.getResolved({rulesetId,kind:'features',id:'pusher'});
+    const pusherSupported=!!pusher&&/25\s*%/.test([pusher.effect,pusher.raw?.bonus_text,pusher.rawText].filter(Boolean).join(' '));
+    const experienceGainBreakdown=pusherExperienceGain({trainer:pusherSupported?payload.trainer:null,pokemon,ownedPokemon:payload.ownedPokemon||[],experience:payload.targetLevel==null?Number(payload.expGain||0):0});
+    if(hasCaretakingFeature(payload.trainer,'pusher')&&!pusherSupported)experienceGainBreakdown.note='Pusher EXP bonus is not available from the active Ruleset definition.';
     const preview=buildPokemonProgressionPreview({
-      pokemon,species,experienceTable,expGain:payload.expGain,targetLevel:payload.targetLevel,newStatAllocations:payload.newStatAllocations,
+      pokemon,species,experienceTable,expGain:experienceGainBreakdown.total,targetLevel:payload.targetLevel,newStatAllocations:payload.newStatAllocations,
       selectedAbilities:payload.selectedAbilities,selectedMoves:payload.selectedMoves,
-      evolutionTarget:selectedEvolution?.target||null,evolutionEdge:selectedEvolution||null,evolutionAllocations:payload.evolutionAllocations,
+      evolutionTarget:selectedEvolution?applyCaretakingSpecies(selectedEvolution.target,details):null,evolutionEdge:selectedEvolution||null,evolutionAllocations:payload.evolutionAllocations,
       manualEvolutionCondition:!!payload.manualEvolutionCondition,gmOverride:!!payload.gmOverride,
       baseRelationExemptStats:relationExemptionsFromPokeEdges(details.pokeEdges||[]),moveLimitAbilities:moveLimitAbilityDefinitions(rulesetId,moveLimitNames)
     });
+    preview.experienceGainBreakdown=experienceGainBreakdown;
     const strengthOwned=(details.pokeEdges||[]).some(e=>capabilityKey(e?.id||e?.name)==='underdogs-strength');
     if(selectedEvolution&&strengthOwned&&!payload.gmOverride){
       preview.errors=[...new Set([...(preview.errors||[]),"Underdog's Strength prevents this Pokémon from evolving."])];
@@ -1206,6 +1215,42 @@ async function handleApi(req,res,url){
     return json(res,200,{rulesetId,species:{id:species.id,name:species.name,types:species.types||[]},preview});
   }
 
+  if(req.method==='POST' && url.pathname==='/api/pokemon/rebalancing-preview'){
+    const payload=await bodyJson(req),rulesetId=String(payload.rulesetId||getActiveRuleset());
+    const pokemon=payload.pokemon||{},feature=definitions.getResolved({rulesetId,kind:'features',id:'re-balancing'});
+    if(!feature)return json(res,400,{error:'Re-Balancing is not available in the active Ruleset.'});
+    try{
+      const change=previewRebalancing({trainer:payload.trainer,pokemon,stats:payload.stats,day:payload.day});
+      Object.assign(change.record,{sourceVersionId:feature.versionId,sourceId:feature.sourceId,sourcePage:feature.sourcePage});
+      const baseSpecies=definitions.getResolved({rulesetId,kind:'species',id:String(pokemon.details?.speciesDefinitionId||'')});
+      if(!baseSpecies)throw new Error('Link this Pokemon to a Species definition first.');
+      const projected={...pokemon,details:change.details};
+      const resolution=resolveSpeciesFormState({species:baseSpecies,pokemon:projected,payload,includeActive:false});
+      if(!resolution.valid)throw new Error('Resolve Form requirements before Re-Balancing.');
+      const preview=buildPokemonRestatPreview({pokemon:projected,species:resolution.species,allocations:payload.allocations,gmOverride:!!payload.gmOverride,baseRelationExemptStats:relationExemptionsFromPokeEdges(change.details.pokeEdges||[])});
+      applyPokeEdgeStatsToPreview({preview,pokemon:projected,species:resolution.species,gmOverride:!!payload.gmOverride});
+      Object.assign(change.details,{statAllocations:preview.statAllocations,natureAdjustedBaseStats:preview.natureAdjustedBaseStats,finalStats:preview.resolvedFinalStats||preview.finalStats});
+      return json(res,200,{valid:preview.valid,preview,change,maxHp:preview.resolvedMaxHp||preview.maxHp});
+    }catch(error){return json(res,400,{error:error.message});}
+  }
+  if(req.method==='POST' && url.pathname==='/api/pokemon/caretaking-preview'){
+    const payload=await bodyJson(req),rulesetId=String(payload.rulesetId||getActiveRuleset());
+    const pokemon=payload.pokemon||{},details=pokemon.details||{};
+    const pusher=definitions.getResolved({rulesetId,kind:'features',id:'pusher'});
+    const feature=definitions.getResolved({rulesetId,kind:'features',id:'skill-trainer'});
+    if(!pusher||!feature||!/Pushed/i.test(feature.effect||''))return json(res,400,{error:'The supplied Skill Trainer rule is not available in the active Ruleset.'});
+    const baseSpecies=definitions.getResolved({rulesetId,kind:'species',id:String(details.speciesDefinitionId||'')});
+    if(!baseSpecies)return json(res,400,{error:'Link this Pokemon to a Species definition first.'});
+    const formResolution=resolveSpeciesFormState({species:baseSpecies,pokemon,payload});
+    if(!formResolution.valid)return json(res,400,{error:'Resolve the Pokemon Form requirements before training.'});
+    const baseline={...details,caretaking:{...details.caretaking,pushedSkill:null}};
+    const skills=resolvePokemonSkills(formResolution.species,baseline).skills;
+    try{
+      const preview=previewSkillTrainer({trainer:payload.trainer,pokemon,skills,skillId:payload.skillId});
+      Object.assign(preview.record,{sourceVersionId:feature.versionId,sourceId:feature.sourceId,sourcePage:feature.sourcePage,source:feature.packName||feature.sourceId});
+      return json(res,200,{valid:true,preview,feature:{id:feature.id,name:feature.name,sourceId:feature.sourceId,sourcePage:feature.sourcePage}});
+    }catch(error){return json(res,400,{error:error.message});}
+  }
   if(req.method==='POST' && url.pathname==='/api/pokemon/training-options'){
     const payload=await bodyJson(req);
     const rulesetId=String(payload.rulesetId||getActiveRuleset());
