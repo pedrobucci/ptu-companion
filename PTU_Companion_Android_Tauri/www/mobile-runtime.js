@@ -1,6 +1,47 @@
 /* PTU Companion Android classic runtime bundle. Generated; no ES-module/file:// dependency. */
 (function(){
 'use strict';
+// Pokémon Caretaking, PTU 1.05 Editation pp. 13–14; campaign decisions in #89.
+const skillKey=value=>String(value||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+function hasCaretakingFeature(trainer,id){
+  return (trainer?.details?.features||[]).some(feature=>skillKey(feature.id||feature.name)===id);
+}
+function pusherExperienceGain({trainer,pokemon,ownedPokemon=[],experience=0}={}){
+  const base=Number(experience);
+  if(!Number.isSafeInteger(base)||base<0)throw new Error('Experience must be a non-negative whole number.');
+  const eligible=hasCaretakingFeature(trainer,'pusher')&&Number(pokemon?.level)<25&&ownedPokemon.some(p=>Number(p.level)>25);
+  const bonus=eligible?Math.floor(base/4):0;
+  if(!Number.isSafeInteger(base+bonus))throw new Error('Experience exceeds the supported range.');
+  return {base,bonus,total:base+bonus,source:eligible?'Pusher':null};
+}
+function resolvePushedSkills(skills,details={}){
+  const pushed=details.caretaking?.pushedSkill;
+  return skills.map(skill=>{
+    const result={...skill};
+    if(!pushed||skillKey(skill.id||skill.name)!==pushed.skillId)return result;
+    result.pushedBaseDice=Number(skill.dice);result.pushedBaseModifier=Number(skill.modifier||0);
+    if(result.pushedBaseDice<6)result.dice=result.pushedBaseDice+1;
+    else result.modifier=result.pushedBaseModifier+3;
+    result.pushed=true;return result;
+  });
+}
+function previewSkillTrainer({trainer,pokemon,skills=[],skillId,now=new Date().toISOString()}={}){
+  if(!hasCaretakingFeature(trainer,'pusher')||!hasCaretakingFeature(trainer,'skill-trainer'))throw new Error('Pusher and Skill Trainer must be recorded on the Trainer.');
+  const skill=skills.find(row=>skillKey(row.id||row.name)===skillKey(skillId));
+  if(!skill||!Number.isInteger(Number(skill.dice))||Number(skill.dice)<1)throw new Error('Choose a resolved Skill for this Pokémon.');
+  const details=JSON.parse(JSON.stringify(pokemon?.details||{}));
+  details.caretaking ||= {};
+  details.caretaking.pushedSkill={skillId:skillKey(skill.id||skill.name),skillName:skill.name,featureId:'skill-trainer',source:'PTU 1.05 Editation pp. 13–14',appliedAt:now,expires:'extended-rest'};
+  // The resolver receives skills without the previous Pushed effect, so replacement never stacks.
+  return {details,before:skill,after:resolvePushedSkills([skill],details)[0],record:details.caretaking.pushedSkill};
+}
+function endCaretakingExtendedRest(pokemon){
+  const details=JSON.parse(JSON.stringify(pokemon?.details||{}));
+  const removed=details.caretaking?.pushedSkill||null;
+  if(details.caretaking)delete details.caretaking.pushedSkill;
+  return {details,removed};
+}
+
 const __ptu_pokemon_engine = (()=>{
 
 /*
@@ -2531,7 +2572,7 @@ function resolvePokemonSkills(species,details={}){
     const target=capabilityKey(normalizeEdgeTarget(edge)); const rec=byId.get(target); if(!rec)continue;
     rec.dice+=1; rec.pokeEdgeRanks+=1; applied.push({edgeId:'skill-improvement',targetId:target,targetName:rec.name,value:1});
   }
-  return {skills,applied};
+  return {skills:resolvePushedSkills(skills,details),applied};
 }
 function statAllocationTargetMeta(edge,species,details={}){
   const id=capabilityKey(edge?.id||edge?.name);
@@ -2860,13 +2901,18 @@ async function handleApi(req,res,url){
     }
     const experienceTable=definitions.getPokemonExperienceTable();
     const abilityNames=[...(payload.selectedAbilities||details.abilities||[]),...(details.grantedAbilities||[])];
+    const pusher=definitions.getResolved({rulesetId,kind:'features',id:'pusher'});
+    const pusherSupported=!!pusher&&/25\s*%/.test([pusher.effect,pusher.raw?.bonus_text,pusher.rawText].filter(Boolean).join(' '));
+    const experienceGainBreakdown=pusherExperienceGain({trainer:pusherSupported?payload.trainer:null,pokemon,ownedPokemon:payload.ownedPokemon||[],experience:payload.targetLevel==null?Number(payload.expGain||0):0});
+    if(hasCaretakingFeature(payload.trainer,'pusher')&&!pusherSupported)experienceGainBreakdown.note='Pusher EXP bonus is not available from the active Ruleset definition.';
     const preview=buildPokemonProgressionPreview({
-      pokemon,species,experienceTable,expGain:payload.expGain,targetLevel:payload.targetLevel,newStatAllocations:payload.newStatAllocations,
+      pokemon,species,experienceTable,expGain:experienceGainBreakdown.total,targetLevel:payload.targetLevel,newStatAllocations:payload.newStatAllocations,
       selectedAbilities:payload.selectedAbilities,selectedMoves:payload.selectedMoves,
       evolutionTarget:selectedEvolution?.target||null,evolutionEdge:selectedEvolution||null,evolutionAllocations:payload.evolutionAllocations,
       manualEvolutionCondition:!!payload.manualEvolutionCondition,gmOverride:!!payload.gmOverride,
       baseRelationExemptStats:relationExemptionsFromPokeEdges(details.pokeEdges||[]),moveLimitAbilities:moveLimitAbilityDefinitions(rulesetId,abilityNames)
     });
+    preview.experienceGainBreakdown=experienceGainBreakdown;
     const strengthOwned=(details.pokeEdges||[]).some(e=>capabilityKey(e?.id||e?.name)==='underdogs-strength');
     if(selectedEvolution&&strengthOwned&&!payload.gmOverride){
       preview.errors=[...new Set([...(preview.errors||[]),"Underdog's Strength prevents this Pokémon from evolving."])];
@@ -3062,6 +3108,24 @@ async function handleApi(req,res,url){
     return json(res,200,{rulesetId,species:{id:species.id,name:species.name,types:species.types||[]},preview});
   }
 
+  if(req.method==='POST' && url.pathname==='/api/pokemon/caretaking-preview'){
+    const payload=await bodyJson(req),rulesetId=String(payload.rulesetId||getActiveRuleset());
+    const pokemon=payload.pokemon||{},details=pokemon.details||{};
+    const pusher=definitions.getResolved({rulesetId,kind:'features',id:'pusher'});
+    const feature=definitions.getResolved({rulesetId,kind:'features',id:'skill-trainer'});
+    if(!pusher||!feature||!/Pushed/i.test(feature.effect||''))return json(res,400,{error:'The supplied Skill Trainer rule is not available in the active Ruleset.'});
+    const baseSpecies=definitions.getResolved({rulesetId,kind:'species',id:String(details.speciesDefinitionId||'')});
+    if(!baseSpecies)return json(res,400,{error:'Link this Pokemon to a Species definition first.'});
+    const formResolution=resolveSpeciesFormState({species:baseSpecies,pokemon,payload});
+    if(!formResolution.valid)return json(res,400,{error:'Resolve the Pokemon Form requirements before training.'});
+    const baseline={...details,caretaking:{...details.caretaking,pushedSkill:null}};
+    const skills=resolvePokemonSkills(formResolution.species,baseline).skills;
+    try{
+      const preview=previewSkillTrainer({trainer:payload.trainer,pokemon,skills,skillId:payload.skillId});
+      Object.assign(preview.record,{sourceVersionId:feature.versionId,sourceId:feature.sourceId,sourcePage:feature.sourcePage,source:feature.packName||feature.sourceId});
+      return json(res,200,{valid:true,preview,feature:{id:feature.id,name:feature.name,sourceId:feature.sourceId,sourcePage:feature.sourcePage}});
+    }catch(error){return json(res,400,{error:error.message});}
+  }
   if(req.method==='POST' && url.pathname==='/api/pokemon/training-options'){
     const payload=await bodyJson(req);
     const rulesetId=String(payload.rulesetId||getActiveRuleset());
