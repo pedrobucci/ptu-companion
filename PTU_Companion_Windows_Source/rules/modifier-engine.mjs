@@ -26,8 +26,6 @@ export function getPokemonModifierSummary(pokemon={}, context={}){
   const d=pokemon.details||{};
   const stats=d.finalStats||{};
   const twisted=hasTwistedPowerEffect(d);
-  const attack=Math.max(0,Number(stats.attack)||0);
-  const specialAttack=Math.max(0,Number(stats.special_attack??stats.spAttack)||0);
   const moveLimitBase=Math.max(0,Number(d.moveLimitBase??6)||0);
   const moveLimitModifier=Number(d.moveLimitModifier??0)||0;
   const moveLimitEffective=Math.max(0,Number(d.moveLimitEffective??(moveLimitBase+moveLimitModifier))||0);
@@ -36,10 +34,14 @@ export function getPokemonModifierSummary(pokemon={}, context={}){
   const effectiveStats={...stats};
   for(const [key,val] of Object.entries(heldStatBonuses)) effectiveStats[key]=(Number(effectiveStats[key])||0)+Number(val||0);
   if(held && Number(held.speedMultiplier||1)!==1 && effectiveStats.speed!=null) effectiveStats.speed=Math.floor((Number(effectiveStats.speed)||0)*Number(held.speedMultiplier||1));
-  const combatStages=d.combatStages||{};
+  const attack=Math.max(0,Number(effectiveStats.attack)||0);
+  const specialAttack=Math.max(0,Number(effectiveStats.special_attack??effectiveStats.spAttack)||0);
+  const combatStages={...(d.combatStages||{})};for(const [key,value] of Object.entries(held?.combatStageBonuses||{}))combatStages[key]=(Number(combatStages[key])||0)+Number(value||0);
   const combatStats={...effectiveStats};
   for(const [stat,key] of [['attack','attack'],['defense','defense'],['speed','speed']]) if(combatStats[stat]!=null)combatStats[stat]=applyCombatStage(combatStats[stat],combatStages[key]);
   for(const [snake,camel,key] of [['special_attack','spAttack','spAttack'],['special_defense','spDefense','spDefense']]){const stat=combatStats[snake]!=null?snake:camel;if(combatStats[stat]!=null)combatStats[stat]=applyCombatStage(combatStats[stat],combatStages[key]);}
+  const evasionStage=Math.max(-6,Math.min(6,Math.trunc(Number(combatStages.evasion)||0))),flatEvasion=Number(held?.evasionBonus)||0;
+  const evasion={physical:Math.min(6,Math.floor((Number(combatStats.defense)||0)/5))+flatEvasion+evasionStage,special:Math.min(6,Math.floor((Number(combatStats.special_defense??combatStats.spDefense)||0)/5))+flatEvasion+evasionStage,speed:Math.min(6,Math.floor((Number(combatStats.speed)||0)/5))+flatEvasion+evasionStage+Number(held?.speedEvasionBonus||0)};
   return {
     moveLimit:{base:moveLimitBase,modifier:moveLimitModifier,effective:moveLimitEffective},
     twistedPower: twisted ? {
@@ -51,8 +53,11 @@ export function getPokemonModifierSummary(pokemon={}, context={}){
     } : {active:false,physicalDamageBonus:0,specialDamageBonus:0},
     effectiveStats,
     combatStats,
-    accuracyRollBonus:Math.max(-6,Math.min(6,Math.trunc(Number(combatStages.accuracy)||0))),
-    heldItem: held ? {id:held.id,name:held.name,automation:held.automation,effectText:held.effectText,statBonuses:held.statBonuses||{},speedMultiplier:held.speedMultiplier||1,speedEvasionBonus:held.speedEvasionBonus||0,conditionalDamageBonusSuperEffective:held.conditionalDamageBonusSuperEffective||0,preventsEvolution:!!held.preventsEvolution,removeGroundImmunity:!!held.removeGroundImmunity,hpStealRecoveryMultiplier:held.hpStealRecoveryMultiplier||1,defaultCombatStage:held.defaultCombatStage||null,warnings:held.warnings||[]} : null,
+    accuracyRollBonus:Math.max(-6,Math.min(6,Math.trunc(Number(combatStages.accuracy)||0)))+Number(held?.accuracyBonus||0),
+    evasionBonus:Number(held?.evasionBonus||0)+Number(combatStages.evasion||0),
+    evasion,
+    combatStages,
+    heldItem: held ? {id:held.id,name:held.name,automation:held.automation,effectText:held.effectText,statBonuses:held.statBonuses||{},combatStageBonuses:held.combatStageBonuses||{},accuracyBonus:held.accuracyBonus||0,evasionBonus:held.evasionBonus||0,damageRollBonus:held.damageRollBonus||0,damageBaseBonus:held.damageBaseBonus||0,itemEffects:held.itemEffects||[],speedMultiplier:held.speedMultiplier||1,speedEvasionBonus:held.speedEvasionBonus||0,conditionalDamageBonusSuperEffective:held.conditionalDamageBonusSuperEffective||0,preventsEvolution:!!held.preventsEvolution,removeGroundImmunity:!!held.removeGroundImmunity,hpStealRecoveryMultiplier:held.hpStealRecoveryMultiplier||1,defaultCombatStage:held.defaultCombatStage||null,warnings:held.warnings||[]} : null,
     activeEffects:[
       ...(twisted?[{kind:'damage_modifier',id:'twisted-power',source:(d.pokeEdges||[]).some(e=>slug(e?.id||e?.name)==='mixed-power')?'mixed-power':'twisted-power'}]:[]),
       ...(moveLimitModifier?[{kind:'move_limit_modifier',id:'move-limit',value:moveLimitModifier,source:'pokemon.details.moveLimitModifier'}]:[]),
@@ -79,7 +84,8 @@ export function resolveMoveDamage({pokemon={},moveDefinition=null,speciesTypes=[
   const moveType=String(move.type||'').trim().toLowerCase();
   const types=(Array.isArray(speciesTypes)?speciesTypes:[]).map(t=>String(t||'').trim().toLowerCase());
   const stab=moveType && types.includes(moveType) ? 2 : 0;
-  const finalDb=Math.max(1,Math.min(28,baseDb+stab));
+  const itemDbBonus=Number(heldItemEffect?.damageBaseBonus||0);
+  const finalDb=Math.max(1,Math.min(28,baseDb+stab+itemDbBonus));
   const chart=getDamageBase(finalDb);
   if(!chart) return null;
   const modifiers=getPokemonModifierSummary(pokemon,{heldItemEffect});
@@ -89,22 +95,27 @@ export function resolveMoveDamage({pokemon={},moveDefinition=null,speciesTypes=[
   const mixedBonus=modifiers.twistedPower.active
     ? Math.floor((moveClass==='physical'?specialAttack:attack)/2)
     : 0;
-  const flatBonus=primary+mixedBonus;
+  const itemDamageBonus=Number(heldItemEffect?.damageRollBonus||0);
+  const flatBonus=primary+mixedBonus+itemDamageBonus;
   return {
     moveClass,
     baseDamageBase:baseDb,
     stabDamageBaseBonus:stab,
     finalDamageBase:finalDb,
+    itemDamageBaseBonus:itemDbBonus,
     damageChart:chart,
     primaryStat:{name:moveClass==='physical'?'Attack':'Special Attack',value:primary,combatStage:moveClass==='physical'?Number(pokemon.details?.combatStages?.attack)||0:Number(pokemon.details?.combatStages?.spAttack)||0},
     mixedPowerBonus:mixedBonus,
+    itemDamageBonus,
     heldItemConditionalSuperEffectiveBonus:Number(heldItemEffect?.conditionalDamageBonusSuperEffective||0),
     finalRoll:mergeDiceExpression(chart.rolled_damage,flatBonus),
     breakdown:[
       {label:`DB ${baseDb}`,value:baseDb},
       ...(stab?[{label:'STAB',value:'+2 DB'}]:[]),
+      ...(itemDbBonus?[{label:`Equipped item Damage Base modifier`,value:`${itemDbBonus>0?'+':''}${itemDbBonus} DB`}]:[]),
       {label:moveClass==='physical'?'Attack':'Special Attack',value:primary},
       ...(mixedBonus?[{label:'Mixed Power',value:mixedBonus}]:[]),
+      ...(itemDamageBonus?[{label:`${heldItemEffect?.name||'Equipped Item'} damage modifier`,value:itemDamageBonus}]:[]),
       ...(heldItemEffect?.statBonuses && Number(heldItemEffect.statBonuses[moveClass==='physical'?'attack':'special_attack']||0)?[{label:`${heldItemEffect.name} Stat Bonus`,value:Number(heldItemEffect.statBonuses[moveClass==='physical'?'attack':'special_attack'])}]:[])
     ]
   };
