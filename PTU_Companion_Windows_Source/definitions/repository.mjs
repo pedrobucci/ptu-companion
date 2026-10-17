@@ -68,40 +68,79 @@ export class DefinitionRepository {
     this._validateKind(kind);
     limit=Math.max(1,Math.min(200,Number(limit)||60)); offset=Math.max(0,Number(offset)||0);
     const needle=`%${String(q||'').trim().toLowerCase()}%`;
+    const hideMisclassifiedFieldClinic=kind==='features'?`AND NOT (logical_id='field-clinic' AND source_id='sep2015' AND content_pack_id='ptu-september-2015-playtest')`:'';
+    const queryLimit=kind==='edges'?200:limit;
+    const queryOffset=kind==='edges'?0:offset;
     const rows=this.db.prepare(`${this._resolvedCte()}
       SELECT * FROM candidates
-      WHERE rn=1 AND (?='' OR lower(logical_id) LIKE ? OR lower(raw_json) LIKE ?)
-      ORDER BY logical_id LIMIT ? OFFSET ?`).all(rulesetId,kind,String(q||'').trim(),needle,needle,limit,offset);
-    return rows.map(r=>this._formatRow(r));
+      WHERE rn=1 ${hideMisclassifiedFieldClinic} AND (?='' OR lower(logical_id) LIKE ? OR lower(raw_json) LIKE ?)
+      ORDER BY logical_id LIMIT ? OFFSET ?`).all(rulesetId,kind,String(q||'').trim(),needle,needle,queryLimit,queryOffset);
+    const result=rows.map(r=>this._formatRow(r));
+    if(kind==='edges'){
+      const fieldClinic=this._fieldClinicPlaytestEdge(rulesetId);
+      const query=String(q||'').trim().toLowerCase();
+      if(fieldClinic && !result.some(row=>row.id===fieldClinic.id) && (!query || `${fieldClinic.id} ${fieldClinic.name} ${fieldClinic.effect} ${JSON.stringify(fieldClinic.raw)}`.toLowerCase().includes(query))) result.push(fieldClinic);
+      result.sort((a,b)=>String(a.id).localeCompare(String(b.id)));
+      return result.slice(offset,offset+limit);
+    }
+    return result;
   }
 
   countResolved({rulesetId,kind,q=''}){
     this._validateKind(kind);
     const needle=`%${String(q||'').trim().toLowerCase()}%`;
+    const hideMisclassifiedFieldClinic=kind==='features'?`AND NOT (logical_id='field-clinic' AND source_id='sep2015' AND content_pack_id='ptu-september-2015-playtest')`:'';
     const count=Number(this.db.prepare(`${this._resolvedCte()}
       SELECT COUNT(*) AS c FROM candidates
-      WHERE rn=1 AND (?='' OR lower(logical_id) LIKE ? OR lower(raw_json) LIKE ?)`)
+      WHERE rn=1 ${hideMisclassifiedFieldClinic} AND (?='' OR lower(logical_id) LIKE ? OR lower(raw_json) LIKE ?)`)
       .get(rulesetId,kind,String(q||'').trim(),needle,needle)?.c||0);
+    if(kind==='edges'){
+      const fieldClinic=this._fieldClinicPlaytestEdge(rulesetId);
+      const query=String(q||'').trim().toLowerCase();
+      if(fieldClinic && (!query || `${fieldClinic.id} ${fieldClinic.name} ${fieldClinic.effect} ${JSON.stringify(fieldClinic.raw)}`.toLowerCase().includes(query))) return count+1;
+    }
     return count;
   }
 
   getResolved({rulesetId,kind,id,versionId=null}){
     this._validateKind(kind);
+    if(kind==='edges'&&id==='field-clinic'&&versionId==='edges:field-clinic@sep2015') return this._fieldClinicPlaytestEdge(rulesetId);
     if(versionId){
       const version=this.getVersions({kind,id}).find(row=>row.versionId===versionId);
       return version||null;
     }
     const row=this.db.prepare(`${this._resolvedCte()}
       SELECT * FROM candidates WHERE rn=1 AND logical_id=? LIMIT 1`).get(rulesetId,kind,id);
-    return row?this._formatRow(row,true):(kind==='items'?getBuiltInFormItem(id):null);
+    return row?this._formatRow(row,true):(kind==='edges'&&id==='field-clinic'?this._fieldClinicPlaytestEdge(rulesetId):(kind==='items'?getBuiltInFormItem(id):null));
   }
 
   getVersions({kind,id}){
     this._validateKind(kind);
-    return this.db.prepare(`SELECT dv.version_id,dv.logical_id,dv.content_pack_id,dv.source_id,dv.priority,dv.source_page,dv.needs_review,
+    const versions=this.db.prepare(`SELECT dv.version_id,dv.logical_id,dv.content_pack_id,dv.source_id,dv.priority,dv.source_page,dv.needs_review,
       cp.name AS pack_name,cp.kind AS pack_kind,dv.raw_json
       FROM definition_versions dv JOIN content_packs cp ON cp.id=dv.content_pack_id
       WHERE dv.definition_kind=? AND dv.logical_id=? ORDER BY dv.priority DESC,dv.version_id`).all(kind,id).map(r=>this._formatRow({...r,source_priority:r.priority,ruleset_priority:r.priority,position:0,is_pinned:0},true));
+    if(kind==='edges'&&id==='field-clinic'&&!versions.length){
+      const row=this.db.prepare(`${this._resolvedCte()}
+        SELECT * FROM candidates WHERE rn=1 AND logical_id=? LIMIT 1`).get('all-provided-material','features',id);
+      if(row && row.source_id==='sep2015' && row.content_pack_id==='ptu-september-2015-playtest') return [this._asFieldClinicPlaytestEdge(row)];
+    }
+    return versions;
+  }
+
+  _fieldClinicPlaytestEdge(rulesetId){
+    const row=this.db.prepare(`${this._resolvedCte()}
+      SELECT * FROM candidates WHERE rn=1 AND logical_id=? LIMIT 1`).get(rulesetId,'features','field-clinic');
+    if(!row || row.source_id!=='sep2015' || row.content_pack_id!=='ptu-september-2015-playtest') return null;
+    return this._asFieldClinicPlaytestEdge(row);
+  }
+
+  _asFieldClinicPlaytestEdge(row){
+    const raw=safeJson(row.raw_json,{});
+    if(raw.record_kind!=='feature') return null;
+    raw.record_kind='edge';
+    delete raw.parent_class;
+    return this._formatRow({...row,definition_kind:'edges',version_id:'edges:field-clinic@sep2015',raw_json:JSON.stringify(raw)},true);
   }
 
   getCounts(rulesetId){
