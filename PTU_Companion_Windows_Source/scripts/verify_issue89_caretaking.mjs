@@ -5,7 +5,7 @@ import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import vm from 'node:vm';
-import {hasCaretakingFeature,pusherExperienceGain,resolvePushedSkills,previewSkillTrainer,endCaretakingExtendedRest,previewRebalancing,applyCaretakingSpecies} from '../static-preview/pokemon-caretaking.mjs';
+import {hasCaretakingFeature,pusherExperienceGain,resolvePushedSkills,previewSkillTrainer,endCaretakingExtendedRest,previewRebalancing,applyCaretakingSpecies,previewThisOnesSpecial} from '../static-preview/pokemon-caretaking.mjs';
 
 const root=fileURLToPath(new URL('..',import.meta.url)),repo=fileURLToPath(new URL('../..',import.meta.url));
 const trainer={details:{features:[{id:'pusher'},{id:'skill-trainer'}]}};
@@ -39,6 +39,14 @@ assert.throws(()=>previewRebalancing({trainer:{details:{...master.details,careta
 assert.throws(()=>previewRebalancing({trainer:master,pokemon,stats:{attack:2},day:1}),/two different/);
 const species={baseStats:{hp:5,attack:5,defense:5,special_attack:7,special_defense:7,speed:5}};
 const adjusted=applyCaretakingSpecies(species,reb.details);assert.equal(adjusted.baseStats.hp,6);assert.equal(species.baseStats.hp,5);assert.deepEqual(applyCaretakingSpecies(adjusted,reb.details).baseStats,adjusted.baseStats,'Base bonuses never stack during repeated resolution');
+const specialTrainer={details:{features:[{id:'pusher'},{id:'this-ones-special-i-know-it'}],skillRanks:{'Pokémon Education':3}}};
+const specialTraits=[{id:'altered_type',typeIndex:0,replacementType:'fire',gmNote:'Parent has Fire Type'},{id:'exceptionally_powerful',stats:['attack','speed']}];
+const special=previewThisOnesSpecial({trainer:specialTrainer,pokemon,traits:specialTraits,feature:{id:'this-ones-special-i-know-it',sourceId:'edit',sourcePage:13}});
+assert.equal(special.record.appliedAtLevel,pokemon.level);assert.equal(special.trainerCaretaking.thisOnesSpecialUsage.uses,1);assert.deepEqual(special.types,['fire','poison']);
+assert.equal(applyCaretakingSpecies({types:pokemon.types,baseStats:{hp:5,attack:5,defense:5,special_attack:5,special_defense:5,speed:5}},special.details).baseStats.attack,7);
+assert.throws(()=>previewThisOnesSpecial({trainer:specialTrainer,pokemon:{...pokemon,details:special.details},traits:specialTraits,feature:{id:'this-ones-special-i-know-it'}}),/already has/);
+assert.throws(()=>previewThisOnesSpecial({trainer:{...specialTrainer,details:{...specialTrainer.details,caretaking:special.trainerCaretaking}},pokemon:{...pokemon,id:'another'},traits:specialTraits,feature:{id:'this-ones-special-i-know-it'}}),/uses remain/);
+assert.throws(()=>previewThisOnesSpecial({trainer:specialTrainer,pokemon,traits:[specialTraits[0],specialTraits[0]],feature:{id:'this-ones-special-i-know-it'}}),/two different/);
 
 const dir=await mkdtemp(join(tmpdir(),'ptu-caretaking-')),port=42189;
 const child=spawn(process.execPath,['server.mjs'],{cwd:root,env:{...process.env,PTU_DATA_DIR:dir,PTU_PORT:String(port)},stdio:['ignore','pipe','pipe']});
@@ -101,7 +109,25 @@ try{
     uiState.ui.pokecenter.pokemonIds=['trained-a'];await ui.pokecenterExtendedRest();
     assert.equal(uiState.pokemon[0].details.caretaking.pushedSkill,undefined);assert(uiState.pokemon[1].details.caretaking.pushedSkill,platform+': rest affects only selected Pokemon');
     const beforeRace=JSON.stringify(uiState.pokemon[0].details);mutateOnConfirm=true;const commitsBeforeRace=commits;await ui.pokecenterTrainSkills();assert.equal(commits,commitsBeforeRace,platform+': stale confirmation does not commit');assert.equal(JSON.stringify(uiState.pokemon[0].details),beforeRace);
+    const specialUiState={trainer:structuredClone(specialTrainer),selectedRosterId:'active',pokemon:[{...structuredClone(pokemon),id:'special-ui',rosterIds:['active']}],ui:{day:1,pokecenter:{pokemonIds:['special-ui']}}};let specialCommits=0;
+    const specialUi=vm.createContext({state:specialUiState,catalogState:{status:{activeRulesetId:'all-provided-material'}},fetch:api,encodeURIComponent,trainer:()=>specialUiState.trainer,pokecenterState:()=>specialUiState.ui.pokecenter,styledForm:async form=>form.title.startsWith('This One’s Special')?{first:'altered_type',second:'exceptionally_powerful'}:form.title.startsWith('Altered Type')?{typeIndex:'0',replacementType:'fire',gmNote:'Approved parent Type'}:{firstStat:'attack',secondStat:'speed'},styledConfirm:async()=>true,commit:()=>specialCommits++,toast(){},render(){},persist(){},invalidateCreatureReference(){},esc:value=>String(value),uid:()=>String(specialCommits),statDisplayName:key=>key});
+    vm.runInContext(app.slice(uiStart,uiEnd),specialUi);await specialUi.pokecenterThisOnesSpecial();
+    assert.equal(specialCommits,1,platform+': Caretaking button flow applies once');assert.equal(specialUiState.pokemon[0].level,pokemon.level,platform+': UI preserves existing level');assert.equal(specialUiState.pokemon[0].details.caretaking.thisOnesSpecial.traits.length,2);
     const originalSpecies=(await call(api,'/api/definitions/species/bulbasaur')).definition;
+    const activeSpecial=(await call(api,'/api/definitions/features/this-ones-special-i-know-it')).definition;
+    const specialBody={pokemon:structuredClone(pokemon),trainer:specialTrainer,traits:specialTraits,rulesetId:'all-provided-material'};
+    const specialPreview=await call(api,'/api/pokemon/this-ones-special-preview',specialBody);
+    assert.equal(specialPreview.change.record.sourcePage,activeSpecial.sourcePage,platform+': active Ruleset source attached');
+    assert.deepEqual(specialPreview.types,['fire','poison'],platform+': Altered Type survives Species resolution');
+    assert.equal(specialPreview.change.record.appliedAtLevel,pokemon.level,platform+': existing level remains unchanged');
+    const specialTarget={...pokemon,types:specialPreview.types,maxHp:specialPreview.maxHp,details:specialPreview.change.details};
+    const specialReference=await call(api,'/api/pokemon/reference-data',{pokemon:specialTarget,rulesetId:'all-provided-material'});
+    assert.deepEqual(specialReference.resolvedCreature.stats.permanent,specialPreview.finalStats,platform+': +2 Base Stats stay effective after reopening');
+    const rejectedSpecial=await api('/api/pokemon/this-ones-special-preview',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({...specialBody,pokemon:specialTarget})});assert.equal(rejectedSpecial.status,400,platform+': one application per Pokémon enforced');
+    const specialSaved=(await call(api,'/api/state')).state;specialSaved.trainer.details ||= {};specialSaved.trainer.details.caretaking=specialPreview.change.trainerCaretaking;
+    const specialIndex=specialSaved.pokemon.findIndex(row=>row.id===specialTarget.id);specialSaved.pokemon[specialIndex]=specialTarget;
+    const savedSpecial=await api('/api/state',{method:'PUT',headers:{'content-type':'application/json'},body:JSON.stringify({state:specialSaved})});assert(savedSpecial.ok,platform+': This One’s Special save accepted');
+    const exportedSpecial=await call(api,'/api/export');assert.equal(exportedSpecial.trainer.details.caretaking.thisOnesSpecialUsage.uses,1,platform+': Trainer use limit persisted/exported');assert.equal(exportedSpecial.pokemon.find(row=>row.id===pokemon.id).details.caretaking.thisOnesSpecial.traits.length,2,platform+': trait details persisted/exported');
     const rebalanced=(await call(api,'/api/pokemon/rebalancing-preview',{pokemon,trainer:master,day:1,stats:allStats,allocations:{hp:20},rulesetId:'all-provided-material'}));
     assert(rebalanced.valid,platform+': '+JSON.stringify(rebalanced.preview.errors));
     assert.equal(rebalanced.change.trainerCaretaking.rebalancingUsage.uses,1);
@@ -123,7 +149,7 @@ try{
   assert.equal((await readFile(join(root,'static-preview/pokemon-caretaking.mjs'),'utf8')).replace(/\r\n/g,'\n'),(await readFile(join(repo,'PTU_Companion_Android_Tauri/www/pokemon-caretaking.mjs'),'utf8')).replace(/\r\n/g,'\n'));
   console.log('Issue #89 Caretaking passed: effective Skills, replacement/rest, EXP rounding, API parity and saved state.');
 }finally{
-  child.kill();await new Promise(r=>child.once('exit',r));
+  child.kill();if(child.exitCode===null&&child.signalCode===null)await new Promise(r=>child.once('exit',r));
   assert(dir.startsWith(join(tmpdir(),'ptu-caretaking-')),'Refusing to remove an unexpected test directory.');
   await rm(dir,{recursive:true,force:true});
 }

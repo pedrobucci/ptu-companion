@@ -41,10 +41,59 @@ export function endCaretakingExtendedRest(pokemon){
 const caretakingStats=['hp','attack','defense','special_attack','special_defense','speed'];
 export function applyCaretakingSpecies(species,details={}){
   if(!species)return species;
-  const bonuses=details.caretaking?.rebalancing?.stats;
-  if(!bonuses)return species;
   const original=species.caretakingOriginalBaseStats||species.baseStats||{};
-  return {...species,caretakingOriginalBaseStats:{...original},caretakingBaseBonus:{...bonuses},baseStats:Object.fromEntries(caretakingStats.map(key=>[key,Number(original[key]||0)+Number(bonuses[key]||0)]))};
+  const originalTypes=species.caretakingOriginalTypes||species.types||[];
+  const bonuses=Object.fromEntries(caretakingStats.map(key=>[key,Number(details.caretaking?.rebalancing?.stats?.[key]||0)]));
+  const special=details.caretaking?.thisOnesSpecial;
+  for(const trait of special?.traits||[])if(trait.id==='exceptionally_powerful')for(const key of trait.stats||[])if(caretakingStats.includes(key))bonuses[key]+=2;
+  const types=[...originalTypes];
+  for(const trait of special?.traits||[])if(trait.id==='altered_type'&&Number.isInteger(trait.typeIndex)&&types[trait.typeIndex])types[trait.typeIndex]=trait.replacementType;
+  const hasStatChange=caretakingStats.some(key=>bonuses[key]);
+  if(!hasStatChange&&!types.some((type,index)=>type!==originalTypes[index]))return species;
+  return {...species,caretakingOriginalBaseStats:{...original},caretakingOriginalTypes:[...originalTypes],caretakingBaseBonus:bonuses,baseStats:hasStatChange?Object.fromEntries(caretakingStats.map(key=>[key,Number(original[key]||0)+bonuses[key]])):species.baseStats,types};
+}
+
+const pokemonTypes=['bug','dark','dragon','electric','fairy','fighting','fire','flying','ghost','grass','ground','ice','normal','poison','psychic','rock','steel','water'];
+export function previewThisOnesSpecial({trainer,pokemon,traits,feature,now=new Date().toISOString()}={}){
+  const featureId='this-ones-special-i-know-it';
+  if(!feature||!hasCaretakingFeature(trainer,'pusher')||!hasCaretakingFeature(trainer,featureId))throw new Error('Pusher and This One’s Special, I Know It must be recorded on the Trainer and available in the active Ruleset.');
+  const education=Object.entries(trainer.details?.skillRanks||{}).find(([name])=>skillKey(name)==='pokemon-education');
+  const rank=Number(education?.[1]||2),maximum=Math.max(0,rank-2);
+  if(maximum<1)throw new Error('This One’s Special requires Novice Pokémon Education.');
+  const caretaking=trainer.details?.caretaking||{},used=Number(caretaking.thisOnesSpecialUsage?.uses||0);
+  if(!Number.isInteger(used)||used<0||used>=maximum)throw new Error('No This One’s Special uses remain at the current Pokémon Education rank.');
+  if(pokemon?.details?.caretaking?.thisOnesSpecial)throw new Error('This Pokémon already has a This One’s Special modification.');
+  const types=Array.isArray(pokemon?.types)?pokemon.types.map(type=>String(type).toLowerCase()):[];
+  if(!Array.isArray(traits)||traits.length!==2||new Set(traits.map(trait=>trait?.id)).size!==2)throw new Error('Choose two different This One’s Special traits.');
+  const chosen=JSON.parse(JSON.stringify(traits));
+  for(const trait of chosen){
+    if(trait.id==='altered_type'){
+      if(!Number.isInteger(trait.typeIndex)||!types[trait.typeIndex]||!pokemonTypes.includes(trait.replacementType)||types[trait.typeIndex]===trait.replacementType||!String(trait.gmNote||'').trim())throw new Error('Altered Type needs one replaced Type, a different replacement Type, and GM notes confirming a parent has that Type.');
+    }else if(trait.id==='altered_ability'){
+      if(!String(trait.name||'').trim()||!String(trait.gmNote||'').trim())throw new Error('Altered Ability needs a non-native Ability name and GM notes.');
+    }else if(trait.id==='unique_move'){
+      const finalTypes=[...types];const typeTrait=chosen.find(item=>item.id==='altered_type');if(typeTrait)finalTypes[typeTrait.typeIndex]=typeTrait.replacementType;
+      if(!String(trait.name||'').trim()||!finalTypes.includes(String(trait.type||'').toLowerCase())||!String(trait.gmNote||'').trim())throw new Error('Unique Move needs a GM-approved Move whose Type matches the modified Pokémon.');
+    }else if(trait.id==='exceptionally_powerful'){
+      if(!Array.isArray(trait.stats)||trait.stats.length!==2||new Set(trait.stats).size!==2||trait.stats.some(key=>!caretakingStats.includes(key)))throw new Error('Exceptionally Powerful needs two different Base Stats.');
+    }else if(trait.id==='savant'){
+      if(!String(trait.template||'').trim()||!String(trait.gmNote||'').trim())throw new Error('Savant needs a Skill Template and GM notes for its manual Skill configuration.');
+    }else throw new Error('Choose two supported This One’s Special traits.');
+    trait.source='PTU 1.05 Editation, Pokémon Caretaking';
+  }
+  const details=JSON.parse(JSON.stringify(pokemon.details||{}));details.caretaking ||= {};
+  const record={featureId,sourceId:feature.sourceId||null,sourceVersionId:feature.versionId||null,sourcePage:feature.sourcePage||null,appliedAt:now,appliedAtLevel:Number(pokemon.level||1),traits:chosen};
+  details.caretaking.thisOnesSpecial=record;
+  if(chosen.some(trait=>trait.id==='altered_ability')){
+    const ability=chosen.find(trait=>trait.id==='altered_ability');details.abilities=[...(details.abilities||[])];details.abilities[0]=String(ability.name).trim();details.ability=details.abilities[0];details.abilityRecords=[...(details.abilityRecords||[])];details.abilityRecords[0]={name:details.abilities[0],sourceKind:'caretaking_altered',sourceLabel:'This One’s Special · Altered Ability',selectedAtLevel:Number(pokemon.level||1),gmNote:ability.gmNote};
+  }
+  if(chosen.some(trait=>trait.id==='unique_move')){
+    const move=chosen.find(trait=>trait.id==='unique_move');details.moves=[...(details.moves||[])];
+    if(details.moves.some(row=>skillKey(row.id||row.name)===skillKey(move.name)))throw new Error('This Pokémon already knows that Move.');
+    details.moves.push({id:skillKey(move.name),name:String(move.name).trim(),type:String(move.type).toLowerCase(),source:'caretaking_unique_move',sourceLabel:'This One’s Special · Unique Move',countsAsNatural:true,cost:0,gmNote:move.gmNote,learnedAtLevel:Number(pokemon.level||1)});
+  }
+  const trainerCaretaking={...JSON.parse(JSON.stringify(caretaking)),thisOnesSpecialUsage:{uses:used+1,maximum,educationRank:rank}};
+  return {details,trainerCaretaking,record,types:applyCaretakingSpecies({types,baseStats:{}},details).types||types};
 }
 export function previewRebalancing({trainer,pokemon,stats,day=1,now=new Date().toISOString()}={}){
   if(!hasCaretakingFeature(trainer,'pusher')||!hasCaretakingFeature(trainer,'re-balancing'))throw new Error('Pusher and Re-Balancing must be recorded on the Trainer.');

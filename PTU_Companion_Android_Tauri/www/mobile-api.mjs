@@ -1,4 +1,4 @@
-import {pusherExperienceGain,resolvePushedSkills,previewSkillTrainer,hasCaretakingFeature,applyCaretakingSpecies,previewRebalancing} from './pokemon-caretaking.mjs';
+import {pusherExperienceGain,resolvePushedSkills,previewSkillTrainer,hasCaretakingFeature,applyCaretakingSpecies,previewRebalancing,previewThisOnesSpecial} from './pokemon-caretaking.mjs';
 import {buildPokemonPreview, buildPokemonProgressionPreview, buildPokemonRestatPreview, resolvePokemonMoveLimit, autoBalancedAllocations, NATURES, parseTutorPointCost, evaluatePokeEdgePrerequisite, moveTrainingPoolUsage, isNaturalTutorMove, tutorRestrictionForMove, relationExemptionsFromPokeEdges, isUnderdogPokemon, pokeEdgeRequiresUnderdog, levelAbilitySlots, eligibleAbilities, applyNature, normalizeBaseStats, normalizeAllocations, STAT_KEYS, validateBaseRelations} from './rules/pokemon-engine.mjs';
 import {getPokemonModifierSummary, resolveMoveDamage} from './rules/modifier-engine.mjs';
 import {resolveHeldItemEffect, applyHeldItemToTypeProfile, applyHeldItemToEffectiveStats} from './rules/held-item-engine.mjs';
@@ -1249,6 +1249,36 @@ async function handleApi(req,res,url){
       const preview=previewSkillTrainer({trainer:payload.trainer,pokemon,skills,skillId:payload.skillId});
       Object.assign(preview.record,{sourceVersionId:feature.versionId,sourceId:feature.sourceId,sourcePage:feature.sourcePage,source:feature.packName||feature.sourceId});
       return json(res,200,{valid:true,preview,feature:{id:feature.id,name:feature.name,sourceId:feature.sourceId,sourcePage:feature.sourcePage}});
+    }catch(error){return json(res,400,{error:error.message});}
+  }
+  if(req.method==='POST' && url.pathname==='/api/pokemon/this-ones-special-preview'){
+    const payload=await bodyJson(req),rulesetId=String(payload.rulesetId||getActiveRuleset()),pokemon=payload.pokemon||{};
+    const feature=definitions.getResolved({rulesetId,kind:'features',id:'this-ones-special-i-know-it'});
+    if(!feature)return json(res,400,{error:'This One’s Special, I Know It is not available in the active Ruleset.'});
+    try{
+      const traits=deep(payload.traits||[]);
+      for(const trait of traits){
+        if(trait.id==='altered_ability'){
+          const ability=definitions.getResolved({rulesetId,kind:'abilities',id:String(trait.name||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')});
+          if(!ability)throw new Error('Choose an Ability present in the active Ruleset.');trait.name=ability.name;
+        }
+        if(trait.id==='unique_move'){
+          const move=definitions.getResolved({rulesetId,kind:'moves',id:String(trait.name||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')});
+          if(!move)throw new Error('Choose a Move present in the active Ruleset.');
+          if(String(move.type||'').toLowerCase()!==String(trait.type||'').toLowerCase())throw new Error('The selected Move Type does not match its active Ruleset definition.');
+          trait.name=move.name;trait.type=String(move.type).toLowerCase();
+        }
+      }
+      const change=previewThisOnesSpecial({trainer:payload.trainer,pokemon,traits,feature});
+      const species=definitions.getResolved({rulesetId,kind:'species',id:String(pokemon.details?.speciesDefinitionId||'')});
+      if(!species)throw new Error('Link this Pokémon to a Species definition first.');
+      const projected={...pokemon,types:change.types,details:change.details};
+      const resolution=resolveSpeciesFormState({species,pokemon:projected,payload,includeActive:false});
+      if(!resolution.valid)throw new Error('Resolve the Pokémon Form requirements before applying this trait.');
+      const stats=resolvePokemonPokeEdgeStats({pokemon:projected,species:resolution.species,detailsOverride:change.details});
+      Object.assign(change.details,{natureAdjustedBaseStats:stats.natureAdjustedBaseStats,finalStats:stats.permanentFinal});
+      Object.assign(change.record,{sourceVersionId:feature.versionId,sourceId:feature.sourceId,sourcePage:feature.sourcePage});
+      return json(res,200,{valid:true,change,types:change.types.map(type=>String(type).toLowerCase()),maxHp:stats.maxHp,finalStats:stats.permanentFinal,feature:{id:feature.id,name:feature.name,sourceId:feature.sourceId,sourcePage:feature.sourcePage}});
     }catch(error){return json(res,400,{error:error.message});}
   }
   if(req.method==='POST' && url.pathname==='/api/pokemon/training-options'){

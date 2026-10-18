@@ -326,3 +326,4 @@ code{background:#eef3f7;border:1px solid #dbe5ec;padding:2px 5px;border-radius:6
 .pokemon-progress-stat-table>.pokemon-progress-stat-list{overflow:visible}
 
 .gm-status{white-space:nowrap;flex-shrink:0}
+.pokecenter-pokemon-option.selected{border-color:#1681d9;background:#edf7ff}
