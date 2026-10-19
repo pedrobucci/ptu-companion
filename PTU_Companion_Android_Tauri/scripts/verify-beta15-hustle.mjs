@@ -19,4 +19,4 @@ for(const id of ['wounding-strike','chip-away']){const m=resolved.moves.find(x=>
 const unequipped=structuredClone(trainer);unequipped.equipment.mainHand=null;unequipped.equipment.offHand=null;resolved=resolveTrainerModel({trainer:unequipped,rulesetId:'all-provided-material',getDefinition,getDamageBase});assert.equal(resolved.accuracyBonus,0);assert.equal(resolved.damageRollBonus,0);
 const runtime=fs.readFileSync(path.join(root,'www/mobile-runtime.js'),'utf8');
 assert(runtime.includes("else if(id==='hustle')"));assert(runtime.includes('model.accuracyBonus-=2'));assert(runtime.includes('model.damageRollBonus+=10'));assert(runtime.includes("version:'2.2.0-android-beta.39'"));
-console.log('PTU Companion Android v2.2.0-beta.39 Hustle equipment mechanics verification: OK');
+console.log('PTU Companion Android v2.2.0-beta.40 Hustle equipment mechanics verification: OK');

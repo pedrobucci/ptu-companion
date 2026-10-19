@@ -25,4 +25,4 @@ trainer.exp=10;
 r=await fetch('/api/trainer/xp-purchase',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({trainer,kind:'edges',id:edgeRows[0].id,selections:{},manualConfirm:true,gmOverride:true})});let buy=await r.json();if(!r.ok)throw new Error('Edge XP purchase failed: '+JSON.stringify(buy));if(buy.preview.cost!==1||buy.updatedTrainer.exp!==9)throw new Error('Edge XP purchase cost mismatch');
 trainer=buy.updatedTrainer;
 r=await fetch('/api/trainer/xp-purchase',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({trainer,kind:'features',id:featureRows[0].id,selections:{},manualConfirm:true,gmOverride:true})});buy=await r.json();if(!r.ok)throw new Error('Feature XP purchase failed: '+JSON.stringify(buy));if(buy.preview.cost!==2||buy.updatedTrainer.exp!==7)throw new Error('Feature XP purchase cost mismatch');
-console.log('PTU Companion Android v2.2.0-beta.39 pack images + Trainer XP verification: OK');
+console.log('PTU Companion Android v2.2.0-beta.40 pack images + Trainer XP verification: OK');

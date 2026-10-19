@@ -50,4 +50,4 @@ assert(runtime.includes("raw.mechanics&&typeof raw.mechanics==='object'"));
 assert(runtime.includes("def?.raw?.mechanics&&typeof def.raw.mechanics==='object'"));
 assert(runtime.includes('for(const effect of def?.compiledEffects||[]) applyCompiledEffect(model,effect,source,ctx);'));
 assert(runtime.includes("version:'2.2.0-android-beta.39'"));
-console.log('PTU Companion Android v2.2.0-beta.39 imported weapon mechanics verification: OK');
+console.log('PTU Companion Android v2.2.0-beta.40 imported weapon mechanics verification: OK');

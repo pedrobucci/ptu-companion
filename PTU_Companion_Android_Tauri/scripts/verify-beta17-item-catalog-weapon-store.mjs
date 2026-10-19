@@ -22,4 +22,4 @@ assert(runtime.includes('shopCategories:Array.isArray(raw.shop_categories)'));
 assert(runtime.includes("version:'2.2.0-android-beta.39'"));
 const pack=fs.readFileSync(path.join(root,'Content Packs/campaign-homebrew-custom-weapons-2.1.0.ptucp'));
 assert(pack.length>1000);
-console.log('PTU Companion Android v2.2.0-beta.39 item catalog + Weapon Store verification: OK');
+console.log('PTU Companion Android v2.2.0-beta.40 item catalog + Weapon Store verification: OK');
