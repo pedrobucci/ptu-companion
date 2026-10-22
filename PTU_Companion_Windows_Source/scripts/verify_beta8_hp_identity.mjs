@@ -32,6 +32,7 @@ const ctx={
   ensureTrainerDetails:()=>trainerObj.details,
   trainerDerived:()=>({maxHp:50,healingHpLimit:50}),
   injuryHealingHpLimit:(maxHp,injuries)=>Math.floor(maxHp*(10-Math.max(0,Math.min(10,Math.trunc(Number(injuries)||0))))/10),
+  pokemonStatusClearOnFaint:()=>{},
   console,
 };
 vm.createContext(ctx);
