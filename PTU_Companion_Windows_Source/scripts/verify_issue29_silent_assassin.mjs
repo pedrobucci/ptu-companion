@@ -43,15 +43,15 @@ try{
 
   for(const path of ['static-preview/app.js','../PTU_Companion_Android_Tauri/www/app.js']){
     const app=readFileSync(join(root,path),'utf8');
-    for(const token of ['function trainerBoundAp','function toggleSilentAssassinBound','Bind · Standard Action · 2 AP','Unbind · Free Action','td.currentAp-=2','td.currentAp+2','Silent Assassin (Bound)','Dead Silent and the Stealth bonus stay active while unbound'])assert.ok(app.includes(token),`${path} is missing ${token}`);
-    const slugFunction=app.match(/function pokemonCombatSlug\(value\)\{[^\r\n]+\}/)?.[0];
-    const boundApFunction=app.match(/function trainerBoundAp\(t=trainer\(\)\)\{[^\r\n]+\}/)?.[0];
-    assert.ok(slugFunction&&boundApFunction,`${path} is missing Trainer Bound AP helpers`);
-    const boundFixture={details:{features:[{id:'shade-caller'},{id:'Silent Assassin',bound:false}]}};
-    const evaluateBoundAp=input=>runInNewContext(`${slugFunction};${boundApFunction};trainerBoundAp(input)`,{input});
-    assert.equal(evaluateBoundAp(boundFixture),0,`${path} loads Trainers with Features when Silent Assassin is unbound`);
-    boundFixture.details.features[1].bound=true;
-    assert.equal(evaluateBoundAp(boundFixture),2,`${path} resolves the Bound AP reservation without a global slug`);
+
+    for(const token of ['function trainerBoundAp','function toggleSilentAssassinBound','function toggleTrainerFeatureBinding','function trainerFeatureBindingControls'])assert.ok(app.includes(token),`${path} is missing ${token}`);
+    const names=['pokemonCombatSlug','trainerFeatureBoundTargets','trainerFeatureBindingCost','trainerBoundAp','trainerFeatureBindingControls','toggleTrainerFeatureBinding','toggleSilentAssassinBound'];
+    const code=names.map(name=>{const line=app.split(/\r?\n/).find(line=>line.startsWith(`function ${name}(`)||line.startsWith(`async function ${name}(`));assert(line,`${path}: ${name}`);return line;}).join('\n');
+    const input={id:'silent-qa',details:{currentAp:5,features:[{id:'shade-caller'},{id:'Silent Assassin',name:'Silent Assassin',bound:false}]}};
+    const snapshots=[],errors=[];
+    const globals={input,snapshots,errors,assert,trainer:()=>input,trainerResolved:()=>null,ensureTrainerDetails:()=>input.details,trainerFeatureBinding:index=>index===1?{apCost:2,action:'Standard Action',unbindAction:'Free Action',targetText:null}:null,trainerDerived:()=>({maxAp:5,boundAp:input.details.features[1].bound?2:0}),trainerMaxAp:()=>5,trainerFeatureTargetLabel:()=> 'Trainer',chip:value=>String(value),esc:value=>String(value),toast:message=>errors.push(message),commit:()=>snapshots.push(JSON.parse(JSON.stringify(input)))};
+    await runInNewContext(`(async()=>{${code};assert.equal(trainerBoundAp(input),0);assert.match(trainerFeatureBindingControls(input.details.features[1],1),/Bind · Standard Action · 2 AP/);await toggleSilentAssassinBound(1);assert.equal(input.details.currentAp,3);assert.equal(trainerBoundAp(input),2);assert.equal(snapshots[0].details.features[1].bound,true);assert.match(trainerFeatureBindingControls(input.details.features[1],1),/Unbind · Free Action/);await toggleSilentAssassinBound(1,'__self__');assert.equal(input.details.currentAp,5);assert.equal(trainerBoundAp(input),0);assert.equal(snapshots[1].details.features[1].bound,false);input.details.currentAp=1;await toggleSilentAssassinBound(1);assert.equal(input.details.currentAp,1);assert.equal(input.details.features[1].bound,false);assert.equal(snapshots.length,2);assert.match(errors.at(-1),/requires 2 available AP/);})()`,globals);
+
   }
   console.log('Issue #29: Silent Assassin Bonus, Bound-only effects, 2 committed AP, UI persistence hooks and Windows/Android parity passed.');
 }finally{definitions.close();}

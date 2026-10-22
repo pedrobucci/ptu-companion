@@ -823,3 +823,4 @@ body.ptu-android-body #app{width:100%;max-width:100vw;overflow-x:hidden}
 .pokemon-progress-stat-table>.pokemon-progress-stat-list{overflow:visible}
 
 .gm-status{white-space:nowrap;flex-shrink:0}
+.pokecenter-pokemon-option.selected{border-color:#1681d9;background:#edf7ff}
