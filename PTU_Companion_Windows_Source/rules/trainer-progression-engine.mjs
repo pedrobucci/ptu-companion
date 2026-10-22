@@ -100,9 +100,9 @@ function collectDefinitionRows(listDefinitions,{rulesetId,kind}){
   for(let offset=0; offset<5000; offset+=pageSize){const chunk=listDefinitions({rulesetId,kind,q:'',limit:pageSize,offset})||[]; rows.push(...chunk); if(chunk.length<pageSize)break;}
   return rows;
 }
-function candidateRows({kind,trainer,draft,rulesetId,getDefinition,listDefinitions,getDamageBase,filter='normal',gmOverride=false,definitionRows=null,definitionMap=null}){
+function candidateRows({kind,trainer,draft,rulesetId,getDefinition,listDefinitions,getDamageBase,statusRulesSource,filter='normal',gmOverride=false,definitionRows=null,definitionMap=null}){
   const projected=applyDraftToTrainer(trainer,draft,getDefinition,rulesetId);
-  const resolved=resolveTrainerModel({trainer:projected,rulesetId,getDefinition,getDamageBase});
+  const resolved=resolveTrainerModel({trainer:projected,rulesetId,getDefinition,getDamageBase,statusRulesSource});
   const records=kind==='features'?projected.details.features:projected.details.edges;
   const rows=definitionRows||collectDefinitionRows(listDefinitions,{rulesetId,kind});
   const classCount=kind==='features'?countClassFeatures(projected.details.features,getDefinition,rulesetId):0;
@@ -119,7 +119,7 @@ function candidateRows({kind,trainer,draft,rulesetId,getDefinition,listDefinitio
     return {id:def.id,name:def.name,parentClass:def.parentClass||null,tags:def.raw?.tags||[],prerequisites:def.prerequisites||'',effect:def.effect||'',packName:def.packName||def.sourceId,sourcePage:def.sourcePage,semanticAutomation:def.semanticAutomation||null,prerequisite:prereq,selectionConflict,duplicate,classBlocked,valid,manual:prereq.valid==null};
   }).filter(Boolean).sort((a,b)=>Number(b.valid)-Number(a.valid)||a.name.localeCompare(b.name));
 }
-function previewTrainerProgression({trainer,draft={},rulesetId,getDefinition,listDefinitions,getDamageBase,gmOverride=false,includeOptions=true}={}){
+function previewTrainerProgression({trainer,draft={},rulesetId,getDefinition,listDefinitions,getDamageBase,statusRulesSource,gmOverride=false,includeOptions=true}={}){
   const nextLevel=Number(trainer?.level||1)+1;
   if(nextLevel>50)return {valid:false,errors:['Trainer is already at the maximum Level of 50.'],nextLevel,rewards:null};
   const rewards=trainerLevelRewards(trainer,nextLevel,draft.milestoneChoice||null);
@@ -144,7 +144,7 @@ function previewTrainerProgression({trainer,draft={},rulesetId,getDefinition,lis
     if(generalCount<rewards.generalFeatureCount)errors.push(`At least ${rewards.generalFeatureCount} selected Feature must be a General Feature from the milestone bonus.`);
   }
   const projected=applyDraftToTrainer(trainer,draft,getDefinition,rulesetId);
-  const resolvedTrainer=resolveTrainerModel({trainer:projected,rulesetId,getDefinition,getDamageBase});
+  const resolvedTrainer=resolveTrainerModel({trainer:projected,rulesetId,getDefinition,getDamageBase,statusRulesSource});
   const checkSelections=(kind,list,filter='normal')=>{
     const records=kind==='features'?projected.details.features:projected.details.edges;
     for(const choice of list||[]){
@@ -185,15 +185,15 @@ function previewTrainerProgression({trainer,draft={},rulesetId,getDefinition,lis
     const edgeRows=collectDefinitionRows(listDefinitions,{rulesetId,kind:'edges'});
     const featureMap=new Map(featureRows.map(row=>[row.id,getDefinition({rulesetId,kind:'features',id:row.id})]).filter(([,d])=>d));
     const edgeMap=new Map(edgeRows.map(row=>[row.id,getDefinition({rulesetId,kind:'edges',id:row.id})]).filter(([,d])=>d));
-    const rawSkillEdges=candidateRows({kind:'edges',trainer,draft,rulesetId,getDefinition,listDefinitions,getDamageBase,filter:'skill_edge',gmOverride,definitionRows:edgeRows,definitionMap:edgeMap});
+    const rawSkillEdges=candidateRows({kind:'edges',trainer,draft,rulesetId,getDefinition,listDefinitions,getDamageBase,statusRulesSource,filter:'skill_edge',gmOverride,definitionRows:edgeRows,definitionMap:edgeMap});
     const skillEdges=rawSkillEdges.map(row=>{
       if(!prohibitedBonusSkillEdge || slug(row.id)!==prohibitedBonusSkillEdge || gmOverride)return row;
       return {...row,valid:false,manual:false,milestoneBlocked:true,prerequisite:{...(row.prerequisite||{}),valid:false,reasons:[...((row.prerequisite?.reasons)||[]),`Level ${nextLevel} bonus Skill Edge cannot Rank a Skill to ${rewards.skillRankUnlock}.`]}};
     });
     optionSets={
-      features:candidateRows({kind:'features',trainer,draft,rulesetId,getDefinition,listDefinitions,getDamageBase,filter:'normal',gmOverride,definitionRows:featureRows,definitionMap:featureMap}),
-      generalFeatures:candidateRows({kind:'features',trainer,draft,rulesetId,getDefinition,listDefinitions,getDamageBase,filter:'general_feature',gmOverride,definitionRows:featureRows,definitionMap:featureMap}),
-      edges:candidateRows({kind:'edges',trainer,draft,rulesetId,getDefinition,listDefinitions,getDamageBase,filter:'normal',gmOverride,definitionRows:edgeRows,definitionMap:edgeMap}),
+      features:candidateRows({kind:'features',trainer,draft,rulesetId,getDefinition,listDefinitions,getDamageBase,statusRulesSource,filter:'normal',gmOverride,definitionRows:featureRows,definitionMap:featureMap}),
+      generalFeatures:candidateRows({kind:'features',trainer,draft,rulesetId,getDefinition,listDefinitions,getDamageBase,statusRulesSource,filter:'general_feature',gmOverride,definitionRows:featureRows,definitionMap:featureMap}),
+      edges:candidateRows({kind:'edges',trainer,draft,rulesetId,getDefinition,listDefinitions,getDamageBase,statusRulesSource,filter:'normal',gmOverride,definitionRows:edgeRows,definitionMap:edgeMap}),
       skillEdges
     };
   }
@@ -216,7 +216,7 @@ function applyTrainerProgression({trainer,draft,preview,getDefinition,rulesetId}
   return t;
 }
 
-function previewTrainerXpPurchase({trainer,kind,id,selections={},manualConfirm=false,rulesetId,getDefinition,getDamageBase,gmOverride=false}={}){
+function previewTrainerXpPurchase({trainer,kind,id,selections={},manualConfirm=false,rulesetId,getDefinition,getDamageBase,statusRulesSource,gmOverride=false}={}){
   const normalizedKind=kind==='features'?'features':kind==='edges'?'edges':null;
   const cost=normalizedKind==='features'?TRAINER_FEATURE_XP_COST:TRAINER_EDGE_XP_COST;
   const availableXp=Math.max(0,num(trainer?.exp)); const errors=[];
@@ -235,7 +235,7 @@ function previewTrainerXpPurchase({trainer,kind,id,selections={},manualConfirm=f
       classBlocked=classCount>=4&&!records.some(r=>slug(r.id)===slug(def.id));
       if(classBlocked&&!gmOverride)errors.push('Trainer already has the maximum of four Classes.');
     }
-    const resolvedTrainer=resolveTrainerModel({trainer:projected,rulesetId,getDefinition,getDamageBase});
+    const resolvedTrainer=resolveTrainerModel({trainer:projected,rulesetId,getDefinition,getDamageBase,statusRulesSource});
     prereq=evaluateTrainerDefinitionPrerequisite(def,{trainer:projected,resolvedTrainer,rulesetId,getDefinition,gmOverride});
     if(prereq.valid===false&&!gmOverride)errors.push(`${def.name}: ${(prereq.reasons||[]).join(' ')||'Prerequisites are not satisfied.'}`);
     if(normalizedKind==='edges')selectionConflict=trainerDefinitionSelectionConflict(def,records);

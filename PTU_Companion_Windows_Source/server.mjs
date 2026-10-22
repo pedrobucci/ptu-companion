@@ -598,7 +598,7 @@ async function handleApi(req,res,url){
     return json(res,200,{ok:true,desktopSession});
   }
   if(req.method==='GET' && url.pathname==='/api/health'){
-    return json(res,200,{ok:true,version:'2.1.0-beta.34',persistence:'sqlite',database:dbPath,schemaVersion:5,definitions:{database:definitionsPath,persistent:true,activeRuleset:getActiveRuleset()}});
+    return json(res,200,{ok:true,version:'2.1.0-beta.36',persistence:'sqlite',database:dbPath,schemaVersion:5,definitions:{database:definitionsPath,persistent:true,activeRuleset:getActiveRuleset()}});
   }
   if(req.method==='GET' && url.pathname==='/api/rulesets'){
     const activeRulesetId=getActiveRuleset();
@@ -898,7 +898,7 @@ async function handleApi(req,res,url){
     const resolvedTrainer=resolveTrainerModel({
       trainer,rulesetId,
       getDefinition:args=>definitions.getResolved(args),
-      getDamageBase:db=>definitions.getDamageBase(db)
+      getDamageBase:db=>definitions.getDamageBase(db),statusRulesSource:rulesetHasPack(rulesetId,'ptu-february-2016-playtest')?'ptu-february-2016-playtest':'ptu-core-1.05'
     });
     return json(res,200,{rulesetId,resolvedTrainer});
   }
@@ -911,7 +911,7 @@ async function handleApi(req,res,url){
       trainer:payload.trainer||{},draft:payload.draft||{},rulesetId,gmOverride:!!payload.gmOverride,includeOptions:payload.includeOptions!==false,
       getDefinition:args=>definitions.getResolved(args),
       listDefinitions:args=>definitions.listResolved(args),
-      getDamageBase:db=>definitions.getDamageBase(db)
+      getDamageBase:db=>definitions.getDamageBase(db),statusRulesSource:rulesetHasPack(rulesetId,'ptu-february-2016-playtest')?'ptu-february-2016-playtest':'ptu-core-1.05'
     });
     return json(res,200,{rulesetId,preview});
   }
@@ -925,11 +925,11 @@ async function handleApi(req,res,url){
       trainer,draft,rulesetId,gmOverride:!!payload.gmOverride,includeOptions:false,
       getDefinition:args=>definitions.getResolved(args),
       listDefinitions:args=>definitions.listResolved(args),
-      getDamageBase:db=>definitions.getDamageBase(db)
+      getDamageBase:db=>definitions.getDamageBase(db),statusRulesSource:rulesetHasPack(rulesetId,'ptu-february-2016-playtest')?'ptu-february-2016-playtest':'ptu-core-1.05'
     });
     if(!preview.valid) return json(res,400,{error:'Trainer progression is not valid.',preview});
     const updatedTrainer=applyTrainerProgression({trainer,draft,preview,getDefinition:args=>definitions.getResolved(args),rulesetId});
-    const resolvedTrainer=resolveTrainerModel({trainer:updatedTrainer,rulesetId,getDefinition:args=>definitions.getResolved(args),getDamageBase:db=>definitions.getDamageBase(db)});
+    const resolvedTrainer=resolveTrainerModel({trainer:updatedTrainer,rulesetId,getDefinition:args=>definitions.getResolved(args),getDamageBase:db=>definitions.getDamageBase(db),statusRulesSource:rulesetHasPack(rulesetId,'ptu-february-2016-playtest')?'ptu-february-2016-playtest':'ptu-core-1.05'});
     return json(res,200,{rulesetId,updatedTrainer,resolvedTrainer,preview:{...preview,projectedTrainer:undefined,resolvedTrainer:undefined,optionSets:undefined}});
   }
 
@@ -942,11 +942,11 @@ async function handleApi(req,res,url){
     const preview=previewTrainerXpPurchase({
       trainer,kind,id,selections,manualConfirm:!!payload.manualConfirm,rulesetId,gmOverride:!!payload.gmOverride,
       getDefinition:args=>definitions.getResolved(args),
-      getDamageBase:db=>definitions.getDamageBase(db)
+      getDamageBase:db=>definitions.getDamageBase(db),statusRulesSource:rulesetHasPack(rulesetId,'ptu-february-2016-playtest')?'ptu-february-2016-playtest':'ptu-core-1.05'
     });
     if(!preview.valid) return json(res,400,{error:'Trainer XP purchase is not valid.',preview});
     const updatedTrainer=applyTrainerXpPurchase({trainer,kind,id,selections,preview,getDefinition:args=>definitions.getResolved(args),rulesetId});
-    const resolvedTrainer=resolveTrainerModel({trainer:updatedTrainer,rulesetId,getDefinition:args=>definitions.getResolved(args),getDamageBase:db=>definitions.getDamageBase(db)});
+    const resolvedTrainer=resolveTrainerModel({trainer:updatedTrainer,rulesetId,getDefinition:args=>definitions.getResolved(args),getDamageBase:db=>definitions.getDamageBase(db),statusRulesSource:rulesetHasPack(rulesetId,'ptu-february-2016-playtest')?'ptu-february-2016-playtest':'ptu-core-1.05'});
     return json(res,200,{rulesetId,updatedTrainer,resolvedTrainer,preview});
   }
 
@@ -1560,7 +1560,7 @@ const server=createServer(async(req,res)=>{
 
 const port=Number(process.env.PTU_PORT||4173);
 server.listen(port,'127.0.0.1',()=>{
-  console.log(`PTU Companion Beta v2.1.0-beta.34: http://127.0.0.1:${port}`);
+  console.log(`PTU Companion Beta v2.1.0-beta.36: http://127.0.0.1:${port}`);
   console.log(`Campaign SQLite: ${dbPath}`);
   console.log(`Persistent Definition SQLite: ${definitionsPath}`);
   console.log(`Active ruleset: ${getActiveRuleset()}`);
