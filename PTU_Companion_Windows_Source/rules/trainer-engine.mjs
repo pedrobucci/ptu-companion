@@ -630,7 +630,7 @@ function weaponQualification(model,mechanics={}){
   }
   candidates.sort((a,b)=>b.rank-a.rank);const best=candidates[0];return {...best,rankName:['','Pathetic','Untrained','Novice','Adept','Expert','Master'][best.rank]||`Rank ${best.rank}`};
 }
-function resolveTrainerModel({trainer,rulesetId,getDefinition,getDamageBase}){
+function resolveTrainerModel({trainer,rulesetId,getDefinition,getDamageBase,statusRulesSource='ptu-core-1.05'}){
   const t=trainer||{}; const details=t.details||{}; const baseStats={}; for(const k of STAT_KEYS)baseStats[k]=num(t.stats?.[k]);
   const model={
     rulesetId,
@@ -686,11 +686,16 @@ function resolveTrainerModel({trainer,rulesetId,getDefinition,getDamageBase}){
   finalizeSkills(model);
   deriveCapabilities(model);
 
+  const afflictions=new Set((Array.isArray(details.statusAfflictions)?details.statusAfflictions:[]).map(row=>typeof row==='string'?row:row.name));
+  const february=statusRulesSource==='ptu-february-2016-playtest';
+  model.statusAfflictions=[...afflictions];
+  // PTU Core 1.05 pp.246–247; February 2016 p.1 replaces paralysis's Speed penalty.
+  const statusStages={defense:afflictions.has('Burned')?-2:0,spDefense:afflictions.has('Poisoned')||afflictions.has('Badly Poisoned')?-2:0,speed:afflictions.has('Paralyzed')&&!february?-4:0};
   for(const k of STAT_KEYS){
     model.stats.effective[k]=Math.max(0,baseStats[k]+model.stats.bonus[k]);
     if(k==='hp'){model.stats.combat[k]=model.stats.effective[k];model.stats.stages[k]=0;continue;}
     let stage=num(details.combatStages?.[k]); if(stage===0&&num(model.defaultCombatStages[k])!==0)stage=model.defaultCombatStages[k];
-    stage+=num(model.equipmentCombatStageBonuses[k]);stage=clamp(Math.trunc(stage),-6,6); model.stats.stages[k]=stage;
+    stage+=num(model.equipmentCombatStageBonuses[k])+num(statusStages[k]);stage=clamp(Math.trunc(stage),-6,6); model.stats.stages[k]=stage;
     model.stats.combat[k]=Math.max(0,applyCombatStage(model.stats.effective[k],stage)+model.stats.afterCombatStage[k]);
   }
 
@@ -712,6 +717,9 @@ function resolveTrainerModel({trainer,rulesetId,getDefinition,getDamageBase}){
   if(model.flags.initiativeSkill)initiative+=model.skills[model.flags.initiativeSkill]?.rank||0;
   model.derived={maxHp,maxAp,boundAp,availableMaxAp:Math.max(0,maxAp-boundAp),physicalEvasion,specialEvasion,speedEvasion,initiative,accuracyBonus:model.accuracyBonus,effectRangeBonus:model.effectRangeBonus,saveCheckBonus:model.saveCheckBonus,saveCheckBonusVolatile:model.saveCheckBonusVolatile,damageReduction:model.damageReduction,damageReductionPhysical:model.damageReduction+model.damageReductionByClass.physical,damageReductionSpecial:model.damageReduction+model.damageReductionByClass.special,...model.capabilities};
 
+  if(afflictions.has('Frozen')||afflictions.has('Sleep')||afflictions.has('Asleep')){
+    model.derived.physicalEvasion=0;model.derived.specialEvasion=0;model.derived.speedEvasion=0;
+  }
   model.struggleAttack=resolveStruggleAttack(model,t,getDamageBase);
   model.moves=[...model._moveMap.values()].map(move=>({...move,resolvedDamage:resolveMoveDamageForTrainer(model,move,t,getDamageBase)})).sort((a,b)=>a.name.localeCompare(b.name));
   model.stabTypes=[...model.stabTypes];

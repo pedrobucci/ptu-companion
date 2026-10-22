@@ -23,7 +23,7 @@ for(const source of apps){
   assert.ok(/statusAfflictionHistory/.test(source),'Reversible status history missing');
   assert.ok(/pokemonStatusClearOnFaint/.test(source),'Fainting status cleanup missing');
 }
-for(const name of ['trainerDerived','ensureTrainerDetails','changeTrainerHp','pokemonStatusRows','pokemonStatusSetRaw','pokemonStatusSnapshot','pokemonStatusHistory','pokemonStatusAfflictionToggle','pokemonStatusRevert','pokemonStatusImmune','pokemonStatusCombatStagePenalty','advancePokemonStatusTurn','trainerQuests','setQuestStatus','toggleQuestStep','moveQuestStep']){
+for(const name of ['trainerStatusSubject','statusAfflictionSubject','trainerDerived','ensureTrainerDetails','changeTrainerHp','pokemonStatusRows','pokemonStatusSetRaw','pokemonStatusSnapshot','pokemonStatusHistory','pokemonStatusAfflictionToggle','pokemonStatusRevert','pokemonStatusImmune','pokemonStatusCombatStagePenalty','advancePokemonStatusTurn','trainerQuests','setQuestStatus','toggleQuestStep','moveQuestStep']){
   assert.equal(extract(apps[0],name),extract(apps[1],name),`${name} differs between Windows and Android`);
 }
 
@@ -35,6 +35,8 @@ const context=vm.createContext({structuredClone, catalogState, state,trainer:()=
 vm.runInContext(extract(apps[0],'trainerDerived'),context);
 vm.runInContext(extract(apps[0],'ensureTrainerDetails'),context);
 vm.runInContext(extract(apps[0],'changeTrainerHp'),context);
+vm.runInContext(extract(apps[0],'trainerStatusSubject'),context);
+vm.runInContext(extract(apps[0],'statusAfflictionSubject'),context);
 vm.runInContext(block(apps[0],'const QUEST_STATUSES=','const STATUS_AFFLICTION_RULES='),context);
 vm.runInContext(block(apps[0],'const STATUS_AFFLICTION_RULES=','function dashboard(){'),context);
 vm.runInContext(extract(apps[0],'pokemonStatusCombatStagePenalty'),context);
@@ -64,5 +66,47 @@ pokemon.hp=20;context.pokemonStatusAfflictionToggle('p1','Poisoned',true);contex
 formResult={standard:'yes',prevented:'no',attackDamage:'no'};const firstTurn=await context.advancePokemonStatusTurn('p1',false);assert.equal(firstTurn.damage,15,'Burn/Poison ticks and the first 5 HP Badly Poisoned loss stack');assert.equal(pokemon.hp,5);
 formResult={standard:'yes',prevented:'no',attackDamage:'no'};const nextTurn=await context.advancePokemonStatusTurn('p1',false);assert.equal(nextTurn.damage,20,'Badly Poisoned damage doubles on the next consecutive round');assert.equal(pokemon.hp,0,'Damage applies to current HP');assert.equal(pokemon.details.statusAfflictions.length,0,'Fainting cures tracked afflictions');
 assert.equal(context.pokemonStatusCombatStagePenalty({...pokemon,details:{statusAfflictions:[{name:'Paralyzed'}]}},'speed'),-4);
+
+// Trainer status changes use currentHp and the effective Max HP without touching Pokémon.
+const trainerId='trainer:william',trainerDetails=state.trainer.details;
+trainerDetails.currentHp=50;trainerDetails.tempHp=2;
+context.pokemonStatusAfflictionToggle(trainerId,'Burned',true);
+assert.equal(trainerDetails.statusAfflictions[0].name,'Burned');
+formResult={standard:'yes',prevented:'no',attackDamage:'no'};
+const trainerTurn=await context.advancePokemonStatusTurn(trainerId,false);
+assert.equal(trainerTurn.damage,8,'Trainer tick uses the effective maximum of 89');
+assert.equal(trainerDetails.currentHp,44);assert.equal(trainerDetails.tempHp,0);
+assert.ok(trainerDetails.statusAfflictionHistory.at(-1).notes.length);
+context.pokemonStatusRevert(trainerId);assert.equal(trainerDetails.currentHp,50);assert.equal(trainerDetails.tempHp,2);
+const trainerSave=JSON.parse(JSON.stringify(state.trainer));
+assert.equal(trainerSave.details.statusAfflictions[0].name,'Burned','Trainer statuses survive campaign serialization');
+trainerDetails.currentHp=49;const conflictToasts=toasts.length;context.pokemonStatusRevert(trainerId);
+assert.equal(toasts.length,conflictToasts+1);assert.equal(trainerDetails.currentHp,49);
+context.pokemonStatusAfflictionToggle(trainerId,'Burned',false);assert.equal(trainerDetails.statusAfflictions.length,0);
+context.pokemonStatusAfflictionToggle('trainer:another','Poisoned',true);
+assert.equal(trainerDetails.statusAfflictions.length,0,'An inactive Trainer ID cannot change the current Trainer or Pokémon');
+context.pokemonStatusAfflictionToggle(trainerId,'Poisoned',true);context.changeTrainerHp(-100);
+assert.equal(trainerDetails.currentHp,0);assert.equal(trainerDetails.statusAfflictions.length,0,'Normal Trainer damage clears afflictions on faint');
+// Shared engine effects preserve base/manual stages and honor the active supplement.
+for(const relative of ['../rules/trainer-engine.mjs','../../PTU_Companion_Android_Tauri/www/rules/trainer-engine.mjs']){
+  const {resolveTrainerModel}=await import(relative);
+  const t={id:'status-test',name:'Trainer',level:20,stats:{hp:12,attack:10,defense:10,spAttack:10,spDefense:10,speed:10},details:{features:[],edges:[],moves:[],combatStages:{defense:1},statusAfflictions:[{name:'Burned'},{name:'Poisoned'},{name:'Paralyzed'}]}};
+  const args={trainer:t,rulesetId:'test',getDefinition:()=>null,getDamageBase:()=>null};
+  const core=resolveTrainerModel(args);
+  assert.equal(core.stats.stages.defense,-1);assert.equal(core.stats.stages.spDefense,-2);assert.equal(core.stats.stages.speed,-4);
+  assert.equal(t.details.combatStages.defense,1,'Affliction penalties must not change manual stages');assert.equal(t.stats.defense,10);
+  const february=resolveTrainerModel({...args,statusRulesSource:'ptu-february-2016-playtest'});
+  assert.equal(february.stats.stages.speed,0,'February paralysis does not reduce Speed CS');
+  t.details.statusAfflictions=[{name:'Frozen'}];const frozen=resolveTrainerModel(args);
+  assert.equal(frozen.derived.physicalEvasion,0);assert.equal(frozen.derived.specialEvasion,0);assert.equal(frozen.derived.speedEvasion,0);
+  t.details.statusAfflictions=[];assert.equal(resolveTrainerModel(args).stats.stages.defense,1,'Clearing status restores original resolved stages');
+}
+trainerDetails.currentHp=50;context.pokemonStatusAfflictionToggle(trainerId,'Burned',true);
+context.styledForm=async()=>{trainerDetails.currentHp=49;return {standard:'yes'};};
+const changedTurn=await context.advancePokemonStatusTurn(trainerId,false);
+assert.equal(changedTurn?.damage,undefined);assert.equal(trainerDetails.currentHp,49,'An open turn dialog cannot apply stale effects after HP changes');
+context.pokemonStatusAfflictionToggle(trainerId,'Sleep',true);
+context.pokemonStatusClearVolatile(context.trainerStatusSubject());
+assert.equal(trainerDetails.statusAfflictions.length,1,'Leaving battle clears volatile Sleep and preserves persistent Burn');
 
 console.log('Issue #101 HP healing, #24 Trainer quests/checklists/JSON and #98 Status Afflictions verified in both frontends.');
