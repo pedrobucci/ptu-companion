@@ -8,7 +8,7 @@ globalThis.reconcileTrainerChannels=function(trainer,pokemon,{getBinding=()=>nul
     const targets=Array.isArray(f.boundTargetIds)?f.boundTargetIds:[];if(!f.bound||!targets.includes(id))return;
     const binding=getBinding(f),cost=Number(f.boundApCostEach??(binding?binding.apCost*(binding.perRank?Math.max(1,Number(f.rank||1)):1):f.id==='shared-senses'?1:NaN));
     if(!Number.isSafeInteger(cost)||cost<1)return;
-    f.boundTargetIds=targets.filter(target=>target!==id);f.bound=f.boundTargetIds.length>0;if(!f.bound)f.boundStratagem=false;td.currentAp=Math.min(maxAp,Number(td.currentAp||0)+cost);
+    if(f.boundChoices)delete f.boundChoices[id];f.boundTargetIds=targets.filter(target=>target!==id);f.bound=f.boundTargetIds.length>0;if(!f.bound)f.boundStratagem=false;td.currentAp=Math.min(maxAp,Number(td.currentAp||0)+cost);
     events.push(`${f.name||f.id}: ${cost} AP returned.`);
   };
   for(const link of links){

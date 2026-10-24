@@ -17,7 +17,7 @@ com 1.278 arquivos rastreados ausentes, foi preservado. O lote está na branch
 | #33 | Índice permanente | Permanece aberto como roadmap. |
 | #57 | Correção complementar | Cluster Mind já entregue. Encontrada divergência no motor Android: comparação com o objeto `moveLimit`, em vez de `moveLimit.effective`, na progressão. Corrigida, com teste negativo de limite. Falta validação no app. |
 | #59 | Entregue anteriormente | Combat Stages. Regressões mantidas; falta validação no app. |
-| #69 | Parcial, ampliada neste lote e na continuação | Pedro escolheu entidades próprias com estado e controles. Implementados Glyph/Alarm Runes, pessoa externa para Mark of Vision e arma própria para Soul Bond/Soul Investment na PR #108. A continuação acrescenta Channeler/Shared Senses com vínculos a Pokémon existentes, distância, foco por rodada e limpeza automática/AP. Permanecem itens/gadgets concedidos, tokens, escolhas de Stance, Spirit Boost e demais efeitos defensivos/por tipo/por evento, iniciativa e alterações de range/crit/effect. Explosive Runes cobre a explosão automática do Alarm Rune; ativação independente e resolução completa do ataque ainda não estão automatizadas. |
+| #69 | Parcial, ampliada neste lote e nas continuações | Pedro escolheu entidades próprias com estado e controles. PR #108: Glyph/Alarm Runes, pessoa externa/Mark of Vision e arma/Soul Bond/Soul Investment. PR #109: Channeler/Shared Senses. Continuação atual: Spirit Boost com cinco resultados, escolhas por alvo, limites de Stratagem, AP e efeitos nos cálculos. Permanecem itens/gadgets concedidos, tokens, escolhas de Stance e demais efeitos defensivos/por tipo/por evento, iniciativa condicional e alterações de range/crit/effect. Explosive Runes cobre a explosão automática do Alarm Rune; ativação independente e resolução completa do ataque ainda não estão automatizadas. |
 | #71 | Entregue anteriormente | JSON de Pokémon, cópia/substituição e preservação de vínculos. Falta validação no app. |
 | #74 | Implementada neste lote | Pais opcionais, decisão de Pedro em 24/10. Criação usa o builder existente e confirma traits antes de registrar o Pokémon/consumir uso. Edição acessível pela ficha, inclusive fora de roster. Reutiliza This One’s Special e seus limites já aprovados; dados individuais, sem alterar catálogo. |
 | #76 | Entregue anteriormente | Field Clinic na categoria Edge e com gating de Ruleset. Falta validação no app. |
@@ -136,6 +136,49 @@ evidências `backlog-oct24-ui/{windows,android}-shared-senses.png`.
 
 A #69 permanece parcial pelos demais efeitos listados na tabela. Não foram
 alteradas versões nem gerados novos APK/EXE nesta continuação.
+
+## Spirit Boost após o merge da PR #109
+
+Base: merge `6b29691`. Branch `codex/bind-spirit-boost`.
+Core 1.05 p.179 define as cinco opções; p.61 define os limites de Stratagem.
+
+- A seleção oferece alvo Channeled no combate ativo e referência Channeled,
+  que pode ser o próprio alvo. A API calcula os Combat Stats da referência com
+  o resolvedor existente: espécie/formas, Poké Edges, Held Item e Combat Stages,
+  incluindo penalidades de Burn/Poison/Paralysis segundo o pack ativo.
+- Só o maior atributo pode ser selecionado; empates oferecem escolha. O atributo
+  e os valores de referência são registrados no Bind por alvo, enquanto o valor
+  do bônus acompanha o Rank efetivo atual de Intuition. A escolha feita ao usar
+  a Feature não muda silenciosamente por alterações posteriores da referência.
+- Attack/Special Attack aplicam Bonus Damage apenas na classe correspondente;
+  Defense/Special Defense aplicam DR apenas contra a classe correspondente.
+  Speed entra no valor de iniciativa exibido para o combatente ativo, com os
+  Combat Stages e a redução de Paralysis do Ruleset considerado.
+- Cada alvo reserva 2 AP e recebe sua própria escolha. Impede outro Stratagem
+  no mesmo alvo e Bind fora de combate. Unbind, fim de combate e término de
+  Channeling no alvo removem escolhas/bônus e devolvem os AP correspondentes.
+  Vínculo legado sem escolha válida é exibido como pendente, sem bônus presumido.
+- Dados de combate são invalidados ao salvar mudanças e respostas antigas são
+  descartadas por sequência/snapshot. Assim, retirar Bind não deixa um bônus
+  antigo no próximo ataque. Prévias continuam protegidas contra alterações
+  reais de ficha/inventário/cena; recálculos de `trainer.derived`, que o motor
+  não usa como entrada, não provocam cancelamento indevido da confirmação.
+
+`verify_issue69_spirit_boost.mjs` foi incluído nas duas suítes. Testa APIs reais
+Windows/Android, cinco efeitos e classes, maior Stat/empate, referência própria,
+penalidade de status/CS, escolhas independentes, AP, conflitos, persistência,
+remoção, cancelamento, fim de combate e respostas fora de ordem. O teste de
+entidades também cobre recálculo de valores de exibição durante confirmação.
+
+Navegador real nas duas plataformas (Android 390 px): escolha de empate,
+DR físico reduzindo dano de 40 para 35, remoção do bônus restaurando dano 40,
+iniciativa 59 + 5 = 64, devolução dos AP no fim de combate e persistência após
+reload. Sem erros JavaScript/overflow. Evidências `backlog-oct24-ui/*-spirit-boost-*.png`;
+logs `E:\ptu-docker-maintenance\spirit-{windows,android}-verify.log` e
+`spirit-ui-final.log`. Suítes completas aprovadas em execução sequencial.
+
+A #69 continua aberta pelo escopo restante da tabela; nenhum APK/EXE ou versão
+nova foi gerado nesta etapa.
 
 ## Armazenamento
 
