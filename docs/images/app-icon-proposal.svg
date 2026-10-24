@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-label="PTU Companion: Poké Ball with PTU monogram">
+  <rect width="512" height="512" rx="112" fill="#102b39"/>
+  <circle cx="256" cy="256" r="192" fill="#071923"/>
+  <path d="M80 240a176 176 0 0 1 352 0Z" fill="#ef4c46"/>
+  <path d="M80 272a176 176 0 0 0 352 0Z" fill="#f5f3e9"/>
+  <rect x="104" y="202" width="304" height="108" rx="54" fill="#071923"/>
+  <text x="256" y="282" text-anchor="middle" font-family="Arial, sans-serif" font-size="78" font-weight="900" letter-spacing="3" fill="#fff">PTU</text>
+</svg>

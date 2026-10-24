@@ -1,3 +1,4 @@
+import {normalizePokeEdgeDefinition} from '../rules/poke-edge-normalization.mjs';
 import { DatabaseSync } from 'node:sqlite';
 import {normalizeCapabilities} from '../rules/capability-normalization.mjs';
 import {getBuiltInFormItem,mergeBuiltInSpeciesForms} from '../rules/pokemon-form-builtins.mjs';
@@ -369,7 +370,7 @@ export class DefinitionRepository {
       summary.tutorMoves=raw.tutor_moves || [];
       summary.eggMoves=raw.egg_moves || [];
     }
-    return summary;
+    return normalizePokeEdgeDefinition(summary.kind==='poke_edges'?{...summary,raw,rawText:raw.raw_text}:summary);
   }
 }
 

@@ -46,7 +46,10 @@ for(const name of ['Aura','Interrupt','Priority','Shield','Weight Class'])assert
 
 assert.match(windowsSource,/\['move_keywords','Move Keywords'\]/,'Library must expose Move Keywords as a category');
 assert.match(windowsSource,/catalogState\.kind==='move_keywords'/,'Library must resolve Move Keywords locally without a definition DB migration');
-assert.match(windowsSource,/kind==='move_keywords'\?MOVE_KEYWORD_CATALOG\.length/,'Library count must report built-in keyword count');
+const countExpression=windowsSource.match(/<b>\$\{([^}]*MOVE_KEYWORD_CATALOG\.length[^}]*)\}/)?.[1];
+assert.ok(countExpression,'Library count expression exists');
+assert.equal(vm.runInNewContext(countExpression,{k:'move_keywords',MOVE_KEYWORD_CATALOG:catalog,counts:{}}),33,'Library renders the actual built-in count');
+assert.ok(!windowsSource.includes("/* kind==='move_keywords'"),'Implementation comments must not appear as UI text');
 assert.match(windowsSource,/moveKeywordReferenceHtml\(def\|\|m\)/,'Creature Move cards must expose detected keyword references');
 assert.match(windowsSource,/function openMoveKeywordInfo\(id\)/,'Keyword descriptions must open in the standard modal flow');
 assert.match(windowsSource,/Object\.assign\(window,\{[^}]*openMoveKeywordInfo[^}]*route/s,'Inline keyword buttons must keep an exposed handler when later stages add more handlers');

@@ -35,6 +35,8 @@ ensure_android_init() {
     log "Inicializando projeto Android do Tauri"
     cargo tauri android init
   fi
+  # Keep launcher assets current even when reusing an initialized Android project.
+  cp -R "$TAURI_DIR/icons/android/." "$TAURI_DIR/gen/android/app/src/main/res/"
 }
 
 clean_android_dist() {

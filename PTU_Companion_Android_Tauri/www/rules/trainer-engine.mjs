@@ -1,3 +1,4 @@
+import {resolveMoveCapabilities} from './move-capabilities.mjs';
 const TRAINER_SKILLS=[
   'Acrobatics','Athletics','Combat','Intimidate','Stealth','Survival',
   'General Education','Medicine Education','Occult Education','Pokémon Education','Technology Education','Guile','Perception',
@@ -685,6 +686,17 @@ function resolveTrainerModel({trainer,rulesetId,getDefinition,getDamageBase,stat
 
   finalizeSkills(model);
   deriveCapabilities(model);
+  const capabilityKey=name=>({highJump:'High Jump',longJump:'Long Jump',throwingRange:'Throwing Range'}[name]||name);
+  const baseCapabilities=Object.entries(model.capabilities).map(([name,value])=>({name:capabilityKey(name),value}));
+  const moveCapabilities=resolveMoveCapabilities(baseCapabilities,[...model._moveMap.values()].map(move=>move.definition));
+  model.moveCapabilityModifiers=moveCapabilities.applied;
+  for(const effect of moveCapabilities.applied){
+    const source={kind:'move',id:effect.sourceId,name:effect.sourceName};
+    if(effect.operation==='grant'){grantEntity(model,{entityKind:'capability',entityName:effect.targetName,source});continue;}
+    const target={"high-jump":'highJump',"long-jump":'longJump',"throwing-range":'throwingRange'}[effect.targetId]||effect.targetId;
+    model.capabilities[target]=effect.operation==='add'?num(model.capabilities[target])+effect.value:Math.max(num(model.capabilities[target]),effect.value);
+    model.capabilitySources[target]||=[];model.capabilitySources[target].push({source,value:effect.after-effect.before,contextual:false});
+  }
 
   const afflictions=new Set((Array.isArray(details.statusAfflictions)?details.statusAfflictions:[]).map(row=>typeof row==='string'?row:row.name));
   const february=statusRulesSource==='ptu-february-2016-playtest';
