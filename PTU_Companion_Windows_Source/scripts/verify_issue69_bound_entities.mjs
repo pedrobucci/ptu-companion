@@ -24,10 +24,10 @@ try{
  vm.runInThisContext(await readFile(join(repo,'PTU_Companion_Android_Tauri/www/mobile-data.js'),'utf8'));
  const {mobileFetch}=await import('../../PTU_Companion_Android_Tauri/www/mobile-api.mjs');
  for(const [platform,api] of [['Windows',(path,init)=>fetch(base+path,init)],['Android',mobileFetch]]){
-  let trainer=fixture(),inventory=[{id:'cleanse-tag',qty:20}],context={day:1,scene:1,round:1};
+  let trainer=fixture(),inventory=[{id:'cleanse-tag',qty:20}],pokemon=[],context={day:1,scene:1,round:1};
   const action=async(action,fields={},error)=>{
    const before=JSON.stringify({trainer,inventory});
-   const payload={trainer,inventory,context,rulesetId,action,...fields};
+   const payload={trainer,inventory,pokemon,context,rulesetId,action,...fields};
    const response=await api('/api/trainer/bound-entity-preview',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(payload)}),result=await response.json();
    assert.equal(JSON.stringify({trainer,inventory}),before,'preview must not mutate saved inputs');
    if(error){assert.equal(response.status,400,JSON.stringify(result));assert.match(result.error,error);return;}
@@ -86,6 +86,35 @@ try{
   await action('create',{data:{kind:'glyph',name:'Over limit'}},/Occult Education Rank/);
   trainer=fixture();inventory=[];await action('create',{data:{kind:'glyph',name:'No tag'}},/Cleanse Tag/);
   inventory=[{id:'cleanse-tag',qty:1}];trainer.details.currentAp=0;await action('create',{data:{kind:'glyph',name:'No AP',swift:true}},/available AP/);
+  trainer=fixture();trainer.details.features=[{id:'channeler'},{id:'shared-senses'}];trainer.details.skillRanks.Intuition=2;trainer.details.currentHp=20;
+  pokemon=[{id:'one',name:'One'},{id:'two',name:'Two'},{id:'three',name:'Three'}];const links=[];
+  for(const p of pokemon)links.push((await action('create',{data:{kind:'pokemon_link',pokemonId:p.id,hostile:p.id==='one',allied:true}})).entityId);
+  await action('create',{data:{kind:'pokemon_link',pokemonId:'one'}},/already has a Channel/);
+  await action('bind',{entityId:links[0],featureIndex:1},/Channeled Pokémon/);
+  await action('channel-pokemon',{entityId:links[0],data:{intuitionCheck:14}},/at least 15/);
+  await action('channel-pokemon',{entityId:links[0],data:{intuitionCheck:15}});
+  await action('channel-pokemon',{entityId:links[1]});
+  await action('channel-pokemon',{entityId:links[2]},/Intuition Rank/);
+  for(const id of links.slice(0,2))await action('bind',{entityId:id,featureIndex:1});assert.equal(trainer.details.currentAp,9);
+  await action('focus-senses',{entityId:links[0]});await action('focus-senses',{entityId:links[1]},/one Pokémon per round/);
+  await action('stop-focus',{entityId:links[0]});await action('focus-senses',{entityId:links[1]},/one Pokémon per round/);
+  context.round++;await action('focus-senses',{entityId:links[1]});assert.equal(trainer.details.boundEntityState.sensoryFocusId,links[1]);
+  await action('position',{entityId:links[1],data:{distance:200,allied:true}});assert(trainer.details.boundEntities[1].channeling,'Imprint removes distance limit');
+  await action('unbind',{entityId:links[1],featureIndex:1});assert(!trainer.details.boundEntities[1].channeling,'removing distant Imprint ends Channeling');assert.equal(trainer.details.currentAp,10);
+  trainer.details.currentHp=0;await action('sync');assert.equal(trainer.details.currentAp,11);assert(!trainer.details.boundEntities.some(e=>e.channeling));assert.equal(trainer.details.boundEntityState.sensoryFocusId,null);
+  await action('channel-pokemon',{entityId:links[0],data:{intuitionCheck:15}},/Fainted Trainer/);
+  trainer.details.currentHp=10;await action('channel-pokemon',{entityId:links[0],data:{intuitionCheck:15}});await action('bind',{entityId:links[0],featureIndex:1});
+  const savedChannels=await (await api('/api/state')).json();savedChannels.state.trainer.details=trainer.details;savedChannels.state.pokemon=pokemon.map(p=>({...savedChannels.state.pokemon[0],...p}));
+  assert((await api('/api/state',{method:'PUT',headers:{'content-type':'application/json'},body:JSON.stringify({state:savedChannels.state})})).ok);
+  const reloadedChannels=await (await api('/api/state')).json();assert.deepEqual(reloadedChannels.state.trainer.details.boundEntities,trainer.details.boundEntities,platform+': Channel state persists');
+  trainer.details.features.push({id:'spirit-boost',bound:true,boundTargetIds:['one'],boundApCostEach:2});trainer.details.currentAp-=2;
+  await action('stop-channel',{entityId:links[0]});assert.equal(trainer.details.currentAp,11);assert.equal(trainer.details.features[2].bound,false,'stopping Channeling releases other Channeled-target Features too');
+  await action('channel-pokemon',{entityId:links[0],data:{intuitionCheck:15}});await action('bind',{entityId:links[0],featureIndex:1});trainer.details.features[2].bound=true;trainer.details.features[2].boundTargetIds=['one'];trainer.details.currentAp-=2;
+  const deletedId=links[0];await action('delete',{entityId:deletedId});assert.equal(trainer.details.currentAp,11,'deleting a Channel link releases AP for the linked Pokémon too');assert(!trainer.details.features[2].bound);
+  links[0]=(await action('create',{data:{kind:'pokemon_link',pokemonId:'one',hostile:false}})).entityId;
+  await action('position',{entityId:links[0],data:{distance:21}});await action('channel-pokemon',{entityId:links[0],data:{intuitionCheck:15}},/20 meters/);
+  await action('channel-pokemon',{entityId:links[2]});await action('bind',{entityId:links[2],featureIndex:1});pokemon=pokemon.filter(p=>p.id!=='three');await action('sync');assert.equal(trainer.details.currentAp,11);assert(!trainer.details.boundEntities.find(e=>e.id===links[2]).channeling);
+  await action('position',{entityId:links[0],data:{distance:1}});await action('channel-pokemon',{entityId:links[0]});await action('bind',{entityId:links[0],featureIndex:1});trainer.details.features=trainer.details.features.filter(f=>f.id!=='channeler');await action('sync');assert.equal(trainer.details.currentAp,11);assert(!trainer.details.boundEntities.find(e=>e.id===links[0]).channeling);
  }
  const invalid=fixture();invalid.details.currentAp='bad';assert.throws(()=>previewBoundEntityAction({trainer:invalid,...deps,action:'create',data:{kind:'external_trainer',name:'Bad'}}),/Current AP/);
  const disabled={...deps,getDefinition:q=>q.kind==='features'?null:deps.getDefinition(q)};assert.throws(()=>previewBoundEntityAction({trainer:fixture(),...disabled,action:'create',inventory:[{id:'cleanse-tag',qty:1}],data:{kind:'glyph',name:'Disabled'}}),/Editation version enabled/);
@@ -96,5 +125,20 @@ try{
   sandbox.styledConfirm=async()=>true;await sandbox.applyBoundEntityAction('create');assert.equal(committed,1);assert.equal(trainer.details.boundEntities[0].id,'new');
   sandbox.styledConfirm=async()=>{state.ui.scene++;return true;};await sandbox.applyBoundEntityAction('create');assert.equal(committed,1,'stale previews cannot overwrite newer state');
  }
- console.log('Issue #69 entities: Windows/Android API parity, Glyph HP/alarms/AP/limits, Marks/consent/focus, Soul Weapon choices/equipment/beckoning, persistence and atomic UI passed.');
+ for(const path of ['static-preview','../PTU_Companion_Android_Tauri/www']){
+  const trainer=fixture(),td=trainer.details;td.features=[{id:'channeler'},{id:'shared-senses',bound:true,boundTargetIds:['bound-entity-one'],boundApCostEach:1}];td.currentAp=10;td.currentHp=0;td.boundEntities=[{id:'bound-entity-one',kind:'pokemon_link',pokemonId:'one',name:'One',distance:1,channeling:true}];td.boundEntityState={sensoryFocusId:'bound-entity-one'};
+  const saved=[],sandbox=vm.createContext({trainer:()=>trainer,state:{pokemon:[{id:'one',name:'One'}],ui:{}},trainerResolved:()=>null,trainerMaxAp:()=>11,invalidateTrainerReference(){},persist(){saved.push(structuredClone(trainer));},toast(){},render(){}});
+  vm.runInContext(await readFile(join(root,path,'channel-links.js'),'utf8'),sandbox);vm.runInContext(await readFile(join(root,path,'bound-entities-ui.js'),'utf8'),sandbox);
+  const app=await readFile(join(root,path,'app.js'),'utf8');vm.runInContext(app.match(/function commit\(message\)\{[^\r\n]+/)[0],sandbox);sandbox.commit('Fainted');
+  assert.equal(saved[0].details.currentAp,11,'commit persists automatic AP refund');assert(!saved[0].details.boundEntities[0].channeling);assert.equal(saved[0].details.boundEntityState.sensoryFocusId,null);
+  sandbox.pokemon=()=>({name:'Unrelated selected Pokémon'});vm.runInContext(app.match(/function trainerFeatureTargetLabel\(id\)\{[^\r\n]+/)[0],sandbox);assert.equal(sandbox.trainerFeatureTargetLabel('bound-entity-one'),'One','entity labels take precedence over the selected Pokémon fallback');
+  const pending=[],owner=fixture(),race=vm.createContext({trainer:()=>owner,location:{protocol:'http:'},state:{ui:{screen:'dashboard'}},fetch:()=>new Promise(resolve=>pending.push(resolve)),reconcileTrainerChannelState:()=>false,persist(){},render(){}});
+  vm.runInContext(app.slice(app.indexOf('let trainerReferenceSequence='),app.indexOf('let pokemonRestatState=')),race);
+  const old=race.loadTrainerReferenceData(true);owner.details.currentAp=10;race.invalidateTrainerReference();const recent=race.loadTrainerReferenceData(true);
+  const response=max=>({ok:true,json:async()=>({resolvedTrainer:{derived:{availableMaxAp:max}}})});
+  pending[1](response(10));await recent;pending[0](response(11));await old;
+  assert.equal(race.trainerResolved().derived.availableMaxAp,10,'an older response must not replace the latest model');
+  const changed=race.loadTrainerReferenceData(true);owner.details.currentAp=9;pending[2](response(10));await delay(0);assert.equal(pending.length,4,'mutation without invalidation triggers a fresh calculation');pending[3](response(9));await changed;assert.equal(race.trainerResolved().derived.availableMaxAp,9);
+ }
+ console.log('Issue #69 entities: Windows/Android APIs, Glyph/Mark/Weapon, Channeler/Shared Senses limits/range/focus/cleanup, persistence and atomic UI passed.');
 }finally{definitions.close();child.kill();await delay(300);await rm(dataDir,{recursive:true,force:true});}

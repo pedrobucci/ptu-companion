@@ -17,7 +17,7 @@ com 1.278 arquivos rastreados ausentes, foi preservado. O lote está na branch
 | #33 | Índice permanente | Permanece aberto como roadmap. |
 | #57 | Correção complementar | Cluster Mind já entregue. Encontrada divergência no motor Android: comparação com o objeto `moveLimit`, em vez de `moveLimit.effective`, na progressão. Corrigida, com teste negativo de limite. Falta validação no app. |
 | #59 | Entregue anteriormente | Combat Stages. Regressões mantidas; falta validação no app. |
-| #69 | Parcial, ampliada neste lote | Pedro escolheu entidades próprias com estado e controles. Implementados Glyph/Alarm Runes, pessoa externa para Mark of Vision e arma própria para Soul Bond/Soul Investment, com AP, limites, consentimento, foco e persistência. Permanecem outros efeitos: Shared Senses/Channeler, itens/gadgets concedidos, tokens, escolhas de Stance, efeitos defensivos/por tipo/por evento, iniciativa e alterações de range/crit/effect. Explosive Runes cobre a explosão automática do Alarm Rune; ativação independente e resolução completa do ataque ainda não estão automatizadas. |
+| #69 | Parcial, ampliada neste lote e na continuação | Pedro escolheu entidades próprias com estado e controles. Implementados Glyph/Alarm Runes, pessoa externa para Mark of Vision e arma própria para Soul Bond/Soul Investment na PR #108. A continuação acrescenta Channeler/Shared Senses com vínculos a Pokémon existentes, distância, foco por rodada e limpeza automática/AP. Permanecem itens/gadgets concedidos, tokens, escolhas de Stance, Spirit Boost e demais efeitos defensivos/por tipo/por evento, iniciativa e alterações de range/crit/effect. Explosive Runes cobre a explosão automática do Alarm Rune; ativação independente e resolução completa do ataque ainda não estão automatizadas. |
 | #71 | Entregue anteriormente | JSON de Pokémon, cópia/substituição e preservação de vínculos. Falta validação no app. |
 | #74 | Implementada neste lote | Pais opcionais, decisão de Pedro em 24/10. Criação usa o builder existente e confirma traits antes de registrar o Pokémon/consumir uso. Edição acessível pela ficha, inclusive fora de roster. Reutiliza This One’s Special e seus limites já aprovados; dados individuais, sem alterar catálogo. |
 | #76 | Entregue anteriormente | Field Clinic na categoria Edge e com gating de Ruleset. Falta validação no app. |
@@ -99,6 +99,43 @@ permanece aberta pelos efeitos restantes acima.
   por APK; não encerrar pendências de validação por inferência.
 - Nenhum pacote de instalação foi gerado por este lote; versões permanecem as
   da base. Merge e publicação seguem aprovação do proprietário em `AGENTS.md`.
+
+## Continuação após o merge da PR #108
+
+Base: merge `1065db0`, de 24/10/2026. Branch `codex/bind-sensory-links`.
+Fonte conferida diretamente no PDF: Core 1.05 p.179, incluindo o parágrafo
+Mechanic de Channeler que não consta no texto reduzido do catálogo.
+
+- Channeler vincula Pokémon já existentes na campanha. Ativação Swift, limite
+  por Intuition, Check DC 15 para hostis, parar como Free e distância de 20 m.
+  Posição, hostilidade e aliança são informações fornecidas pela mesa.
+- Shared Senses aceita somente Pokémon Channeled e reserva 1 AP por Imprint.
+  Permite múltiplos Imprints, remove o limite de distância e mantém um foco
+  sensorial, com uma escolha de Pokémon por rodada (chave dia/Scene/round).
+  Encerrar concentração não libera a escolha para trocar novamente na rodada.
+- Parar Channeling, desmaiar, excluir o Pokémon/vínculo ou retirar Channeler
+  encerra Imprints e devolve AP. Outros vínculos que exigem alvo Channeled também
+  são liberados. Remover Imprint a mais de 20 m encerra Channeling imediatamente.
+- Regras de limpeza compartilhadas entre API e UI, com histórico e save/reload.
+  Fichas antigas sem entidades Pokémon novas mantêm os vínculos legados até
+  liberação explícita; esta continuação não presume migração de Channeling.
+- Corrigida concorrência no carregamento da ficha: resposta antiga ou calculada
+  para uma versão anterior do Trainer não substitui o modelo atual. O navegador
+  reproduziu perda de um AP reembolsado devido ao limite disponível desatualizado;
+  a correção preserva o saldo e é coberta com respostas fora de ordem.
+- Nomes dos alvos Bound priorizam a entidade correta sobre o fallback do Pokémon
+  selecionado, evitando mostrar o mesmo nome em dois vínculos distintos.
+
+Verificação: duas suítes completas `npm run verify` aprovadas; regressão #69
+ampliada e reexecutada após os ajustes finais de limpeza/rótulos. O harness de
+compatibilidade passou a carregar os scripts da página antes de `app.js`.
+Navegador real validou Windows e Android 390 px: cadastro, Check, Channel,
+Imprints, foco, distância, unbind, desmaio com AP e reload, sem erros JavaScript
+ou overflow horizontal. Logs `E:\ptu-docker-maintenance\channel-{windows,android}-verify.log`;
+evidências `backlog-oct24-ui/{windows,android}-shared-senses.png`.
+
+A #69 permanece parcial pelos demais efeitos listados na tabela. Não foram
+alteradas versões nem gerados novos APK/EXE nesta continuação.
 
 ## Armazenamento
 
