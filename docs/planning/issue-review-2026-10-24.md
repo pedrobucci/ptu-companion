@@ -17,7 +17,7 @@ com 1.278 arquivos rastreados ausentes, foi preservado. O lote está na branch
 | #33 | Índice permanente | Permanece aberto como roadmap. |
 | #57 | Correção complementar | Cluster Mind já entregue. Encontrada divergência no motor Android: comparação com o objeto `moveLimit`, em vez de `moveLimit.effective`, na progressão. Corrigida, com teste negativo de limite. Falta validação no app. |
 | #59 | Entregue anteriormente | Combat Stages. Regressões mantidas; falta validação no app. |
-| #69 | Parcial, em andamento | Bind/AP e parte dos efeitos de combate já entregues. Permanecem efeitos que exigem estado/fluxos próprios: itens concedidos, runas, tokens, vínculos sensoriais, escolhas de Stance, efeitos defensivos/por tipo/por evento, iniciativa e alterações de range/crit/effect. Não declarar completa com base apenas na reserva de AP ou exibição de texto. |
+| #69 | Parcial, ampliada neste lote | Pedro escolheu entidades próprias com estado e controles. Implementados Glyph/Alarm Runes, pessoa externa para Mark of Vision e arma própria para Soul Bond/Soul Investment, com AP, limites, consentimento, foco e persistência. Permanecem outros efeitos: Shared Senses/Channeler, itens/gadgets concedidos, tokens, escolhas de Stance, efeitos defensivos/por tipo/por evento, iniciativa e alterações de range/crit/effect. Explosive Runes cobre a explosão automática do Alarm Rune; ativação independente e resolução completa do ataque ainda não estão automatizadas. |
 | #71 | Entregue anteriormente | JSON de Pokémon, cópia/substituição e preservação de vínculos. Falta validação no app. |
 | #74 | Implementada neste lote | Pais opcionais, decisão de Pedro em 24/10. Criação usa o builder existente e confirma traits antes de registrar o Pokémon/consumir uso. Edição acessível pela ficha, inclusive fora de roster. Reutiliza This One’s Special e seus limites já aprovados; dados individuais, sem alterar catálogo. |
 | #76 | Entregue anteriormente | Field Clinic na categoria Edge e com gating de Ruleset. Falta validação no app. |
@@ -41,9 +41,47 @@ com 1.278 arquivos rastreados ausentes, foi preservado. O lote está na branch
 - February 2016 Playtest Packet **p.2**: cinco revisões de status. O histórico
   anterior citava p.1; o texto das regras está na segunda página do PDF fornecido.
 - PTU 1.05 Editation pp.13–14: Caretaking, reutilizado da entrega #89.
+- PTU 1.05 Editation p.42, pp.47–50 e pp.54–55: Mark of Vision, Glyph,
+  Alarm/Explosive Runes, Arcanist, Soul Investment e opções de Arcane Weapon Moves.
+
+## Entidades da #69
+
+Decisão recebida de Pedro: criar entidades próprias com estado e controles
+específicos. As entidades ficam em `trainer.details.boundEntities`, com histórico
+e foco próprios, preservados pelo save SQLite/Android existente.
+
+- Glyph: consome Cleanse Tag, HP igual ao nível, limite por Occult Education,
+  colocação Extended ou Swift por 1 AP, visibilidade, dano/destruição e Channel.
+- Alarm Runes: múltiplos alvos, trigger registrado, alcance de 30 m, uma ativação
+  por Scene, silenciar como Free Action. Explosão automática registra Hidden Power
+  com stats do Trainer, custa 1 AP e respeita um Glyph por rodada. Falta de AP,
+  Move ou disponibilidade da explosão mantém o disparo do alarme.
+- Pessoa externa: consentimento, posição, Mark of Vision limitado à metade de
+  Perception, um foco sensorial por vez. Negar acesso mantém AP reservado;
+  retirar consentimento encerra o vínculo e devolve AP.
+- Arma: definição Arcane do Ruleset, vínculo físico opcional a uma mão equipada,
+  distância/portador, Soul Bond único, beckon até 10 m com conferência do teste
+  oposto quando necessário. Soul Investment exige escolhas Adept/Master válidas;
+  os Moves usam a arma correta e ficam indisponíveis se ela não estiver empunhada.
+  Outra arma idêntica em outra mão não é afetada pela distância da primeira.
+- Toda alteração passa por prévia/confirmação e verificação de estado concorrente.
+  Cancelamento preserva AP/inventário; destruição, exclusão e troca de Soul Bond
+  liberam os vínculos correspondentes sem consumir recursos de outro alvo.
+
+Os controles são assistidos pela mesa: não detectam deslocamento/consentimento
+automaticamente nem resolvem ataques contra alvos ausentes da campanha. A #69
+permanece aberta pelos efeitos restantes acima.
 
 ## Verificação e limites
 
+- `verify_issue69_bound_entities.mjs`: APIs reais Windows/Android, custos/limites,
+  destruição, alarme sem explosão, consentimento/foco, arma/distância/teste oposto,
+  escolhas de Moves, mão vinculada, save/reload, cancelamento e prévia obsoleta.
+  Incluído nas duas suítes `npm run verify`, ambas aprovadas nesta continuação.
+  Logs em `E:\ptu-docker-maintenance\entities-{windows,android}-verify.log`.
+- Navegador real validou os novos formulários e controles, AP e reload em Windows
+  e Android 390 px, sem erro JavaScript ou overflow horizontal. Evidências
+  `windows-bound-entities.png` e `android-bound-entities.png` na pasta abaixo.
 - `verify_issue99_106_107.mjs`: APIs Windows/Android, Special de Moves,
   Trainer/Pokémon, deduplicação, valor mínimo, alternativas, alvo inválido/repetido,
   condição desconhecida do Trainer, fonte ativa dos status, cancelamento e criação

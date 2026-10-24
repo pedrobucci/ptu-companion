@@ -1,3 +1,7 @@
+export const ENTITY_MOVE_TIERS={
+  adept:['arcane-fury','energy-blast','energy-sphere','rending-spell','resonance-beam','secret-force','magic-weapon','touch-of-fatigue','arcane-ray','merciful-smite'],
+  master:['arcane-storm','bane','cone-of-force','energy-vortex','magic-burst','spirit-lance','magic-missile','mage-armor','enervation']
+};
 const SLOT_ALIASES={
   head:'head',body:'body',main_hand:'mainHand',mainhand:'mainHand',mainHand:'mainHand',
   off_hand:'offHand',offhand:'offHand',offHand:'offHand',feet:'feet',foot:'feet',accessory:'accessory'

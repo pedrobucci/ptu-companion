@@ -1,3 +1,4 @@
+import {previewBoundEntityAction} from './rules/bound-entities.mjs';
 import {pusherExperienceGain,resolvePushedSkills,previewSkillTrainer,hasCaretakingFeature,applyCaretakingSpecies,previewRebalancing,previewThisOnesSpecial} from './pokemon-caretaking.mjs';
 import {resolveMoveCapabilities} from './rules/move-capabilities.mjs';
 import {BASIC_RANGED_CAPABILITIES} from './rules/poke-edge-normalization.mjs';
@@ -1037,6 +1038,12 @@ async function handleApi(req,res,url){
     return json(res,200,{rulesetId,currentSpecies:{id:species.id,name:species.name,types:species.types||[],versionId:species.versionId,contentPackId:species.contentPackId,sourceId:species.sourceId},formResolution:progressionFormResolution,evolutionCandidates:candidates,preview});
   }
 
+  if(req.method==='POST' && url.pathname==='/api/trainer/bound-entity-preview'){
+    const payload=await bodyJson(req),rulesetId=String(payload.rulesetId||getActiveRuleset());
+    if(!definitions.getRuleset(rulesetId))throw Object.assign(new Error('Unknown ruleset'),{status:400});
+    const result=previewBoundEntityAction({...payload,rulesetId,getDefinition:args=>definitions.getResolved(args),getDamageBase:db=>definitions.getDamageBase(db),listDefinitions:args=>definitions.listResolved(args)});
+    return json(res,200,result);
+  }
   if(req.method==='POST' && url.pathname==='/api/trainer/reference-data'){
     const payload=await bodyJson(req);
     const rulesetId=String(payload.rulesetId||getActiveRuleset());
