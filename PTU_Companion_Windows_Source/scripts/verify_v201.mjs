@@ -120,6 +120,7 @@ assert(pkg.version==='2.1.0-beta.37','package.json version is not the beta versi
   let asyncFailure=null;
   const rejection=e=>{asyncFailure=e;};
   process.once('unhandledRejection',rejection);
+  for(const file of ['channel-links.js','bound-entities-ui.js'])vm.runInContext(readFileSync(join(root,'static-preview',file),'utf8'),sandbox,{filename:`static-preview/${file}`});
   vm.runInContext(app,sandbox,{filename:'static-preview/app.js'});
   await new Promise(r=>setTimeout(r,40));
   process.removeListener('unhandledRejection',rejection);

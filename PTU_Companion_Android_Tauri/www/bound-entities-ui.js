@@ -1,9 +1,9 @@
 let boundEntityBusy=false;
 function trainerBoundEntities(){return trainer().details?.boundEntities||[];}
 function boundEntityHasBinding(entity,id){return (trainer().details?.features||[]).some(f=>f.id===id&&f.bound&&(f.boundTargetIds||[]).includes(entity.id));}
-function boundEntityUiSnapshot(){return JSON.stringify({trainer:trainer(),inventory:state.inventory,day:state.ui.day,scene:state.ui.scene,round:state.ui.round,ruleset:catalogState.status?.activeRulesetId});}
+function boundEntityUiSnapshot(){return JSON.stringify({trainer:trainer(),inventory:state.inventory,pokemon:state.pokemon,day:state.ui.day,scene:state.ui.scene,round:state.ui.round,ruleset:catalogState.status?.activeRulesetId});}
 async function boundEntityPreview(action,fields={}){
-  const response=await fetch('/api/trainer/bound-entity-preview',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({trainer:trainer(),inventory:state.inventory,rulesetId:catalogState.status?.activeRulesetId,context:{day:state.ui.day||1,scene:state.ui.scene||1,round:state.ui.round||1},action,...fields})});
+  const response=await fetch('/api/trainer/bound-entity-preview',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({trainer:trainer(),inventory:state.inventory,pokemon:state.pokemon,rulesetId:catalogState.status?.activeRulesetId,context:{day:state.ui.day||1,scene:state.ui.scene||1,round:state.ui.round||1},action,...fields})});
   const result=await response.json();if(!response.ok||!result.valid)throw new Error(result.error||'Entity action could not be resolved.');return result;
 }
 async function applyBoundEntityAction(action,fields={}){
@@ -18,8 +18,9 @@ async function applyBoundEntityAction(action,fields={}){
 }
 async function createTrainerBoundEntity(kind){
   try{
-    const options=await boundEntityPreview('options'),labels={glyph:'Glyph',weapon:'Arcane Weapon',external_trainer:'External Trainer'};
-    const fields=[{name:'name',label:'Name',value:''}];
+    const options=await boundEntityPreview('options'),labels={glyph:'Glyph',weapon:'Arcane Weapon',external_trainer:'External Trainer',pokemon_link:'Pokémon Channel Link'};
+    const fields=kind==='pokemon_link'?[]:[{name:'name',label:'Name',value:''}];
+    if(kind==='pokemon_link'){const choices=(state.pokemon||[]).filter(p=>!trainerBoundEntities().some(e=>e.kind==='pokemon_link'&&e.pokemonId===p.id));if(!choices.length)return toast('Add an unlinked Pokémon to the campaign first.','error');fields.push({name:'pokemonId',label:'Campaign Pokémon',type:'select',value:choices[0].id,options:choices.map(p=>({value:p.id,label:p.name||p.species}))},{name:'hostile',label:'Hostile?',type:'select',value:'no',options:[{value:'no',label:'No'},{value:'yes',label:'Yes · Intuition DC 15'}]},{name:'allied',label:'Allied with other Channeled Pokémon?',type:'select',value:'yes',options:[{value:'yes',label:'Yes'},{value:'no',label:'No'}]});}
     if(kind==='glyph')fields.push({name:'location',label:'Surface / location',value:''},{name:'swift',label:'Placement',type:'select',value:'no',options:[{value:'no',label:'Extended Action · one Cleanse Tag'},{value:'yes',label:'Swift Action · 1 AP + one Cleanse Tag'}]},{name:'visible',label:'Visible when placed?',type:'select',value:'no',options:[{value:'no',label:'Invisible'},{value:'yes',label:'Visible'}]});
     if(kind==='weapon'){
       if(!options.items.length)return toast('No Arcane Weapons are available in the active Ruleset.','error');
@@ -29,16 +30,16 @@ async function createTrainerBoundEntity(kind){
     if(kind==='weapon')fields.push({name:'heldByOther',label:'Held by someone unwilling to release it?',type:'select',value:'no',options:[{value:'no',label:'No'},{value:'yes',label:'Yes'}]});
     if(kind==='external_trainer')fields.push({name:'direction',label:'Direction / location',value:''},{name:'willing',label:'Consents to Mark of Vision?',type:'select',value:'yes',options:[{value:'yes',label:'Yes'},{value:'no',label:'No'}]});
     fields.push({name:'notes',label:'Notes',type:'textarea',rows:2,value:''});
-    const value=await styledForm({title:`Register ${labels[kind]}`,subtitle:kind==='weapon'?'Link a weapon that exists in the campaign. This does not create an inventory item.':kind==='glyph'?'Glyph HP equals Trainer Level; active Glyphs are limited by Occult Education Rank.':'Track consent, position and sensory access for this person.',fields,submitLabel:'Review entity'});if(!value)return;
-    return applyBoundEntityAction('create',{data:{...value,kind,swift:value.swift==='yes',visible:value.visible==='yes',heldByOther:value.heldByOther==='yes',willing:value.willing==='yes'}});
+    const value=await styledForm({title:`Register ${labels[kind]}`,subtitle:kind==='weapon'?'Link a weapon that exists in the campaign. This does not create an inventory item.':kind==='pokemon_link'?'Link a campaign Pokémon, then use Channel. Core 1.05 p.179.':kind==='glyph'?'Glyph HP equals Trainer Level; active Glyphs are limited by Occult Education Rank.':'Track consent, position and sensory access for this person.',fields,submitLabel:'Review entity'});if(!value)return;
+    return applyBoundEntityAction('create',{data:{...value,kind,swift:value.swift==='yes',visible:value.visible==='yes',heldByOther:value.heldByOther==='yes',willing:value.willing==='yes',hostile:value.hostile==='yes',allied:value.allied==='yes'}});
   }catch(error){toast(error.message,'error');}
 }
 async function openTrainerEntityBinding(index,targetId=null,preferredId=null){
   const feature=trainer().details?.features?.[index];if(!feature)return;
   if(targetId!=null)return applyBoundEntityAction('unbind',{entityId:targetId,featureIndex:index});
   try{
-    const options=await boundEntityPreview('options'),kind={'alarm-runes':'glyph','mark-of-vision':'external_trainer','soul-investment':'weapon'}[feature.id];
-    const entities=trainerBoundEntities().filter(e=>e.kind===kind&&e.active!==false&&(kind!=='glyph'||e.hp>0)&&!(feature.boundTargetIds||[]).includes(e.id));
+    const options=await boundEntityPreview('options'),kind={'alarm-runes':'glyph','mark-of-vision':'external_trainer','soul-investment':'weapon','shared-senses':'pokemon_link'}[feature.id];
+    const entities=trainerBoundEntities().filter(e=>e.kind===kind&&(kind!=='pokemon_link'||e.channeling)&&e.active!==false&&(kind!=='glyph'||e.hp>0)&&!(feature.boundTargetIds||[]).includes(e.id));
     if(!entities.length)return toast('Register an eligible entity in Bound Entities below.','error');
     const fields=[{name:'entityId',label:'Target entity',type:'select',value:entities.find(e=>e.id===preferredId)?.id||entities[0].id,options:entities.map(e=>({value:e.id,label:e.name}))}];
     if(feature.id==='alarm-runes')fields.push({name:'trigger',label:'Trigger',type:'textarea',rows:2,value:''},{name:'explosive',label:'Use Explosive Runes when triggered?',type:'select',value:'no',options:[{value:'no',label:'Alarm only'},{value:'yes',label:'Hidden Power · Free Action · 1 AP'}]});
@@ -53,13 +54,15 @@ async function openTrainerEntityBinding(index,targetId=null,preferredId=null){
 }
 async function trainerBoundEntityControl(id,action){
   const entity=trainerBoundEntities().find(e=>e.id===id);if(!entity)return;
+  if(action==='view-pokemon')return selectPokemon(entity.pokemonId,true);
   let data={};
-  if(action==='damage'){
+  if(action==='channel-pokemon'&&entity.hostile){const v=await styledForm({title:`Channel · ${entity.name}`,fields:[{name:'intuitionCheck',label:'Intuition Check total (DC 15)',type:'number',min:0,value:15}],submitLabel:'Review Channel'});if(!v)return;data=v;}
+  else if(action==='damage'){
     const v=await styledForm({title:`Damage · ${entity.name}`,fields:[{name:'amount',label:'Damage',type:'number',min:1,value:1}],submitLabel:'Review damage'});if(!v)return;data=v;
   }else if(action==='trigger'){
     const v=await styledForm({title:`Trigger · ${entity.name}`,subtitle:entity.trigger,fields:[{name:'distance',label:'Trigger distance from Glyph (meters; maximum 30)',type:'number',min:0,max:30,value:0}],submitLabel:'Review trigger'});if(!v)return;data=v;
   }else if(action==='position'){
-    const v=await styledForm({title:`Position · ${entity.name}`,fields:[{name:'distance',label:'Distance from Trainer (meters)',type:'number',min:0,value:entity.distance||0},{name:'direction',label:'Direction / location',value:entity.direction||''},...(entity.kind==='weapon'?[{name:'equipmentSlot',label:'Linked equipped slot',type:'select',value:entity.equipmentSlot||'',options:[{value:'',label:'Not equipped'},{value:'mainHand',label:'Main hand'},{value:'offHand',label:'Off hand'}]},{name:'heldByOther',label:'Held by an unwilling holder?',type:'select',value:entity.heldByOther?'yes':'no',options:[{value:'no',label:'No'},{value:'yes',label:'Yes'}]}]:[])],submitLabel:'Review position'});if(!v)return;data={...v,heldByOther:v.heldByOther==='yes'};
+    const v=await styledForm({title:`Position · ${entity.name}`,fields:[{name:'distance',label:'Distance from Trainer (meters)',type:'number',min:0,value:entity.distance||0},{name:'direction',label:'Direction / location',value:entity.direction||''},...(entity.kind==='pokemon_link'?[{name:'hostile',label:'Hostile?',type:'select',value:entity.hostile?'yes':'no',options:[{value:'no',label:'No'},{value:'yes',label:'Yes'}]},{name:'allied',label:'Allied?',type:'select',value:entity.allied?'yes':'no',options:[{value:'yes',label:'Yes'},{value:'no',label:'No'}]}]:[]),...(entity.kind==='weapon'?[{name:'equipmentSlot',label:'Linked equipped slot',type:'select',value:entity.equipmentSlot||'',options:[{value:'',label:'Not equipped'},{value:'mainHand',label:'Main hand'},{value:'offHand',label:'Off hand'}]},{name:'heldByOther',label:'Held by an unwilling holder?',type:'select',value:entity.heldByOther?'yes':'no',options:[{value:'no',label:'No'},{value:'yes',label:'Yes'}]}]:[])],submitLabel:'Review position'});if(!v)return;data={...v,heldByOther:v.heldByOther==='yes',hostile:v.hostile==='yes',allied:v.allied==='yes'};
   }else if(action==='beckon'&&entity.heldByOther){
     const ok=await styledConfirm({title:'Opposed Check',confirmLabel:'Check succeeded',message:'<p>Did your Occult Education beat the unwilling holder’s Athletics Check?</p>'});if(!ok)return;data.opposedCheckSucceeded=true;
   }else if(action==='access')data.denied=!entity.accessDenied;
@@ -84,6 +87,11 @@ function trainerBoundEntityPanel(){
     }else if(entity.kind==='weapon'){
       details=`${esc(entity.itemId)} · ${esc(entity.equipmentSlot||'Not equipped')} · ${entity.distance} m · ${entity.soulBonded?'SOUL BONDED':'No Soul Bond'}${entity.heldByOther?' · unwilling holder':''}${invested?`<p>Invested Moves: ${(entity.investmentMoves||[]).map(esc).join(', ')}</p>`:''}`;
       if(active)buttons=control(entity,'position','Position')+(entity.soulBonded?control(entity,'beckon','Beckon · Shift')+(invested?'':bindButton(entity,'soul-investment','Bind Soul Investment')):control(entity,'soul-bond','Form Soul Bond · Extended'));
+    }else if(entity.kind==='pokemon_link'){
+      const imprinted=boundEntityHasBinding(entity,'shared-senses');
+      details=`${entity.channeling?'CHANNELED':'Not Channeling'} · ${entity.distance} m · ${entity.hostile?'Hostile':'Not hostile'}${imprinted?' · IMPRINTED · distance exemption':''}${entity.allied?' · Allied':''}${focus.sensoryFocusId===entity.id?'<p><strong>In focus:</strong> receiving this Pokémon’s senses.</p>':''}`;
+      if(entity.channeling)details+='<p>Honest emotional communication; Moves, Abilities and Capabilities known. Allied Channeled Pokémon can attempt Intercept for each other regardless of Loyalty.</p>';
+      buttons=control(entity,'view-pokemon','Pokémon sheet')+control(entity,'position','Position')+(entity.channeling?control(entity,'stop-channel','Stop Channeling · Free')+(imprinted?control(entity,'focus-senses','Concentrate on senses')+(focus.sensoryFocusId===entity.id?control(entity,'stop-focus','Stop concentrating'):''):bindButton(entity,'shared-senses','Bind Shared Senses')):control(entity,'channel-pokemon','Channel · Swift'));
     }else{
       details=`${entity.willing?'Consenting':'Consent withdrawn'} · ${entity.accessDenied?'Sensory access denied':'Access permitted'} · ${entity.distance} m ${esc(entity.direction||'')}${marked?' · MARKED':''}${focus.markFocusId===entity.id?'<p><strong>In focus:</strong> perceiving this Trainer’s senses.</p>':''}`;
       if(active)buttons=control(entity,'position','Position')+control(entity,'consent',entity.willing?'End mark / withdraw consent':'Consent')+(marked?control(entity,'access',entity.accessDenied?'Restore access':'Deny access')+(!entity.accessDenied&&entity.willing?control(entity,'focus','Concentrate'):'')+(focus.markFocusId===entity.id?control(entity,'stop-focus','Stop concentrating'):''):bindButton(entity,'mark-of-vision','Bind Mark of Vision'));
@@ -92,5 +100,13 @@ function trainerBoundEntityPanel(){
   }).join('');
   const create=(kind,label)=>`<button class="btn btn-small btn-primary" onclick="createTrainerBoundEntity('${kind}')">＋ ${label}</button>`;
   const history=(td.boundEntityHistory||[]).slice(-5).reverse().map(e=>`<li>${esc(e.events.join(' '))} · AP ${e.apBefore} → ${e.apAfter}</li>`).join('');
-  return section('BOUND ENTITIES',`<div class="row-gap">${create('glyph','Place Glyph')}${create('weapon','Link Arcane Weapon')}${create('external_trainer','External Trainer')}</div><div class="trainer-option-grid">${rows||'<p class="muted">No entities registered.</p>'}</div>${history?`<details><summary>Recent entity actions</summary><ul>${history}</ul></details>`:''}<p class="muted">Editation: Mark of Vision p.42; Glyph and Alarm Runes pp.47–48; Arcanist and Soul Investment pp.49–50. Bind controls use the active Ruleset.</p>`);
+  return section('BOUND ENTITIES',`<div class="row-gap">${create('glyph','Place Glyph')}${create('weapon','Link Arcane Weapon')}${create('external_trainer','External Trainer')}${create('pokemon_link','Pokémon Channel Link')}</div><div class="trainer-option-grid">${rows||'<p class="muted">No entities registered.</p>'}</div>${history?`<details><summary>Recent entity actions</summary><ul>${history}</ul></details>`:''}<p class="muted">Core p.179: Channeler / Shared Senses. Editation: Mark of Vision p.42; Glyph and Alarm Runes pp.47–48; Arcanist and Soul Investment pp.49–50. Bind controls use the active Ruleset.</p>`);
+}
+
+function reconcileTrainerChannelState(){
+  const t=trainer(),sources=trainerResolved()?.sourceSummary||[],events=globalThis.reconcileTrainerChannels(t,state.pokemon||[],{
+    maxAp:Number(t.derived?.maxAp||trainerMaxAp(t)),
+    getBinding:f=>sources.find(s=>s.id===f.id)?.binding||null,
+    getFeatureSource:f=>{if(f.definitionVersionId&&!String(f.definitionVersionId).endsWith('@core'))return null;const source=sources.find(s=>s.id===f.id);return source?source.sourceId:!trainerResolved()?'core':null;}
+  });return events.length>0;
 }

@@ -747,7 +747,7 @@ function resolveTrainerModel({trainer,rulesetId,getDefinition,getDamageBase,stat
   model.struggleAttack=resolveStruggleAttack(model,t,getDamageBase);
   model.moves=[...model._moveMap.values()].map(move=>{const unavailable=move.sources.length&&move.sources.every(s=>s.metadata?.unavailableReason);return {...move,unavailableReason:unavailable?move.sources[0].metadata.unavailableReason:null,resolvedDamage:unavailable?null:resolveMoveDamageForTrainer(model,move,t,getDamageBase)};}).sort((a,b)=>a.name.localeCompare(b.name));
   model.stabTypes=[...model.stabTypes];
-  model.sourceSummary=sources.map(s=>({kind:s.kind,id:s.id,name:s.name,recordIndex:s.recordIndex,tags:s.tags,selections:s.selections,bound:s.bound,boundTargetIds:s.boundTargetIds,binding:s.binding,automation:s.definition?.semanticAutomation||null,rankedLimit:rankedLimit(s.tags)}));
+  model.sourceSummary=sources.map(s=>({kind:s.kind,id:s.id,name:s.name,recordIndex:s.recordIndex,sourceId:s.definition?.sourceId||null,tags:s.tags,selections:s.selections,bound:s.bound,boundTargetIds:s.boundTargetIds,binding:s.binding,automation:s.definition?.semanticAutomation||null,rankedLimit:rankedLimit(s.tags)}));
   delete model.sourceSummaryRaw;
   delete model._moveMap;
   return model;
