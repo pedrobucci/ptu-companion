@@ -1,3 +1,5 @@
+import {ENTITY_MOVE_TIERS} from './item-metadata.mjs';
+import {resolveMoveCapabilities} from './move-capabilities.mjs';
 const TRAINER_SKILLS=[
   'Acrobatics','Athletics','Combat','Intimidate','Stealth','Survival',
   'General Education','Medicine Education','Occult Education','Pokémon Education','Technology Education','Guile','Perception',
@@ -424,6 +426,7 @@ function applyEquipment(model,trainer,ctx){
     // weapons keep their mechanics in raw.mechanics, while built-in/save-era
     // weapons may already carry the same payload directly on the equipped item.
     const id=equipmentDefinitionId(typeof value==='object'?(value.definitionId||value.id||value.name):value);
+    if((trainer.details?.boundEntities||[]).some(e=>e.kind==='weapon'&&e.active!==false&&e.equipmentSlot===slot&&e.itemId===id&&(e.distance>0||e.heldByOther)))continue;
     const def=id?resolveDefinition(ctx.getDefinition,ctx.rulesetId,'items',id):null;
     const definitionMechanics=def?.raw?.mechanics&&typeof def.raw.mechanics==='object'?def.raw.mechanics:null;
     const embedded=typeof value==='object'?(value.mechanics||value.weapon||definitionMechanics):definitionMechanics;
@@ -651,7 +654,7 @@ function resolveTrainerModel({trainer,rulesetId,getDefinition,getDamageBase,stat
       const definition=resolveDefinition(getDefinition,rulesetId,defKind,record)||null;
       const source=sourceRecord({kind,record,definition,recordIndex}); sources.push(source);
       if(kind==='feature')applyFeatureTags(model,source);
-      for(const effect of definition?.compiledEffects||record.compiledEffects||[])applyCompiledEffect(model,effect,source,ctx);
+      for(const effect of definition?.compiledEffects||record.compiledEffects||[]){if(source.id==='soul-investment'&&source.definition?.sourceId==='edit'&&effect.kind==='choose_and_grant_entity')continue;applyCompiledEffect(model,effect,source,ctx);}
       applyKnownSemantics(model,source,ctx);
       fallbackDirectGrants(model,source,ctx);
       if((!source.binding||source.bound) && (definition?.semanticAutomation?.level==='manual_text' || definition?.semanticAutomation?.level==='hybrid')){
@@ -678,6 +681,16 @@ function resolveTrainerModel({trainer,rulesetId,getDefinition,getDamageBase,stat
     move.sources.push({kind:source.kind,id:source.id,name:source.name,label:source.sourceLabel,automatic:false}); move.automatic=false;
   }
 
+  for(const source of sources.filter(s=>s.id==='soul-investment'&&s.definition?.sourceId==='edit'&&s.bound)){
+    const weapon=(details.boundEntities||[]).find(e=>e.kind==='weapon'&&e.active!==false&&e.soulBonded&&source.boundTargetIds.includes(e.id));
+    if(!weapon){model.unresolvedChoices.push({source:slimSource(source),type:'bound_weapon',message:'Soul Investment requires a Soul Bonded Weapon entity.'});continue;}
+    const ids=weapon.investmentMoves||[];
+    if(ids.length!==2||!ENTITY_MOVE_TIERS.adept.includes(ids[0])||!ENTITY_MOVE_TIERS.master.includes(ids[1])){model.unresolvedChoices.push({source:slimSource(source),type:'bound_weapon_moves',message:'Choose one Adept and one Master Arcane Weapon Move.'});continue;}
+    const equipped=t.equipment?.[weapon.equipmentSlot],equippedId=equipmentDefinitionId(typeof equipped==='object'?(equipped?.definitionId||equipped?.id||equipped?.name):equipped);
+    const wielded=equippedId===weapon.itemId&&weapon.distance===0&&!weapon.heldByOther?model.weapons.find(w=>w.slot===weapon.equipmentSlot):null;
+    for(const id of ids)grantEntity(model,{entityKind:'move',entityId:id,source,automatic:true,...ctx,metadata:{boundEntityId:weapon.id,weaponItemId:weapon.itemId,requiresWeapon:weapon.name,...(wielded?{weapon:wielded}:{unavailableReason:`Wield ${weapon.name} in its linked equipment slot to use this Move.`})}});
+  }
+
   for(const source of sources.filter(s=>slug(s.id||s.name)==='silent-assassin')){
     const rank=Math.max(model.skills.Intimidate?.rank||2,model.skills['Occult Education']?.rank||2);
     addSkillBonus(model,'Stealth',Math.floor(rank/2),source,{note:'Half the higher Rank of Intimidate or Occult Education; always active while the Feature is recorded.'});
@@ -685,6 +698,17 @@ function resolveTrainerModel({trainer,rulesetId,getDefinition,getDamageBase,stat
 
   finalizeSkills(model);
   deriveCapabilities(model);
+  const capabilityKey=name=>({highJump:'High Jump',longJump:'Long Jump',throwingRange:'Throwing Range'}[name]||name);
+  const baseCapabilities=Object.entries(model.capabilities).map(([name,value])=>({name:capabilityKey(name),value}));
+  const moveCapabilities=resolveMoveCapabilities(baseCapabilities,[...model._moveMap.values()].map(move=>move.definition));
+  model.moveCapabilityModifiers=moveCapabilities.applied;
+  for(const effect of moveCapabilities.applied){
+    const source={kind:'move',id:effect.sourceId,name:effect.sourceName};
+    if(effect.operation==='grant'){grantEntity(model,{entityKind:'capability',entityName:effect.targetName,source});continue;}
+    const target={"high-jump":'highJump',"long-jump":'longJump',"throwing-range":'throwingRange'}[effect.targetId]||effect.targetId;
+    model.capabilities[target]=effect.operation==='add'?num(model.capabilities[target])+effect.value:Math.max(num(model.capabilities[target]),effect.value);
+    model.capabilitySources[target]||=[];model.capabilitySources[target].push({source,value:effect.after-effect.before,contextual:false});
+  }
 
   const afflictions=new Set((Array.isArray(details.statusAfflictions)?details.statusAfflictions:[]).map(row=>typeof row==='string'?row:row.name));
   const february=statusRulesSource==='ptu-february-2016-playtest';
@@ -721,7 +745,7 @@ function resolveTrainerModel({trainer,rulesetId,getDefinition,getDamageBase,stat
     model.derived.physicalEvasion=0;model.derived.specialEvasion=0;model.derived.speedEvasion=0;
   }
   model.struggleAttack=resolveStruggleAttack(model,t,getDamageBase);
-  model.moves=[...model._moveMap.values()].map(move=>({...move,resolvedDamage:resolveMoveDamageForTrainer(model,move,t,getDamageBase)})).sort((a,b)=>a.name.localeCompare(b.name));
+  model.moves=[...model._moveMap.values()].map(move=>{const unavailable=move.sources.length&&move.sources.every(s=>s.metadata?.unavailableReason);return {...move,unavailableReason:unavailable?move.sources[0].metadata.unavailableReason:null,resolvedDamage:unavailable?null:resolveMoveDamageForTrainer(model,move,t,getDamageBase)};}).sort((a,b)=>a.name.localeCompare(b.name));
   model.stabTypes=[...model.stabTypes];
   model.sourceSummary=sources.map(s=>({kind:s.kind,id:s.id,name:s.name,recordIndex:s.recordIndex,tags:s.tags,selections:s.selections,bound:s.bound,boundTargetIds:s.boundTargetIds,binding:s.binding,automation:s.definition?.semanticAutomation||null,rankedLimit:rankedLimit(s.tags)}));
   delete model.sourceSummaryRaw;
@@ -867,4 +891,4 @@ function evaluateTrainerDefinitionPrerequisite(definition,context={}){
   return {...evaluated,status:semantics.status||null,raw:definition?.prerequisites||definition?.raw?.prerequisites_text||''};
 }
 
-export {resolveTrainerModel, combatStageMultiplier, applyCombatStage, TRAINER_SKILLS, SKILL_CATEGORIES, STAT_KEYS, TYPE_NAMES, rankedLimit, trainerDefinitionRepeatability, trainerDefinitionSelectionConflict, evaluateTrainerPrerequisiteAst, evaluateTrainerDefinitionPrerequisite};
+export {equipmentDefinitionId,featureBindingInfo,resolveTrainerModel, combatStageMultiplier, applyCombatStage, TRAINER_SKILLS, SKILL_CATEGORIES, STAT_KEYS, TYPE_NAMES, rankedLimit, trainerDefinitionRepeatability, trainerDefinitionSelectionConflict, evaluateTrainerPrerequisiteAst, evaluateTrainerDefinitionPrerequisite};

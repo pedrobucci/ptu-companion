@@ -545,7 +545,7 @@ export function buildPokemonProgressionPreview({
   const moveLimit=resolvePokemonMoveLimit({base:details.moveLimitBase??6,modifier:details.moveLimitModifier??0,abilities:moveLimitAbilities});
   const chosenMoveKeys=Array.isArray(selectedMoves)?[...new Set(selectedMoves.map(slugMove))]:existingMoves.map(m=>m.key);
   const moveKeys=new Set(movePool.map(m=>m.key)); const moveErrors=[];
-  if(chosenMoveKeys.length>moveLimit) moveErrors.push(`Selected ${chosenMoveKeys.length} Moves; current Move Limit is ${moveLimit}.`);
+  if(chosenMoveKeys.length>moveLimit.effective) moveErrors.push(`Selected ${chosenMoveKeys.length} Moves; current Move Limit is ${moveLimit.effective}.`);
   for(const key of chosenMoveKeys) if(!moveKeys.has(key)) moveErrors.push(`Move ${key} is not available in the progression Move pool.`);
 
   const errors=[];
@@ -598,16 +598,16 @@ function normalizedAbilityNames(abilities=[]){
   return new Set((Array.isArray(abilities)?abilities:[]).map(a=>String(a?.name||a||'').trim().toLowerCase()).filter(Boolean));
 }
 
-export function evaluatePrerequisiteAst(ast,{level=1,capabilities=[],abilities=[],abilityKeywordLookup=null}={}){
+export function evaluatePrerequisiteAst(ast,{level=1,capabilities=[],trainerCapabilities=null,abilities=[],abilityKeywordLookup=null}={}){
   if(!ast) return {status:'manual',valid:null,reasons:['Prerequisite could not be compiled.']};
   if(ast.op==='all'){
-    const children=(ast.children||[]).map(c=>evaluatePrerequisiteAst(c,{level,capabilities,abilities,abilityKeywordLookup}));
+    const children=(ast.children||[]).map(c=>evaluatePrerequisiteAst(c,{level,capabilities,trainerCapabilities,abilities,abilityKeywordLookup}));
     if(children.some(c=>c.valid===false)) return {status:'blocked',valid:false,reasons:children.flatMap(c=>c.reasons||[])};
     if(children.some(c=>c.valid==null)) return {status:'manual',valid:null,reasons:children.flatMap(c=>c.reasons||[])};
     return {status:'eligible',valid:true,reasons:children.flatMap(c=>c.reasons||[])};
   }
   if(ast.op==='any'){
-    const children=(ast.children||[]).map(c=>evaluatePrerequisiteAst(c,{level,capabilities,abilities,abilityKeywordLookup}));
+    const children=(ast.children||[]).map(c=>evaluatePrerequisiteAst(c,{level,capabilities,trainerCapabilities,abilities,abilityKeywordLookup}));
     if(children.some(c=>c.valid===true)) return {status:'eligible',valid:true,reasons:children.flatMap(c=>c.reasons||[])};
     if(children.some(c=>c.valid==null)) return {status:'manual',valid:null,reasons:children.flatMap(c=>c.reasons||[])};
     return {status:'blocked',valid:false,reasons:children.flatMap(c=>c.reasons||[])};
@@ -618,6 +618,11 @@ export function evaluatePrerequisiteAst(ast,{level=1,capabilities=[],abilities=[
   if(kind==='level_min'){
     const needed=int(ast.value,0); const ok=int(level,1)>=needed;
     return {status:ok?'eligible':'blocked',valid:ok,reasons:ok?[]:[`Requires Level ${needed}.`]};
+  }
+  if(kind==='trainer_capability'){
+    if(trainerCapabilities==null)return {status:'manual',valid:null,reasons:[`Requires the owning Trainer with ${ast.name}.`]};
+    const valid=normalizedCapabilityNames(trainerCapabilities).has(String(ast.name).toLowerCase());
+    return {status:valid?'eligible':'blocked',valid,reasons:valid?[]:[`Requires the owning Trainer with ${ast.name}.`]};
   }
   if(kind==='has_capability'){
     const names=normalizedCapabilityNames(capabilities); const wanted=String(ast.name||ast.value||ast.capability||ast.raw||'').replace(/\s+Capability$/i,'').trim().toLowerCase();
@@ -645,7 +650,7 @@ export function pokeEdgeRequiresUnderdog(edge={}){
   return id==='underdogs-strength' || id==='realized-potential' || id==='underdogs-lessons' || /underdog pok[eé]mon/.test(text) || /underdog'?s strength/.test(text);
 }
 
-export function evaluatePokeEdgePrerequisite(edge,{level=1,capabilities=[],abilities=[],abilityKeywordLookup=null,rank=1,ownedPokeEdges=[],statAllocations={}}={}){
+export function evaluatePokeEdgePrerequisite(edge,{level=1,capabilities=[],trainerCapabilities=null,abilities=[],abilityKeywordLookup=null,rank=1,ownedPokeEdges=[],statAllocations={}}={}){
   const edgeId=String(edge?.id||'').toLowerCase();
   if(edgeId==='mixed-power'){
     const atk=Math.max(0,int(statAllocations?.attack));
@@ -676,9 +681,9 @@ export function evaluatePokeEdgePrerequisite(edge,{level=1,capabilities=[],abili
   if(!sem) return {status:'manual',valid:null,reasons:[edge?.prerequisites||edge?.prerequisites_text||'Manual prerequisite confirmation required.']};
   if(Array.isArray(sem.rank_asts)&&sem.rank_asts.length){
     const ranked=sem.rank_asts.find(r=>Number(r.rank)===Number(rank))||sem.rank_asts[Math.max(0,Math.min(sem.rank_asts.length-1,Number(rank)-1))];
-    return evaluatePrerequisiteAst(ranked?.ast,{level,capabilities,abilities,abilityKeywordLookup});
+    return evaluatePrerequisiteAst(ranked?.ast,{level,capabilities,trainerCapabilities,abilities,abilityKeywordLookup});
   }
-  return evaluatePrerequisiteAst(sem.ast,{level,capabilities,abilities,abilityKeywordLookup});
+  return evaluatePrerequisiteAst(sem.ast,{level,capabilities,trainerCapabilities,abilities,abilityKeywordLookup});
 }
 
 export function moveTrainingPoolUsage(moves=[]){

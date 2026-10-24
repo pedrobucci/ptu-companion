@@ -25,6 +25,9 @@ try{
     const progression=engine.buildPokemonProgressionPreview({pokemon,species,experienceTable:[{level:1,cumulative_exp:0,stat_points_awarded:0}],moveLimitAbilities:[ability]});
     assert.equal(progression.moveLimit.effective,8);
     assert.equal(progression.valid,true,progression.errors.join('; '));
+    const withoutBonus=engine.buildPokemonProgressionPreview({pokemon,species,experienceTable:[{level:1,cumulative_exp:0,stat_points_awarded:0}]});
+    assert.equal(withoutBonus.valid,false,'Progression must reject seven Moves when no active Ability bonus is resolved');
+    assert.ok(withoutBonus.errors.some(error=>error.includes('current Move Limit is 6')));
   }
   const runtime=readFileSync(new URL('../../PTU_Companion_Android_Tauri/www/mobile-runtime.js',import.meta.url),'utf8');
   assert.match(runtime,/moveSlots:\{used:knownMoves\.length,limit:resolvePokemonMoveLimit/,'Android native runtime reports resolved limit');

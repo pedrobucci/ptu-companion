@@ -57,6 +57,8 @@ context.toggleQuestStep('q1',quest.steps[0].id,true);assert.equal(quest.steps[0]
 context.setQuestStatus('q1','Completed');assert.equal(quest.status,'Completed');
 context.exportQuests();assert.equal(downloaded.format,'ptu-companion-quests');assert.equal(downloaded.quests[0].steps.find(step=>step.notes)?.notes,'At the north gate');
 const roundTrip=JSON.parse(JSON.stringify(state.trainer.details.quests));assert.equal(roundTrip[0].steps.some(step=>step.completed),true,'Quest checklist must survive state serialization');
+formResult={title:quest.title,status:quest.status,deadline:'1 year, 2 months, 3 days and 6 hours'};await context.editQuest('q1');
+assert.equal(quest.deadline,'1 year, 2 months, 3 days and 6 hours');context.exportQuests();assert.equal(downloaded.quests[0].deadline,quest.deadline,'Narrative deadlines survive export');
 
 const pokemon={id:'p1',name:'Testmon',species:'Testmon',types:['normal'],hp:50,maxHp:100,tempHp:0,details:{statusAfflictions:[],statusAfflictionHistory:[]}};state.pokemon.push(pokemon);
 context.pokemonStatusAfflictionToggle('p1','Burned',true);assert.equal(pokemon.details.statusAfflictions[0].name,'Burned');const legacyPokemon={id:'legacy',name:'Legacy',types:['normal'],hp:40,maxHp:40,tempHp:0,details:{}};state.pokemon.push(legacyPokemon);context.pokemonStatusAfflictionToggle('legacy','Burned',false);assert.equal(legacyPokemon.details.statusAfflictions.length,0,'Clearing a migrated legacy status must not resurrect it');assert.equal(legacyParticipant.conditions.statusAfflictions.length,0,'Clear must synchronize the migrated combat ledger');
@@ -66,6 +68,15 @@ pokemon.hp=20;context.pokemonStatusAfflictionToggle('p1','Poisoned',true);contex
 formResult={standard:'yes',prevented:'no',attackDamage:'no'};const firstTurn=await context.advancePokemonStatusTurn('p1',false);assert.equal(firstTurn.damage,15,'Burn/Poison ticks and the first 5 HP Badly Poisoned loss stack');assert.equal(pokemon.hp,5);
 formResult={standard:'yes',prevented:'no',attackDamage:'no'};const nextTurn=await context.advancePokemonStatusTurn('p1',false);assert.equal(nextTurn.damage,20,'Badly Poisoned damage doubles on the next consecutive round');assert.equal(pokemon.hp,0,'Damage applies to current HP');assert.equal(pokemon.details.statusAfflictions.length,0,'Fainting cures tracked afflictions');
 assert.equal(context.pokemonStatusCombatStagePenalty({...pokemon,details:{statusAfflictions:[{name:'Paralyzed'}]}},'speed'),-4);
+
+const statusQa={id:'status-qa',name:'Status QA',hp:100,maxHp:100,tempHp:0,types:['normal'],details:{statusAfflictions:[{name:'Burned'},{name:'Poisoned'}]}};state.pokemon.push(statusQa);
+formResult={standard:'yes'};assert.equal((await context.advancePokemonStatusTurn(statusQa.id)).damage,20,'Burn and regular Poison each cause one Tick');
+statusQa.hp=100;statusQa.details.statusAfflictions=[{name:'Sleep'},{name:'Bad Sleep'}];formResult={save_Sleep:16};
+assert.equal((await context.advancePokemonStatusTurn(statusQa.id)).damage,20,'Bad Sleep causes damage even when the recovery Save succeeds');assert.equal(statusQa.details.statusAfflictions.length,0);
+statusQa.details.statusAfflictions=[{name:'Sleep'},{name:'Confused'},{name:'Infatuated'},{name:'Rage'}];formResult={save_Sleep:1,save_Confused:20,save_Infatuated:20,save_Rage:20};
+await context.advancePokemonStatusTurn(statusQa.id);assert.equal(statusQa.details.statusAfflictions.length,4,'Sleep prevents the other three recovery Saves');
+catalogState.status.ruleset.packs=[{pack_id:'ptu-february-2016-playtest',enabled:true}];statusQa.details.statusAfflictions=[{name:'Infatuated'}];formResult={save_Infatuated:16};
+await context.advancePokemonStatusTurn(statusQa.id);assert.equal(statusQa.details.statusAfflictions.length,0,'February Infatuation recovers on 16+');catalogState.status.ruleset.packs=[];
 
 // Trainer status changes use currentHp and the effective Max HP without touching Pokémon.
 const trainerId='trainer:william',trainerDetails=state.trainer.details;
