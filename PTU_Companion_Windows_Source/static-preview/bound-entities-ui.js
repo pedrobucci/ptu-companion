@@ -1,9 +1,9 @@
 let boundEntityBusy=false;
 function trainerBoundEntities(){return trainer().details?.boundEntities||[];}
 function boundEntityHasBinding(entity,id){return (trainer().details?.features||[]).some(f=>f.id===id&&f.bound&&(f.boundTargetIds||[]).includes(entity.id));}
-function boundEntityUiSnapshot(){return JSON.stringify({trainer:trainer(),inventory:state.inventory,pokemon:state.pokemon,day:state.ui.day,scene:state.ui.scene,round:state.ui.round,ruleset:catalogState.status?.activeRulesetId});}
+function boundEntityUiSnapshot(){return JSON.stringify({trainer:{...trainer(),derived:undefined},inventory:state.inventory,pokemon:state.pokemon,day:state.ui.day,scene:state.ui.scene,round:state.ui.round,combat:state.ui.combat,ruleset:catalogState.status?.activeRulesetId});}
 async function boundEntityPreview(action,fields={}){
-  const response=await fetch('/api/trainer/bound-entity-preview',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({trainer:trainer(),inventory:state.inventory,pokemon:state.pokemon,rulesetId:catalogState.status?.activeRulesetId,context:{day:state.ui.day||1,scene:state.ui.scene||1,round:state.ui.round||1},action,...fields})});
+  const response=await fetch('/api/trainer/bound-entity-preview',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({trainer:{...trainer(),derived:undefined},inventory:state.inventory,pokemon:state.pokemon,rulesetId:catalogState.status?.activeRulesetId,context:{day:state.ui.day||1,scene:state.ui.scene||1,round:state.ui.round||1,combat:{active:state.ui.combat?.active===true,participantIds:state.ui.combat?.participantIds||[]}},action,...fields})});
   const result=await response.json();if(!response.ok||!result.valid)throw new Error(result.error||'Entity action could not be resolved.');return result;
 }
 async function applyBoundEntityAction(action,fields={}){
@@ -109,4 +109,18 @@ function reconcileTrainerChannelState(){
     getBinding:f=>sources.find(s=>s.id===f.id)?.binding||null,
     getFeatureSource:f=>{if(f.definitionVersionId&&!String(f.definitionVersionId).endsWith('@core'))return null;const source=sources.find(s=>s.id===f.id);return source?source.sourceId:!trainerResolved()?'core':null;}
   });return events.length>0;
+}
+
+async function openTrainerSpiritBoostBinding(index,targetId=null,preferredPokemonId=null){
+  if(targetId!=null)return applyBoundEntityAction('unbind-spirit-boost',{featureIndex:index,data:{targetPokemonId:targetId}});
+  const feature=trainer().details.features[index];
+  try{
+    const options=await boundEntityPreview('spirit-options'),targets=options.targets.filter(p=>!(feature.boundTargetIds||[]).includes(p.pokemonId)),sources=options.sources.filter(p=>!p.error);
+    if(!targets.length||!sources.length)return toast('Channel a Pokémon in the active combat and provide a reference with resolved Combat Stats.','error');
+    const chosen=await styledForm({title:'Bind Spirit Boost',subtitle:'Choose the Channeled target and reference Pokémon. Each target reserves 2 AP.',fields:[{name:'targetPokemonId',label:'Target Pokémon',type:'select',value:preferredPokemonId||targets[0].pokemonId,options:targets.map(p=>({value:p.pokemonId,label:p.name}))},{name:'sourcePokemonId',label:'Reference Pokémon',type:'select',value:sources[0].pokemonId,options:sources.map(p=>({value:p.pokemonId,label:p.name}))}],submitLabel:'Choose highest Stat'});if(!chosen)return;
+    const source=sources.find(p=>p.pokemonId===chosen.sourcePokemonId),labels={attack:'Attack · Physical Bonus Damage',defense:'Defense · Physical DR',special_attack:'Special Attack · Special Bonus Damage',special_defense:'Special Defense · Special DR',speed:'Speed · Initiative'};
+    const selection=await styledForm({title:'Spirit Boost · Highest Combat Stat',subtitle:source.name+' · '+Object.entries(source.stats).map(([key,value])=>`${key}: ${value}`).join(' · '),fields:[{name:'stat',label:'Highest Stat (choose when tied)',type:'select',value:source.highestStats[0],options:source.highestStats.map(stat=>({value:stat,label:labels[stat]}))}],submitLabel:'Review Spirit Boost'});if(!selection)return;
+    if(trainer().details.features[index]!==feature)throw new Error('The Feature changed while choosing Spirit Boost.');
+    return applyBoundEntityAction('bind-spirit-boost',{featureIndex:index,data:{...chosen,...selection}});
+  }catch(error){toast(error.message,'error');}
 }

@@ -123,11 +123,12 @@ try{
   const sandbox=vm.createContext({trainer:()=>trainer,state,catalogState:{status:{activeRulesetId:rulesetId}},fetch:async()=>({ok:true,json:async()=>result}),styledConfirm:async()=>false,esc:s=>s,toast(){},render(){},invalidateTrainerReference(){},commit:async()=>committed++});
   vm.runInContext(await readFile(join(root,path),'utf8'),sandbox);await sandbox.applyBoundEntityAction('create');assert(!trainer.details.boundEntities);assert.equal(committed,0,'cancel leaves state untouched');
   sandbox.styledConfirm=async()=>true;await sandbox.applyBoundEntityAction('create');assert.equal(committed,1);assert.equal(trainer.details.boundEntities[0].id,'new');
-  sandbox.styledConfirm=async()=>{state.ui.scene++;return true;};await sandbox.applyBoundEntityAction('create');assert.equal(committed,1,'stale previews cannot overwrite newer state');
+  sandbox.styledConfirm=async()=>{trainer.derived={physicalEvasion:99};return true;};await sandbox.applyBoundEntityAction('create');assert.equal(committed,2,'recomputed display-only Trainer.derived does not invalidate an unchanged preview');
+  sandbox.styledConfirm=async()=>{state.ui.scene++;return true;};await sandbox.applyBoundEntityAction('create');assert.equal(committed,2,'stale previews cannot overwrite newer state');
  }
  for(const path of ['static-preview','../PTU_Companion_Android_Tauri/www']){
   const trainer=fixture(),td=trainer.details;td.features=[{id:'channeler'},{id:'shared-senses',bound:true,boundTargetIds:['bound-entity-one'],boundApCostEach:1}];td.currentAp=10;td.currentHp=0;td.boundEntities=[{id:'bound-entity-one',kind:'pokemon_link',pokemonId:'one',name:'One',distance:1,channeling:true}];td.boundEntityState={sensoryFocusId:'bound-entity-one'};
-  const saved=[],sandbox=vm.createContext({trainer:()=>trainer,state:{pokemon:[{id:'one',name:'One'}],ui:{}},trainerResolved:()=>null,trainerMaxAp:()=>11,invalidateTrainerReference(){},persist(){saved.push(structuredClone(trainer));},toast(){},render(){}});
+  const saved=[],sandbox=vm.createContext({trainer:()=>trainer,state:{pokemon:[{id:'one',name:'One'}],ui:{}},trainerResolved:()=>null,trainerMaxAp:()=>11,invalidateTrainerReference(){},invalidatePokemonCombatReferenceData(){},persist(){saved.push(structuredClone(trainer));},toast(){},render(){}});
   vm.runInContext(await readFile(join(root,path,'channel-links.js'),'utf8'),sandbox);vm.runInContext(await readFile(join(root,path,'bound-entities-ui.js'),'utf8'),sandbox);
   const app=await readFile(join(root,path,'app.js'),'utf8');vm.runInContext(app.match(/function commit\(message\)\{[^\r\n]+/)[0],sandbox);sandbox.commit('Fainted');
   assert.equal(saved[0].details.currentAp,11,'commit persists automatic AP refund');assert(!saved[0].details.boundEntities[0].channeling);assert.equal(saved[0].details.boundEntityState.sensoryFocusId,null);

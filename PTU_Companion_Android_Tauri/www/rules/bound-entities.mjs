@@ -6,7 +6,7 @@ import {resolveTrainerModel,featureBindingInfo,equipmentDefinitionId} from './tr
 import {ENTITY_MOVE_TIERS} from './item-metadata.mjs';
 export {ENTITY_MOVE_TIERS};
 const managed=new Set(['alarm-runes','mark-of-vision','soul-investment','shared-senses']);
-const sourceFor=id=>['channeler','shared-senses'].includes(id)?'core':'edit';
+const sourceFor=id=>['channeler','shared-senses','spirit-boost'].includes(id)?'core':'edit';
 const fail=message=>{throw Object.assign(new Error(message),{status:400});};
 const text=(value,max=2000)=>String(value??'').trim().slice(0,max);
 function integer(value,label,min=0){const number=Number(value);if(!Number.isSafeInteger(number)||number<min)fail(`${label} must be a whole number of at least ${min}.`);return number;}
@@ -23,7 +23,7 @@ export function boundEntityOptions({trainer,rulesetId,getDefinition,listDefiniti
   return {moves,items,features:Object.fromEntries(['glyph','arcanist','channeler',...managed].map(id=>[id,!!featureDefinition(trainer,id,getDefinition,rulesetId)]))};
 }
 
-export function previewBoundEntityAction({trainer,inventory=[],pokemon=null,rulesetId,action,entityId,featureIndex,data={},context={},getDefinition,getDamageBase,listDefinitions}){
+export function previewBoundEntityAction({trainer,inventory=[],pokemon=null,rulesetId,action,entityId,featureIndex,data={},context={},getDefinition,getDamageBase,listDefinitions,getPokemonCombatStats}){
   if(!data||typeof data!=='object'||Array.isArray(data)||!context||typeof context!=='object'||Array.isArray(context))fail('Invalid action fields.');
   if(!Array.isArray(inventory))fail('Invalid Backpack.');
   if(pokemon==null){if(Array.isArray(trainer?.details?.boundEntities)&&trainer.details.boundEntities.some(e=>e.kind==='pokemon_link'))fail('The complete campaign Pokémon list is required for Channel links.');pokemon=[];}
@@ -57,6 +57,7 @@ export function previewBoundEntityAction({trainer,inventory=[],pokemon=null,rule
     record.boundTargetIds=targets.filter(id=>id!==target);record.bound=record.boundTargetIds.length>0;
     const cost=integer(record.boundApCostEach??binding.apCost*(binding.perRank?Math.max(1,Number(record.rank||1)):1),'Stored binding cost',1);
     td.currentAp=Math.min(model.derived.maxAp,td.currentAp+cost);events.push(`${record.name||record.id}: ${cost} AP returned.`);
+    if(record.boundChoices)delete record.boundChoices[target];
     if(state.markFocusId===target)state.markFocusId=null;
     if(record.id==='shared-senses'&&state.sensoryFocusId===target)state.sensoryFocusId=null;
     if(record.id==='alarm-runes'){const glyph=entities.find(e=>e.id===target);if(glyph){glyph.alarming=false;glyph.trigger='';glyph.explosive=false;}}
@@ -66,7 +67,35 @@ export function previewBoundEntityAction({trainer,inventory=[],pokemon=null,rule
   const reconcile=()=>events.push(...globalThis.reconcileTrainerChannels(updatedTrainer,pokemon,{getBinding:f=>featureBindingInfo(definitionFor(f),f),getFeatureSource:f=>definitionFor(f)?.sourceId,maxAp:model.derived.maxAp,history:false}));
   reconcile();
   if(action==='options')return {valid:true,...boundEntityOptions({trainer:updatedTrainer,rulesetId,getDefinition,listDefinitions})};
-  if(action==='sync'){events.push('Channel links reconciled.');}
+  const channeled=()=>entities.filter(e=>e.kind==='pokemon_link'&&e.active!==false&&e.channeling&&pokemon.some(p=>p.id===e.pokemonId));
+  const spiritSource=id=>{
+    const link=channeled().find(e=>e.pokemonId===id);if(!link)fail('Choose a Channeled reference Pokémon.');
+    if(typeof getPokemonCombatStats!=='function')fail('Resolved Pokémon stats are required.');
+    const stats=getPokemonCombatStats(pokemon.find(p=>p.id===id)),keys=['attack','defense','special_attack','special_defense','speed'];
+    if(keys.some(k=>!Number.isSafeInteger(stats?.[k])||stats[k]<0))fail('The reference Pokémon has incomplete Combat Stats.');
+    const highest=Math.max(...keys.map(k=>stats[k]));return {pokemonId:id,name:link.name,stats:Object.fromEntries(keys.map(k=>[k,stats[k]])),highestStats:keys.filter(k=>stats[k]===highest)};
+  };
+  if(action==='spirit-options'){
+    requireFeature(updatedTrainer,'channeler',getDefinition,rulesetId);requireFeature(updatedTrainer,'spirit-boost',getDefinition,rulesetId);
+    const sources=channeled().map(link=>{try{return spiritSource(link.pokemonId);}catch(error){return {pokemonId:link.pokemonId,name:link.name,error:error.message};}});
+    return {valid:true,sources,targets:channeled().filter(e=>context.combat?.active===true&&context.combat.participantIds?.includes(e.pokemonId)).map(e=>({pokemonId:e.pokemonId,name:e.name}))};
+  }
+  if(action==='bind-spirit-boost'||action==='unbind-spirit-boost'){
+    const record=td.features[integer(featureIndex,'Feature index')];if(record?.id!=='spirit-boost')fail('Choose Spirit Boost.');
+    const definition=requireFeature(updatedTrainer,'spirit-boost',getDefinition,rulesetId),binding=featureBindingInfo(definition,record),targetId=text(data.targetPokemonId,150);
+    if(!binding?.stratagem||binding.apCost!==2)fail('Unsupported Spirit Boost binding definition.');
+    if(action==='unbind-spirit-boost'){if(!(record.boundTargetIds||[]).includes(targetId))fail('Target has no Spirit Boost binding.');release(record,targetId);events.push('Spirit Boost released · Free Action.');}
+    else{
+      requireFeature(updatedTrainer,'channeler',getDefinition,rulesetId);
+      if(context.combat?.active!==true||!Array.isArray(context.combat.participantIds)||!context.combat.participantIds.includes(targetId))fail('Spirit Boost requires a target in the active combat.');
+      if(!channeled().some(e=>e.pokemonId===targetId))fail('Spirit Boost requires a Channeled target Pokémon.');
+      if(td.features.some(f=>f.bound&&(f.boundTargetIds||[]).includes(targetId)&&(featureBindingInfo(definitionFor(f),f)?.stratagem||f.boundStratagem)))fail('This Pokémon already has a Bound Stratagem.');
+      const chosen=spiritSource(text(data.sourcePokemonId,150)),stat=text(data.stat,30);if(!chosen.highestStats.includes(stat))fail('Choose one of the reference Pokémon’s highest Combat Stats.');
+      if(record.boundChoices!=null&&(typeof record.boundChoices!=='object'||Array.isArray(record.boundChoices)))fail('Invalid saved Spirit Boost choices.');
+      spend(2);record.bound=true;record.boundTargetIds=[...(record.boundTargetIds||[]),targetId];record.boundApCostEach=2;record.boundStratagem=true;record.boundChoices||={};record.boundChoices={...record.boundChoices,[targetId]:{sourcePokemonId:chosen.pokemonId,sourceName:chosen.name,stat,statsAtBinding:chosen.stats,sourceId:definition.sourceId,sourcePage:definition.sourcePage}};
+      events.push(`Spirit Boost · Standard Action · 2 AP Bound · ${chosen.name}: ${stat} · Intuition Rank ${rank('Intuition')}.`);
+    }
+  }else if(action==='sync'){events.push('Channel links reconciled.');}
   else if(action==='create'){
     if(entities.length>=1000)fail('The entity list has reached its supported limit.');
     const name=text(data.kind==='pokemon_link'?pokemon.find(p=>p.id===data.pokemonId)?.name||data.name:data.name,120);if(!name)fail('An entity name is required.');

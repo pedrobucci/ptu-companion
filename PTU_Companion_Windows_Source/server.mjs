@@ -567,6 +567,20 @@ function resolveCreatureAbilityRecords({pokemon,species,rulesetId,heldItemEffect
   }
   return merged;
 }
+
+function resolveChannelPokemonStats(pokemon,rulesetId){
+  const baseSpecies=definitions.getResolved({rulesetId,kind:'species',id:String(pokemon.details?.speciesDefinitionId||'')});
+  if(!baseSpecies)throw Object.assign(new Error('Reference Pokémon must have a Species definition.'),{status:400});
+  const form=resolveSpeciesFormState({species:baseSpecies,pokemon});
+  if(!form.valid)throw Object.assign(new Error('Reference Pokémon has invalid Form state.'),{status:400});
+  const swaps=form.applied.flatMap(f=>f.statSwaps||[]),base=resolvePokemonPokeEdgeStats({pokemon,species:swaps.length?baseSpecies:form.species}),stats=swaps.length?applyPokemonFormStatSwaps(base,swaps):base;
+  const held=resolvePokemonHeldItem({rulesetId,pokemon,species:baseSpecies}),stages={...(pokemon.combatStages||pokemon.details?.combatStages||{})},names=new Set((pokemon.details?.statusAfflictions||[]).map(s=>typeof s==='string'?s:s.name));
+  if(names.has('Burned'))stages.defense=Number(stages.defense||0)-2;
+  if(names.has('Poisoned')||names.has('Badly Poisoned'))stages.spDefense=Number(stages.spDefense||0)-2;
+  if(names.has('Paralyzed')&&!rulesetHasPack(rulesetId,'ptu-february-2016-playtest'))stages.speed=Number(stages.speed||0)-4;
+  return getPokemonModifierSummary({...pokemon,details:{...pokemon.details,finalStats:stats.permanentFinal,combatStages:stages}},{heldItemEffect:held.effect}).combatStats;
+}
+
 function resolvedCreatureModel({pokemon,species,rulesetId,heldItemEffect=null,heldItemDefinition=null,edgeStatsOverride=null}){
   const details=pokemon?.details||{};
   const abilities=resolveCreatureAbilityRecords({pokemon,species,rulesetId,heldItemEffect});
@@ -910,7 +924,7 @@ async function handleApi(req,res,url){
   if(req.method==='POST' && url.pathname==='/api/trainer/bound-entity-preview'){
     const payload=await bodyJson(req),rulesetId=String(payload.rulesetId||getActiveRuleset());
     if(!definitions.getRuleset(rulesetId))throw Object.assign(new Error('Unknown ruleset'),{status:400});
-    const result=previewBoundEntityAction({...payload,rulesetId,getDefinition:args=>definitions.getResolved(args),getDamageBase:db=>definitions.getDamageBase(db),listDefinitions:args=>definitions.listResolved(args)});
+    const result=previewBoundEntityAction({...payload,rulesetId,getDefinition:args=>definitions.getResolved(args),getDamageBase:db=>definitions.getDamageBase(db),listDefinitions:args=>definitions.listResolved(args),getPokemonCombatStats:p=>resolveChannelPokemonStats(p,rulesetId)});
     return json(res,200,result);
   }
   if(req.method==='POST' && url.pathname==='/api/trainer/reference-data'){
