@@ -778,8 +778,8 @@ function resolvedCreatureModel({pokemon,species,rulesetId,heldItemEffect=null,he
   const details=pokemon?.details||{};
   const abilities=resolveCreatureAbilityRecords({pokemon,species,rulesetId,heldItemEffect});
   const edgeStats=edgeStatsOverride||resolvePokemonPokeEdgeStats({pokemon,species});
-  const resolvedPokemon={...pokemon,details:{...details,finalStats:{...edgeStats.permanentFinal}}};
-  const modifierSummary=getPokemonModifierSummary(resolvedPokemon,{heldItemEffect});
+  const resolvedPokemon={...pokemon,details:{...details,combatStages:pokemon.combatStages??details.combatStages,finalStats:{...edgeStats.permanentFinal}}};
+  const modifierSummary=getPokemonModifierSummary(resolvedPokemon,{heldItemEffect,abilities});
   const effectiveStats=applyHeldItemToEffectiveStats(edgeStats.permanentFinal,heldItemEffect);
   const capabilityResolution=resolvePokemonCapabilities(species,details,rulesetId);
   const skillResolution=resolvePokemonSkills(species,details);
@@ -807,7 +807,7 @@ async function handleApi(req,res,url){
     return json(res,200,{ok:true,desktopSession});
   }
   if(req.method==='GET' && url.pathname==='/api/health'){
-    return json(res,200,{ok:true,version:'2.2.0-beta.46',persistence:'android-local',database:'app-data/content-packs + WebView local storage',schemaVersion:5,definitions:{database:'embedded mobile bundle + installed .ptucp overlays',activeRuleset:getActiveRuleset()}});
+    return json(res,200,{ok:true,version:'2.2.0-beta.47',persistence:'android-local',database:'app-data/content-packs + WebView local storage',schemaVersion:5,definitions:{database:'embedded mobile bundle + installed .ptucp overlays',activeRuleset:getActiveRuleset()}});
   }
   if(req.method==='GET' && url.pathname==='/api/rulesets'){
     const activeRulesetId=getActiveRuleset();
@@ -1147,17 +1147,18 @@ async function handleApi(req,res,url){
     const calculatedStats=resolvePokemonPokeEdgeStats({pokemon,species:formStatSwaps.length?baseSpecies:species});
     const edgeStats=formStatSwaps.length?applyPokemonFormStatSwaps(calculatedStats,formStatSwaps):calculatedStats;
     const resolvedPokemonForCombat={...pokemon,details:{...details,finalStats:{...edgeStats.permanentFinal},combatStages:pokemon.combatStages||{}}};
+    const abilities=resolveCreatureAbilityRecords({pokemon,species,rulesetId,heldItemEffect:held.effect});
+    const modifierSummary=getPokemonModifierSummary(resolvedPokemonForCombat,{heldItemEffect:held.effect,abilities});
     const accuracyMap=accuracyTrainingMap(details);
     const moves=(Array.isArray(details.moves)?details.moves:[]).map(m=>{
       const id=slug(m.id||m.name); const definition=id?definitions.getResolved({rulesetId,kind:'moves',id}):null;
-      const resolvedDamage=definition?resolveMoveDamage({pokemon:resolvedPokemonForCombat,moveDefinition:definition,speciesTypes,getDamageBase:db=>definitions.getDamageBase(db),heldItemEffect:held.effect}):null;
+      const resolvedDamage=definition?resolveMoveDamage({pokemon:resolvedPokemonForCombat,moveDefinition:definition,speciesTypes,getDamageBase:db=>definitions.getDamageBase(db),heldItemEffect:held.effect,abilities}):null;
       const accuracyTrainingRanks=accuracyMap.get(id)||0;
-      const accuracyRollBonus=getPokemonModifierSummary(resolvedPokemonForCombat,{heldItemEffect:held.effect}).accuracyRollBonus;
+      const accuracyRollBonus=modifierSummary.accuracyRollBonus;
       const baseAc=definition?.ac==null?null:Number(definition.ac);
       const effectiveAc=baseAc==null||!Number.isFinite(baseAc)?baseAc:Math.max(0,baseAc-accuracyTrainingRanks);
       return {record:m,definition,linkedFormMoveKey:linkedFormMoveKey(species,id),resolvedDamage,accuracyTrainingRanks,accuracyRollBonus,effectiveAc};
     });
-    const abilities=resolveCreatureAbilityRecords({pokemon,species,rulesetId,heldItemEffect:held.effect});
     const abilitySlots=nativeAbilitySlotsForSpecies(species,pokemon.level);
     const nativeSelected=[...(Array.isArray(details.abilities)?details.abilities.filter(Boolean):[])];
     for(const rec of (Array.isArray(details.abilityRecords)?details.abilityRecords:[])) if(['species_starting','level_choice','native_extra'].includes(String(rec?.sourceKind||'')) && rec?.name && !nativeSelected.some(x=>abilitySlug(x)===abilitySlug(rec.name))) nativeSelected.push(rec.name);
@@ -1166,7 +1167,7 @@ async function handleApi(req,res,url){
     const incoming=definitions.getIncomingEvolution({speciesName:baseSpecies.name,sourceId:baseSpecies.sourceId});
     const typeProfile=applyHeldItemToTypeProfile(definitions.getDefensiveTypeProfile(speciesTypes),held.effect);
     const boundFeatureEffects=resolveBoundFeatureEffects({trainer:payload.trainer,rulesetId,targetId:pokemon.id,targetTypes:speciesTypes,getDefinition:args=>definitions.getResolved(args)});
-    return json(res,200,{rulesetId,species,formResolution:referenceFormResolution,moves,abilities,abilitySlots,abilitySlotStatus,boundFeatureEffects,resolvedCreature:resolvedCreatureModel({pokemon,species,rulesetId,heldItemEffect:held.effect,heldItemDefinition:held.definition,edgeStatsOverride:edgeStats}),modifierSummary:getPokemonModifierSummary(resolvedPokemonForCombat,{heldItemEffect:held.effect}),heldItem:{definition:held.definition,effect:held.effect},typeProfile,incomingEvolution:incoming||null,outgoingEvolutions:outgoing});
+    return json(res,200,{rulesetId,species,formResolution:referenceFormResolution,moves,abilities,abilitySlots,abilitySlotStatus,boundFeatureEffects,resolvedCreature:resolvedCreatureModel({pokemon,species,rulesetId,heldItemEffect:held.effect,heldItemDefinition:held.definition,edgeStatsOverride:edgeStats}),modifierSummary,heldItem:{definition:held.definition,effect:held.effect},typeProfile,incomingEvolution:incoming||null,outgoingEvolutions:outgoing});
   }
 
   if(req.method==='POST' && url.pathname==='/api/pokemon/ability-correction-preview'){

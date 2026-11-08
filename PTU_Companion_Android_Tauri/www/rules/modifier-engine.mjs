@@ -3,7 +3,7 @@
  *
  * Scope intentionally small and deterministic:
  * - Attack Conflict remains a Base Relations exemption handled by pokemon-engine.mjs.
- * - Mixed Power / Twisted Power modifies damaging Move rolls, not the stored Attack or Sp. Attack Stats.
+ * - Weird Power and Mixed Power / Twisted Power compete per damage class.
  * - STAB modifies Damage Base before the Damage Chart lookup.
  *
  * The PTU Core's usual rounding rule is down, so half-stat bonuses use Math.floor.
@@ -12,20 +12,27 @@
 const slug=v=>String(v||'').trim().toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
 const combatStageMultiplier=stage=>{const cs=Math.max(-6,Math.min(6,Math.trunc(Number(stage)||0)));return Number((cs>=0?1+cs*.2:1+cs*.1).toFixed(1));};
 const applyCombatStage=(value,stage)=>Math.floor((Number(value)||0)*combatStageMultiplier(stage));
+const hasAbility=(abilities,id)=>abilities.some(ability=>slug(typeof ability==='string'?ability:ability?.id||ability?.name)===id);
 
 export function hasTwistedPowerEffect(details={}){
   const edges=Array.isArray(details.pokeEdges)?details.pokeEdges:[];
   if(edges.some(e=>slug(e?.id||e?.name)==='mixed-power')) return true;
   const native=Array.isArray(details.abilities)?details.abilities:[];
-  if(native.some(a=>slug(typeof a==='string'?a:a?.name)==='twisted-power')) return true;
+  if(hasAbility(native,'twisted-power')) return true;
   const granted=Array.isArray(details.grantedAbilities)?details.grantedAbilities:[];
-  return granted.some(a=>slug(typeof a==='string'?a:a?.name)==='twisted-power');
+  return hasAbility(granted,'twisted-power');
 }
 
 export function getPokemonModifierSummary(pokemon={}, context={}){
   const d=pokemon.details||{};
   const stats=d.finalStats||{};
-  const twisted=hasTwistedPowerEffect(d);
+  const resolvedAbilities=context.abilities;
+  const twisted=hasTwistedPowerEffect(d)||hasAbility(resolvedAbilities||[],'twisted-power');
+  const weird=hasAbility(resolvedAbilities??[
+    ...(Array.isArray(d.abilities)?d.abilities:[]),
+    ...(Array.isArray(d.grantedAbilities)?d.grantedAbilities:[])
+  ],'weird-power');
+  const twistedSource=Array.isArray(d.pokeEdges)&&d.pokeEdges.some(e=>slug(e?.id||e?.name)==='mixed-power')?'Mixed Power':'Twisted Power';
   const moveLimitBase=Math.max(0,Number(d.moveLimitBase??6)||0);
   const moveLimitModifier=Number(d.moveLimitModifier??0)||0;
   const moveLimitEffective=Math.max(0,Number(d.moveLimitEffective??(moveLimitBase+moveLimitModifier))||0);
@@ -40,17 +47,25 @@ export function getPokemonModifierSummary(pokemon={}, context={}){
   const combatStats={...effectiveStats};
   for(const [stat,key] of [['attack','attack'],['defense','defense'],['speed','speed']]) if(combatStats[stat]!=null)combatStats[stat]=applyCombatStage(combatStats[stat],combatStages[key]);
   for(const [snake,camel,key] of [['special_attack','spAttack','spAttack'],['special_defense','spDefense','spDefense']]){const stat=combatStats[snake]!=null?snake:camel;if(combatStats[stat]!=null)combatStats[stat]=applyCombatStage(combatStats[stat],combatStages[key]);}
+  const combatAttack=Math.max(0,Number(combatStats.attack)||0);
+  const combatSpecialAttack=Math.max(0,Number(combatStats.special_attack??combatStats.spAttack)||0);
+  const bestPower=(primary,opposite)=>{
+    const mixed=twisted?Math.floor(opposite/2):0;
+    const weirdBonus=weird&&opposite>primary?opposite:0;
+    return weirdBonus>mixed?{source:'Weird Power',value:weirdBonus}:{source:mixed?twistedSource:null,value:mixed};
+  };
   const evasionStage=Math.max(-6,Math.min(6,Math.trunc(Number(combatStages.evasion)||0))),flatEvasion=Number(held?.evasionBonus)||0;
   const evasion={physical:Math.min(6,Math.floor((Number(combatStats.defense)||0)/5))+flatEvasion+evasionStage,special:Math.min(6,Math.floor((Number(combatStats.special_defense??combatStats.spDefense)||0)/5))+flatEvasion+evasionStage,speed:Math.min(6,Math.floor((Number(combatStats.speed)||0)/5))+flatEvasion+evasionStage+Number(held?.speedEvasionBonus||0)};
   return {
     moveLimit:{base:moveLimitBase,modifier:moveLimitModifier,effective:moveLimitEffective},
     twistedPower: twisted ? {
       active:true,
-      source:(d.pokeEdges||[]).some(e=>slug(e?.id||e?.name)==='mixed-power')?'Mixed Power':'Twisted Power',
+      source:twistedSource,
       physicalDamageBonus:Math.floor(specialAttack/2),
       specialDamageBonus:Math.floor(attack/2),
       note:'Adds half Special Attack to Physical Move damage rolls and half Attack to Special Move damage rolls. It does not change the Move\'s Damage Class or the stored Stats.'
     } : {active:false,physicalDamageBonus:0,specialDamageBonus:0},
+    powerDamage:{physical:bestPower(combatAttack,combatSpecialAttack),special:bestPower(combatSpecialAttack,combatAttack)},
     effectiveStats,
     combatStats,
     accuracyRollBonus:Math.max(-6,Math.min(6,Math.trunc(Number(combatStages.accuracy)||0)))+Number(held?.accuracyBonus||0),
@@ -59,7 +74,8 @@ export function getPokemonModifierSummary(pokemon={}, context={}){
     combatStages,
     heldItem: held ? {id:held.id,name:held.name,automation:held.automation,effectText:held.effectText,statBonuses:held.statBonuses||{},combatStageBonuses:held.combatStageBonuses||{},accuracyBonus:held.accuracyBonus||0,evasionBonus:held.evasionBonus||0,damageRollBonus:held.damageRollBonus||0,damageBaseBonus:held.damageBaseBonus||0,itemEffects:held.itemEffects||[],speedMultiplier:held.speedMultiplier||1,speedEvasionBonus:held.speedEvasionBonus||0,conditionalDamageBonusSuperEffective:held.conditionalDamageBonusSuperEffective||0,preventsEvolution:!!held.preventsEvolution,removeGroundImmunity:!!held.removeGroundImmunity,hpStealRecoveryMultiplier:held.hpStealRecoveryMultiplier||1,defaultCombatStage:held.defaultCombatStage||null,warnings:held.warnings||[]} : null,
     activeEffects:[
-      ...(twisted?[{kind:'damage_modifier',id:'twisted-power',source:(d.pokeEdges||[]).some(e=>slug(e?.id||e?.name)==='mixed-power')?'mixed-power':'twisted-power'}]:[]),
+      ...(twisted?[{kind:'damage_modifier',id:'twisted-power',source:slug(twistedSource)}]:[]),
+      ...(weird?[{kind:'damage_modifier',id:'weird-power',source:'weird-power'}]:[]),
       ...(moveLimitModifier?[{kind:'move_limit_modifier',id:'move-limit',value:moveLimitModifier,source:'pokemon.details.moveLimitModifier'}]:[]),
       ...(held?[{kind:'held_item',id:held.id,source:'held-item',automation:held.automation}]:[])
     ]
@@ -75,7 +91,7 @@ function mergeDiceExpression(rolledDamage, flatBonus){
   return `${m[1]}${total>0?`+${total}`:total<0?total:''}`;
 }
 
-export function resolveMoveDamage({pokemon={},moveDefinition=null,speciesTypes=[],getDamageBase=null,heldItemEffect=null}={}){
+export function resolveMoveDamage({pokemon={},moveDefinition=null,speciesTypes=[],getDamageBase=null,heldItemEffect=null,abilities=null}={}){
   const move=moveDefinition||{};
   const moveClass=String(move.class||move.damageClass||move.raw?.class||'').trim().toLowerCase();
   const damaging=moveClass==='physical'||moveClass==='special';
@@ -88,15 +104,11 @@ export function resolveMoveDamage({pokemon={},moveDefinition=null,speciesTypes=[
   const finalDb=Math.max(1,Math.min(28,baseDb+stab+itemDbBonus));
   const chart=getDamageBase(finalDb);
   if(!chart) return null;
-  const modifiers=getPokemonModifierSummary(pokemon,{heldItemEffect});
-  const attack=Math.max(0,Number(modifiers.combatStats.attack)||0);
-  const specialAttack=Math.max(0,Number(modifiers.combatStats.special_attack??modifiers.combatStats.spAttack)||0);
+  const modifiers=getPokemonModifierSummary(pokemon,{heldItemEffect,abilities});
   const primary=moveClass==='physical'?Number(modifiers.combatStats.attack)||0:Number(modifiers.combatStats.special_attack??modifiers.combatStats.spAttack)||0;
-  const mixedBonus=modifiers.twistedPower.active
-    ? Math.floor((moveClass==='physical'?specialAttack:attack)/2)
-    : 0;
+  const powerDamage=modifiers.powerDamage[moveClass];
   const itemDamageBonus=Number(heldItemEffect?.damageRollBonus||0);
-  const flatBonus=primary+mixedBonus+itemDamageBonus;
+  const flatBonus=primary+powerDamage.value+itemDamageBonus;
   return {
     moveClass,
     baseDamageBase:baseDb,
@@ -105,7 +117,8 @@ export function resolveMoveDamage({pokemon={},moveDefinition=null,speciesTypes=[
     itemDamageBaseBonus:itemDbBonus,
     damageChart:chart,
     primaryStat:{name:moveClass==='physical'?'Attack':'Special Attack',value:primary,combatStage:moveClass==='physical'?Number(pokemon.details?.combatStages?.attack)||0:Number(pokemon.details?.combatStages?.spAttack)||0},
-    mixedPowerBonus:mixedBonus,
+    mixedPowerBonus:powerDamage.source==='Weird Power'?0:powerDamage.value,
+    powerDamage,
     itemDamageBonus,
     heldItemConditionalSuperEffectiveBonus:Number(heldItemEffect?.conditionalDamageBonusSuperEffective||0),
     finalRoll:mergeDiceExpression(chart.rolled_damage,flatBonus),
@@ -114,7 +127,7 @@ export function resolveMoveDamage({pokemon={},moveDefinition=null,speciesTypes=[
       ...(stab?[{label:'STAB',value:'+2 DB'}]:[]),
       ...(itemDbBonus?[{label:`Equipped item Damage Base modifier`,value:`${itemDbBonus>0?'+':''}${itemDbBonus} DB`}]:[]),
       {label:moveClass==='physical'?'Attack':'Special Attack',value:primary},
-      ...(mixedBonus?[{label:'Mixed Power',value:mixedBonus}]:[]),
+      ...(powerDamage.value?[{label:powerDamage.source,value:powerDamage.value}]:[]),
       ...(itemDamageBonus?[{label:`${heldItemEffect?.name||'Equipped Item'} damage modifier`,value:itemDamageBonus}]:[]),
       ...(heldItemEffect?.statBonuses && Number(heldItemEffect.statBonuses[moveClass==='physical'?'attack':'special_attack']||0)?[{label:`${heldItemEffect.name} Stat Bonus`,value:Number(heldItemEffect.statBonuses[moveClass==='physical'?'attack':'special_attack'])}]:[])
     ]

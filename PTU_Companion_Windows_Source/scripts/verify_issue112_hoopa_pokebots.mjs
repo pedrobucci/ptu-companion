@@ -40,6 +40,26 @@ async function check(api,label){
       assert.deepEqual(Buffer.from(await response.arrayBuffer()),await readFile(new URL(sprite,android)));
     }
   }
+  async function checkCombatPower(row){
+    let log='';
+    const inputs={'combat-natural-roll':'10','combat-hit-result':'hit','combat-critical-result':'no','combat-manual-damage-roll':'20'};
+    const start=app.indexOf('async function pokemonCombatResolveMove(');
+    const resolve=runInNewContext(app.slice(start,app.indexOf('function pokemonCombatMoveCard(',start))+'\npokemonCombatResolveMove',{
+      pokemonCombatReferenceState:{pokemonId:'hoopa',data:{moves:[row]}},
+      pokemon:()=>({name:'Hoopa'}),document:{getElementById:id=>({value:inputs[id]})},
+      pokemonCombatMoveAvailability:()=>({valid:true}),pokemonCombatSlug:()=>row.record.id,
+      pokemonCombatParticipant:()=>({conditions:{}}),pokemonCombatOutcomeSpec:()=>({}),
+      pokemonCombatBoundFeatureModifiers:()=>[],pokemonCombatSpendAction:()=>({valid:true}),pokemonCombatSpendFrequency:()=>({valid:true}),
+      pokemonCombatDamageChart:()=>row.resolvedDamage.damageChart,
+      pokemonCombatKnowsRollMove:()=>false,pokemonCombatDefenseCurlModifier:()=>({}),
+      pokemonCombatApplyMoveOutcome:()=>{},pokemonCombatDispatchMoveFormEvent:()=>{},
+      pokemonCombatLog:(_id,_title,detail)=>{log=detail;},closeModal:()=>{},commit:()=>{},render:()=>{},
+      toast:(message,kind)=>{assert.notEqual(kind,'error',message);}
+    });
+    await resolve('hoopa',0);
+    const {primaryStat,powerDamage}=row.resolvedDamage;
+    assert(log.includes(`20 + Stat ${primaryStat.value} + ${powerDamage.source} ${powerDamage.value} = ${20+primaryStat.value+powerDamage.value}`),log);
+  }
   async function request(path,body,method=body?'POST':'GET',status=200){
     const response=await api(path,{
       method,
@@ -119,6 +139,39 @@ async function check(api,label){
     restored.details.formState=back.formState;
     await checkPortrait(restored,id);
   }
+
+  const powerProbe={level:50,details:{
+    speciesDefinitionId:'hoopa-confined',formState:{baseFormId:'hoopa-unbound'},
+    abilities:['Handyman'],pokeEdges:[{id:'mixed-power'}],
+    moves:[{id:'knock-off'},{id:'hyperspace-fury'},{id:'dark-pulse'},{id:'trick'}]
+  }};
+  for(const [combatStages,statAllocations,physical,special] of [
+    [{},{},{source:'Weird Power',value:17},{source:'Mixed Power',value:8}],
+    [{attack:1},{},{source:'Mixed Power',value:8},{source:'Weird Power',value:19}],
+    [{},{attack:1},{source:'Mixed Power',value:8},{source:'Mixed Power',value:8}]
+  ]){
+    const pokemon={...powerProbe,combatStages,details:{...powerProbe.details,statAllocations}};
+    const ref=await request('/api/pokemon/reference-data',{pokemon});
+    assert.deepEqual(ref.modifierSummary.powerDamage,{physical,special});
+    assert.deepEqual(ref.resolvedCreature.modifierSummary.powerDamage,{physical,special});
+    for(const [id,expected] of [['knock-off',physical],['dark-pulse',special]]){
+      const {resolvedDamage}=ref.moves.find(row=>row.record.id===id);
+      assert.deepEqual(resolvedDamage.powerDamage,expected);
+      assert.equal(resolvedDamage.breakdown.filter(row=>['Weird Power','Mixed Power','Twisted Power'].includes(row.label)).length,1);
+      const {rolled_damage}=resolvedDamage.damageChart;
+      const [dice,flat='0']=rolled_damage.split('+');
+      assert.equal(resolvedDamage.finalRoll,`${dice}+${Number(flat)+resolvedDamage.primaryStat.value+expected.value}`);
+    }
+    assert.equal(ref.moves.find(row=>row.record.id==='trick').resolvedDamage,null);
+    if(physical.source==='Weird Power')await checkCombatPower(ref.moves.find(row=>row.record.id==='knock-off'));
+  }
+  const weirdOnly=await request('/api/pokemon/reference-data',{pokemon:{...powerProbe,details:{...powerProbe.details,pokeEdges:[]}}});
+  assert.deepEqual(weirdOnly.modifierSummary.powerDamage,{physical:{source:'Weird Power',value:17},special:{source:null,value:0}});
+  const bound=await request('/api/pokemon/reference-data',{pokemon:{
+    ...powerProbe,details:{...powerProbe.details,formState:{baseFormId:'base'},abilities:['Weird Power']}
+  }});
+  assert.equal(bound.modifierSummary.powerDamage.physical.source,'Mixed Power');
+  assert.equal(bound.modifierSummary.powerDamage.special.source,'Mixed Power');
 
   for(const [id,types] of [['skeledirge',['Fire','Ghost']],...['tinkatink','tinkatuff','tinkaton'].map(id=>[id,['Fairy','Steel']])]){
     const record=await species(id);
