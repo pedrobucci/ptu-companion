@@ -19,7 +19,7 @@ import {resolveHeldItemEffect, applyHeldItemToTypeProfile, applyHeldItemToEffect
 import {resolveTrainerModel,resolveBoundFeatureEffects} from './rules/trainer-engine.mjs';
 import {previewTrainerProgression,applyTrainerProgression,previewTrainerXpPurchase,applyTrainerXpPurchase} from './rules/trainer-progression-engine.mjs';
 import {itemUsageMetadata} from './rules/item-metadata.mjs';
-import {applyPokemonFormStatSwaps,normalizePokemonFormState,resolvePokemonForms,resolvePokemonPresentation} from './rules/pokemon-forms.mjs';
+import {applyPokemonFormStatSwaps,linkedFormMoveKey,resolveLinkedFormMoves,normalizePokemonFormState,resolvePokemonForms,resolvePokemonPresentation} from './rules/pokemon-forms.mjs';
 import {applyPokemonFormTransitionEvent} from './rules/pokemon-form-events.mjs';
 import {applyPokemonFormGameEvent} from './rules/pokemon-form-campaign-state.mjs';
 import {getBuiltInFormItem,listBuiltInFormItems} from './rules/pokemon-form-builtins.mjs';
@@ -629,7 +629,7 @@ async function handleApi(req,res,url){
     return json(res,200,{ok:true,desktopSession});
   }
   if(req.method==='GET' && url.pathname==='/api/health'){
-    return json(res,200,{ok:true,version:'2.1.0-beta.37',persistence:'sqlite',database:dbPath,schemaVersion:5,definitions:{database:definitionsPath,persistent:true,activeRuleset:getActiveRuleset()}});
+    return json(res,200,{ok:true,version:'2.1.0-beta.38',persistence:'sqlite',database:dbPath,schemaVersion:5,definitions:{database:definitionsPath,persistent:true,activeRuleset:getActiveRuleset()}});
   }
   if(req.method==='GET' && url.pathname==='/api/rulesets'){
     const activeRulesetId=getActiveRuleset();
@@ -827,7 +827,7 @@ async function handleApi(req,res,url){
     const baseSpecies=definitions.getResolved({rulesetId,kind:'species',id:speciesId});
     if(!baseSpecies)return json(res,404,{error:'Species definition not found in active ruleset'});
     const resolution=resolveSpeciesFormState({species:baseSpecies,pokemon,payload,includeActive:payload.includeActive!==false});
-    return json(res,resolution.valid?200:400,{rulesetId,baseSpecies:{id:baseSpecies.id,name:baseSpecies.name,forms:baseSpecies.forms||[]},...resolution});
+    return json(res,resolution.valid?200:400,{rulesetId,baseSpecies:{id:baseSpecies.id,name:baseSpecies.name,forms:baseSpecies.forms||[]},...resolution,linkedMoves:resolution.valid?resolveLinkedFormMoves(resolution.species,details.moves):null});
   }
   if(req.method==='POST' && url.pathname==='/api/pokemon/build-preview'){
     const payload=await bodyJson(req);
@@ -844,7 +844,7 @@ async function handleApi(req,res,url){
     const allocations=payload.autoAllocate
       ? autoBalancedAllocations({baseStats:species.baseStats,nature:payload.nature,level:payload.level})
       : payload.allocations;
-    const moveLimitAbilities=moveLimitAbilityDefinitions(rulesetId,payload.selectedAbilities||[]);
+    const moveLimitAbilities=moveLimitAbilityDefinitions(rulesetId,species.raw?.fixed_build?species.abilities.map(ability=>ability.name):payload.selectedAbilities||[]);
     let preview=buildPokemonPreview({
       species,level:payload.level,nature:payload.nature,allocations,
       selectedAbilities:payload.selectedAbilities,selectedMoves:payload.autoSelectMoves?[]:payload.selectedMoves,
@@ -1013,7 +1013,7 @@ async function handleApi(req,res,url){
       const accuracyRollBonus=getPokemonModifierSummary(resolvedPokemonForCombat,{heldItemEffect:held.effect}).accuracyRollBonus;
       const baseAc=definition?.ac==null?null:Number(definition.ac);
       const effectiveAc=baseAc==null||!Number.isFinite(baseAc)?baseAc:Math.max(0,baseAc-accuracyTrainingRanks);
-      return {record:m,definition,resolvedDamage,accuracyTrainingRanks,accuracyRollBonus,effectiveAc};
+      return {record:m,definition,linkedFormMoveKey:linkedFormMoveKey(species,id),resolvedDamage,accuracyTrainingRanks,accuracyRollBonus,effectiveAc};
     });
     const abilities=resolveCreatureAbilityRecords({pokemon,species,rulesetId,heldItemEffect:held.effect});
     const abilitySlots=nativeAbilitySlotsForSpecies(species,pokemon.level);
@@ -1597,7 +1597,7 @@ const server=createServer(async(req,res)=>{
 
 const port=Number(process.env.PTU_PORT||4173);
 server.listen(port,'127.0.0.1',()=>{
-  console.log(`PTU Companion Beta v2.1.0-beta.37: http://127.0.0.1:${port}`);
+  console.log(`PTU Companion Beta v2.1.0-beta.38: http://127.0.0.1:${port}`);
   console.log(`Campaign SQLite: ${dbPath}`);
   console.log(`Persistent Definition SQLite: ${definitionsPath}`);
   console.log(`Active ruleset: ${getActiveRuleset()}`);

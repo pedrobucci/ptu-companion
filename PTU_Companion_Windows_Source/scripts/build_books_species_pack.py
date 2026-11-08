@@ -19,7 +19,7 @@ ROOT = Path(__file__).resolve().parents[1]
 REPO = ROOT.parent
 DATA = ROOT / 'seed/content-packs/campaign-books-species'
 PACK_ID = 'campaign-books-species'
-VERSION = '1.0.0'
+VERSION = '1.1.0'
 FILES = ['Alola Lilligant', 'Aron Desert', 'Babee', 'Budice', 'Eudemown',
          'Fire Giant Honedge', 'Grifflet', 'Icynib', 'Izaguiraze', 'Lopunny',
          'Miroboros', 'Noirela', 'Scarlet and Violet', 'Waifu Pool']
@@ -260,7 +260,8 @@ def build():
     for kind, rows in {'species': species, **supplemental}.items():
         entries[f'content/{kind}.ndjson'] = b''.join(payload(r) for r in rows)
     for row in species:
-        entries[row['portrait_asset_path']] = (DATA / row['portrait_asset_path']).read_bytes()
+        if asset := row.get('portrait_asset_path'):
+            entries[asset] = (DATA / asset).read_bytes()
     for kind in ['families', 'edges']:
         entries[f'content/datasets/ptu_evolution_{kind}.json'] = (DATA / f'evolution-{kind}.json').read_bytes()
     manifest = {'format': 'ptu-content-pack', 'format_version': 1, 'id': PACK_ID,

@@ -1280,7 +1280,7 @@
   },
   {
     "filename": "Scarlet and Violet.pdf",
-    "sha256": "87fd1693d201499f28cdb2ed21dc394bf5cb1b914c338dfc8c2fba9afadca287",
+    "sha256": "cd056a472a92b4a67d03ca7d46300585ad13eb8ca8b5b5f2d97ddbe4eb0cfef9",
     "species_pages": [
       1,
       2,
@@ -1294,10 +1294,7 @@
       10,
       11,
       12
-    ],
-    "text_characters": 45497,
-    "pdf_pages": 15,
-    "catalog_action": "recovered"
+    ]
   },
   {
     "filename": "SuMo References.pdf",
@@ -1324,5 +1321,29 @@
     "text_characters": 35816,
     "pdf_pages": 9,
     "catalog_action": "recovered"
+  },
+  {
+    "filename": "Quatrotem.pdf",
+    "sha256": "c8f46dd06785d2264e4e5767a295c55456c6334f717338d59174ac3540697ffd",
+    "pages": 1,
+    "species_pages": [
+      1
+    ]
+  },
+  {
+    "filename": "Shadow Protocol.pdf",
+    "sha256": "c93f8daf7ccbf69f84454067a983b0d0ed95a8d0fd9d701ed6d404e3f79bb252",
+    "pages": 1,
+    "species_pages": [
+      1
+    ]
+  },
+  {
+    "filename": "Dracopter.pdf",
+    "sha256": "9389efff1f32fbc2cab608198c827d5f4b0b8dd483d00c5115518ab24d3f94fd",
+    "pages": 1,
+    "species_pages": [
+      1
+    ]
   }
 ]

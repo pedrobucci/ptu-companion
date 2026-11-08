@@ -4,11 +4,17 @@
 
 Varredura dos 35 PDFs fornecidos por Pedro em `Documents/Pokémon/Books`. O inventário versionado registra nome, SHA-256 e páginas com ficha de espécie. Regras e retratos vieram exclusivamente desses PDFs; os três stats ausentes de Lopunny (Omega) seguem a decisão explícita de Pedro.
 
-50 fichas recuperadas: 38 novas espécies/variantes e 12 fichas PTU para cadastros externos de Scarlet/Violet. 43 habilitadas para criação; 7 preservadas na biblioteca, sem criação até as decisões abaixo. Inclui 9 Moves, 5 Abilities e Smith; 22 vínculos evolutivos seguros.
+A recuperação inicial trouxe 50 fichas: 38 novas espécies/variantes e 12 fichas PTU para cadastros externos de Scarlet/Violet. 43 habilitadas para criação; 7 preservadas na biblioteca, sem criação até as decisões abaixo. Inclui 9 Moves, 5 Abilities e Smith; 22 vínculos evolutivos seguros.
+
+## Atualização 1.1.0
+
+- O PDF revisado libera Skeledirge (Fire/Ghost) e a linha de Tinkaton (Fairy/Steel) para criação. As quatro linhas de Scarlet/Violet têm vínculos evolutivos de campanha.
+- A ficha de Hoopa alterna manualmente entre Bound e Unbound e mantém o ID de espécie que a vinculava ao save. Os três pares de golpes seguem a forma. A fonte PTU não especifica um gatilho nem uma duração para a troca.
+- Quatrotem, Shadow Protocol e Dracopter usam o nível 100 e os atributos das fichas. O catálogo oferece as quatro unidades de Quatrotem individualmente. Scald, Brine e Water Absorb identificam a unidade de água na ficha, apesar do ícone Ice na ilustração. As artes dos Pokébots vêm dos JPGs fornecidos.
 
 ## Integração
 
-- Pack `campaign-books-species`, versão de conteúdo `1.0.0`, prioridade 180, habilitado em `all-provided-material`. Não há incremento de versão do aplicativo nem publicação de release.
+- Pack `campaign-books-species`, versão de conteúdo `1.1.0`, prioridade 180, habilitado em `all-provided-material`.
 - Windows: seeds versionados + atualização do banco de definições existente pelo mecanismo com backup; saves/campanhas não foram editados.
 - Android: mesmo arquivo `.ptucp` e registros embutidos antes do bootstrap; controle de pack/importações continua pelo mecanismo existente.
 - Versões antigas das espécies e regras continuam disponíveis. As 12 fichas Scarlet/Violet substituem os stubs na resolução do ruleset, sem apagar os registros antigos.
@@ -26,8 +32,6 @@ Lopunny (Omega): Pedro pediu os valores da Lopunny normal para os campos em bran
 | Aron Desert p.3 | Título Hydrusa; evolução indica Aggron | Hydrusa (Desert), criação suspensa; sem vínculo Lairon → terminal |
 | Budice p.3 | Título Aromint; linha evolutiva Aromist | Aromint, criação suspensa; sem vínculo Fromint → terminal |
 | Waifu Pool p.9 | Psychic/Poison na ficha; linha anterior Dark/Fairy | Gardevoir (Waifu Pool 3), criação suspensa |
-| Scarlet/Violet p.6 | Skeledirge apenas Fire | Criação suspensa, sem substituir tipos por conhecimento externo |
-| Scarlet/Violet pp.10–12 | Tinkatink/Tinkatuff/Tinkaton Ice/Psychic | Criação suspensa, sem corrigir para tipos externos |
 | Eudemown pp.1–2 | Evolução nível 30 ou 25, ambas Loyalty 6 | Fichas disponíveis; evolução automática adiada |
 | Waifu Pool p.3 | Primeiro estágio Icynib; pp.1–2 indicam Ralts | Fichas disponíveis; evolução automática dessa linha adiada |
 
@@ -85,13 +89,13 @@ Gen 8ish: todas as páginas identificadas de espécie já têm entrada correspon
 | Meowscarada | Scarlet and Violet.pdf p.3 | Disponível |
 | Fuecoco | Scarlet and Violet.pdf p.4 | Disponível |
 | Crocalor | Scarlet and Violet.pdf p.5 | Disponível |
-| Skeledirge | Scarlet and Violet.pdf p.6 | Aguardando decisão |
+| Skeledirge | Scarlet and Violet.pdf p.6 | Disponível |
 | Quaxly | Scarlet and Violet.pdf p.7 | Disponível |
 | Quaxwell | Scarlet and Violet.pdf p.8 | Disponível |
 | Quaquaval | Scarlet and Violet.pdf p.9 | Disponível |
-| Tinkatink | Scarlet and Violet.pdf p.10 | Aguardando decisão |
-| Tinkatuff | Scarlet and Violet.pdf p.11 | Aguardando decisão |
-| Tinkaton | Scarlet and Violet.pdf p.12 | Aguardando decisão |
+| Tinkatink | Scarlet and Violet.pdf p.10 | Disponível |
+| Tinkatuff | Scarlet and Violet.pdf p.11 | Disponível |
+| Tinkaton | Scarlet and Violet.pdf p.12 | Disponível |
 | Ralts (Waifu Pool 1) | Waifu Pool.pdf p.1 | Disponível |
 | Kirlia (Waifu Pool 1) | Waifu Pool.pdf p.2 | Disponível |
 | Gardevoir (Waifu Pool 1) | Waifu Pool.pdf p.3 | Disponível |

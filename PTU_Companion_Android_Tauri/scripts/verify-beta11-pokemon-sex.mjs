@@ -4,7 +4,7 @@ const app=readFileSync(new URL('../www/app.js',import.meta.url),'utf8');
 assert.match(app,/gender:'None'/,'Pokémon builder must keep a sex field');
 assert.match(app,/label>Sex<select[^]*Male[^]*Female/,'Pokémon builder must offer None, Male and Female');
 assert.match(app,/p\.details\.gender=normalizePokemonGender\(p\.details\.gender\?\?p\.gender\?\?p\.sex\?\?'None'\)/,'Migration must preserve legacy gender/sex values');
-assert.match(app,/gender:normalizePokemonGender\(f\.gender\)/,'New Pokémon must persist sex in details');
+assert.match(app,/gender:fixed\?'None':normalizePokemonGender\(f\.gender\)/,'New Pokémon must persist sex in details');
 assert.match(app,/name:'gender',label:'Sex',type:'select'/,'Identity editor must edit sex');
 assert.match(app,/pokemonGenderLabel\(p\.details\?\.gender\)/,'Creature sheet must display sex');
 console.log('PTU Companion Android v2.2.0-beta.11 Pokémon sex verification: OK');

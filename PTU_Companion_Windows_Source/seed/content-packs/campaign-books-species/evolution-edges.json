@@ -240,5 +240,71 @@
     "condition_text": null,
     "mapping_confidence": "safe_single_predecessor",
     "source_id": "books-lopunny"
+  },
+  {
+    "family_id": "evofam-books-scarlet-and-violet-fuecoco",
+    "from_species_name": "Fuecoco",
+    "from_ref_key": "fuecoco",
+    "to_species_name": "Crocalor",
+    "to_ref_key": "crocalor",
+    "to_min_level": 15,
+    "condition_text": null,
+    "mapping_confidence": "exact",
+    "source_id": "books-scarlet-and-violet"
+  },
+  {
+    "family_id": "evofam-books-scarlet-and-violet-fuecoco",
+    "from_species_name": "Crocalor",
+    "from_ref_key": "crocalor",
+    "to_species_name": "Skeledirge",
+    "to_ref_key": "skeledirge",
+    "to_min_level": 30,
+    "condition_text": null,
+    "mapping_confidence": "exact",
+    "source_id": "books-scarlet-and-violet"
+  },
+  {
+    "family_id": "evofam-books-scarlet-and-violet-quaxly",
+    "from_species_name": "Quaxly",
+    "from_ref_key": "quaxly",
+    "to_species_name": "Quaxwell",
+    "to_ref_key": "quaxwell",
+    "to_min_level": 15,
+    "condition_text": null,
+    "mapping_confidence": "exact",
+    "source_id": "books-scarlet-and-violet"
+  },
+  {
+    "family_id": "evofam-books-scarlet-and-violet-quaxly",
+    "from_species_name": "Quaxwell",
+    "from_ref_key": "quaxwell",
+    "to_species_name": "Quaquaval",
+    "to_ref_key": "quaquaval",
+    "to_min_level": 30,
+    "condition_text": null,
+    "mapping_confidence": "exact",
+    "source_id": "books-scarlet-and-violet"
+  },
+  {
+    "family_id": "evofam-books-scarlet-and-violet-tinkatink",
+    "from_species_name": "Tinkatink",
+    "from_ref_key": "tinkatink",
+    "to_species_name": "Tinkatuff",
+    "to_ref_key": "tinkatuff",
+    "to_min_level": 15,
+    "condition_text": null,
+    "mapping_confidence": "exact",
+    "source_id": "books-scarlet-and-violet"
+  },
+  {
+    "family_id": "evofam-books-scarlet-and-violet-tinkatink",
+    "from_species_name": "Tinkatuff",
+    "from_ref_key": "tinkatuff",
+    "to_species_name": "Tinkaton",
+    "to_ref_key": "tinkaton",
+    "to_min_level": 30,
+    "condition_text": null,
+    "mapping_confidence": "exact",
+    "source_id": "books-scarlet-and-violet"
   }
 ]

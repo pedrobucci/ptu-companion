@@ -1,0 +1,131 @@
+import assert from 'node:assert/strict';
+import {spawn} from 'node:child_process';
+import {once} from 'node:events';
+import {mkdtemp, readFile, rm} from 'node:fs/promises';
+import {tmpdir} from 'node:os';
+import {join} from 'node:path';
+import {fileURLToPath} from 'node:url';
+import {runInThisContext} from 'node:vm';
+
+const win=new URL('../',import.meta.url);
+const android=new URL('../../PTU_Companion_Android_Tauri/www/',import.meta.url);
+const rulesetId='all-provided-material';
+const port=42112;
+const tmp=await mkdtemp(join(tmpdir(),'ptu-issue112-'));
+const server=spawn(process.execPath,['server.mjs'],{
+  cwd:fileURLToPath(win),
+  env:{...process.env,PTU_PORT:String(port),PTU_DATA_DIR:tmp},
+  stdio:['ignore','pipe','pipe']
+});
+
+let serverErrors='';
+server.stderr.on('data',chunk=>serverErrors+=chunk);
+
+async function check(api,label){
+  async function request(path,body,method=body?'POST':'GET',status=200){
+    const response=await api(path,{
+      method,
+      headers:{'content-type':'application/json'},
+      body:body&&JSON.stringify({rulesetId,...body})
+    });
+    const data=await response.json();
+    assert.equal(response.status,status,`${label} ${path} ${data.error||''}`);
+    return data;
+  }
+  const species=async id=>(await request('/api/definitions/species/'+id)).definition;
+  const examples=[
+    ['hoopa-confined','hoopa-unbound',['Psychic','Dark'],['knock-off','dark-pulse','hyperspace-fury']],
+    ['hoopa-unbound','hoopa-confined',['Psychic','Ghost'],['phantom-force','shadow-ball','hyperspace-hole']]
+  ];
+  for(const [id,target,types,expected] of examples){
+    const original=await species(id);
+    const initial=examples.find(row=>row[0]===target)[3];
+    const pokemon={id:`saved-${id}`,name:'Ring Keeper',species:original.name,level:50,hp:71,maxHp:114,tempHp:0,injuries:0,ball:'Poké Ball',heldItem:null,img:'creatures/default.svg',storage:false,loyalty:4,rosterIds:[],combatStages:{},
+      details:{speciesDefinitionId:id,speciesVersionId:`species:${id}@gen8`,
+        nature:'Hardy',createdFromDefinition:true,experience:15000,tutorPointsEarned:11,tutorPointsSpent:1,
+        tutorPointsRemaining:10,abilities:['Magician'],moves:[...initial.map((id,i)=>({id,key:id,source:i===2?'tutor':'current_species',tutorCost:i===2?1:0})),{id:'trick',source:'current_species'}]}};
+    const switched=await request('/api/pokemon/forms/resolve',{pokemon,formState:{baseFormId:target}});
+    assert.deepEqual(switched.species.types,types);
+    assert.deepEqual(switched.species.levelUpMoves.filter(move=>expected.includes(move.move_id)).map(move=>[Number(move.level),move.move_id]),[[18,expected[0]],[28,expected[1]],[43,expected[2]]]);
+    assert(switched.species.tutorMoves.some(move=>move.move_id===expected[2]&&move.note==='N'));
+    assert(switched.species.tutorMoves.some(move=>move.move_id==='zen-headbutt'));
+    assert(!switched.species.tutorMoves.some(move=>move.move_id===initial[2]));
+    assert.deepEqual(switched.linkedMoves.map(move=>move.id),[...expected,'trick']);
+    assert.equal(switched.linkedMoves[2].tutorCost,1);
+    pokemon.species=switched.species.name;
+    pokemon.types=types;
+    pokemon.details.formState=switched.formState;
+    pokemon.details.moves=switched.linkedMoves;
+
+    const ref=await request('/api/pokemon/reference-data',{pokemon});
+    assert(ref.moves.every(move=>move.definition));
+    assert.equal(ref.moves[2].linkedFormMoveKey,'hyperspace-hole');
+    const options=await request('/api/pokemon/training-options',{pokemon});
+    assert(options.moveTeaching.tutor.some(move=>move.id===expected[2]&&move.naturalTutor));
+
+    const {state}=await request('/api/state');
+    state.pokemon=[pokemon];
+    state.selectedPokemonId=pokemon.id;
+    await request('/api/state',{state},'PUT');
+    const restored=(await request('/api/state')).state.pokemon[0];
+    assert.equal(restored.id,pokemon.id);
+    assert.equal(restored.hp,pokemon.hp);
+    assert.equal(restored.details.experience,15000);
+    const back=await request('/api/pokemon/forms/resolve',{pokemon:restored,formState:{baseFormId:'base'}});
+    assert.deepEqual(back.linkedMoves.map(move=>move.id),[...initial,'trick']);
+  }
+
+  for(const [id,types] of [['skeledirge',['Fire','Ghost']],...['tinkatink','tinkatuff','tinkaton'].map(id=>[id,['Fairy','Steel']])]){
+    const record=await species(id);
+    assert(record.enabledForCreation);
+    assert.deepEqual(record.types,types);
+  }
+  const tinkatink={level:15,details:{speciesDefinitionId:'tinkatink',nature:'Hardy'}};
+  const tinkatinkRef=await request('/api/pokemon/reference-data',{pokemon:tinkatink});
+  assert(tinkatinkRef.outgoingEvolutions.some(row=>row.target.id==='tinkatuff'&&row.toMinLevel===15));
+
+  for(const [id,hp,moves,abilities] of [['quatrotem',170,8,5],['shadow-protocol',200,5,4],['dracopter',260,4,4],
+    ...['electric','fire','grass','water'].map(element=>[`quatrotem-${element}-unit`,125,2,1])]){
+    const d=await species(id);
+    assert.deepEqual(d.types,['Robotic']);
+    assert(d.raw.portrait_data_url.startsWith('data:image/webp;base64,'));
+    const {preview}=await request('/api/pokemon/build-preview',{speciesId:id,level:1,nature:'Adamant',autoAllocate:true,autoSelectMoves:true});
+    assert(preview.valid,preview.errors?.join(', '));
+    assert.equal(preview.level,100);
+    assert.equal(preview.nature.name,'Robotic');
+    assert.equal(preview.maxHp,hp);
+    assert.deepEqual(preview.finalStats,d.baseStats);
+    assert.equal(preview.selectedMoves.length,moves);
+    assert.equal(preview.selectedAbilities.length,abilities);
+    const pokemon={level:100,details:{speciesDefinitionId:id}};
+    await request('/api/pokemon/progression-preview',{pokemon,expGain:500,gmOverride:true},'POST',400);
+    await request('/api/pokemon/restat-preview',{pokemon},'POST',400);
+  }
+  console.log(`${label}: Hoopa round-trip and persistence, Scarlet/Violet typing/evolution, fixed Pokébots OK`);
+}
+
+try{
+  await new Promise((resolve,reject)=>{
+    const timer=setTimeout(()=>reject(new Error(`Windows API did not start: ${serverErrors}`)),15000);
+    server.stdout.on('data',line=>{
+      if(String(line).includes(`127.0.0.1:${port}`)){clearTimeout(timer);resolve();}
+    });
+    server.once('error',error=>{clearTimeout(timer);reject(error);});
+  });
+  await check((path,init)=>fetch(`http://127.0.0.1:${port}${path}`,init),'Windows');
+  globalThis.window=globalThis;
+  globalThis.location={href:'https://app.local/index.html'};
+  const local=new Map();
+  globalThis.localStorage={getItem:key=>local.get(key)||null,setItem:(key,value)=>local.set(key,value)};
+  for(const file of ['mobile-data.js','fakemon-v2-data.js','books-species-data.js']){
+    runInThisContext(await readFile(new URL(file,android),'utf8'),{filename:file});
+  }
+  const {mobileFetch}=await import(new URL('mobile-api.mjs',android));
+  await check(mobileFetch,'Android');
+}finally{
+  if(server.exitCode==null){
+    server.kill();
+    await once(server,'exit');
+  }
+  await rm(tmp,{recursive:true,force:true});
+}

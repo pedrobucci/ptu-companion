@@ -315,12 +315,13 @@ export function resolvePokemonMoveLimit({base=6,modifier=0,abilities=[]}={}){
 
 export function buildPokemonPreview({species,level=1,nature='Hardy',allocations={},selectedAbilities=[],selectedMoves=[],incomingEvolution=null,preEvolutionSpecies=[],gmMoves=[],moveLimitModifier=0,moveLimitAbilities=[],gmOverride=false,baseRelationExemptStats=[]}={}){
   if(!species) throw Object.assign(new Error('Species definition is required'),{status:400});
-  level=Math.max(1,Math.min(100,int(level,1)));
+  const fixed=species.raw?.fixed_build;
+  level=fixed?.level??Math.max(1,Math.min(100,int(level,1)));
   const base=normalizeBaseStats(species.baseStats||species.base_stats||{});
   if(STAT_KEYS.some(k=>!Number.isFinite(base[k]))) throw Object.assign(new Error('Species Base Stats are incomplete'),{status:400});
-  const natureResult=applyNature(base,nature);
-  const alloc=normalizeAllocations(allocations);
-  const budget=level+10;
+  const natureResult=fixed?{nature:{name:fixed.nature,neutral:true},stats:base}:applyNature(base,nature);
+  const alloc=normalizeAllocations(fixed?{}:allocations);
+  const budget=fixed?0:level+10;
   const spent=STAT_KEYS.reduce((sum,k)=>sum+alloc[k],0);
   const finalStats=Object.fromEntries(STAT_KEYS.map(k=>[k,natureResult.stats[k]+alloc[k]]));
   const relationExemptStats=normalizeRelationExemptStats(baseRelationExemptStats);
@@ -328,31 +329,31 @@ export function buildPokemonPreview({species,level=1,nature='Hardy',allocations=
   const maxHp=level+(finalStats.hp*3)+10;
 
   const nativeAbilities=eligibleAbilities(species.abilities||species.ability_slots||[]);
-  const abilitySlots=levelAbilitySlots(level).map(slot=>({
+  const abilitySlots=(fixed?[]:levelAbilitySlots(level)).map(slot=>({
     ...slot,
     options:nativeAbilities.filter(a=>slot.allowedCategories.includes(a.category))
   }));
-  const selectedAbilityNames=(Array.isArray(selectedAbilities)?selectedAbilities:[]).map(String).filter(Boolean);
+  const selectedAbilityNames=fixed?nativeAbilities.map(a=>a.name):(Array.isArray(selectedAbilities)?selectedAbilities:[]).map(String).filter(Boolean);
   const abilityErrors=[];
-  if(selectedAbilityNames.length>abilitySlots.length) abilityErrors.push(`Level ${level} grants ${abilitySlots.length} Ability slot${abilitySlots.length===1?'':'s'} through normal progression.`);
+  if(!fixed&&selectedAbilityNames.length>abilitySlots.length) abilityErrors.push(`Level ${level} grants ${abilitySlots.length} Ability slot${abilitySlots.length===1?'':'s'} through normal progression.`);
   for(let i=0;i<abilitySlots.length;i++){
     const selection=selectedAbilityNames[i];
     if(!selection){ abilityErrors.push(`Choose ${abilitySlots[i].label}.`); continue; }
     if(!abilitySlots[i].options.some(a=>a.name===selection)) abilityErrors.push(`${selection} is not valid for ${abilitySlots[i].label}.`);
   }
 
-  const moveLimit=resolvePokemonMoveLimit({base:6,modifier:moveLimitModifier,abilities:moveLimitAbilities});
+  const moveLimit=resolvePokemonMoveLimit({base:6,modifier:fixed?0:moveLimitModifier,abilities:moveLimitAbilities});
   const currentMoves=eligibleNaturalMoves(species.levelUpMoves||species.level_up_moves||[],level).map(m=>({...m,sourceKind:'current_species',sourceSpeciesId:species.id||null,sourceSpeciesName:species.name||species.display_name||null}));
   const ancestryMoves=preEvolutionNaturalMoves(preEvolutionSpecies);
-  const overrideMoves=gmOverride?normalizeGmMoves(gmMoves):[];
+  const overrideMoves=!fixed&&gmOverride?normalizeGmMoves(gmMoves):[];
   const rawMovePool=[...currentMoves,...ancestryMoves,...overrideMoves];
   const eligibleMoves=mergeMovePool(rawMovePool);
   const eligibleMoveKeys=new Set(eligibleMoves.map(m=>m.key));
-  const selectedMoveKeys=[...new Set((Array.isArray(selectedMoves)?selectedMoves:[]).map(k=>canonicalizeSelectedMoveKey(k,rawMovePool,eligibleMoves)).filter(Boolean))];
+  const selectedMoveKeys=fixed?currentMoves.map(m=>m.key):[...new Set((Array.isArray(selectedMoves)?selectedMoves:[]).map(k=>canonicalizeSelectedMoveKey(k,rawMovePool,eligibleMoves)).filter(Boolean))];
   const moveErrors=[];
   if(selectedMoveKeys.length>moveLimit.effective) moveErrors.push(`Selected ${selectedMoveKeys.length} Moves; current Move Limit is ${moveLimit.effective}.`);
   for(const key of selectedMoveKeys){ if(!eligibleMoveKeys.has(key)) moveErrors.push(`Move ${key} is not available from the current Species, a pre-evolution, or an active GM Override.`); }
-  if((gmMoves||[]).length && !gmOverride) moveErrors.push('GM-added Moves require GM Override to remain enabled.');
+  if(!fixed&&(gmMoves||[]).length && !gmOverride) moveErrors.push('GM-added Moves require GM Override to remain enabled.');
 
   const errors=[];
   if(spent!==budget) errors.push(`Allocate exactly ${budget} Stat Points (currently ${spent}; ${budget-spent} remaining).`);
@@ -369,7 +370,7 @@ export function buildPokemonPreview({species,level=1,nature='Hardy',allocations=
     finalStats,
     maxHp,
     baseRelations:{valid:relationViolations.length===0,violations:relationViolations,overridden:!!(gmOverride&&relationViolations.length),hpExempt:true,exemptStats:relationExemptStats},
-    tutorPoints:{earned:tutorPointsAtLevel(level),spent:0,remaining:tutorPointsAtLevel(level)},
+    tutorPoints:{earned:fixed?0:tutorPointsAtLevel(level),spent:0,remaining:fixed?0:tutorPointsAtLevel(level)},
     abilitySlots,
     selectedAbilities:selectedAbilityNames,
     moveLimit,
@@ -483,6 +484,7 @@ export function buildPokemonProgressionPreview({
   evolutionTarget=null,evolutionEdge=null,evolutionAllocations={},manualEvolutionCondition=false,gmOverride=false,baseRelationExemptStats=null,moveLimitAbilities=[]
 }={}){
   if(!pokemon||!species) throw Object.assign(new Error('Pokémon and current Species are required'),{status:400});
+  if(species.raw?.fixed_build) throw Object.assign(new Error('Pokébots have a fixed level and cannot gain experience.'),{status:400});
   const details=pokemon.details||{};
   const currentLevel=Math.max(1,Math.min(100,int(pokemon.level,1)));
   const currentLevelRow=(Array.isArray(experienceTable)?experienceTable:[]).find(r=>Number(r.level)===currentLevel);
@@ -721,6 +723,7 @@ export function tutorRestrictionForMove({level=1,move=null,september2015Enabled=
  * -------------------------------------------------------------------------- */
 export function buildPokemonRestatPreview({pokemon,species,allocations={},gmOverride=false,baseRelationExemptStats=null}={}){
   if(!pokemon||!species) throw Object.assign(new Error('Pokémon and Species are required'),{status:400});
+  if(species.raw?.fixed_build) throw Object.assign(new Error('This Pokébot uses the stats from its sheet.'),{status:400});
   const details=pokemon.details||{};
   const level=Math.max(1,Math.min(100,int(pokemon.level,1)));
   const nature=details.nature||'Hardy';

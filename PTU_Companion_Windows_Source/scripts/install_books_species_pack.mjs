@@ -8,7 +8,7 @@ import {importContentPack} from '../definitions/pack-importer.mjs';
 
 const root=fileURLToPath(new URL('../',import.meta.url));
 const packId='campaign-books-species';
-const archiveFilename=`${packId}-1.0.0.ptucp`;
+const archiveFilename=`${packId}-1.1.0.ptucp`;
 const buffer=await readFile(join(root,'bundled-packs',archiveFilename));
 const sourceRoot=join(root,'seed','content-packs',packId);
 const inventory=JSON.parse(await readFile(join(sourceRoot,'source-inventory.json'),'utf8'));

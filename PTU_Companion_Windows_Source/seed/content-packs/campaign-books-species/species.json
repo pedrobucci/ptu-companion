@@ -17114,7 +17114,7 @@
     "source_priority": 180,
     "source_page": 1,
     "source_file": "Scarlet and Violet.pdf",
-    "source_sha256": "87fd1693d201499f28cdb2ed21dc394bf5cb1b914c338dfc8c2fba9afadca287",
+    "source_sha256": "cd056a472a92b4a67d03ca7d46300585ad13eb8ca8b5b5f2d97ddbe4eb0cfef9",
     "types": [
       "Grass"
     ],
@@ -17827,7 +17827,7 @@
     "source_priority": 180,
     "source_page": 2,
     "source_file": "Scarlet and Violet.pdf",
-    "source_sha256": "87fd1693d201499f28cdb2ed21dc394bf5cb1b914c338dfc8c2fba9afadca287",
+    "source_sha256": "cd056a472a92b4a67d03ca7d46300585ad13eb8ca8b5b5f2d97ddbe4eb0cfef9",
     "types": [
       "Grass"
     ],
@@ -18512,7 +18512,7 @@
     "source_priority": 180,
     "source_page": 3,
     "source_file": "Scarlet and Violet.pdf",
-    "source_sha256": "87fd1693d201499f28cdb2ed21dc394bf5cb1b914c338dfc8c2fba9afadca287",
+    "source_sha256": "cd056a472a92b4a67d03ca7d46300585ad13eb8ca8b5b5f2d97ddbe4eb0cfef9",
     "types": [
       "Grass",
       "Dark"
@@ -19276,7 +19276,7 @@
     "source_priority": 180,
     "source_page": 4,
     "source_file": "Scarlet and Violet.pdf",
-    "source_sha256": "87fd1693d201499f28cdb2ed21dc394bf5cb1b914c338dfc8c2fba9afadca287",
+    "source_sha256": "cd056a472a92b4a67d03ca7d46300585ad13eb8ca8b5b5f2d97ddbe4eb0cfef9",
     "types": [
       "Fire"
     ],
@@ -19923,7 +19923,7 @@
     "source_priority": 180,
     "source_page": 5,
     "source_file": "Scarlet and Violet.pdf",
-    "source_sha256": "87fd1693d201499f28cdb2ed21dc394bf5cb1b914c338dfc8c2fba9afadca287",
+    "source_sha256": "cd056a472a92b4a67d03ca7d46300585ad13eb8ca8b5b5f2d97ddbe4eb0cfef9",
     "types": [
       "Fire"
     ],
@@ -20595,9 +20595,10 @@
     "source_priority": 180,
     "source_page": 6,
     "source_file": "Scarlet and Violet.pdf",
-    "source_sha256": "87fd1693d201499f28cdb2ed21dc394bf5cb1b914c338dfc8c2fba9afadca287",
+    "source_sha256": "cd056a472a92b4a67d03ca7d46300585ad13eb8ca8b5b5f2d97ddbe4eb0cfef9",
     "types": [
-      "Fire"
+      "Fire",
+      "Ghost"
     ],
     "base_stats": {
       "hp": 10,
@@ -21301,15 +21302,14 @@
     "dex_number": 911,
     "mechanical_completeness": "complete",
     "missing_mechanical_fields": [],
-    "enabled_for_character_creation": false,
+    "enabled_for_character_creation": true,
     "search_aliases": [
       "Skeledirge",
       "Scarlet and Violet"
     ],
-    "raw_text": "Skeledirge                                     Capability List\n                                         Overland 5, Swim 5, Jump 0/0, Power 9,\n                                         Dig 5, Egg Warmer, Firestarter, Glow,\n                                         Heater, Mountable 2, Phasing, Dead\n                                         Silent.\n\n                                                            Skill List\n                                         Athletic 4d6+2, Acrobatic 3d6, Combat 5d6,\n                                         Stealth 5d6+2, Perception 4d6, Focus 3d6\n\n                                                 Move List\n                                                 Evo. - Torch Song\n                                                 Lv. 5 - Lick\n               Base Stats:                       Lv. 10 - Round\nHp:                           10                 Lv. 13 - Scary Face\n                                                 Lv. 16 - Bite\nAttack:                       8\n                                                 Lv. 19 - Incinerate\nDefense:                      10\n                                                 Lv. 22 - Snarl\nSpecial Attack:               11                 Lv. 25 - Roar\nSpecial Defense:              8                  Lv. 27 - Flamethrower\nSpeed:                        6                  Lv. 31 - Shadow Ball\n                                                 Lv. 34 - Hyper Voice\n              Basic Information                  Lv. 37 - Will-O-Wisp\nType: Fire                                       Lv. 42 - Hex\nBasic Ability 1:        Blaze                    Lv. 45 - Fire Blast\nBasic Ability 2:        Gluttony                 Lv. 52 - Overheat\nAdvanced Ability 1: Sturdy\n                                         TM Move List\nAdvanced Ability 2: Overcoat\n                                         01 Work Up, 05 Roar, 06 Toxic, 10 Hidden Power,\nHigh Ability:           Unaware          11 Sunny Day, 15 Hyper Beam, 17 Protect, 21\n                                         Frustration, 22 Solar Beam, 26 Earthquake, 27\n                                         Return, 31 Brick Break, 32 Double Team, 35\n                                         Flamethrower, 38 Fire Blast, 39 Rock Tomb, 40\nEvolution:\n                                         Aerial Ace, 42 Facade, 43 Flame Charge, 44 Rest,\n1 - Fuecoco                              45 Attract, 48 Round, 50 Overheat, 52 Focus Blast,\n2 - Crocalor Minimum 15                  56 Fling, 61 Will-O-Wisp, 65 Shadow Claw, 68 Giga\n3 - Skeledirge Minimum 30                Impact, 74 Gyro Ball, 78 Bulldoze, 80 Rock Slide,\n                                         87 Swagger, 88 Sleep Talk, 90 Substitute, 93 Wild\n                                         Charge, 96 Nature Power, 100 Confide\n              Size Information\nHeight: 5’ 03” / 1.6m (Large)            Tutor Move List\nWeight: 719.8 lbs / 326.5kg (6)          Take Down, Mud-Slap, Fire Fang (N), Thunder\n                                         Fang, Disarming Voice, Fire Spin, Facade,\n          Breeding Information           Hex, Snarl, Flame Charge, Night Shade,\nGender ratio: 87.5 Male / 12.5% Female   Endure, Sunny Day, Dig, Zen Headbutt,\n                                         Shadow Claw (N), Body Slam, Seed Bomb,\nDiet: Omnivore                           Stomping Tantrum, Imprison, Substitute,\n                                         Crunch (N), Shadow Ball, Hyper Voice, Heat\nHabitat: : Urban, Desert, Cave\n                                         Wave, Encore, Flamethrower, Helping Hand,\nEgg group: Field\n                                         Earth Power, Fire Pledge, Earthquake, Blast\n                                         Burn, Outrage, Overheat (N), Flare Blitz",
+    "raw_text": "Skeledirge                                     Capability List\n                                         Overland 5, Swim 5, Jump 0/0, Power 9,\n                                         Dig 5, Egg Warmer, Firestarter, Glow,\n                                         Heater, Mountable 2, Phasing, Dead\n                                         Silent.\n\n                                                            Skill List\n                                         Athletic 4d6+2, Acrobatic 3d6, Combat 5d6,\n                                         Stealth 5d6+2, Perception 4d6, Focus 3d6\n\n                                                 Move List\n                                                 Evo. - Torch Song\n                                                 Lv. 5 - Lick\n               Base Stats:                       Lv. 10 - Round\nHp:                           10                 Lv. 13 - Scary Face\n                                                 Lv. 16 - Bite\nAttack:                       8\n                                                 Lv. 19 - Incinerate\nDefense:                      10\n                                                 Lv. 22 - Snarl\nSpecial Attack:               11                 Lv. 25 - Roar\nSpecial Defense:              8                  Lv. 27 - Flamethrower\nSpeed:                        6                  Lv. 31 - Shadow Ball\n                                                 Lv. 34 - Hyper Voice\n              Basic Information                  Lv. 37 - Will-O-Wisp\nType: Fire / Ghost                               Lv. 42 - Hex\nBasic Ability 1:        Blaze                    Lv. 45 - Fire Blast\nBasic Ability 2:        Gluttony                 Lv. 52 - Overheat\nAdvanced Ability 1: Sturdy\n                                         TM Move List\nAdvanced Ability 2: Overcoat\n                                         01 Work Up, 05 Roar, 06 Toxic, 10 Hidden Power,\nHigh Ability:           Unaware          11 Sunny Day, 15 Hyper Beam, 17 Protect, 21\n                                         Frustration, 22 Solar Beam, 26 Earthquake, 27\n                                         Return, 31 Brick Break, 32 Double Team, 35\n                                         Flamethrower, 38 Fire Blast, 39 Rock Tomb, 40\nEvolution:\n                                         Aerial Ace, 42 Facade, 43 Flame Charge, 44 Rest,\n1 - Fuecoco                              45 Attract, 48 Round, 50 Overheat, 52 Focus Blast,\n2 - Crocalor Minimum 15                  56 Fling, 61 Will-O-Wisp, 65 Shadow Claw, 68 Giga\n3 - Skeledirge Minimum 30                Impact, 74 Gyro Ball, 78 Bulldoze, 80 Rock Slide,\n                                         87 Swagger, 88 Sleep Talk, 90 Substitute, 93 Wild\n                                         Charge, 96 Nature Power, 100 Confide\n              Size Information\nHeight: 5’ 03” / 1.6m (Large)            Tutor Move List\nWeight: 719.8 lbs / 326.5kg (6)          Take Down, Mud-Slap, Fire Fang (N), Thunder\n                                         Fang, Disarming Voice, Fire Spin, Facade,\n          Breeding Information           Hex, Snarl, Flame Charge, Night Shade,\nGender ratio: 87.5 Male / 12.5% Female   Endure, Sunny Day, Dig, Zen Headbutt,\n                                         Shadow Claw (N), Body Slam, Seed Bomb,\nDiet: Omnivore                           Stomping Tantrum, Imprison, Substitute,\n                                         Crunch (N), Shadow Ball, Hyper Voice, Heat\nHabitat: : Urban, Desert, Cave\n                                         Wave, Encore, Flamethrower, Helping Hand,\nEgg group: Field\n                                         Earth Power, Fire Pledge, Earthquake, Blast\n                                         Burn, Outrage, Overheat (N), Flare Blitz",
     "data_notes": [
-      "Transcribed from the supplied PDF; spelling-only reference normalization preserves the source text.",
-      "Fire-only type in the source; awaiting confirmation of campaign typing."
+      "Transcribed from the supplied PDF; spelling-only reference normalization preserves the source text."
     ],
     "portrait_asset_path": "assets/species/skeledirge.webp",
     "reference_validation": {
@@ -21322,9 +21322,6 @@
       ]
     },
     "needs_review": true,
-    "pending_source_decisions": [
-      "Fire-only type in the source; awaiting confirmation of campaign typing."
-    ],
     "source_evolution": [
       {
         "stage": 1,
@@ -21358,7 +21355,7 @@
     "source_priority": 180,
     "source_page": 7,
     "source_file": "Scarlet and Violet.pdf",
-    "source_sha256": "87fd1693d201499f28cdb2ed21dc394bf5cb1b914c338dfc8c2fba9afadca287",
+    "source_sha256": "cd056a472a92b4a67d03ca7d46300585ad13eb8ca8b5b5f2d97ddbe4eb0cfef9",
     "types": [
       "Water"
     ],
@@ -22069,7 +22066,7 @@
     "source_priority": 180,
     "source_page": 8,
     "source_file": "Scarlet and Violet.pdf",
-    "source_sha256": "87fd1693d201499f28cdb2ed21dc394bf5cb1b914c338dfc8c2fba9afadca287",
+    "source_sha256": "cd056a472a92b4a67d03ca7d46300585ad13eb8ca8b5b5f2d97ddbe4eb0cfef9",
     "types": [
       "Water"
     ],
@@ -22771,7 +22768,7 @@
     "source_priority": 180,
     "source_page": 9,
     "source_file": "Scarlet and Violet.pdf",
-    "source_sha256": "87fd1693d201499f28cdb2ed21dc394bf5cb1b914c338dfc8c2fba9afadca287",
+    "source_sha256": "cd056a472a92b4a67d03ca7d46300585ad13eb8ca8b5b5f2d97ddbe4eb0cfef9",
     "types": [
       "Water",
       "Fighting"
@@ -23510,10 +23507,10 @@
     "source_priority": 180,
     "source_page": 10,
     "source_file": "Scarlet and Violet.pdf",
-    "source_sha256": "87fd1693d201499f28cdb2ed21dc394bf5cb1b914c338dfc8c2fba9afadca287",
+    "source_sha256": "cd056a472a92b4a67d03ca7d46300585ad13eb8ca8b5b5f2d97ddbe4eb0cfef9",
     "types": [
-      "Ice",
-      "Psychic"
+      "Fairy",
+      "Steel"
     ],
     "base_stats": {
       "hp": 5,
@@ -24030,24 +24027,20 @@
     "dex_number": 957,
     "mechanical_completeness": "complete",
     "missing_mechanical_fields": [],
-    "enabled_for_character_creation": false,
+    "enabled_for_character_creation": true,
     "search_aliases": [
       "Tinkatink",
       "Scarlet and Violet"
     ],
-    "raw_text": "Tinkatink                            Capability List\n                                       Overland 2, Swim 1, Jump 0/0, Power 6,\n                                       Fortune, Smith (Grude), Underdog.\n\n                                                          Skill List\n                                       Athletic 3d6, Acrobatic 1d6+2, Combat 2d6,\n                                       Stealth 1d6+2, Perception 2d6, Focus 3d6\n\n                                              Move List\n                                              Lv. 1 - Astonish\n                                              Lv. 1 - Fairy Wind\n                                              Lv. 5 - Baby-Doll Eyes\n                                              Lv. 8 - Metal Claw\n                                              Lv. 11 - Covet\n                                              Lv. 14 - Rock Smash\n                                              Lv. 17 - Draining Kiss\n               Base Stats:                    Lv. 21 - Sweet Kiss\nHp:                              5            Lv. 24 - Brutal Swing\nAttack:                          5            Lv. 27 - Slam\nDefense:                         6            Lv. 31 - Flash Cannon\nSpecial Attack:                  4            Lv. 35 - Play Rough\nSpecial Defense:                 6            Lv. 39 - Fake Out\nSpeed:                           5            Lv. 43 - Flatter\n                                              Lv. 47 - Skitter Smack\n              Basic Information               Lv. 52 - Knock Off\nType: Ice / Psychic\nBasic Ability 1:        Mold Breaker   Egg Move List\nAdvanced Ability 1: Pickup             Power-up punch, Superpower, Strength,\nAdvanced Ability 2: Own Time           Sucker Punch, Bullet Punch\nAdvanced Ability 3: Pickpocket\nHigh Ability:           Hammer Time    TM Move List\n                                       08 - Bulk Up, 10 - Hidden Power, 12 -\n                                       Taunt, 16 - Light Screen, 17 - Protect, 23 -\nEvolution:                             Smack Down, 31 - Brick Break, 33 -\n1 - Tinkatink                          Reflect, 39 - Rock Tomb, 42 - Facade, 44 -\n2 - Tinkatuff Minimum 15               Rest, 45 - Attract, 56 - Fling, 59 - Brutal\n3 - Tinkaton Minimum 30                Swing, 63 - Embargo, 65 - Shadow Claw,\n                                       71 - Stone Edge, 87 - Swagger, 88 - Sleep\n              Size Information         Talk, 90 - Substitute.\nHeight: 1’ 04” / 0.4m (Small)\nWeight: 19.6 lbs / 8.9kg (2)           Tutor Move List\n                                       Fake tears, Protect, Thief, Metal Claw,\n          Breeding Information         Smack Down, Draining Kiss, Fling,\nGender ratio: 100% Female              Endure, Sleep Talk, Reflect, Light Screen,\n                                       Metronome (N), Thunder Wave, Skill\nDiet: omnivore                         Swap, Substitute, Encore, Play Rough,\nHabitat: : Montain, Urban              Helping Hand.\nEgg group: Field / Fairy",
+    "raw_text": "Tinkatink                            Capability List\n                                       Overland 2, Swim 1, Jump 0/0, Power 6,\n                                       Fortune, Smith (Grude), Underdog.\n\n                                                          Skill List\n                                       Athletic 3d6, Acrobatic 1d6+2, Combat 2d6,\n                                       Stealth 1d6+2, Perception 2d6, Focus 3d6\n\n                                              Move List\n                                              Lv. 1 - Astonish\n                                              Lv. 1 - Fairy Wind\n                                              Lv. 5 - Baby-Doll Eyes\n                                              Lv. 8 - Metal Claw\n                                              Lv. 11 - Covet\n                                              Lv. 14 - Rock Smash\n                                              Lv. 17 - Draining Kiss\n               Base Stats:                    Lv. 21 - Sweet Kiss\nHp:                              5            Lv. 24 - Brutal Swing\nAttack:                          5            Lv. 27 - Slam\nDefense:                         6            Lv. 31 - Flash Cannon\nSpecial Attack:                  4            Lv. 35 - Play Rough\nSpecial Defense:                 6            Lv. 39 - Fake Out\nSpeed:                           5            Lv. 43 - Flatter\n                                              Lv. 47 - Skitter Smack\n              Basic Information               Lv. 52 - Knock Off\nType: Fairy / Steel\nBasic Ability 1:        Mold Breaker   Egg Move List\nAdvanced Ability 1: Pickup             Power-up punch, Superpower, Strength,\nAdvanced Ability 2: Own Time           Sucker Punch, Bullet Punch\nAdvanced Ability 3: Pickpocket\nHigh Ability:           Hammer Time    TM Move List\n                                       08 - Bulk Up, 10 - Hidden Power, 12 -\n                                       Taunt, 16 - Light Screen, 17 - Protect, 23 -\nEvolution:                             Smack Down, 31 - Brick Break, 33 -\n1 - Tinkatink                          Reflect, 39 - Rock Tomb, 42 - Facade, 44 -\n2 - Tinkatuff Minimum 15               Rest, 45 - Attract, 56 - Fling, 59 - Brutal\n3 - Tinkaton Minimum 30                Swing, 63 - Embargo, 65 - Shadow Claw,\n                                       71 - Stone Edge, 87 - Swagger, 88 - Sleep\n              Size Information         Talk, 90 - Substitute.\nHeight: 1’ 04” / 0.4m (Small)\nWeight: 19.6 lbs / 8.9kg (2)           Tutor Move List\n                                       Fake tears, Protect, Thief, Metal Claw,\n          Breeding Information         Smack Down, Draining Kiss, Fling,\nGender ratio: 100% Female              Endure, Sleep Talk, Reflect, Light Screen,\n                                       Metronome (N), Thunder Wave, Skill\nDiet: omnivore                         Swap, Substitute, Encore, Play Rough,\nHabitat: : Montain, Urban              Helping Hand.\nEgg group: Field / Fairy",
     "data_notes": [
-      "Transcribed from the supplied PDF; spelling-only reference normalization preserves the source text.",
-      "Ice/Psychic type in the source; awaiting confirmation of campaign typing."
+      "Transcribed from the supplied PDF; spelling-only reference normalization preserves the source text."
     ],
     "portrait_asset_path": "assets/species/tinkatink.webp",
     "reference_validation": {
       "unresolved": []
     },
-    "needs_review": true,
-    "pending_source_decisions": [
-      "Ice/Psychic type in the source; awaiting confirmation of campaign typing."
-    ],
+    "needs_review": false,
     "source_evolution": [
       {
         "stage": 1,
@@ -24081,10 +24074,10 @@
     "source_priority": 180,
     "source_page": 11,
     "source_file": "Scarlet and Violet.pdf",
-    "source_sha256": "87fd1693d201499f28cdb2ed21dc394bf5cb1b914c338dfc8c2fba9afadca287",
+    "source_sha256": "cd056a472a92b4a67d03ca7d46300585ad13eb8ca8b5b5f2d97ddbe4eb0cfef9",
     "types": [
-      "Ice",
-      "Psychic"
+      "Fairy",
+      "Steel"
     ],
     "base_stats": {
       "hp": 7,
@@ -24617,15 +24610,14 @@
     "dex_number": 958,
     "mechanical_completeness": "complete",
     "missing_mechanical_fields": [],
-    "enabled_for_character_creation": false,
+    "enabled_for_character_creation": true,
     "search_aliases": [
       "Tinkatuff",
       "Scarlet and Violet"
     ],
-    "raw_text": "Tinkatuff                            Capability List\n                                       Overland 4, Swim 2, Jump 0/0, Power 9,\n                                       Fortune, Smith (Simple), Underdog.\n\n                                                        Skill List\n                                       Athletic 4d6+2, Acrobatic 2d6, Combat\n                                       3d6, Stealth 1d6, Perception 3d6, Focus\n                                       4d6+2\n\n                                              Move List\n                                              Lv. 5 - Baby-Doll Eyes\n                                              Lv. 8 - Metal Claw\n                                              Lv. 11 - Covet\n                                              Lv. 14 - Rock Smash\n                                              Lv. 17 - Draining Kiss\n                                              Lv. 21 - Sweet Kiss\n               Base Stats:                    Lv. 24 - Brutal Swing\nHp:                              7            Lv. 27 - Slam\nAttack:                          6            Lv. 31 - Flash Cannon\nDefense:                         7            Lv. 35 - Play Rough\nSpecial Attack:                  5            Lv. 39 - Fake Out\nSpecial Defense:                 8            Lv. 43 - Flatter\nSpeed:                           6            Lv. 47 - Skitter Smack\n                                              Lv. 52 - Knock Off\n              Basic Information\nType: Ice / Psychic                    TM Move List\nBasic Ability 1:        Mold Breaker   08 - Bulk Up, 10 - Hidden Power, 12 -\nAdvanced Ability 1: Pickup             Taunt, 16 - Light Screen, 17 - Protect, 20 -\nAdvanced Ability 2: Own Time           Safeguard, 23 - Smack Down, 31 - Brick\nAdvanced Ability 3: Pickpocket         Break, 33 - Reflect, 39 - Rock Tomb, 42 -\nHigh Ability:           Hammer Time    Facade, 44 - Rest, 45 - Attract, 46 - Thief,\n                                       56 - Fling, 59 - Brutal Swing, 63 -\n                                       Embargo, 65 - Shadow Claw, 71 - Stone\nEvolution:                             Edge, 87 - Swagger, 88 - Sleep Talk, 90 -\n1 - Tinkatink                          Substitute,\n2 - Tinkatuff Minimum 15\n3 - Tinkaton Minimum 30                Tutor Move List\n                                       Fake tears, Protect, Thief (N), Pounce,\n              Size Information         Metal Claw, Rock Tomb, Smack Down,\nHeight: 2’ 04” / 0.7m (Small)          Draining Kiss, Fling (N), Endure, Foul\nWeight: 130.3 lbs / 59.1kg (4)         Play, Sleep Talk, Reflect, Light Screen,\n                                       Metronome (N), Thunder Wave, Rest,\n          Breeding Information         Sword Dance, Skill Swap, Substitute,\nGender ratio: 100% Female              Stealth Rock, Encore, Play Rough,\n                                       Helping Hand, Brick Break, Heavy Slam.\nDiet: omnivore\nHabitat: : Montain, Urban\nEgg group: Field / Fairy",
+    "raw_text": "Tinkatuff                            Capability List\n                                       Overland 4, Swim 2, Jump 0/0, Power 9,\n                                       Fortune, Smith (Simple), Underdog.\n\n                                                        Skill List\n                                       Athletic 4d6+2, Acrobatic 2d6, Combat\n                                       3d6, Stealth 1d6, Perception 3d6, Focus\n                                       4d6+2\n\n                                              Move List\n                                              Lv. 5 - Baby-Doll Eyes\n                                              Lv. 8 - Metal Claw\n                                              Lv. 11 - Covet\n                                              Lv. 14 - Rock Smash\n                                              Lv. 17 - Draining Kiss\n                                              Lv. 21 - Sweet Kiss\n               Base Stats:                    Lv. 24 - Brutal Swing\nHp:                              7            Lv. 27 - Slam\nAttack:                          6            Lv. 31 - Flash Cannon\nDefense:                         7            Lv. 35 - Play Rough\nSpecial Attack:                  5            Lv. 39 - Fake Out\nSpecial Defense:                 8            Lv. 43 - Flatter\nSpeed:                           6            Lv. 47 - Skitter Smack\n                                              Lv. 52 - Knock Off\n              Basic Information\nType: Fairy / Steel                    TM Move List\nBasic Ability 1:        Mold Breaker   08 - Bulk Up, 10 - Hidden Power, 12 -\nAdvanced Ability 1: Pickup             Taunt, 16 - Light Screen, 17 - Protect, 20 -\nAdvanced Ability 2: Own Time           Safeguard, 23 - Smack Down, 31 - Brick\nAdvanced Ability 3: Pickpocket         Break, 33 - Reflect, 39 - Rock Tomb, 42 -\nHigh Ability:           Hammer Time    Facade, 44 - Rest, 45 - Attract, 46 - Thief,\n                                       56 - Fling, 59 - Brutal Swing, 63 -\n                                       Embargo, 65 - Shadow Claw, 71 - Stone\nEvolution:                             Edge, 87 - Swagger, 88 - Sleep Talk, 90 -\n1 - Tinkatink                          Substitute,\n2 - Tinkatuff Minimum 15\n3 - Tinkaton Minimum 30                Tutor Move List\n                                       Fake tears, Protect, Thief (N), Pounce,\n              Size Information         Metal Claw, Rock Tomb, Smack Down,\nHeight: 2’ 04” / 0.7m (Small)          Draining Kiss, Fling (N), Endure, Foul\nWeight: 130.3 lbs / 59.1kg (4)         Play, Sleep Talk, Reflect, Light Screen,\n                                       Metronome (N), Thunder Wave, Rest,\n          Breeding Information         Sword Dance, Skill Swap, Substitute,\nGender ratio: 100% Female              Stealth Rock, Encore, Play Rough,\n                                       Helping Hand, Brick Break, Heavy Slam.\nDiet: omnivore\nHabitat: : Montain, Urban\nEgg group: Field / Fairy",
     "data_notes": [
-      "Transcribed from the supplied PDF; spelling-only reference normalization preserves the source text.",
-      "Ice/Psychic type in the source; awaiting confirmation of campaign typing."
+      "Transcribed from the supplied PDF; spelling-only reference normalization preserves the source text."
     ],
     "portrait_asset_path": "assets/species/tinkatuff.webp",
     "reference_validation": {
@@ -24638,9 +24630,6 @@
       ]
     },
     "needs_review": true,
-    "pending_source_decisions": [
-      "Ice/Psychic type in the source; awaiting confirmation of campaign typing."
-    ],
     "source_evolution": [
       {
         "stage": 1,
@@ -24674,10 +24663,10 @@
     "source_priority": 180,
     "source_page": 12,
     "source_file": "Scarlet and Violet.pdf",
-    "source_sha256": "87fd1693d201499f28cdb2ed21dc394bf5cb1b914c338dfc8c2fba9afadca287",
+    "source_sha256": "cd056a472a92b4a67d03ca7d46300585ad13eb8ca8b5b5f2d97ddbe4eb0cfef9",
     "types": [
-      "Ice",
-      "Psychic"
+      "Fairy",
+      "Steel"
     ],
     "base_stats": {
       "hp": 9,
@@ -25271,15 +25260,14 @@
     "dex_number": 959,
     "mechanical_completeness": "complete",
     "missing_mechanical_fields": [],
-    "enabled_for_character_creation": false,
+    "enabled_for_character_creation": true,
     "search_aliases": [
       "Tinkaton",
       "Scarlet and Violet"
     ],
-    "raw_text": "Tinkaton                             Capability List\n                                       Overland 5, Swim 2, Jump 0/0, Power 13,\n                                       Fortune, Smith (Fine).\n\n                                                         Skill List\n                                       Athletic 5d6+2, Acrobatic 2d6, Combat 5d6,\n                                       Stealth 1d6-2, Perception 3d6, Focus 5d6+2\n\n                                               Move List\n                                               Evo. - Gigaton Hammer\n                                               Lv. 5 - Baby-Doll Eyes\n                                               Lv. 8 - Metal Claw\n                                               Lv. 11 - Covet\n                                               Lv. 14 - Rock Smash\n                                               Lv. 17 - Draining Kiss\n                                               Lv. 21 - Sweet Kiss\n                                               Lv. 24 - Brutal Swing\n               Base Stats:                     Lv. 27 - Slam\nHp:                           9                Lv. 31 - Flash Cannon\nAttack:                       7                Lv. 35 - Play Rough\nDefense:                      9                Lv. 39 - Fake Out\nSpecial Attack:               7                Lv. 43 - Flatter\n                                               Lv. 47 - Skitter Smack\nSpecial Defense:              11\n                                               Lv. 52 - Knock Off\nSpeed:                        7\n                                       TM Move List\n              Basic Information        01- Work Up, 08 - Bulk Up, 10 - Hidden Power,\nType: Ice / Psychic                    12 - Taunt, 16 - Light Screen, 17 - Protect, 20 -\nBasic Ability 1:        Mold Breaker   Safeguard, 23 - Smack Down, 31 - Brick\nAdvanced Ability 1: Pickup             Break, 33 - Reflect, 39 - Rock Tomb, 42 -\nAdvanced Ability 2: Own Time           Facade, 44 - Rest, 45 - Attract, 46 - Thief, 56 -\nAdvanced Ability 3: Pickpocket         Fling, 59 - Brutal Swing, 63 - Embargo, 65 -\nHigh Ability:           Hammer Time    Shadow Claw, 68 - Giga impact, 71 - Stone\n                                       Edge, 74 - Gyro Ball, 78 - Bulldoze, 87 -\n                                       Swagger, 88 - Sleep Talk, 90 - Substitute, 91\n                                       Flash Cannon.\nEvolution:\n1 - Tinkatink                          Tutor Move List\n2 - Tinkatuff Minimum 15               Fake tears, Protect, Thief (N), Pounce,\n3 - Tinkaton Minimum 30                Facade, Metal Claw, Rock Tomb, Smack\n                                       Down (N), Draining Kiss, Fling(N), Endure,\n              Size Information         Foul Play, Sleep Talk, Reflect, Light Screen,\nHeight: 2’ 04” / 0.7m (Small)          Metronome (N), Thunder Wave, Rest, Rock\nWeight: 248.7 lbs / 112.8kg (6)        Slide, Sword Dance, Flash Cannon, Skill\n                                       Swap, Substitute, Stealth Rock, Encore, Play\n                                       Rough, Helping Hand, Stone Edge, Steel\n          Breeding Information\n                                       Beam, Bulldoze, Brick Break, Stone edge,\nGender ratio: 100% Female\n                                       Heavy Slam (N).\n\nDiet: omnivore\nHabitat: : Montain, Urban\nEgg group: Field / Fairy",
+    "raw_text": "Tinkaton                             Capability List\n                                       Overland 5, Swim 2, Jump 0/0, Power 13,\n                                       Fortune, Smith (Fine).\n\n                                                         Skill List\n                                       Athletic 5d6+2, Acrobatic 2d6, Combat 5d6,\n                                       Stealth 1d6-2, Perception 3d6, Focus 5d6+2\n\n                                               Move List\n                                               Evo. - Gigaton Hammer\n                                               Lv. 5 - Baby-Doll Eyes\n                                               Lv. 8 - Metal Claw\n                                               Lv. 11 - Covet\n                                               Lv. 14 - Rock Smash\n                                               Lv. 17 - Draining Kiss\n                                               Lv. 21 - Sweet Kiss\n                                               Lv. 24 - Brutal Swing\n               Base Stats:                     Lv. 27 - Slam\nHp:                           9                Lv. 31 - Flash Cannon\nAttack:                       7                Lv. 35 - Play Rough\nDefense:                      9                Lv. 39 - Fake Out\nSpecial Attack:               7                Lv. 43 - Flatter\n                                               Lv. 47 - Skitter Smack\nSpecial Defense:              11\n                                               Lv. 52 - Knock Off\nSpeed:                        7\n                                       TM Move List\n              Basic Information        01- Work Up, 08 - Bulk Up, 10 - Hidden Power,\nType: Fairy / Steel                    12 - Taunt, 16 - Light Screen, 17 - Protect, 20 -\nBasic Ability 1:        Mold Breaker   Safeguard, 23 - Smack Down, 31 - Brick\nAdvanced Ability 1: Pickup             Break, 33 - Reflect, 39 - Rock Tomb, 42 -\nAdvanced Ability 2: Own Time           Facade, 44 - Rest, 45 - Attract, 46 - Thief, 56 -\nAdvanced Ability 3: Pickpocket         Fling, 59 - Brutal Swing, 63 - Embargo, 65 -\nHigh Ability:           Hammer Time    Shadow Claw, 68 - Giga impact, 71 - Stone\n                                       Edge, 74 - Gyro Ball, 78 - Bulldoze, 87 -\n                                       Swagger, 88 - Sleep Talk, 90 - Substitute, 91\n                                       Flash Cannon.\nEvolution:\n1 - Tinkatink                          Tutor Move List\n2 - Tinkatuff Minimum 15               Fake tears, Protect, Thief (N), Pounce,\n3 - Tinkaton Minimum 30                Facade, Metal Claw, Rock Tomb, Smack\n                                       Down (N), Draining Kiss, Fling(N), Endure,\n              Size Information         Foul Play, Sleep Talk, Reflect, Light Screen,\nHeight: 2’ 04” / 0.7m (Small)          Metronome (N), Thunder Wave, Rest, Rock\nWeight: 248.7 lbs / 112.8kg (6)        Slide, Sword Dance, Flash Cannon, Skill\n                                       Swap, Substitute, Stealth Rock, Encore, Play\n                                       Rough, Helping Hand, Stone Edge, Steel\n          Breeding Information\n                                       Beam, Bulldoze, Brick Break, Stone edge,\nGender ratio: 100% Female\n                                       Heavy Slam (N).\n\nDiet: omnivore\nHabitat: : Montain, Urban\nEgg group: Field / Fairy",
     "data_notes": [
-      "Transcribed from the supplied PDF; spelling-only reference normalization preserves the source text.",
-      "Ice/Psychic type in the source; awaiting confirmation of campaign typing."
+      "Transcribed from the supplied PDF; spelling-only reference normalization preserves the source text."
     ],
     "portrait_asset_path": "assets/species/tinkaton.webp",
     "reference_validation": {
@@ -25292,9 +25280,6 @@
       ]
     },
     "needs_review": true,
-    "pending_source_decisions": [
-      "Ice/Psychic type in the source; awaiting confirmation of campaign typing."
-    ],
     "source_evolution": [
       {
         "stage": 1,
@@ -32060,5 +32045,4352 @@
         "condition_text": null
       }
     ]
+  },
+  {
+    "id": "hoopa-confined",
+    "display_name": "Hoopa Bound",
+    "dex_number": null,
+    "variant_index": null,
+    "enabled": true,
+    "source_id": "books-gen8ish-hoopa",
+    "source_title": "Gen 8ish PokeDex",
+    "source_kind": "homebrew_species",
+    "source_priority": 180,
+    "source_page": 931,
+    "types": [
+      "Psychic",
+      "Ghost"
+    ],
+    "base_stats": {
+      "hp": 8,
+      "attack": 11,
+      "defense": 6,
+      "special_attack": 15,
+      "special_defense": 13,
+      "speed": 7
+    },
+    "ability_slots": [
+      {
+        "slot": "Basic Ability 1",
+        "name": "Magician",
+        "ability_id": "magician",
+        "slot_category": "basic",
+        "slot_index": 1,
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "slot": "Adv Ability 1",
+        "name": "Prankster",
+        "ability_id": "prankster",
+        "slot_category": "advanced",
+        "slot_index": 1,
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "slot": "Adv Ability 2",
+        "name": "Run Away",
+        "ability_id": "run-away",
+        "slot_category": "advanced",
+        "slot_index": 2,
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "slot": "Adv Ability 3",
+        "name": "Bully",
+        "ability_id": "bully",
+        "slot_category": "advanced",
+        "slot_index": 3,
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "slot": "High Ability",
+        "name": "Handyman",
+        "ability_id": "handyman",
+        "slot_category": "high",
+        "slot_index": 1,
+        "reference_status": "resolved_final_normalization"
+      }
+    ],
+    "capabilities_text": "Overland 3, Swim 1, Levitate 5, Teleporter 10, Jump 2/2, Power 2, Confined, Darkvision, Forme Change",
+    "skills_text": "Athl 3d6 Acro 4d6, Combat 2d6, Stealth 4d6+2, Percep 6d6+2, Focus 3d6",
+    "evolution_text": "1 - Hoopa",
+    "level_up_moves": [
+      {
+        "level": "1",
+        "move": "Ally Switch",
+        "type_hint": "Psychic",
+        "move_id": "ally-switch",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "level": "1",
+        "move": "Destiny Bond",
+        "type_hint": "Ghost",
+        "move_id": "destiny-bond",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "level": "1",
+        "move": "Trick",
+        "type_hint": "Psychic",
+        "move_id": "trick",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "level": "1",
+        "move": "Confusion",
+        "type_hint": "Psychic",
+        "move_id": "confusion",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "level": "3",
+        "move": "Astonish",
+        "type_hint": "Ghost",
+        "move_id": "astonish",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "level": "5",
+        "move": "Magic Coat",
+        "type_hint": "Psychic",
+        "move_id": "magic-coat",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "level": "8",
+        "move": "Light Screen",
+        "type_hint": "Psychic",
+        "move_id": "light-screen",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "level": "10",
+        "move": "Psybeam",
+        "type_hint": "Psychic",
+        "move_id": "psybeam",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "level": "13",
+        "move": "Skill Swap",
+        "type_hint": "Psychic",
+        "move_id": "skill-swap",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "level": "15",
+        "move": "Guard Split",
+        "type_hint": "Psychic",
+        "move_id": "guard-split",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "level": "15",
+        "move": "Power Split",
+        "type_hint": "Psychic",
+        "move_id": "power-split",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "level": "18",
+        "move": "Phantom Force",
+        "move_id": "phantom-force",
+        "type_hint": "Ghost",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "level": "23",
+        "move": "Zen Headbutt",
+        "type_hint": "Psychic",
+        "move_id": "zen-headbutt",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "level": "25",
+        "move": "Trick Room",
+        "type_hint": "Psychic",
+        "move_id": "trick-room",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "level": "25",
+        "move": "Wonder Room",
+        "type_hint": "Psychic",
+        "move_id": "wonder-room",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "level": "28",
+        "move": "Shadow Ball",
+        "move_id": "shadow-ball",
+        "type_hint": "Ghost",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "level": "34",
+        "move": "Nasty Plot",
+        "type_hint": "Dark",
+        "move_id": "nasty-plot",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "level": "38",
+        "move": "Psychic",
+        "type_hint": "Psychic",
+        "move_id": "psychic",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "level": "43",
+        "move": "Hyperspace Hole",
+        "move_id": "hyperspace-hole",
+        "type_hint": "Psychic",
+        "reference_status": "resolved_final_normalization"
+      }
+    ],
+    "tm_moves_text": "03 Psyshock, 04 Calm Mind, 06 Toxic, 10 Hidden Power,11 Sunny Day, 12 Taunt, 15 Hyper Beam, 16 Light Screen, 17 Protect, 18 Rain Dance, 20 Safeguard, 21 Frustration, 24 Thunderbolt, 27 Return, 29 Psychic, 30 Shadow Ball, 31 Brick Break, 32 Double Team, 33 Reflect, 41 Torment, 42 Facade, 44 Rest, 46 Thief, 48 Round, 52 Focus Blast, 53 Energy Ball, 56 Fling, 57 Charge Beam, 60 Quash, 63 Embargo, 68 Giga Impact, 73 Thunder Wave, 77 Psych Up, 85 Dream Eater, 86 Grass Knot, 87 Swagger, 88 Sleep Talk, 90 Substitute, 92 Trick Room, 100 Confide",
+    "egg_moves_text": "",
+    "tutor_moves_text": "Ally Switch (N), Block, Covet, Drain Punch, Dual Chop, Fire Punch, Focus Punch, Foul Play, Gravity, Gunk Shot, Hyperspace Hole (N), Ice Punch, Laser Focus, Last Resort, Magic Coat, Magic Room, Recycle, Role Play, Shock Wave, Signal Beam, Skill Swap, Snatch, Snore, Telekinesis, Throat Chop, Thunder Punch, Trick, Uproar, Wonder Room, Zen Headbutt",
+    "height_text": "1’ 8” / 0.5m (Small)",
+    "weight_text": "19.8 lbs / 9kg (1)",
+    "gender_ratio_text": "No Gender",
+    "egg_group_text": "None",
+    "diet_text": "Nullivore",
+    "habitat_text": "Non-Space",
+    "needs_review": false,
+    "skills": [
+      {
+        "skill": "Athletics",
+        "dice": 3,
+        "modifier": 0
+      },
+      {
+        "skill": "Acrobatics",
+        "dice": 4,
+        "modifier": 0
+      },
+      {
+        "skill": "Combat",
+        "dice": 2,
+        "modifier": 0
+      },
+      {
+        "skill": "Stealth",
+        "dice": 4,
+        "modifier": 2
+      },
+      {
+        "skill": "Perception",
+        "dice": 6,
+        "modifier": 2
+      },
+      {
+        "skill": "Focus",
+        "dice": 3,
+        "modifier": 0
+      }
+    ],
+    "capabilities": [
+      {
+        "name": "Overland",
+        "value": 3,
+        "kind": "movement",
+        "capability_id": "overland",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "name": "Swim",
+        "value": 1,
+        "kind": "movement",
+        "capability_id": "swim",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "name": "Levitate",
+        "value": 5,
+        "kind": "movement",
+        "capability_id": "levitate",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "name": "Teleporter",
+        "value": 10,
+        "kind": "special",
+        "capability_id": "teleporter",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "name": "Jump",
+        "high": 2,
+        "long": 2,
+        "kind": "jump",
+        "component_capability_ids": [
+          "high-jump",
+          "long-jump"
+        ],
+        "reference_status": "resolved_composite"
+      },
+      {
+        "name": "Power",
+        "value": 2,
+        "kind": "power",
+        "capability_id": "power",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "name": "Confined",
+        "kind": "special",
+        "reference_status": "unresolved"
+      },
+      {
+        "name": "Darkvision",
+        "kind": "special",
+        "capability_id": "darkvision",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "name": "Forme Change",
+        "kind": "special",
+        "capability_id": "forme-change",
+        "reference_status": "resolved_final_normalization"
+      }
+    ],
+    "evolution": [
+      {
+        "stage": 1,
+        "species_name": "Hoopa",
+        "min_level": null,
+        "condition_text": null
+      }
+    ],
+    "tm_moves": [
+      {
+        "code": "03",
+        "move": "Psyshock",
+        "move_id": "psyshock",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "code": "04",
+        "move": "Calm Mind",
+        "move_id": "calm-mind",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "code": "06",
+        "move": "Toxic",
+        "move_id": "toxic",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "code": "10",
+        "move": "Hidden Power",
+        "move_id": "hidden-power",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "code": "11",
+        "move": "Sunny Day",
+        "move_id": "sunny-day",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "code": "12",
+        "move": "Taunt",
+        "move_id": "taunt",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "code": "15",
+        "move": "Hyper Beam",
+        "move_id": "hyper-beam",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "code": "16",
+        "move": "Light Screen",
+        "move_id": "light-screen",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "code": "17",
+        "move": "Protect",
+        "move_id": "protect",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "code": "18",
+        "move": "Rain Dance",
+        "move_id": "rain-dance",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "code": "20",
+        "move": "Safeguard",
+        "move_id": "safeguard",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "code": "21",
+        "move": "Frustration",
+        "move_id": "frustration",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "code": "24",
+        "move": "Thunderbolt",
+        "move_id": "thunderbolt",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "code": "27",
+        "move": "Return",
+        "move_id": "return",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "code": "29",
+        "move": "Psychic",
+        "move_id": "psychic",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "code": "30",
+        "move": "Shadow Ball",
+        "move_id": "shadow-ball",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "code": "31",
+        "move": "Brick Break",
+        "move_id": "brick-break",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "code": "32",
+        "move": "Double Team",
+        "move_id": "double-team",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "code": "33",
+        "move": "Reflect",
+        "move_id": "reflect",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "code": "41",
+        "move": "Torment",
+        "move_id": "torment",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "code": "42",
+        "move": "Façade",
+        "move_id": "facade",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "code": "44",
+        "move": "Rest",
+        "move_id": "rest",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "code": "46",
+        "move": "Thief",
+        "move_id": "thief",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "code": "48",
+        "move": "Round",
+        "move_id": "round",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "code": "52",
+        "move": "Focus Blast",
+        "move_id": "focus-blast",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "code": "53",
+        "move": "Energy Ball",
+        "move_id": "energy-ball",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "code": "56",
+        "move": "Fling",
+        "move_id": "fling",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "code": "57",
+        "move": "Charge Beam",
+        "move_id": "charge-beam",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "code": "60",
+        "move": "Quash",
+        "move_id": "quash",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "code": "63",
+        "move": "Embargo",
+        "move_id": "embargo",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "code": "68",
+        "move": "Giga Impact",
+        "move_id": "giga-impact",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "code": "73",
+        "move": "Thunder Wave",
+        "move_id": "thunder-wave",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "code": "77",
+        "move": "Psych Up",
+        "move_id": "psych-up",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "code": "85",
+        "move": "Dream Eater",
+        "move_id": "dream-eater",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "code": "86",
+        "move": "Grass Knot",
+        "move_id": "grass-knot",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "code": "87",
+        "move": "Swagger",
+        "move_id": "swagger",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "code": "88",
+        "move": "Sleep Talk",
+        "move_id": "sleep-talk",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "code": "90",
+        "move": "Substitute",
+        "move_id": "substitute",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "code": "92",
+        "move": "Trick Room",
+        "move_id": "trick-room",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "code": "100",
+        "move": "Confide",
+        "move_id": "confide",
+        "reference_status": "resolved_final_normalization"
+      }
+    ],
+    "egg_moves": [],
+    "tutor_moves": [
+      {
+        "move": "Ally Switch",
+        "move_id": "ally-switch",
+        "note": "N",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "move": "Block",
+        "move_id": "block",
+        "note": null,
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "move": "Covet",
+        "move_id": "covet",
+        "note": null,
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "move": "Drain Punch",
+        "move_id": "drain-punch",
+        "note": null,
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "move": "Dual Chop",
+        "move_id": "dual-chop",
+        "note": null,
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "move": "Fire Punch",
+        "move_id": "fire-punch",
+        "note": null,
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "move": "Focus Punch",
+        "move_id": "focus-punch",
+        "note": null,
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "move": "Foul Play",
+        "move_id": "foul-play",
+        "note": null,
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "move": "Gravity",
+        "move_id": "gravity",
+        "note": null,
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "move": "Gunk Shot",
+        "move_id": "gunk-shot",
+        "note": null,
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "move": "Hyperspace Hole",
+        "move_id": "hyperspace-hole",
+        "note": "N",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "move": "Ice Punch",
+        "move_id": "ice-punch",
+        "note": null,
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "move": "Laser Focus",
+        "move_id": "laser-focus",
+        "note": null,
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "move": "Last Resort",
+        "move_id": "last-resort",
+        "note": null,
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "move": "Magic Coat",
+        "move_id": "magic-coat",
+        "note": null,
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "move": "Magic Room",
+        "move_id": "magic-room",
+        "note": null,
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "move": "Recycle",
+        "move_id": "recycle",
+        "note": null,
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "move": "Role Play",
+        "move_id": "role-play",
+        "note": null,
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "move": "Shock Wave",
+        "move_id": "shock-wave",
+        "note": null,
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "move": "Signal Beam",
+        "move_id": "signal-beam",
+        "note": null,
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "move": "Skill Swap",
+        "move_id": "skill-swap",
+        "note": null,
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "move": "Snatch",
+        "move_id": "snatch",
+        "note": null,
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "move": "Snore",
+        "move_id": "snore",
+        "note": null,
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "move": "Telekinesis",
+        "move_id": "telekinesis",
+        "note": null,
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "move": "Throat Chop",
+        "move_id": "throat-chop",
+        "note": null,
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "move": "Thunder Punch",
+        "move_id": "thunder-punch",
+        "note": null,
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "move": "Trick",
+        "move_id": "trick",
+        "note": null,
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "move": "Uproar",
+        "move_id": "uproar",
+        "note": null,
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "move": "Wonder Room",
+        "move_id": "wonder-room",
+        "note": null,
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "move": "Zen Headbutt",
+        "move_id": "zen-headbutt",
+        "note": null,
+        "reference_status": "resolved_final_normalization"
+      }
+    ],
+    "mechanical_completeness": "complete",
+    "height": {
+      "raw": "1' 8\" / 0.5m (Small)",
+      "meters": 0.5,
+      "size_class": "Small"
+    },
+    "weight": {
+      "raw": "19.8 lbs / 9kg (1)",
+      "kg": 9.0,
+      "weight_class": 1
+    },
+    "gender_ratio": {
+      "raw": "No Gender",
+      "genderless": true,
+      "male_percent": 0.0,
+      "female_percent": 0.0
+    },
+    "egg_groups": [
+      "None"
+    ],
+    "habitats": [
+      "Non-Space"
+    ],
+    "diet": {
+      "raw": "Nullivore",
+      "values": [
+        "Nullivore"
+      ]
+    },
+    "missing_mechanical_fields": [],
+    "enabled_for_character_creation": true,
+    "ptu_evolution_stages": [
+      {
+        "stage": 1,
+        "species_name": null,
+        "raw_segment": "Hoopa",
+        "parse_status": "unresolved_species"
+      }
+    ],
+    "ptu_evolution_family_id": "evofam-e093fb08fda2",
+    "search_aliases": [
+      "Hoopa Bound",
+      "Hoopa Confined"
+    ],
+    "display_dex_id": null,
+    "logical_id": "hoopa-confined",
+    "name": "Hoopa Bound",
+    "source_file": "Gen 8ish PokeDex.pdf",
+    "source_sha256": "fd68f8ecb9964ef2264e14f239e1025729efb051728ffdc606919ad9a19bfe00",
+    "linked_move_side": 0,
+    "linked_move_pairs": [
+      [
+        {
+          "id": "phantom-force",
+          "name": "Phantom Force",
+          "typeHint": "Ghost"
+        },
+        {
+          "id": "knock-off",
+          "name": "Knock Off",
+          "typeHint": "Dark"
+        }
+      ],
+      [
+        {
+          "id": "shadow-ball",
+          "name": "Shadow Ball",
+          "typeHint": "Ghost"
+        },
+        {
+          "id": "dark-pulse",
+          "name": "Dark Pulse",
+          "typeHint": "Dark"
+        }
+      ],
+      [
+        {
+          "id": "hyperspace-hole",
+          "name": "Hyperspace Hole",
+          "typeHint": "Psychic"
+        },
+        {
+          "id": "hyperspace-fury",
+          "name": "Hyperspace Fury",
+          "typeHint": "Dark"
+        }
+      ]
+    ],
+    "forms": [
+      {
+        "id": "hoopa-unbound",
+        "name": "Hoopa Unbound",
+        "mode": "permanent",
+        "overrides": {
+          "name": {
+            "replace": "Hoopa Unbound"
+          },
+          "types": {
+            "replace": [
+              "Psychic",
+              "Dark"
+            ]
+          },
+          "base_stats": {
+            "replace": {
+              "hp": 8,
+              "attack": 16,
+              "defense": 6,
+              "special_attack": 17,
+              "special_defense": 13,
+              "speed": 8
+            }
+          },
+          "ability_slots": {
+            "replace": [
+              {
+                "slot": "Basic Ability 1",
+                "name": "Magician",
+                "ability_id": "magician",
+                "slot_category": "basic",
+                "slot_index": 1,
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "slot": "Adv Ability 1",
+                "name": "Enduring Rage",
+                "ability_id": "enduring-rage",
+                "slot_category": "advanced",
+                "slot_index": 1,
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "slot": "Adv Ability 2",
+                "name": "Cruelty",
+                "ability_id": "cruelty",
+                "slot_category": "advanced",
+                "slot_index": 2,
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "slot": "Adv Ability 3",
+                "name": "Bully",
+                "ability_id": "bully",
+                "slot_category": "advanced",
+                "slot_index": 3,
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "slot": "High Ability",
+                "name": "Weird power",
+                "ability_id": "weird-power",
+                "slot_category": "high",
+                "slot_index": 1,
+                "reference_status": "resolved_final_normalization"
+              }
+            ]
+          },
+          "capabilities": {
+            "replace": [
+              {
+                "name": "Overland",
+                "value": 10,
+                "kind": "movement",
+                "capability_id": "overland",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "name": "Swim",
+                "value": 6,
+                "kind": "movement",
+                "capability_id": "swim",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "name": "Teleporter",
+                "value": 8,
+                "kind": "special",
+                "capability_id": "teleporter",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "name": "Jump",
+                "high": 4,
+                "long": 4,
+                "kind": "jump",
+                "component_capability_ids": [
+                  "high-jump",
+                  "long-jump"
+                ],
+                "reference_status": "resolved_composite"
+              },
+              {
+                "name": "Power",
+                "value": 9,
+                "kind": "power",
+                "capability_id": "power",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "name": "Confined",
+                "kind": "special",
+                "reference_status": "unresolved"
+              },
+              {
+                "name": "Darkvision",
+                "kind": "special",
+                "capability_id": "darkvision",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "name": "Forme Change",
+                "kind": "special",
+                "capability_id": "forme-change",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "name": "Reach",
+                "kind": "special",
+                "capability_id": "reach",
+                "reference_status": "resolved_final_normalization"
+              }
+            ]
+          },
+          "capabilities_text": {
+            "replace": "Overland 10, Swim 6, Teleporter 8, Jump 4/4, Power 9, Confined, Darkvision, Forme Change, Reach"
+          },
+          "height": {
+            "replace": {
+              "raw": "21' 5\" / 5m (Gigantic)",
+              "meters": 5.0,
+              "size_class": "Gigantic"
+            }
+          },
+          "weight": {
+            "replace": {
+              "raw": "1080.3 lbs / 490kg (9)",
+              "kg": 490.0,
+              "weight_class": 9
+            }
+          },
+          "height_text": {
+            "replace": "21’ 5” / 5m (Gigantic)"
+          },
+          "weight_text": {
+            "replace": "1080.3 lbs / 490kg (9)"
+          },
+          "level_up_moves": {
+            "replace": [
+              {
+                "level": "1",
+                "move": "Ally Switch",
+                "type_hint": "Psychic",
+                "move_id": "ally-switch",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "level": "1",
+                "move": "Destiny Bond",
+                "type_hint": "Ghost",
+                "move_id": "destiny-bond",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "level": "1",
+                "move": "Trick",
+                "type_hint": "Psychic",
+                "move_id": "trick",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "level": "1",
+                "move": "Confusion",
+                "type_hint": "Psychic",
+                "move_id": "confusion",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "level": "3",
+                "move": "Astonish",
+                "type_hint": "Ghost",
+                "move_id": "astonish",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "level": "5",
+                "move": "Magic Coat",
+                "type_hint": "Psychic",
+                "move_id": "magic-coat",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "level": "8",
+                "move": "Light Screen",
+                "type_hint": "Psychic",
+                "move_id": "light-screen",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "level": "10",
+                "move": "Psybeam",
+                "type_hint": "Psychic",
+                "move_id": "psybeam",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "level": "13",
+                "move": "Skill Swap",
+                "type_hint": "Psychic",
+                "move_id": "skill-swap",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "level": "15",
+                "move": "Guard Split",
+                "type_hint": "Psychic",
+                "move_id": "guard-split",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "level": "15",
+                "move": "Power Split",
+                "type_hint": "Psychic",
+                "move_id": "power-split",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "level": "18",
+                "move": "Knock Off",
+                "move_id": "knock-off",
+                "type_hint": "Dark",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "level": "23",
+                "move": "Zen Headbutt",
+                "type_hint": "Psychic",
+                "move_id": "zen-headbutt",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "level": "25",
+                "move": "Trick Room",
+                "type_hint": "Psychic",
+                "move_id": "trick-room",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "level": "25",
+                "move": "Wonder Room",
+                "type_hint": "Psychic",
+                "move_id": "wonder-room",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "level": "28",
+                "move": "Dark Pulse",
+                "move_id": "dark-pulse",
+                "type_hint": "Dark",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "level": "34",
+                "move": "Nasty Plot",
+                "type_hint": "Dark",
+                "move_id": "nasty-plot",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "level": "38",
+                "move": "Psychic",
+                "type_hint": "Psychic",
+                "move_id": "psychic",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "level": "43",
+                "move": "Hyperspace Fury",
+                "move_id": "hyperspace-fury",
+                "type_hint": "Dark",
+                "reference_status": "resolved_final_normalization"
+              }
+            ]
+          },
+          "tm_moves": {
+            "replace": [
+              {
+                "code": "03",
+                "move": "Psyshock",
+                "move_id": "psyshock",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "code": "04",
+                "move": "Calm Mind",
+                "move_id": "calm-mind",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "code": "06",
+                "move": "Toxic",
+                "move_id": "toxic",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "code": "10",
+                "move": "Hidden Power",
+                "move_id": "hidden-power",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "code": "11",
+                "move": "Sunny Day",
+                "move_id": "sunny-day",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "code": "12",
+                "move": "Taunt",
+                "move_id": "taunt",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "code": "15",
+                "move": "Hyper Beam",
+                "move_id": "hyper-beam",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "code": "16",
+                "move": "Light Screen",
+                "move_id": "light-screen",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "code": "17",
+                "move": "Protect",
+                "move_id": "protect",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "code": "18",
+                "move": "Rain Dance",
+                "move_id": "rain-dance",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "code": "20",
+                "move": "Safeguard",
+                "move_id": "safeguard",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "code": "21",
+                "move": "Frustration",
+                "move_id": "frustration",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "code": "24",
+                "move": "Thunderbolt",
+                "move_id": "thunderbolt",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "code": "27",
+                "move": "Return",
+                "move_id": "return",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "code": "29",
+                "move": "Psychic",
+                "move_id": "psychic",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "code": "31",
+                "move": "Brick Break",
+                "move_id": "brick-break",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "code": "32",
+                "move": "Double Team",
+                "move_id": "double-team",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "code": "33",
+                "move": "Reflect",
+                "move_id": "reflect",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "code": "41",
+                "move": "Torment",
+                "move_id": "torment",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "code": "42",
+                "move": "Façade",
+                "move_id": "facade",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "code": "44",
+                "move": "Rest",
+                "move_id": "rest",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "code": "46",
+                "move": "Thief",
+                "move_id": "thief",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "code": "48",
+                "move": "Round",
+                "move_id": "round",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "code": "52",
+                "move": "Focus Blast",
+                "move_id": "focus-blast",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "code": "53",
+                "move": "Energy Ball",
+                "move_id": "energy-ball",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "code": "56",
+                "move": "Fling",
+                "move_id": "fling",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "code": "57",
+                "move": "Charge Beam",
+                "move_id": "charge-beam",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "code": "60",
+                "move": "Quash",
+                "move_id": "quash",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "code": "63",
+                "move": "Embargo",
+                "move_id": "embargo",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "code": "68",
+                "move": "Giga Impact",
+                "move_id": "giga-impact",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "code": "73",
+                "move": "Thunder Wave",
+                "move_id": "thunder-wave",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "code": "77",
+                "move": "Psych Up",
+                "move_id": "psych-up",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "code": "85",
+                "move": "Dream Eater",
+                "move_id": "dream-eater",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "code": "86",
+                "move": "Grass Knot",
+                "move_id": "grass-knot",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "code": "87",
+                "move": "Swagger",
+                "move_id": "swagger",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "code": "88",
+                "move": "Sleep Talk",
+                "move_id": "sleep-talk",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "code": "90",
+                "move": "Substitute",
+                "move_id": "substitute",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "code": "92",
+                "move": "Trick Room",
+                "move_id": "trick-room",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "code": "97",
+                "move": "Dark Pulse",
+                "move_id": "dark-pulse",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "code": "100",
+                "move": "Confide",
+                "move_id": "confide",
+                "reference_status": "resolved_final_normalization"
+              }
+            ]
+          },
+          "tm_moves_text": {
+            "replace": "03 Psyshock, 04 Calm Mind, 06 Toxic, 10 Hidden Power,11 Sunny Day, 12 Taunt, 15 Hyper Beam, 16 Light Screen, 17 Protect, 18 Rain Dance, 20 Safeguard, 21 Frustration, 24 Thunderbolt, 27 Return, 29 Psychic, 31 Brick Break, 32 Double Team, 33 Reflect, 41 Torment, 42 Facade, 44 Rest, 46 Thief, 48 Round, 52 Focus Blast, 53 Energy Ball, 56 Fling, 57 Charge Beam, 60 Quash, 63 Embargo, 68 Giga Impact, 73 Thunder Wave, 77 Psych Up, 85 Dream Eater, 86 Grass Knot, 87 Swagger, 88 Sleep Talk, 90 Substitute, 92 Trick Room, 97 Dark Pulse, 100 Confide"
+          },
+          "tutor_moves": {
+            "replace": [
+              {
+                "move": "Ally Switch",
+                "move_id": "ally-switch",
+                "note": "N",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "move": "Block",
+                "move_id": "block",
+                "note": null,
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "move": "Covet",
+                "move_id": "covet",
+                "note": null,
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "move": "Drain Punch",
+                "move_id": "drain-punch",
+                "note": null,
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "move": "Dual Chop",
+                "move_id": "dual-chop",
+                "note": null,
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "move": "Fire Punch",
+                "move_id": "fire-punch",
+                "note": null,
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "move": "Focus Punch",
+                "move_id": "focus-punch",
+                "note": null,
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "move": "Foul Play",
+                "move_id": "foul-play",
+                "note": null,
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "move": "Gravity",
+                "move_id": "gravity",
+                "note": null,
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "move": "Gunk Shot",
+                "move_id": "gunk-shot",
+                "note": null,
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "move": "Hyperspace Fury",
+                "move_id": "hyperspace-fury",
+                "note": "N",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "move": "Ice Punch",
+                "move_id": "ice-punch",
+                "note": null,
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "move": "Knock Off",
+                "move_id": "knock-off",
+                "note": null,
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "move": "Laser Focus",
+                "move_id": "laser-focus",
+                "note": null,
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "move": "Last Resort",
+                "move_id": "last-resort",
+                "note": null,
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "move": "Magic Coat",
+                "move_id": "magic-coat",
+                "note": null,
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "move": "Magic Room",
+                "move_id": "magic-room",
+                "note": null,
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "move": "Recycle",
+                "move_id": "recycle",
+                "note": null,
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "move": "Role Play",
+                "move_id": "role-play",
+                "note": null,
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "move": "Shock Wave",
+                "move_id": "shock-wave",
+                "note": null,
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "move": "Signal Beam",
+                "move_id": "signal-beam",
+                "note": null,
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "move": "Skill Swap",
+                "move_id": "skill-swap",
+                "note": null,
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "move": "Snatch",
+                "move_id": "snatch",
+                "note": null,
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "move": "Snore",
+                "move_id": "snore",
+                "note": null,
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "move": "Telekinesis",
+                "move_id": "telekinesis",
+                "note": null,
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "move": "Throat Chop",
+                "move_id": "throat-chop",
+                "note": null,
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "move": "Thunder Punch",
+                "move_id": "thunder-punch",
+                "note": null,
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "move": "Trick",
+                "move_id": "trick",
+                "note": null,
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "move": "Uproar",
+                "move_id": "uproar",
+                "note": null,
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "move": "Wonder Room",
+                "move_id": "wonder-room",
+                "note": null,
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "move": "Zen Headbutt",
+                "move_id": "zen-headbutt",
+                "note": null,
+                "reference_status": "resolved_final_normalization"
+              }
+            ]
+          },
+          "tutor_moves_text": {
+            "replace": "Ally Switch (N), Block, Covet, Drain Punch, Dual Chop, Fire Punch, Focus Punch, Foul Play, Gravity, Gunk Shot, Hyperspace Fury (N), Ice Punch, Knock Off, Laser Focus, Last Resort, Magic Coat, Magic Room, Recycle, Role Play, Shock Wave, Signal Beam, Skill Swap, Snatch, Snore, Telekinesis, Throat Chop, Thunder Punch, Trick, Uproar, Wonder Room, Zen Headbutt"
+          },
+          "linked_move_side": {
+            "replace": 1
+          }
+        },
+        "source": {
+          "source_id": "books-gen8ish-hoopa",
+          "page": 932
+        },
+        "notes": "Manual form change. The linked moves follow the active form."
+      }
+    ]
+  },
+  {
+    "id": "hoopa-unbound",
+    "display_name": "Hoopa Unbound",
+    "dex_number": null,
+    "variant_index": null,
+    "enabled": true,
+    "source_id": "books-gen8ish-hoopa",
+    "source_title": "Gen 8ish PokeDex",
+    "source_kind": "homebrew_species",
+    "source_priority": 180,
+    "source_page": 932,
+    "types": [
+      "Psychic",
+      "Dark"
+    ],
+    "base_stats": {
+      "hp": 8,
+      "attack": 16,
+      "defense": 6,
+      "special_attack": 17,
+      "special_defense": 13,
+      "speed": 8
+    },
+    "ability_slots": [
+      {
+        "slot": "Basic Ability 1",
+        "name": "Magician",
+        "ability_id": "magician",
+        "slot_category": "basic",
+        "slot_index": 1,
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "slot": "Adv Ability 1",
+        "name": "Enduring Rage",
+        "ability_id": "enduring-rage",
+        "slot_category": "advanced",
+        "slot_index": 1,
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "slot": "Adv Ability 2",
+        "name": "Cruelty",
+        "ability_id": "cruelty",
+        "slot_category": "advanced",
+        "slot_index": 2,
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "slot": "Adv Ability 3",
+        "name": "Bully",
+        "ability_id": "bully",
+        "slot_category": "advanced",
+        "slot_index": 3,
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "slot": "High Ability",
+        "name": "Weird power",
+        "ability_id": "weird-power",
+        "slot_category": "high",
+        "slot_index": 1,
+        "reference_status": "resolved_final_normalization"
+      }
+    ],
+    "capabilities_text": "Overland 10, Swim 6, Teleporter 8, Jump 4/4, Power 9, Confined, Darkvision, Forme Change, Reach",
+    "skills_text": "Athl 3d6 Acro 4d6, Combat 2d6, Stealth 4d6+2, Percep 6d6+2, Focus 3d6",
+    "evolution_text": "1 - Hoopa",
+    "level_up_moves": [
+      {
+        "level": "1",
+        "move": "Ally Switch",
+        "type_hint": "Psychic",
+        "move_id": "ally-switch",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "level": "1",
+        "move": "Destiny Bond",
+        "type_hint": "Ghost",
+        "move_id": "destiny-bond",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "level": "1",
+        "move": "Trick",
+        "type_hint": "Psychic",
+        "move_id": "trick",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "level": "1",
+        "move": "Confusion",
+        "type_hint": "Psychic",
+        "move_id": "confusion",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "level": "3",
+        "move": "Astonish",
+        "type_hint": "Ghost",
+        "move_id": "astonish",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "level": "5",
+        "move": "Magic Coat",
+        "type_hint": "Psychic",
+        "move_id": "magic-coat",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "level": "8",
+        "move": "Light Screen",
+        "type_hint": "Psychic",
+        "move_id": "light-screen",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "level": "10",
+        "move": "Psybeam",
+        "type_hint": "Psychic",
+        "move_id": "psybeam",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "level": "13",
+        "move": "Skill Swap",
+        "type_hint": "Psychic",
+        "move_id": "skill-swap",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "level": "15",
+        "move": "Guard Split",
+        "type_hint": "Psychic",
+        "move_id": "guard-split",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "level": "15",
+        "move": "Power Split",
+        "type_hint": "Psychic",
+        "move_id": "power-split",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "level": "18",
+        "move": "Knock Off",
+        "move_id": "knock-off",
+        "type_hint": "Dark",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "level": "23",
+        "move": "Zen Headbutt",
+        "type_hint": "Psychic",
+        "move_id": "zen-headbutt",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "level": "25",
+        "move": "Trick Room",
+        "type_hint": "Psychic",
+        "move_id": "trick-room",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "level": "25",
+        "move": "Wonder Room",
+        "type_hint": "Psychic",
+        "move_id": "wonder-room",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "level": "28",
+        "move": "Dark Pulse",
+        "move_id": "dark-pulse",
+        "type_hint": "Dark",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "level": "34",
+        "move": "Nasty Plot",
+        "type_hint": "Dark",
+        "move_id": "nasty-plot",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "level": "38",
+        "move": "Psychic",
+        "type_hint": "Psychic",
+        "move_id": "psychic",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "level": "43",
+        "move": "Hyperspace Fury",
+        "move_id": "hyperspace-fury",
+        "type_hint": "Dark",
+        "reference_status": "resolved_final_normalization"
+      }
+    ],
+    "tm_moves_text": "03 Psyshock, 04 Calm Mind, 06 Toxic, 10 Hidden Power,11 Sunny Day, 12 Taunt, 15 Hyper Beam, 16 Light Screen, 17 Protect, 18 Rain Dance, 20 Safeguard, 21 Frustration, 24 Thunderbolt, 27 Return, 29 Psychic, 31 Brick Break, 32 Double Team, 33 Reflect, 41 Torment, 42 Facade, 44 Rest, 46 Thief, 48 Round, 52 Focus Blast, 53 Energy Ball, 56 Fling, 57 Charge Beam, 60 Quash, 63 Embargo, 68 Giga Impact, 73 Thunder Wave, 77 Psych Up, 85 Dream Eater, 86 Grass Knot, 87 Swagger, 88 Sleep Talk, 90 Substitute, 92 Trick Room, 97 Dark Pulse, 100 Confide",
+    "egg_moves_text": "",
+    "tutor_moves_text": "Ally Switch (N), Block, Covet, Drain Punch, Dual Chop, Fire Punch, Focus Punch, Foul Play, Gravity, Gunk Shot, Hyperspace Fury (N), Ice Punch, Knock Off, Laser Focus, Last Resort, Magic Coat, Magic Room, Recycle, Role Play, Shock Wave, Signal Beam, Skill Swap, Snatch, Snore, Telekinesis, Throat Chop, Thunder Punch, Trick, Uproar, Wonder Room, Zen Headbutt",
+    "height_text": "21’ 5” / 5m (Gigantic)",
+    "weight_text": "1080.3 lbs / 490kg (9)",
+    "gender_ratio_text": "No Gender",
+    "egg_group_text": "None",
+    "diet_text": "Nullivore",
+    "habitat_text": "Non-Space",
+    "needs_review": false,
+    "skills": [
+      {
+        "skill": "Athletics",
+        "dice": 3,
+        "modifier": 0
+      },
+      {
+        "skill": "Acrobatics",
+        "dice": 4,
+        "modifier": 0
+      },
+      {
+        "skill": "Combat",
+        "dice": 2,
+        "modifier": 0
+      },
+      {
+        "skill": "Stealth",
+        "dice": 4,
+        "modifier": 2
+      },
+      {
+        "skill": "Perception",
+        "dice": 6,
+        "modifier": 2
+      },
+      {
+        "skill": "Focus",
+        "dice": 3,
+        "modifier": 0
+      }
+    ],
+    "capabilities": [
+      {
+        "name": "Overland",
+        "value": 10,
+        "kind": "movement",
+        "capability_id": "overland",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "name": "Swim",
+        "value": 6,
+        "kind": "movement",
+        "capability_id": "swim",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "name": "Teleporter",
+        "value": 8,
+        "kind": "special",
+        "capability_id": "teleporter",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "name": "Jump",
+        "high": 4,
+        "long": 4,
+        "kind": "jump",
+        "component_capability_ids": [
+          "high-jump",
+          "long-jump"
+        ],
+        "reference_status": "resolved_composite"
+      },
+      {
+        "name": "Power",
+        "value": 9,
+        "kind": "power",
+        "capability_id": "power",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "name": "Confined",
+        "kind": "special",
+        "reference_status": "unresolved"
+      },
+      {
+        "name": "Darkvision",
+        "kind": "special",
+        "capability_id": "darkvision",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "name": "Forme Change",
+        "kind": "special",
+        "capability_id": "forme-change",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "name": "Reach",
+        "kind": "special",
+        "capability_id": "reach",
+        "reference_status": "resolved_final_normalization"
+      }
+    ],
+    "evolution": [
+      {
+        "stage": 1,
+        "species_name": "Hoopa",
+        "min_level": null,
+        "condition_text": null
+      }
+    ],
+    "tm_moves": [
+      {
+        "code": "03",
+        "move": "Psyshock",
+        "move_id": "psyshock",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "code": "04",
+        "move": "Calm Mind",
+        "move_id": "calm-mind",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "code": "06",
+        "move": "Toxic",
+        "move_id": "toxic",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "code": "10",
+        "move": "Hidden Power",
+        "move_id": "hidden-power",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "code": "11",
+        "move": "Sunny Day",
+        "move_id": "sunny-day",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "code": "12",
+        "move": "Taunt",
+        "move_id": "taunt",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "code": "15",
+        "move": "Hyper Beam",
+        "move_id": "hyper-beam",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "code": "16",
+        "move": "Light Screen",
+        "move_id": "light-screen",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "code": "17",
+        "move": "Protect",
+        "move_id": "protect",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "code": "18",
+        "move": "Rain Dance",
+        "move_id": "rain-dance",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "code": "20",
+        "move": "Safeguard",
+        "move_id": "safeguard",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "code": "21",
+        "move": "Frustration",
+        "move_id": "frustration",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "code": "24",
+        "move": "Thunderbolt",
+        "move_id": "thunderbolt",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "code": "27",
+        "move": "Return",
+        "move_id": "return",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "code": "29",
+        "move": "Psychic",
+        "move_id": "psychic",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "code": "31",
+        "move": "Brick Break",
+        "move_id": "brick-break",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "code": "32",
+        "move": "Double Team",
+        "move_id": "double-team",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "code": "33",
+        "move": "Reflect",
+        "move_id": "reflect",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "code": "41",
+        "move": "Torment",
+        "move_id": "torment",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "code": "42",
+        "move": "Façade",
+        "move_id": "facade",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "code": "44",
+        "move": "Rest",
+        "move_id": "rest",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "code": "46",
+        "move": "Thief",
+        "move_id": "thief",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "code": "48",
+        "move": "Round",
+        "move_id": "round",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "code": "52",
+        "move": "Focus Blast",
+        "move_id": "focus-blast",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "code": "53",
+        "move": "Energy Ball",
+        "move_id": "energy-ball",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "code": "56",
+        "move": "Fling",
+        "move_id": "fling",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "code": "57",
+        "move": "Charge Beam",
+        "move_id": "charge-beam",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "code": "60",
+        "move": "Quash",
+        "move_id": "quash",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "code": "63",
+        "move": "Embargo",
+        "move_id": "embargo",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "code": "68",
+        "move": "Giga Impact",
+        "move_id": "giga-impact",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "code": "73",
+        "move": "Thunder Wave",
+        "move_id": "thunder-wave",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "code": "77",
+        "move": "Psych Up",
+        "move_id": "psych-up",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "code": "85",
+        "move": "Dream Eater",
+        "move_id": "dream-eater",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "code": "86",
+        "move": "Grass Knot",
+        "move_id": "grass-knot",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "code": "87",
+        "move": "Swagger",
+        "move_id": "swagger",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "code": "88",
+        "move": "Sleep Talk",
+        "move_id": "sleep-talk",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "code": "90",
+        "move": "Substitute",
+        "move_id": "substitute",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "code": "92",
+        "move": "Trick Room",
+        "move_id": "trick-room",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "code": "97",
+        "move": "Dark Pulse",
+        "move_id": "dark-pulse",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "code": "100",
+        "move": "Confide",
+        "move_id": "confide",
+        "reference_status": "resolved_final_normalization"
+      }
+    ],
+    "egg_moves": [],
+    "tutor_moves": [
+      {
+        "move": "Ally Switch",
+        "move_id": "ally-switch",
+        "note": "N",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "move": "Block",
+        "move_id": "block",
+        "note": null,
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "move": "Covet",
+        "move_id": "covet",
+        "note": null,
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "move": "Drain Punch",
+        "move_id": "drain-punch",
+        "note": null,
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "move": "Dual Chop",
+        "move_id": "dual-chop",
+        "note": null,
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "move": "Fire Punch",
+        "move_id": "fire-punch",
+        "note": null,
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "move": "Focus Punch",
+        "move_id": "focus-punch",
+        "note": null,
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "move": "Foul Play",
+        "move_id": "foul-play",
+        "note": null,
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "move": "Gravity",
+        "move_id": "gravity",
+        "note": null,
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "move": "Gunk Shot",
+        "move_id": "gunk-shot",
+        "note": null,
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "move": "Hyperspace Fury",
+        "move_id": "hyperspace-fury",
+        "note": "N",
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "move": "Ice Punch",
+        "move_id": "ice-punch",
+        "note": null,
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "move": "Knock Off",
+        "move_id": "knock-off",
+        "note": null,
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "move": "Laser Focus",
+        "move_id": "laser-focus",
+        "note": null,
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "move": "Last Resort",
+        "move_id": "last-resort",
+        "note": null,
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "move": "Magic Coat",
+        "move_id": "magic-coat",
+        "note": null,
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "move": "Magic Room",
+        "move_id": "magic-room",
+        "note": null,
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "move": "Recycle",
+        "move_id": "recycle",
+        "note": null,
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "move": "Role Play",
+        "move_id": "role-play",
+        "note": null,
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "move": "Shock Wave",
+        "move_id": "shock-wave",
+        "note": null,
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "move": "Signal Beam",
+        "move_id": "signal-beam",
+        "note": null,
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "move": "Skill Swap",
+        "move_id": "skill-swap",
+        "note": null,
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "move": "Snatch",
+        "move_id": "snatch",
+        "note": null,
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "move": "Snore",
+        "move_id": "snore",
+        "note": null,
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "move": "Telekinesis",
+        "move_id": "telekinesis",
+        "note": null,
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "move": "Throat Chop",
+        "move_id": "throat-chop",
+        "note": null,
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "move": "Thunder Punch",
+        "move_id": "thunder-punch",
+        "note": null,
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "move": "Trick",
+        "move_id": "trick",
+        "note": null,
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "move": "Uproar",
+        "move_id": "uproar",
+        "note": null,
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "move": "Wonder Room",
+        "move_id": "wonder-room",
+        "note": null,
+        "reference_status": "resolved_final_normalization"
+      },
+      {
+        "move": "Zen Headbutt",
+        "move_id": "zen-headbutt",
+        "note": null,
+        "reference_status": "resolved_final_normalization"
+      }
+    ],
+    "mechanical_completeness": "complete",
+    "height": {
+      "raw": "21' 5\" / 5m (Gigantic)",
+      "meters": 5.0,
+      "size_class": "Gigantic"
+    },
+    "weight": {
+      "raw": "1080.3 lbs / 490kg (9)",
+      "kg": 490.0,
+      "weight_class": 9
+    },
+    "gender_ratio": {
+      "raw": "No Gender",
+      "genderless": true,
+      "male_percent": 0.0,
+      "female_percent": 0.0
+    },
+    "egg_groups": [
+      "None"
+    ],
+    "habitats": [
+      "Non-Space"
+    ],
+    "diet": {
+      "raw": "Nullivore",
+      "values": [
+        "Nullivore"
+      ]
+    },
+    "missing_mechanical_fields": [],
+    "enabled_for_character_creation": true,
+    "ptu_evolution_stages": [
+      {
+        "stage": 1,
+        "species_name": null,
+        "raw_segment": "Hoopa",
+        "parse_status": "unresolved_species"
+      }
+    ],
+    "ptu_evolution_family_id": "evofam-e093fb08fda2",
+    "search_aliases": [
+      "Hoopa Unbound",
+      "Hoopa Unbound"
+    ],
+    "display_dex_id": null,
+    "logical_id": "hoopa-unbound",
+    "name": "Hoopa Unbound",
+    "source_file": "Gen 8ish PokeDex.pdf",
+    "source_sha256": "fd68f8ecb9964ef2264e14f239e1025729efb051728ffdc606919ad9a19bfe00",
+    "linked_move_side": 1,
+    "linked_move_pairs": [
+      [
+        {
+          "id": "phantom-force",
+          "name": "Phantom Force",
+          "typeHint": "Ghost"
+        },
+        {
+          "id": "knock-off",
+          "name": "Knock Off",
+          "typeHint": "Dark"
+        }
+      ],
+      [
+        {
+          "id": "shadow-ball",
+          "name": "Shadow Ball",
+          "typeHint": "Ghost"
+        },
+        {
+          "id": "dark-pulse",
+          "name": "Dark Pulse",
+          "typeHint": "Dark"
+        }
+      ],
+      [
+        {
+          "id": "hyperspace-hole",
+          "name": "Hyperspace Hole",
+          "typeHint": "Psychic"
+        },
+        {
+          "id": "hyperspace-fury",
+          "name": "Hyperspace Fury",
+          "typeHint": "Dark"
+        }
+      ]
+    ],
+    "forms": [
+      {
+        "id": "hoopa-confined",
+        "name": "Hoopa Bound",
+        "mode": "permanent",
+        "overrides": {
+          "name": {
+            "replace": "Hoopa Bound"
+          },
+          "types": {
+            "replace": [
+              "Psychic",
+              "Ghost"
+            ]
+          },
+          "base_stats": {
+            "replace": {
+              "hp": 8,
+              "attack": 11,
+              "defense": 6,
+              "special_attack": 15,
+              "special_defense": 13,
+              "speed": 7
+            }
+          },
+          "ability_slots": {
+            "replace": [
+              {
+                "slot": "Basic Ability 1",
+                "name": "Magician",
+                "ability_id": "magician",
+                "slot_category": "basic",
+                "slot_index": 1,
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "slot": "Adv Ability 1",
+                "name": "Prankster",
+                "ability_id": "prankster",
+                "slot_category": "advanced",
+                "slot_index": 1,
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "slot": "Adv Ability 2",
+                "name": "Run Away",
+                "ability_id": "run-away",
+                "slot_category": "advanced",
+                "slot_index": 2,
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "slot": "Adv Ability 3",
+                "name": "Bully",
+                "ability_id": "bully",
+                "slot_category": "advanced",
+                "slot_index": 3,
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "slot": "High Ability",
+                "name": "Handyman",
+                "ability_id": "handyman",
+                "slot_category": "high",
+                "slot_index": 1,
+                "reference_status": "resolved_final_normalization"
+              }
+            ]
+          },
+          "capabilities": {
+            "replace": [
+              {
+                "name": "Overland",
+                "value": 3,
+                "kind": "movement",
+                "capability_id": "overland",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "name": "Swim",
+                "value": 1,
+                "kind": "movement",
+                "capability_id": "swim",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "name": "Levitate",
+                "value": 5,
+                "kind": "movement",
+                "capability_id": "levitate",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "name": "Teleporter",
+                "value": 10,
+                "kind": "special",
+                "capability_id": "teleporter",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "name": "Jump",
+                "high": 2,
+                "long": 2,
+                "kind": "jump",
+                "component_capability_ids": [
+                  "high-jump",
+                  "long-jump"
+                ],
+                "reference_status": "resolved_composite"
+              },
+              {
+                "name": "Power",
+                "value": 2,
+                "kind": "power",
+                "capability_id": "power",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "name": "Confined",
+                "kind": "special",
+                "reference_status": "unresolved"
+              },
+              {
+                "name": "Darkvision",
+                "kind": "special",
+                "capability_id": "darkvision",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "name": "Forme Change",
+                "kind": "special",
+                "capability_id": "forme-change",
+                "reference_status": "resolved_final_normalization"
+              }
+            ]
+          },
+          "capabilities_text": {
+            "replace": "Overland 3, Swim 1, Levitate 5, Teleporter 10, Jump 2/2, Power 2, Confined, Darkvision, Forme Change"
+          },
+          "height": {
+            "replace": {
+              "raw": "1' 8\" / 0.5m (Small)",
+              "meters": 0.5,
+              "size_class": "Small"
+            }
+          },
+          "weight": {
+            "replace": {
+              "raw": "19.8 lbs / 9kg (1)",
+              "kg": 9.0,
+              "weight_class": 1
+            }
+          },
+          "height_text": {
+            "replace": "1’ 8” / 0.5m (Small)"
+          },
+          "weight_text": {
+            "replace": "19.8 lbs / 9kg (1)"
+          },
+          "level_up_moves": {
+            "replace": [
+              {
+                "level": "1",
+                "move": "Ally Switch",
+                "type_hint": "Psychic",
+                "move_id": "ally-switch",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "level": "1",
+                "move": "Destiny Bond",
+                "type_hint": "Ghost",
+                "move_id": "destiny-bond",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "level": "1",
+                "move": "Trick",
+                "type_hint": "Psychic",
+                "move_id": "trick",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "level": "1",
+                "move": "Confusion",
+                "type_hint": "Psychic",
+                "move_id": "confusion",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "level": "3",
+                "move": "Astonish",
+                "type_hint": "Ghost",
+                "move_id": "astonish",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "level": "5",
+                "move": "Magic Coat",
+                "type_hint": "Psychic",
+                "move_id": "magic-coat",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "level": "8",
+                "move": "Light Screen",
+                "type_hint": "Psychic",
+                "move_id": "light-screen",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "level": "10",
+                "move": "Psybeam",
+                "type_hint": "Psychic",
+                "move_id": "psybeam",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "level": "13",
+                "move": "Skill Swap",
+                "type_hint": "Psychic",
+                "move_id": "skill-swap",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "level": "15",
+                "move": "Guard Split",
+                "type_hint": "Psychic",
+                "move_id": "guard-split",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "level": "15",
+                "move": "Power Split",
+                "type_hint": "Psychic",
+                "move_id": "power-split",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "level": "18",
+                "move": "Phantom Force",
+                "move_id": "phantom-force",
+                "type_hint": "Ghost",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "level": "23",
+                "move": "Zen Headbutt",
+                "type_hint": "Psychic",
+                "move_id": "zen-headbutt",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "level": "25",
+                "move": "Trick Room",
+                "type_hint": "Psychic",
+                "move_id": "trick-room",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "level": "25",
+                "move": "Wonder Room",
+                "type_hint": "Psychic",
+                "move_id": "wonder-room",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "level": "28",
+                "move": "Shadow Ball",
+                "move_id": "shadow-ball",
+                "type_hint": "Ghost",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "level": "34",
+                "move": "Nasty Plot",
+                "type_hint": "Dark",
+                "move_id": "nasty-plot",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "level": "38",
+                "move": "Psychic",
+                "type_hint": "Psychic",
+                "move_id": "psychic",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "level": "43",
+                "move": "Hyperspace Hole",
+                "move_id": "hyperspace-hole",
+                "type_hint": "Psychic",
+                "reference_status": "resolved_final_normalization"
+              }
+            ]
+          },
+          "tm_moves": {
+            "replace": [
+              {
+                "code": "03",
+                "move": "Psyshock",
+                "move_id": "psyshock",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "code": "04",
+                "move": "Calm Mind",
+                "move_id": "calm-mind",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "code": "06",
+                "move": "Toxic",
+                "move_id": "toxic",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "code": "10",
+                "move": "Hidden Power",
+                "move_id": "hidden-power",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "code": "11",
+                "move": "Sunny Day",
+                "move_id": "sunny-day",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "code": "12",
+                "move": "Taunt",
+                "move_id": "taunt",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "code": "15",
+                "move": "Hyper Beam",
+                "move_id": "hyper-beam",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "code": "16",
+                "move": "Light Screen",
+                "move_id": "light-screen",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "code": "17",
+                "move": "Protect",
+                "move_id": "protect",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "code": "18",
+                "move": "Rain Dance",
+                "move_id": "rain-dance",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "code": "20",
+                "move": "Safeguard",
+                "move_id": "safeguard",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "code": "21",
+                "move": "Frustration",
+                "move_id": "frustration",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "code": "24",
+                "move": "Thunderbolt",
+                "move_id": "thunderbolt",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "code": "27",
+                "move": "Return",
+                "move_id": "return",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "code": "29",
+                "move": "Psychic",
+                "move_id": "psychic",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "code": "30",
+                "move": "Shadow Ball",
+                "move_id": "shadow-ball",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "code": "31",
+                "move": "Brick Break",
+                "move_id": "brick-break",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "code": "32",
+                "move": "Double Team",
+                "move_id": "double-team",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "code": "33",
+                "move": "Reflect",
+                "move_id": "reflect",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "code": "41",
+                "move": "Torment",
+                "move_id": "torment",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "code": "42",
+                "move": "Façade",
+                "move_id": "facade",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "code": "44",
+                "move": "Rest",
+                "move_id": "rest",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "code": "46",
+                "move": "Thief",
+                "move_id": "thief",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "code": "48",
+                "move": "Round",
+                "move_id": "round",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "code": "52",
+                "move": "Focus Blast",
+                "move_id": "focus-blast",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "code": "53",
+                "move": "Energy Ball",
+                "move_id": "energy-ball",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "code": "56",
+                "move": "Fling",
+                "move_id": "fling",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "code": "57",
+                "move": "Charge Beam",
+                "move_id": "charge-beam",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "code": "60",
+                "move": "Quash",
+                "move_id": "quash",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "code": "63",
+                "move": "Embargo",
+                "move_id": "embargo",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "code": "68",
+                "move": "Giga Impact",
+                "move_id": "giga-impact",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "code": "73",
+                "move": "Thunder Wave",
+                "move_id": "thunder-wave",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "code": "77",
+                "move": "Psych Up",
+                "move_id": "psych-up",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "code": "85",
+                "move": "Dream Eater",
+                "move_id": "dream-eater",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "code": "86",
+                "move": "Grass Knot",
+                "move_id": "grass-knot",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "code": "87",
+                "move": "Swagger",
+                "move_id": "swagger",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "code": "88",
+                "move": "Sleep Talk",
+                "move_id": "sleep-talk",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "code": "90",
+                "move": "Substitute",
+                "move_id": "substitute",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "code": "92",
+                "move": "Trick Room",
+                "move_id": "trick-room",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "code": "100",
+                "move": "Confide",
+                "move_id": "confide",
+                "reference_status": "resolved_final_normalization"
+              }
+            ]
+          },
+          "tm_moves_text": {
+            "replace": "03 Psyshock, 04 Calm Mind, 06 Toxic, 10 Hidden Power,11 Sunny Day, 12 Taunt, 15 Hyper Beam, 16 Light Screen, 17 Protect, 18 Rain Dance, 20 Safeguard, 21 Frustration, 24 Thunderbolt, 27 Return, 29 Psychic, 30 Shadow Ball, 31 Brick Break, 32 Double Team, 33 Reflect, 41 Torment, 42 Facade, 44 Rest, 46 Thief, 48 Round, 52 Focus Blast, 53 Energy Ball, 56 Fling, 57 Charge Beam, 60 Quash, 63 Embargo, 68 Giga Impact, 73 Thunder Wave, 77 Psych Up, 85 Dream Eater, 86 Grass Knot, 87 Swagger, 88 Sleep Talk, 90 Substitute, 92 Trick Room, 100 Confide"
+          },
+          "tutor_moves": {
+            "replace": [
+              {
+                "move": "Ally Switch",
+                "move_id": "ally-switch",
+                "note": "N",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "move": "Block",
+                "move_id": "block",
+                "note": null,
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "move": "Covet",
+                "move_id": "covet",
+                "note": null,
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "move": "Drain Punch",
+                "move_id": "drain-punch",
+                "note": null,
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "move": "Dual Chop",
+                "move_id": "dual-chop",
+                "note": null,
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "move": "Fire Punch",
+                "move_id": "fire-punch",
+                "note": null,
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "move": "Focus Punch",
+                "move_id": "focus-punch",
+                "note": null,
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "move": "Foul Play",
+                "move_id": "foul-play",
+                "note": null,
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "move": "Gravity",
+                "move_id": "gravity",
+                "note": null,
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "move": "Gunk Shot",
+                "move_id": "gunk-shot",
+                "note": null,
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "move": "Hyperspace Hole",
+                "move_id": "hyperspace-hole",
+                "note": "N",
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "move": "Ice Punch",
+                "move_id": "ice-punch",
+                "note": null,
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "move": "Laser Focus",
+                "move_id": "laser-focus",
+                "note": null,
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "move": "Last Resort",
+                "move_id": "last-resort",
+                "note": null,
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "move": "Magic Coat",
+                "move_id": "magic-coat",
+                "note": null,
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "move": "Magic Room",
+                "move_id": "magic-room",
+                "note": null,
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "move": "Recycle",
+                "move_id": "recycle",
+                "note": null,
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "move": "Role Play",
+                "move_id": "role-play",
+                "note": null,
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "move": "Shock Wave",
+                "move_id": "shock-wave",
+                "note": null,
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "move": "Signal Beam",
+                "move_id": "signal-beam",
+                "note": null,
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "move": "Skill Swap",
+                "move_id": "skill-swap",
+                "note": null,
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "move": "Snatch",
+                "move_id": "snatch",
+                "note": null,
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "move": "Snore",
+                "move_id": "snore",
+                "note": null,
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "move": "Telekinesis",
+                "move_id": "telekinesis",
+                "note": null,
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "move": "Throat Chop",
+                "move_id": "throat-chop",
+                "note": null,
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "move": "Thunder Punch",
+                "move_id": "thunder-punch",
+                "note": null,
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "move": "Trick",
+                "move_id": "trick",
+                "note": null,
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "move": "Uproar",
+                "move_id": "uproar",
+                "note": null,
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "move": "Wonder Room",
+                "move_id": "wonder-room",
+                "note": null,
+                "reference_status": "resolved_final_normalization"
+              },
+              {
+                "move": "Zen Headbutt",
+                "move_id": "zen-headbutt",
+                "note": null,
+                "reference_status": "resolved_final_normalization"
+              }
+            ]
+          },
+          "tutor_moves_text": {
+            "replace": "Ally Switch (N), Block, Covet, Drain Punch, Dual Chop, Fire Punch, Focus Punch, Foul Play, Gravity, Gunk Shot, Hyperspace Hole (N), Ice Punch, Laser Focus, Last Resort, Magic Coat, Magic Room, Recycle, Role Play, Shock Wave, Signal Beam, Skill Swap, Snatch, Snore, Telekinesis, Throat Chop, Thunder Punch, Trick, Uproar, Wonder Room, Zen Headbutt"
+          },
+          "linked_move_side": {
+            "replace": 0
+          }
+        },
+        "source": {
+          "source_id": "books-gen8ish-hoopa",
+          "page": 931
+        },
+        "notes": "Manual form change. The linked moves follow the active form."
+      }
+    ]
+  },
+  {
+    "id": "quatrotem",
+    "logical_id": "quatrotem",
+    "name": "Quatrotem",
+    "display_name": "Quatrotem",
+    "source_id": "books-quatrotem",
+    "source_title": "Quatrotem",
+    "source_kind": "homebrew_species",
+    "source_priority": 180,
+    "source_file": "Quatrotem.pdf",
+    "source_sha256": "c8f46dd06785d2264e4e5767a295c55456c6334f717338d59174ac3540697ffd",
+    "source_page": 1,
+    "enabled": true,
+    "enabled_for_character_creation": true,
+    "mechanical_completeness": "complete",
+    "search_aliases": [
+      "Quatrotem",
+      "Pokebot"
+    ],
+    "types": [
+      "Robotic"
+    ],
+    "base_stats": {
+      "hp": 20,
+      "attack": 20,
+      "defense": 20,
+      "special_attack": 20,
+      "special_defense": 20,
+      "speed": 20
+    },
+    "fixed_build": {
+      "level": 100,
+      "nature": "Robotic",
+      "loyalty": 6
+    },
+    "ability_slots": [
+      {
+        "name": "Cluster Mind",
+        "ability_id": "cluster-mind",
+        "slot_category": "basic",
+        "slot_index": 1
+      },
+      {
+        "name": "Lightning Rod",
+        "ability_id": "lightning-rod",
+        "slot_category": "basic",
+        "slot_index": 2
+      },
+      {
+        "name": "Flash Fire",
+        "ability_id": "flash-fire",
+        "slot_category": "basic",
+        "slot_index": 3
+      },
+      {
+        "name": "Sap Sipper",
+        "ability_id": "sap-sipper",
+        "slot_category": "basic",
+        "slot_index": 4
+      },
+      {
+        "name": "Water Absorb",
+        "ability_id": "water-absorb",
+        "slot_category": "basic",
+        "slot_index": 5
+      }
+    ],
+    "level_up_moves": [
+      {
+        "level": "100",
+        "move": "Thunder Shock",
+        "move_id": "thunder-shock"
+      },
+      {
+        "level": "100",
+        "move": "Thunder Wave",
+        "move_id": "thunder-wave"
+      },
+      {
+        "level": "100",
+        "move": "Flamethrower",
+        "move_id": "flamethrower"
+      },
+      {
+        "level": "100",
+        "move": "Heat Wave",
+        "move_id": "heat-wave"
+      },
+      {
+        "level": "100",
+        "move": "Seed Bomb",
+        "move_id": "seed-bomb"
+      },
+      {
+        "level": "100",
+        "move": "Spiky Shield",
+        "move_id": "spiky-shield"
+      },
+      {
+        "level": "100",
+        "move": "Scald",
+        "move_id": "scald"
+      },
+      {
+        "level": "100",
+        "move": "Brine",
+        "move_id": "brine"
+      }
+    ],
+    "capabilities": [
+      {
+        "name": "Overland",
+        "capability_id": "overland",
+        "kind": "movement",
+        "value": 4
+      },
+      {
+        "name": "Swim",
+        "capability_id": "swim",
+        "kind": "movement",
+        "value": 4
+      },
+      {
+        "name": "Jump",
+        "kind": "jump",
+        "long": 0,
+        "high": 0
+      },
+      {
+        "name": "Power",
+        "capability_id": "power",
+        "kind": "power",
+        "value": 2
+      },
+      {
+        "name": "Levitate",
+        "capability_id": "levitate",
+        "kind": "movement",
+        "value": 6
+      },
+      {
+        "name": "Zapper",
+        "capability_id": "zapper",
+        "kind": "special"
+      },
+      {
+        "name": "Magnetic",
+        "capability_id": "magnetic",
+        "kind": "special"
+      },
+      {
+        "name": "Firestarter",
+        "capability_id": "firestarter",
+        "kind": "special"
+      },
+      {
+        "name": "Egg Warmer",
+        "capability_id": "egg-warmer",
+        "kind": "special"
+      },
+      {
+        "name": "Planter",
+        "capability_id": "planter",
+        "kind": "special"
+      },
+      {
+        "name": "Alluring",
+        "capability_id": "alluring",
+        "kind": "special"
+      },
+      {
+        "name": "Over Grow",
+        "capability_id": "over-grow",
+        "kind": "special"
+      },
+      {
+        "name": "Fountain",
+        "capability_id": "fountain",
+        "kind": "special"
+      },
+      {
+        "name": "Gilled",
+        "capability_id": "gilled",
+        "kind": "special"
+      }
+    ],
+    "skills": [
+      {
+        "skill": "Athletics",
+        "dice": 3,
+        "modifier": 0
+      },
+      {
+        "skill": "Acrobatics",
+        "dice": 3,
+        "modifier": 0
+      },
+      {
+        "skill": "Combat",
+        "dice": 4,
+        "modifier": 0
+      },
+      {
+        "skill": "Stealth",
+        "dice": 4,
+        "modifier": 0
+      },
+      {
+        "skill": "Perception",
+        "dice": 6,
+        "modifier": 0
+      },
+      {
+        "skill": "Focus",
+        "dice": 1,
+        "modifier": 0
+      },
+      {
+        "skill": "General Education",
+        "dice": 6,
+        "modifier": 0
+      },
+      {
+        "skill": "Intuition",
+        "dice": 6,
+        "modifier": 0
+      },
+      {
+        "skill": "Medicine Education",
+        "dice": 6,
+        "modifier": 0
+      },
+      {
+        "skill": "Pokémon Education",
+        "dice": 6,
+        "modifier": 0
+      }
+    ],
+    "height": null,
+    "weight": null,
+    "gender_ratio_text": "No Gender",
+    "raw_text": "Pokémon Sheet\r\n                                                                                         PokéEdge / Tutor Item                  Cost\r\n Name: Quatrotem\r\nSpecies: _____________\r\n              Pokebot\r\nType: _______\r\n           Robotic / _______\r\nLevel: ___ 100\r\nEXP: _____ / _____\r\nHeld Item: __________\r\nLoyalty: ____  6\r\nGender: __________\r\nNature: _________\r\n             Robotic          (+ ______ / - ______ )\r\nAbilities: _________ / _________\r\n                Cluster  Mind                        Sap Sipper / _________\r\n                                   Water Absorb / _________           Lightining Rod     Remaining Tutor Points:\r\n_________\r\nFlash Fire / _________ /_________ / _________                                           Inheritance Moves: ______________________\r\nHeight / Size: ___________ Weight Class: ___________                                    Vitamins: _____________________________\r\nCapabilities: Overland __,         4 Swim ___,  4       Jump L/H 0__ / 0__,\r\nPower ___, 2      ____________________________________\r\n                  Fountain, Planter, Zapper, Firestarter, Levitate 6                    Beauty: ____, Cool: ____, Cute: ____,\r\n______________________________________________\r\nMagnetic, Egg Warmer, Gilled, Alluring, Ove grow                                        Smart: ____, Tough: ____\r\nSkills: Athl _____,\r\n                  3d6       Acro _____,\r\n                                     3d6      Combat _____, 4d6\r\nStealth _____,\r\n            4d6       Percep _____,\r\n                                 6d6       Focus _____,\r\n                                                     1d6                                Poffins: ______________________________\r\n______________________________________________\r\nIntuition 6d6, General Education 6d6, Medice Education 6d6, Pokemon education 6d6\r\n\r\n                                                                                       Notes:\r\n Hit Points: ___ / ___                           Phys Evade: _______                   Especial; Quando separados cada um tem 5 em cada\r\n                                                                                       Status e apenas os moves e abilities do seu tipo.\r\n HP: 20            SpAtk:20                      Spec Evade: _______                   Skill: Water; Pokemon Education, Fire; intuition,\r\n Atk: 20           SpDef: 20                     Speed Evade: ______                   Grass; Medicine Education & Eletric; General\r\n Def: 20           Speed: 20                     Injuries: __________                  Education.\r\n\r\n\r\n     Move             Freq         AC      Type          Damage                Range            Special Effect              Contest\r\n                                                        Roll/Type                                                            Effect\r\n\r\nThunder Shock\r\n\r\n\r\nThunder Wave\r\n\r\n\r\nFlamethrower\r\n\r\n\r\nHeat Wave\r\n\r\nSeed bomb\r\n\r\nSpike Shield\r\n\r\n\r\n Scald\r\n Brine",
+    "data_notes": [
+      "Spike Shield is normalized to Spiky Shield. The water unit follows the PDF moves and ability. Over Grow is recorded as written in the capability list."
+    ],
+    "portrait_asset_path": "assets/species/quatrotem.webp"
+  },
+  {
+    "id": "quatrotem-electric-unit",
+    "logical_id": "quatrotem-electric-unit",
+    "name": "Quatrotem (Electric Unit)",
+    "display_name": "Quatrotem (Electric Unit)",
+    "source_id": "books-quatrotem",
+    "source_title": "Quatrotem",
+    "source_kind": "homebrew_species",
+    "source_priority": 180,
+    "source_file": "Quatrotem.pdf",
+    "source_sha256": "c8f46dd06785d2264e4e5767a295c55456c6334f717338d59174ac3540697ffd",
+    "source_page": 1,
+    "enabled": true,
+    "enabled_for_character_creation": true,
+    "mechanical_completeness": "complete",
+    "search_aliases": [
+      "Quatrotem (Electric Unit)",
+      "Pokebot"
+    ],
+    "types": [
+      "Robotic"
+    ],
+    "base_stats": {
+      "hp": 5,
+      "attack": 5,
+      "defense": 5,
+      "special_attack": 5,
+      "special_defense": 5,
+      "speed": 5
+    },
+    "fixed_build": {
+      "level": 100,
+      "nature": "Robotic",
+      "loyalty": 6
+    },
+    "ability_slots": [
+      {
+        "name": "Lightning Rod",
+        "ability_id": "lightning-rod",
+        "slot_category": "basic",
+        "slot_index": 1
+      }
+    ],
+    "level_up_moves": [
+      {
+        "level": "100",
+        "move": "Thunder Shock",
+        "move_id": "thunder-shock"
+      },
+      {
+        "level": "100",
+        "move": "Thunder Wave",
+        "move_id": "thunder-wave"
+      }
+    ],
+    "capabilities": [
+      {
+        "name": "Overland",
+        "capability_id": "overland",
+        "kind": "movement",
+        "value": 4
+      },
+      {
+        "name": "Swim",
+        "capability_id": "swim",
+        "kind": "movement",
+        "value": 4
+      },
+      {
+        "name": "Jump",
+        "kind": "jump",
+        "long": 0,
+        "high": 0
+      },
+      {
+        "name": "Power",
+        "capability_id": "power",
+        "kind": "power",
+        "value": 2
+      },
+      {
+        "name": "Levitate",
+        "capability_id": "levitate",
+        "kind": "movement",
+        "value": 6
+      },
+      {
+        "name": "Zapper",
+        "capability_id": "zapper",
+        "kind": "special"
+      },
+      {
+        "name": "Magnetic",
+        "capability_id": "magnetic",
+        "kind": "special"
+      }
+    ],
+    "skills": [
+      {
+        "skill": "Athletics",
+        "dice": 3,
+        "modifier": 0
+      },
+      {
+        "skill": "Acrobatics",
+        "dice": 3,
+        "modifier": 0
+      },
+      {
+        "skill": "Combat",
+        "dice": 4,
+        "modifier": 0
+      },
+      {
+        "skill": "Stealth",
+        "dice": 4,
+        "modifier": 0
+      },
+      {
+        "skill": "Perception",
+        "dice": 6,
+        "modifier": 0
+      },
+      {
+        "skill": "Focus",
+        "dice": 1,
+        "modifier": 0
+      },
+      {
+        "skill": "General Education",
+        "dice": 6,
+        "modifier": 0
+      }
+    ],
+    "height": null,
+    "weight": null,
+    "gender_ratio_text": "No Gender",
+    "raw_text": "Pokémon Sheet\r\n                                                                                         PokéEdge / Tutor Item                  Cost\r\n Name: Quatrotem\r\nSpecies: _____________\r\n              Pokebot\r\nType: _______\r\n           Robotic / _______\r\nLevel: ___ 100\r\nEXP: _____ / _____\r\nHeld Item: __________\r\nLoyalty: ____  6\r\nGender: __________\r\nNature: _________\r\n             Robotic          (+ ______ / - ______ )\r\nAbilities: _________ / _________\r\n                Cluster  Mind                        Sap Sipper / _________\r\n                                   Water Absorb / _________           Lightining Rod     Remaining Tutor Points:\r\n_________\r\nFlash Fire / _________ /_________ / _________                                           Inheritance Moves: ______________________\r\nHeight / Size: ___________ Weight Class: ___________                                    Vitamins: _____________________________\r\nCapabilities: Overland __,         4 Swim ___,  4       Jump L/H 0__ / 0__,\r\nPower ___, 2      ____________________________________\r\n                  Fountain, Planter, Zapper, Firestarter, Levitate 6                    Beauty: ____, Cool: ____, Cute: ____,\r\n______________________________________________\r\nMagnetic, Egg Warmer, Gilled, Alluring, Ove grow                                        Smart: ____, Tough: ____\r\nSkills: Athl _____,\r\n                  3d6       Acro _____,\r\n                                     3d6      Combat _____, 4d6\r\nStealth _____,\r\n            4d6       Percep _____,\r\n                                 6d6       Focus _____,\r\n                                                     1d6                                Poffins: ______________________________\r\n______________________________________________\r\nIntuition 6d6, General Education 6d6, Medice Education 6d6, Pokemon education 6d6\r\n\r\n                                                                                       Notes:\r\n Hit Points: ___ / ___                           Phys Evade: _______                   Especial; Quando separados cada um tem 5 em cada\r\n                                                                                       Status e apenas os moves e abilities do seu tipo.\r\n HP: 20            SpAtk:20                      Spec Evade: _______                   Skill: Water; Pokemon Education, Fire; intuition,\r\n Atk: 20           SpDef: 20                     Speed Evade: ______                   Grass; Medicine Education & Eletric; General\r\n Def: 20           Speed: 20                     Injuries: __________                  Education.\r\n\r\n\r\n     Move             Freq         AC      Type          Damage                Range            Special Effect              Contest\r\n                                                        Roll/Type                                                            Effect\r\n\r\nThunder Shock\r\n\r\n\r\nThunder Wave\r\n\r\n\r\nFlamethrower\r\n\r\n\r\nHeat Wave\r\n\r\nSeed bomb\r\n\r\nSpike Shield\r\n\r\n\r\n Scald\r\n Brine",
+    "data_notes": [
+      "Spike Shield is normalized to Spiky Shield. The water unit follows the PDF moves and ability. Over Grow is recorded as written in the capability list."
+    ],
+    "portrait_asset_path": "assets/species/quatrotem.webp"
+  },
+  {
+    "id": "quatrotem-fire-unit",
+    "logical_id": "quatrotem-fire-unit",
+    "name": "Quatrotem (Fire Unit)",
+    "display_name": "Quatrotem (Fire Unit)",
+    "source_id": "books-quatrotem",
+    "source_title": "Quatrotem",
+    "source_kind": "homebrew_species",
+    "source_priority": 180,
+    "source_file": "Quatrotem.pdf",
+    "source_sha256": "c8f46dd06785d2264e4e5767a295c55456c6334f717338d59174ac3540697ffd",
+    "source_page": 1,
+    "enabled": true,
+    "enabled_for_character_creation": true,
+    "mechanical_completeness": "complete",
+    "search_aliases": [
+      "Quatrotem (Fire Unit)",
+      "Pokebot"
+    ],
+    "types": [
+      "Robotic"
+    ],
+    "base_stats": {
+      "hp": 5,
+      "attack": 5,
+      "defense": 5,
+      "special_attack": 5,
+      "special_defense": 5,
+      "speed": 5
+    },
+    "fixed_build": {
+      "level": 100,
+      "nature": "Robotic",
+      "loyalty": 6
+    },
+    "ability_slots": [
+      {
+        "name": "Flash Fire",
+        "ability_id": "flash-fire",
+        "slot_category": "basic",
+        "slot_index": 1
+      }
+    ],
+    "level_up_moves": [
+      {
+        "level": "100",
+        "move": "Flamethrower",
+        "move_id": "flamethrower"
+      },
+      {
+        "level": "100",
+        "move": "Heat Wave",
+        "move_id": "heat-wave"
+      }
+    ],
+    "capabilities": [
+      {
+        "name": "Overland",
+        "capability_id": "overland",
+        "kind": "movement",
+        "value": 4
+      },
+      {
+        "name": "Swim",
+        "capability_id": "swim",
+        "kind": "movement",
+        "value": 4
+      },
+      {
+        "name": "Jump",
+        "kind": "jump",
+        "long": 0,
+        "high": 0
+      },
+      {
+        "name": "Power",
+        "capability_id": "power",
+        "kind": "power",
+        "value": 2
+      },
+      {
+        "name": "Levitate",
+        "capability_id": "levitate",
+        "kind": "movement",
+        "value": 6
+      },
+      {
+        "name": "Firestarter",
+        "capability_id": "firestarter",
+        "kind": "special"
+      },
+      {
+        "name": "Egg Warmer",
+        "capability_id": "egg-warmer",
+        "kind": "special"
+      }
+    ],
+    "skills": [
+      {
+        "skill": "Athletics",
+        "dice": 3,
+        "modifier": 0
+      },
+      {
+        "skill": "Acrobatics",
+        "dice": 3,
+        "modifier": 0
+      },
+      {
+        "skill": "Combat",
+        "dice": 4,
+        "modifier": 0
+      },
+      {
+        "skill": "Stealth",
+        "dice": 4,
+        "modifier": 0
+      },
+      {
+        "skill": "Perception",
+        "dice": 6,
+        "modifier": 0
+      },
+      {
+        "skill": "Focus",
+        "dice": 1,
+        "modifier": 0
+      },
+      {
+        "skill": "Intuition",
+        "dice": 6,
+        "modifier": 0
+      }
+    ],
+    "height": null,
+    "weight": null,
+    "gender_ratio_text": "No Gender",
+    "raw_text": "Pokémon Sheet\r\n                                                                                         PokéEdge / Tutor Item                  Cost\r\n Name: Quatrotem\r\nSpecies: _____________\r\n              Pokebot\r\nType: _______\r\n           Robotic / _______\r\nLevel: ___ 100\r\nEXP: _____ / _____\r\nHeld Item: __________\r\nLoyalty: ____  6\r\nGender: __________\r\nNature: _________\r\n             Robotic          (+ ______ / - ______ )\r\nAbilities: _________ / _________\r\n                Cluster  Mind                        Sap Sipper / _________\r\n                                   Water Absorb / _________           Lightining Rod     Remaining Tutor Points:\r\n_________\r\nFlash Fire / _________ /_________ / _________                                           Inheritance Moves: ______________________\r\nHeight / Size: ___________ Weight Class: ___________                                    Vitamins: _____________________________\r\nCapabilities: Overland __,         4 Swim ___,  4       Jump L/H 0__ / 0__,\r\nPower ___, 2      ____________________________________\r\n                  Fountain, Planter, Zapper, Firestarter, Levitate 6                    Beauty: ____, Cool: ____, Cute: ____,\r\n______________________________________________\r\nMagnetic, Egg Warmer, Gilled, Alluring, Ove grow                                        Smart: ____, Tough: ____\r\nSkills: Athl _____,\r\n                  3d6       Acro _____,\r\n                                     3d6      Combat _____, 4d6\r\nStealth _____,\r\n            4d6       Percep _____,\r\n                                 6d6       Focus _____,\r\n                                                     1d6                                Poffins: ______________________________\r\n______________________________________________\r\nIntuition 6d6, General Education 6d6, Medice Education 6d6, Pokemon education 6d6\r\n\r\n                                                                                       Notes:\r\n Hit Points: ___ / ___                           Phys Evade: _______                   Especial; Quando separados cada um tem 5 em cada\r\n                                                                                       Status e apenas os moves e abilities do seu tipo.\r\n HP: 20            SpAtk:20                      Spec Evade: _______                   Skill: Water; Pokemon Education, Fire; intuition,\r\n Atk: 20           SpDef: 20                     Speed Evade: ______                   Grass; Medicine Education & Eletric; General\r\n Def: 20           Speed: 20                     Injuries: __________                  Education.\r\n\r\n\r\n     Move             Freq         AC      Type          Damage                Range            Special Effect              Contest\r\n                                                        Roll/Type                                                            Effect\r\n\r\nThunder Shock\r\n\r\n\r\nThunder Wave\r\n\r\n\r\nFlamethrower\r\n\r\n\r\nHeat Wave\r\n\r\nSeed bomb\r\n\r\nSpike Shield\r\n\r\n\r\n Scald\r\n Brine",
+    "data_notes": [
+      "Spike Shield is normalized to Spiky Shield. The water unit follows the PDF moves and ability. Over Grow is recorded as written in the capability list."
+    ],
+    "portrait_asset_path": "assets/species/quatrotem.webp"
+  },
+  {
+    "id": "quatrotem-grass-unit",
+    "logical_id": "quatrotem-grass-unit",
+    "name": "Quatrotem (Grass Unit)",
+    "display_name": "Quatrotem (Grass Unit)",
+    "source_id": "books-quatrotem",
+    "source_title": "Quatrotem",
+    "source_kind": "homebrew_species",
+    "source_priority": 180,
+    "source_file": "Quatrotem.pdf",
+    "source_sha256": "c8f46dd06785d2264e4e5767a295c55456c6334f717338d59174ac3540697ffd",
+    "source_page": 1,
+    "enabled": true,
+    "enabled_for_character_creation": true,
+    "mechanical_completeness": "complete",
+    "search_aliases": [
+      "Quatrotem (Grass Unit)",
+      "Pokebot"
+    ],
+    "types": [
+      "Robotic"
+    ],
+    "base_stats": {
+      "hp": 5,
+      "attack": 5,
+      "defense": 5,
+      "special_attack": 5,
+      "special_defense": 5,
+      "speed": 5
+    },
+    "fixed_build": {
+      "level": 100,
+      "nature": "Robotic",
+      "loyalty": 6
+    },
+    "ability_slots": [
+      {
+        "name": "Sap Sipper",
+        "ability_id": "sap-sipper",
+        "slot_category": "basic",
+        "slot_index": 1
+      }
+    ],
+    "level_up_moves": [
+      {
+        "level": "100",
+        "move": "Seed Bomb",
+        "move_id": "seed-bomb"
+      },
+      {
+        "level": "100",
+        "move": "Spiky Shield",
+        "move_id": "spiky-shield"
+      }
+    ],
+    "capabilities": [
+      {
+        "name": "Overland",
+        "capability_id": "overland",
+        "kind": "movement",
+        "value": 4
+      },
+      {
+        "name": "Swim",
+        "capability_id": "swim",
+        "kind": "movement",
+        "value": 4
+      },
+      {
+        "name": "Jump",
+        "kind": "jump",
+        "long": 0,
+        "high": 0
+      },
+      {
+        "name": "Power",
+        "capability_id": "power",
+        "kind": "power",
+        "value": 2
+      },
+      {
+        "name": "Levitate",
+        "capability_id": "levitate",
+        "kind": "movement",
+        "value": 6
+      },
+      {
+        "name": "Planter",
+        "capability_id": "planter",
+        "kind": "special"
+      },
+      {
+        "name": "Alluring",
+        "capability_id": "alluring",
+        "kind": "special"
+      },
+      {
+        "name": "Over Grow",
+        "capability_id": "over-grow",
+        "kind": "special"
+      }
+    ],
+    "skills": [
+      {
+        "skill": "Athletics",
+        "dice": 3,
+        "modifier": 0
+      },
+      {
+        "skill": "Acrobatics",
+        "dice": 3,
+        "modifier": 0
+      },
+      {
+        "skill": "Combat",
+        "dice": 4,
+        "modifier": 0
+      },
+      {
+        "skill": "Stealth",
+        "dice": 4,
+        "modifier": 0
+      },
+      {
+        "skill": "Perception",
+        "dice": 6,
+        "modifier": 0
+      },
+      {
+        "skill": "Focus",
+        "dice": 1,
+        "modifier": 0
+      },
+      {
+        "skill": "Medicine Education",
+        "dice": 6,
+        "modifier": 0
+      }
+    ],
+    "height": null,
+    "weight": null,
+    "gender_ratio_text": "No Gender",
+    "raw_text": "Pokémon Sheet\r\n                                                                                         PokéEdge / Tutor Item                  Cost\r\n Name: Quatrotem\r\nSpecies: _____________\r\n              Pokebot\r\nType: _______\r\n           Robotic / _______\r\nLevel: ___ 100\r\nEXP: _____ / _____\r\nHeld Item: __________\r\nLoyalty: ____  6\r\nGender: __________\r\nNature: _________\r\n             Robotic          (+ ______ / - ______ )\r\nAbilities: _________ / _________\r\n                Cluster  Mind                        Sap Sipper / _________\r\n                                   Water Absorb / _________           Lightining Rod     Remaining Tutor Points:\r\n_________\r\nFlash Fire / _________ /_________ / _________                                           Inheritance Moves: ______________________\r\nHeight / Size: ___________ Weight Class: ___________                                    Vitamins: _____________________________\r\nCapabilities: Overland __,         4 Swim ___,  4       Jump L/H 0__ / 0__,\r\nPower ___, 2      ____________________________________\r\n                  Fountain, Planter, Zapper, Firestarter, Levitate 6                    Beauty: ____, Cool: ____, Cute: ____,\r\n______________________________________________\r\nMagnetic, Egg Warmer, Gilled, Alluring, Ove grow                                        Smart: ____, Tough: ____\r\nSkills: Athl _____,\r\n                  3d6       Acro _____,\r\n                                     3d6      Combat _____, 4d6\r\nStealth _____,\r\n            4d6       Percep _____,\r\n                                 6d6       Focus _____,\r\n                                                     1d6                                Poffins: ______________________________\r\n______________________________________________\r\nIntuition 6d6, General Education 6d6, Medice Education 6d6, Pokemon education 6d6\r\n\r\n                                                                                       Notes:\r\n Hit Points: ___ / ___                           Phys Evade: _______                   Especial; Quando separados cada um tem 5 em cada\r\n                                                                                       Status e apenas os moves e abilities do seu tipo.\r\n HP: 20            SpAtk:20                      Spec Evade: _______                   Skill: Water; Pokemon Education, Fire; intuition,\r\n Atk: 20           SpDef: 20                     Speed Evade: ______                   Grass; Medicine Education & Eletric; General\r\n Def: 20           Speed: 20                     Injuries: __________                  Education.\r\n\r\n\r\n     Move             Freq         AC      Type          Damage                Range            Special Effect              Contest\r\n                                                        Roll/Type                                                            Effect\r\n\r\nThunder Shock\r\n\r\n\r\nThunder Wave\r\n\r\n\r\nFlamethrower\r\n\r\n\r\nHeat Wave\r\n\r\nSeed bomb\r\n\r\nSpike Shield\r\n\r\n\r\n Scald\r\n Brine",
+    "data_notes": [
+      "Spike Shield is normalized to Spiky Shield. The water unit follows the PDF moves and ability. Over Grow is recorded as written in the capability list."
+    ],
+    "portrait_asset_path": "assets/species/quatrotem.webp"
+  },
+  {
+    "id": "quatrotem-water-unit",
+    "logical_id": "quatrotem-water-unit",
+    "name": "Quatrotem (Water Unit)",
+    "display_name": "Quatrotem (Water Unit)",
+    "source_id": "books-quatrotem",
+    "source_title": "Quatrotem",
+    "source_kind": "homebrew_species",
+    "source_priority": 180,
+    "source_file": "Quatrotem.pdf",
+    "source_sha256": "c8f46dd06785d2264e4e5767a295c55456c6334f717338d59174ac3540697ffd",
+    "source_page": 1,
+    "enabled": true,
+    "enabled_for_character_creation": true,
+    "mechanical_completeness": "complete",
+    "search_aliases": [
+      "Quatrotem (Water Unit)",
+      "Pokebot"
+    ],
+    "types": [
+      "Robotic"
+    ],
+    "base_stats": {
+      "hp": 5,
+      "attack": 5,
+      "defense": 5,
+      "special_attack": 5,
+      "special_defense": 5,
+      "speed": 5
+    },
+    "fixed_build": {
+      "level": 100,
+      "nature": "Robotic",
+      "loyalty": 6
+    },
+    "ability_slots": [
+      {
+        "name": "Water Absorb",
+        "ability_id": "water-absorb",
+        "slot_category": "basic",
+        "slot_index": 1
+      }
+    ],
+    "level_up_moves": [
+      {
+        "level": "100",
+        "move": "Scald",
+        "move_id": "scald"
+      },
+      {
+        "level": "100",
+        "move": "Brine",
+        "move_id": "brine"
+      }
+    ],
+    "capabilities": [
+      {
+        "name": "Overland",
+        "capability_id": "overland",
+        "kind": "movement",
+        "value": 4
+      },
+      {
+        "name": "Swim",
+        "capability_id": "swim",
+        "kind": "movement",
+        "value": 4
+      },
+      {
+        "name": "Jump",
+        "kind": "jump",
+        "long": 0,
+        "high": 0
+      },
+      {
+        "name": "Power",
+        "capability_id": "power",
+        "kind": "power",
+        "value": 2
+      },
+      {
+        "name": "Levitate",
+        "capability_id": "levitate",
+        "kind": "movement",
+        "value": 6
+      },
+      {
+        "name": "Fountain",
+        "capability_id": "fountain",
+        "kind": "special"
+      },
+      {
+        "name": "Gilled",
+        "capability_id": "gilled",
+        "kind": "special"
+      }
+    ],
+    "skills": [
+      {
+        "skill": "Athletics",
+        "dice": 3,
+        "modifier": 0
+      },
+      {
+        "skill": "Acrobatics",
+        "dice": 3,
+        "modifier": 0
+      },
+      {
+        "skill": "Combat",
+        "dice": 4,
+        "modifier": 0
+      },
+      {
+        "skill": "Stealth",
+        "dice": 4,
+        "modifier": 0
+      },
+      {
+        "skill": "Perception",
+        "dice": 6,
+        "modifier": 0
+      },
+      {
+        "skill": "Focus",
+        "dice": 1,
+        "modifier": 0
+      },
+      {
+        "skill": "Pokémon Education",
+        "dice": 6,
+        "modifier": 0
+      }
+    ],
+    "height": null,
+    "weight": null,
+    "gender_ratio_text": "No Gender",
+    "raw_text": "Pokémon Sheet\r\n                                                                                         PokéEdge / Tutor Item                  Cost\r\n Name: Quatrotem\r\nSpecies: _____________\r\n              Pokebot\r\nType: _______\r\n           Robotic / _______\r\nLevel: ___ 100\r\nEXP: _____ / _____\r\nHeld Item: __________\r\nLoyalty: ____  6\r\nGender: __________\r\nNature: _________\r\n             Robotic          (+ ______ / - ______ )\r\nAbilities: _________ / _________\r\n                Cluster  Mind                        Sap Sipper / _________\r\n                                   Water Absorb / _________           Lightining Rod     Remaining Tutor Points:\r\n_________\r\nFlash Fire / _________ /_________ / _________                                           Inheritance Moves: ______________________\r\nHeight / Size: ___________ Weight Class: ___________                                    Vitamins: _____________________________\r\nCapabilities: Overland __,         4 Swim ___,  4       Jump L/H 0__ / 0__,\r\nPower ___, 2      ____________________________________\r\n                  Fountain, Planter, Zapper, Firestarter, Levitate 6                    Beauty: ____, Cool: ____, Cute: ____,\r\n______________________________________________\r\nMagnetic, Egg Warmer, Gilled, Alluring, Ove grow                                        Smart: ____, Tough: ____\r\nSkills: Athl _____,\r\n                  3d6       Acro _____,\r\n                                     3d6      Combat _____, 4d6\r\nStealth _____,\r\n            4d6       Percep _____,\r\n                                 6d6       Focus _____,\r\n                                                     1d6                                Poffins: ______________________________\r\n______________________________________________\r\nIntuition 6d6, General Education 6d6, Medice Education 6d6, Pokemon education 6d6\r\n\r\n                                                                                       Notes:\r\n Hit Points: ___ / ___                           Phys Evade: _______                   Especial; Quando separados cada um tem 5 em cada\r\n                                                                                       Status e apenas os moves e abilities do seu tipo.\r\n HP: 20            SpAtk:20                      Spec Evade: _______                   Skill: Water; Pokemon Education, Fire; intuition,\r\n Atk: 20           SpDef: 20                     Speed Evade: ______                   Grass; Medicine Education & Eletric; General\r\n Def: 20           Speed: 20                     Injuries: __________                  Education.\r\n\r\n\r\n     Move             Freq         AC      Type          Damage                Range            Special Effect              Contest\r\n                                                        Roll/Type                                                            Effect\r\n\r\nThunder Shock\r\n\r\n\r\nThunder Wave\r\n\r\n\r\nFlamethrower\r\n\r\n\r\nHeat Wave\r\n\r\nSeed bomb\r\n\r\nSpike Shield\r\n\r\n\r\n Scald\r\n Brine",
+    "data_notes": [
+      "Spike Shield is normalized to Spiky Shield. The water unit follows the PDF moves and ability. Over Grow is recorded as written in the capability list."
+    ],
+    "portrait_asset_path": "assets/species/quatrotem.webp"
+  },
+  {
+    "id": "shadow-protocol",
+    "logical_id": "shadow-protocol",
+    "name": "Shadow Protocol",
+    "display_name": "Shadow Protocol",
+    "source_id": "books-shadow-protocol",
+    "source_title": "Shadow Protocol",
+    "source_kind": "homebrew_species",
+    "source_priority": 180,
+    "source_file": "Shadow Protocol.pdf",
+    "source_sha256": "c93f8daf7ccbf69f84454067a983b0d0ed95a8d0fd9d701ed6d404e3f79bb252",
+    "source_page": 1,
+    "enabled": true,
+    "enabled_for_character_creation": true,
+    "mechanical_completeness": "complete",
+    "search_aliases": [
+      "Shadow Protocol",
+      "Pokebot"
+    ],
+    "types": [
+      "Robotic"
+    ],
+    "base_stats": {
+      "hp": 30,
+      "attack": 15,
+      "defense": 5,
+      "special_attack": 15,
+      "special_defense": 5,
+      "speed": 30
+    },
+    "fixed_build": {
+      "level": 100,
+      "nature": "Robotic",
+      "loyalty": 6
+    },
+    "ability_slots": [
+      {
+        "name": "Light Metal",
+        "ability_id": "light-metal",
+        "slot_category": "basic",
+        "slot_index": 1
+      },
+      {
+        "name": "Bodyguard",
+        "ability_id": "bodyguard",
+        "slot_category": "basic",
+        "slot_index": 2
+      },
+      {
+        "name": "Bulletproof",
+        "ability_id": "bulletproof",
+        "slot_category": "basic",
+        "slot_index": 3
+      },
+      {
+        "name": "Battery",
+        "ability_id": "battery",
+        "slot_category": "basic",
+        "slot_index": 4
+      }
+    ],
+    "level_up_moves": [
+      {
+        "level": "100",
+        "move": "Fling",
+        "move_id": "fling"
+      },
+      {
+        "level": "100",
+        "move": "Thunder Shock",
+        "move_id": "thunder-shock"
+      },
+      {
+        "level": "100",
+        "move": "Electro Ball",
+        "move_id": "electro-ball"
+      },
+      {
+        "level": "100",
+        "move": "Head Charge",
+        "move_id": "head-charge"
+      },
+      {
+        "level": "100",
+        "move": "Agility",
+        "move_id": "agility"
+      }
+    ],
+    "capabilities": [
+      {
+        "name": "Overland",
+        "capability_id": "overland",
+        "kind": "movement",
+        "value": 2
+      },
+      {
+        "name": "Swim",
+        "capability_id": "swim",
+        "kind": "movement",
+        "value": 1
+      },
+      {
+        "name": "Jump",
+        "kind": "jump",
+        "long": 4,
+        "high": 5
+      },
+      {
+        "name": "Power",
+        "capability_id": "power",
+        "kind": "power",
+        "value": 8
+      },
+      {
+        "name": "Sky",
+        "capability_id": "sky",
+        "kind": "movement",
+        "value": 8
+      },
+      {
+        "name": "Stealth",
+        "capability_id": "stealth",
+        "kind": "special"
+      },
+      {
+        "name": "Mountable X",
+        "capability_id": "mountable-x",
+        "kind": "special",
+        "value": 1
+      },
+      {
+        "name": "Darkvision",
+        "capability_id": "darkvision",
+        "kind": "special"
+      }
+    ],
+    "skills": [
+      {
+        "skill": "Athletics",
+        "dice": 4,
+        "modifier": 0
+      },
+      {
+        "skill": "Acrobatics",
+        "dice": 4,
+        "modifier": 0
+      },
+      {
+        "skill": "Combat",
+        "dice": 6,
+        "modifier": 0
+      },
+      {
+        "skill": "Stealth",
+        "dice": 5,
+        "modifier": 0
+      },
+      {
+        "skill": "Perception",
+        "dice": 5,
+        "modifier": 0
+      },
+      {
+        "skill": "Focus",
+        "dice": 1,
+        "modifier": 0
+      }
+    ],
+    "height": {
+      "raw": "Medium",
+      "size_class": "Medium"
+    },
+    "weight": {
+      "raw": "4",
+      "weight_class": 4
+    },
+    "gender_ratio_text": "No Gender",
+    "raw_text": "Pokémon Sheet\r\n                                                                    PokéEdge / Tutor Item                 Cost\r\n Name: Shadow Protocol\r\nSpecies: _____________\r\n          Pokebot\r\nType: _______\r\n       Robotic / _______\r\nLevel: ___\r\n        100\r\nEXP: _____ / _____\r\nHeld Item: __________\r\nLoyalty: ____\r\n          6\r\nGender: __________\r\nNature: _________\r\n          Robotic     (+ ______ / - ______ )\r\nAbilities: _________\r\n           Light Metal / _________\r\n                          BodyGuard / _________\r\n                                        Bulletproof / _________\r\n                                                      Battery      Remaining Tutor Points:\r\n_________ / _________ /_________ / _________                      Inheritance Moves: ______________________\r\nHeight / Size: ___________\r\n                Medium         Weight Class: ___________\r\n                                                4                 Vitamins: _____________________________\r\nCapabilities: Overland __,2 Swim ___,\r\n                                    1     Jump L/H 4__ / 5__,\r\nPower ___,\r\n        8    ____________________________________\r\n             Sky 8, Stealth, Mountable 1, DarkVision              Beauty: ____, Cool: ____, Cute: ____,\r\n______________________________________________                    Smart: ____, Tough: ____\r\nSkills: Athl _____,\r\n             4d6     Acro _____,\r\n                           4d6     Combat _____,\r\n                                             6d6\r\nStealth _____,\r\n         5d6    Percep _____,\r\n                        5d6     Focus _____,\r\n                                       1d6                        Poffins: ______________________________\r\n______________________________________________\r\n                                                                  Notes:\r\nHit Points: ___ / ___                Phys Evade: _______\r\nHP: 30            SpAtk:15           Spec Evade: _______\r\nAtk: 15           SpDef: 5           Speed Evade: ______\r\nDef: 5            Speed: 30          Injuries: __________\r\n\r\n    Move         Freq     AC    Type       Damage           Range          Special Effect           Contest\r\n                                          Roll/Type                                                  Effect\r\n\r\n Fling\r\nThundershock\r\n\r\n\r\nElectro Ball\r\n\r\nHead Charge\r\n\r\n\r\nAgility",
+    "data_notes": [],
+    "portrait_asset_path": "assets/species/shadow-protocol.webp"
+  },
+  {
+    "id": "dracopter",
+    "logical_id": "dracopter",
+    "name": "Dracopter",
+    "display_name": "Dracopter",
+    "source_id": "books-dracopter",
+    "source_title": "Dracopter",
+    "source_kind": "homebrew_species",
+    "source_priority": 180,
+    "source_file": "Dracopter.pdf",
+    "source_sha256": "9389efff1f32fbc2cab608198c827d5f4b0b8dd483d00c5115518ab24d3f94fd",
+    "source_page": 1,
+    "enabled": true,
+    "enabled_for_character_creation": true,
+    "mechanical_completeness": "complete",
+    "search_aliases": [
+      "Dracopter",
+      "Pokebot"
+    ],
+    "types": [
+      "Robotic"
+    ],
+    "base_stats": {
+      "hp": 50,
+      "attack": 5,
+      "defense": 10,
+      "special_attack": 5,
+      "special_defense": 10,
+      "speed": 5
+    },
+    "fixed_build": {
+      "level": 100,
+      "nature": "Robotic",
+      "loyalty": 6
+    },
+    "ability_slots": [
+      {
+        "name": "Heavy Metal",
+        "ability_id": "heavy-metal",
+        "slot_category": "basic",
+        "slot_index": 1
+      },
+      {
+        "name": "Abominable",
+        "ability_id": "abominable",
+        "slot_category": "basic",
+        "slot_index": 2
+      },
+      {
+        "name": "Aftermath",
+        "ability_id": "aftermath",
+        "slot_category": "basic",
+        "slot_index": 3
+      },
+      {
+        "name": "Soundproof",
+        "ability_id": "soundproof",
+        "slot_category": "basic",
+        "slot_index": 4
+      }
+    ],
+    "level_up_moves": [
+      {
+        "level": "100",
+        "move": "Detect",
+        "move_id": "detect"
+      },
+      {
+        "level": "100",
+        "move": "Charge Beam",
+        "move_id": "charge-beam"
+      },
+      {
+        "level": "100",
+        "move": "Hyper Beam",
+        "move_id": "hyper-beam"
+      },
+      {
+        "level": "100",
+        "move": "Zap Cannon",
+        "move_id": "zap-cannon"
+      }
+    ],
+    "capabilities": [
+      {
+        "name": "Overland",
+        "capability_id": "overland",
+        "kind": "movement",
+        "value": 1
+      },
+      {
+        "name": "Swim",
+        "capability_id": "swim",
+        "kind": "movement",
+        "value": 0
+      },
+      {
+        "name": "Jump",
+        "kind": "jump",
+        "long": 0,
+        "high": 0
+      },
+      {
+        "name": "Power",
+        "capability_id": "power",
+        "kind": "power",
+        "value": 15
+      },
+      {
+        "name": "Sky",
+        "capability_id": "sky",
+        "kind": "movement",
+        "value": 15
+      },
+      {
+        "name": "Magnetic",
+        "capability_id": "magnetic",
+        "kind": "special"
+      },
+      {
+        "name": "Zapper",
+        "capability_id": "zapper",
+        "kind": "special"
+      },
+      {
+        "name": "Mountable X",
+        "capability_id": "mountable-x",
+        "kind": "special",
+        "value": 5
+      },
+      {
+        "name": "X-Ray Vision",
+        "capability_id": "x-ray-vision",
+        "kind": "special"
+      },
+      {
+        "name": "Stealth",
+        "capability_id": "stealth",
+        "kind": "special"
+      }
+    ],
+    "skills": [
+      {
+        "skill": "Athletics",
+        "dice": 3,
+        "modifier": 0
+      },
+      {
+        "skill": "Acrobatics",
+        "dice": 3,
+        "modifier": 0
+      },
+      {
+        "skill": "Combat",
+        "dice": 6,
+        "modifier": 0
+      },
+      {
+        "skill": "Stealth",
+        "dice": 5,
+        "modifier": 0
+      },
+      {
+        "skill": "Perception",
+        "dice": 6,
+        "modifier": 0
+      },
+      {
+        "skill": "Focus",
+        "dice": 1,
+        "modifier": 0
+      }
+    ],
+    "height": {
+      "raw": "Gigantic",
+      "size_class": "Gigantic"
+    },
+    "weight": {
+      "raw": "2 t",
+      "kg": 2000
+    },
+    "gender_ratio_text": "No Gender",
+    "raw_text": "Pokémon Sheet\r\n                                                                             PokéEdge / Tutor Item                  Cost\r\n Name: Dracopter\r\nSpecies: _____________\r\n          Pokebot\r\nType: _______\r\n       Robotic / _______\r\nLevel: ___\r\n        100\r\nEXP: _____ / _____\r\nHeld Item: __________\r\nLoyalty: ____\r\n          6\r\nGender: __________\r\nNature: _________\r\n          Robotic      (+ ______ / - ______ )\r\nAbilities: _________ / _________\r\n           Heavy  Metal                      Aftermath / _________\r\n                           Abominable / _________              Soundproof    Remaining Tutor Points:\r\n_________ / _________ /_________ / _________                                Inheritance Moves: ______________________\r\nHeight / Size: ___________\r\n                Gigantic           Weight Class: ___________\r\n                                                      2t                    Vitamins: _____________________________\r\nCapabilities: Overland __,  1 Swim ___,  0     Jump L/H 0__ / 0__,\r\nPower ___,\r\n        15 ____________________________________\r\n             Sky 15, magnetic, Zapper, Mountable 5, X-Ray vision, Stealth   Beauty: ____, Cool: ____, Cute: ____,\r\n______________________________________________                              Smart: ____, Tough: ____\r\nSkills: Athl _____,\r\n             3d6      Acro _____,\r\n                              3d6      Combat _____,\r\n                                                   6d6\r\nStealth _____,\r\n         5d6    Percep _____,\r\n                         6d6       Focus _____,\r\n                                            1d6                             Poffins: ______________________________\r\n______________________________________________\r\n                                                                            Notes:\r\n Hit Points: ___\r\n             260 / ___\r\n                   260                    Phys Evade: _______\r\n HP: 50               SpAtk:5             Spec Evade: _______\r\n Atk: 5               SpDef: 10           Speed Evade: ______\r\n Def: 10              Speed: 5            Injuries: __________\r\n\r\n     Move          Freq       AC     Type         Damage             Range           Special Effect           Contest\r\n                                                 Roll/Type                                                     Effect\r\n\r\nDetect\r\nCharge Beam\r\n\r\n\r\nHyper Beam\r\n\r\nZap Cannon",
+    "data_notes": [],
+    "portrait_asset_path": "assets/species/dracopter.webp"
   }
 ]

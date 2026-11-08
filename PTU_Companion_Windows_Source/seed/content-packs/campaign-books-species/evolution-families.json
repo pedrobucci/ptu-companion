@@ -445,5 +445,98 @@
     "raw_texts": [
       "1 - Ralts 2 - Kirlia Minimum 20 3 - Gardevoir Minimum 30"
     ]
+  },
+  {
+    "id": "evofam-books-scarlet-and-violet-fuecoco",
+    "source_id": "books-scarlet-and-violet",
+    "edges_status": "safe",
+    "stages": [
+      {
+        "stage": 1,
+        "species_name": "Fuecoco",
+        "min_level": null,
+        "condition_text": null,
+        "species_ref_key": "fuecoco"
+      },
+      {
+        "stage": 2,
+        "species_name": "Crocalor",
+        "min_level": 15,
+        "condition_text": null,
+        "species_ref_key": "crocalor"
+      },
+      {
+        "stage": 3,
+        "species_name": "Skeledirge",
+        "min_level": 30,
+        "condition_text": null,
+        "species_ref_key": "skeledirge"
+      }
+    ],
+    "raw_texts": [
+      "1 - Fuecoco 2 - Crocalor Minimum 15 3 - Skeledirge Minimum 30"
+    ]
+  },
+  {
+    "id": "evofam-books-scarlet-and-violet-quaxly",
+    "source_id": "books-scarlet-and-violet",
+    "edges_status": "safe",
+    "stages": [
+      {
+        "stage": 1,
+        "species_name": "Quaxly",
+        "min_level": null,
+        "condition_text": null,
+        "species_ref_key": "quaxly"
+      },
+      {
+        "stage": 2,
+        "species_name": "Quaxwell",
+        "min_level": 15,
+        "condition_text": null,
+        "species_ref_key": "quaxwell"
+      },
+      {
+        "stage": 3,
+        "species_name": "Quaquaval",
+        "min_level": 30,
+        "condition_text": null,
+        "species_ref_key": "quaquaval"
+      }
+    ],
+    "raw_texts": [
+      "1 - Quaxly 2 - Quaxwell Minimum 15 3 - Quaquaval Minimum 30"
+    ]
+  },
+  {
+    "id": "evofam-books-scarlet-and-violet-tinkatink",
+    "source_id": "books-scarlet-and-violet",
+    "edges_status": "safe",
+    "stages": [
+      {
+        "stage": 1,
+        "species_name": "Tinkatink",
+        "min_level": null,
+        "condition_text": null,
+        "species_ref_key": "tinkatink"
+      },
+      {
+        "stage": 2,
+        "species_name": "Tinkatuff",
+        "min_level": 15,
+        "condition_text": null,
+        "species_ref_key": "tinkatuff"
+      },
+      {
+        "stage": 3,
+        "species_name": "Tinkaton",
+        "min_level": 30,
+        "condition_text": null,
+        "species_ref_key": "tinkaton"
+      }
+    ],
+    "raw_texts": [
+      "1 - Tinkatink 2 - Tinkatuff Minimum 15 3 - Tinkaton Minimum 30"
+    ]
   }
 ]

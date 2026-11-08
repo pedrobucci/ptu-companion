@@ -55,7 +55,7 @@ for(const token of [
   'setPokemonPermanentForm(formId)',
   'togglePokemonTransformation(formId)',
   "fetch('/api/pokemon/forms/resolve'",
-  'p.details.formState={...payload.formState}',
+  'formState:{...payload.formState}',
   'p.types=payload.species.types.map',
   'resolvedTypes.map(typeBadge)',
   'pokemonFormRequirementText',

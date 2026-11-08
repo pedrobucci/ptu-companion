@@ -245,6 +245,26 @@ export function applySpeciesFormOverrides(species,overrides={}){
   return resolved;
 }
 
+export function linkedFormMoveKey(species,id){
+  const pair=species?.raw?.linked_move_pairs?.find(group=>group.some(move=>move.id===id));
+  return pair?.[0]?.id||null;
+}
+
+export function resolveLinkedFormMoves(species,moves){
+  const pairs=species?.raw?.linked_move_pairs;
+  const side=species?.raw?.linked_move_side;
+  if(!pairs||!Array.isArray(moves)||(side!==0&&side!==1))return null;
+  const idOf=move=>slug(move.id||move.name);
+  const known=new Set(moves.map(idOf));
+  const replacements=new Map(pairs.map(pair=>[pair[1-side].id,pair[side]]));
+  return moves.map(record=>{
+    const move=replacements.get(idOf(record));
+    // A separately learned counterpart keeps its own record and tutor history.
+    if(!move||known.has(move.id))return record;
+    return {...record,...move,key:move.id};
+  });
+}
+
 export function applyPokemonFormStatSwaps(breakdown,pairs=[]){
   const resolved=deepClone(breakdown||{});
   for(const key of ['speciesBase','baseBonus','modifiedBase','natureAdjusted','levelAllocation','bonusAllocation','permanentFinal']){

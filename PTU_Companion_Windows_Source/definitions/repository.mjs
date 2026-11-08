@@ -172,7 +172,8 @@ export class DefinitionRepository {
       let immune=false,steps=0;
       const components=[];
       for(const defenseType of defenseTypes){
-        const row=byKey.get(`${attackType}::${defenseType}`) || {relation:'neutral'};
+        const roboticWeakness=defenseType.toLowerCase()==='robotic'&&['fire','electric','ground'].includes(attackType.toLowerCase());
+        const row=roboticWeakness?{relation:'weak'}:byKey.get(`${attackType}::${defenseType}`) || {relation:'neutral'};
         components.push({defenseType,relation:row.relation});
         if(row.relation==='immune') immune=true;
         else if(row.relation==='weak') steps+=1;

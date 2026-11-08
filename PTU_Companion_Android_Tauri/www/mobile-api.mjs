@@ -9,7 +9,7 @@ import {resolveTrainerModel,resolveBoundFeatureEffects} from './rules/trainer-en
 import {previewTrainerProgression,applyTrainerProgression,previewTrainerXpPurchase,applyTrainerXpPurchase} from './rules/trainer-progression-engine.mjs';
 import {itemUsageMetadata} from './rules/item-metadata.mjs';
 import {normalizeCapabilities} from './rules/capability-normalization.mjs';
-import {applyPokemonFormStatSwaps,normalizePokemonFormState,resolvePokemonForms,resolvePokemonPresentation} from './rules/pokemon-forms.mjs';
+import {applyPokemonFormStatSwaps,linkedFormMoveKey,resolveLinkedFormMoves,normalizePokemonFormState,resolvePokemonForms,resolvePokemonPresentation} from './rules/pokemon-forms.mjs';
 import {applyPokemonFormTransitionEvent} from './rules/pokemon-form-events.mjs';
 import {applyPokemonFormGameEvent} from './rules/pokemon-form-campaign-state.mjs';
 import {normalizeSpeciesForms} from './rules/pokemon-forms.mjs';
@@ -191,7 +191,8 @@ export class MobileDefinitions {
     const defenseTypes=(types||[]).map(x=>String(x||'').trim()).filter(Boolean), matchups=this.getTypeMatchups();
     const attackTypes=[...new Set(matchups.map(r=>r.attack_type))], byKey=new Map(matchups.map(r=>[`${r.attack_type}::${r.defense_type}`,r]));
     const scale=new Map(this.getTypeEffectivenessScale().map(r=>[Number(r.net_steps),Number(r.combat_multiplier)]));
-    return attackTypes.map(attackType=>{let immune=false,steps=0;const components=[];for(const defenseType of defenseTypes){const row=byKey.get(`${attackType}::${defenseType}`)||{relation:'neutral'};components.push({defenseType,relation:row.relation});if(row.relation==='immune')immune=true;else if(row.relation==='weak')steps++;else if(row.relation==='resist'||row.relation==='resistant')steps--;}const clamped=Math.max(-3,Math.min(3,steps));const multiplier=immune?0:(scale.get(clamped)??1);return {attackType,relation:immune?'immune':clamped>0?'weak':clamped<0?'resistant':'neutral',netSteps:immune?null:steps,multiplier,components};});
+    return attackTypes.map(attackType=>{let immune=false,steps=0;const components=[];for(const defenseType of defenseTypes){const roboticWeakness=defenseType.toLowerCase()==='robotic'&&['fire','electric','ground'].includes(attackType.toLowerCase());
+        const row=roboticWeakness?{relation:'weak'}:byKey.get(`${attackType}::${defenseType}`)||{relation:'neutral'};components.push({defenseType,relation:row.relation});if(row.relation==='immune')immune=true;else if(row.relation==='weak')steps++;else if(row.relation==='resist'||row.relation==='resistant')steps--;}const clamped=Math.max(-3,Math.min(3,steps));const multiplier=immune?0:(scale.get(clamped)??1);return {attackType,relation:immune?'immune':clamped>0?'weak':clamped<0?'resistant':'neutral',netSteps:immune?null:steps,multiplier,components};});
   }
   getPokemonExperience(level){ level=Math.max(1,Math.min(100,Number(level)||1)); return deep((data.experience||[]).find(r=>Number(r.level)===level)||null); }
   getPokemonExperienceTable(){ return deep(data.experience||[]); }
@@ -796,7 +797,7 @@ async function handleApi(req,res,url){
     return json(res,200,{ok:true,desktopSession});
   }
   if(req.method==='GET' && url.pathname==='/api/health'){
-    return json(res,200,{ok:true,version:'2.2.0-android-beta.39',persistence:'android-local',database:'app-data/content-packs + WebView local storage',schemaVersion:5,definitions:{database:'embedded mobile bundle + installed .ptucp overlays',activeRuleset:getActiveRuleset()}});
+    return json(res,200,{ok:true,version:'2.2.0-beta.44',persistence:'android-local',database:'app-data/content-packs + WebView local storage',schemaVersion:5,definitions:{database:'embedded mobile bundle + installed .ptucp overlays',activeRuleset:getActiveRuleset()}});
   }
   if(req.method==='GET' && url.pathname==='/api/rulesets'){
     const activeRulesetId=getActiveRuleset();
@@ -958,7 +959,7 @@ async function handleApi(req,res,url){
     const baseSpecies=definitions.getResolved({rulesetId,kind:'species',id:speciesId});
     if(!baseSpecies)return json(res,404,{error:'Species definition not found in active ruleset'});
     const resolution=resolveSpeciesFormState({species:baseSpecies,pokemon,payload,includeActive:payload.includeActive!==false});
-    return json(res,resolution.valid?200:400,{rulesetId,baseSpecies:{id:baseSpecies.id,name:baseSpecies.name,forms:baseSpecies.forms||[]},...resolution});
+    return json(res,resolution.valid?200:400,{rulesetId,baseSpecies:{id:baseSpecies.id,name:baseSpecies.name,forms:baseSpecies.forms||[]},...resolution,linkedMoves:resolution.valid?resolveLinkedFormMoves(resolution.species,details.moves):null});
   }
   if(req.method==='POST' && url.pathname==='/api/pokemon/build-preview'){
     const payload=await bodyJson(req);
@@ -975,7 +976,7 @@ async function handleApi(req,res,url){
     const allocations=payload.autoAllocate
       ? autoBalancedAllocations({baseStats:species.baseStats,nature:payload.nature,level:payload.level})
       : payload.allocations;
-    const moveLimitAbilities=moveLimitAbilityDefinitions(rulesetId,payload.selectedAbilities||[]);
+    const moveLimitAbilities=moveLimitAbilityDefinitions(rulesetId,species.raw?.fixed_build?species.abilities.map(ability=>ability.name):payload.selectedAbilities||[]);
     let preview=buildPokemonPreview({
       species,level:payload.level,nature:payload.nature,allocations,
       selectedAbilities:payload.selectedAbilities,selectedMoves:payload.autoSelectMoves?[]:payload.selectedMoves,
@@ -1144,7 +1145,7 @@ async function handleApi(req,res,url){
       const accuracyRollBonus=getPokemonModifierSummary(resolvedPokemonForCombat,{heldItemEffect:held.effect}).accuracyRollBonus;
       const baseAc=definition?.ac==null?null:Number(definition.ac);
       const effectiveAc=baseAc==null||!Number.isFinite(baseAc)?baseAc:Math.max(0,baseAc-accuracyTrainingRanks);
-      return {record:m,definition,resolvedDamage,accuracyTrainingRanks,accuracyRollBonus,effectiveAc};
+      return {record:m,definition,linkedFormMoveKey:linkedFormMoveKey(species,id),resolvedDamage,accuracyTrainingRanks,accuracyRollBonus,effectiveAc};
     });
     const abilities=resolveCreatureAbilityRecords({pokemon,species,rulesetId,heldItemEffect:held.effect});
     const abilitySlots=nativeAbilitySlotsForSpecies(species,pokemon.level);
