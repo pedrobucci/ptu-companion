@@ -5,7 +5,7 @@ import {mkdtemp, readFile, rm} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {fileURLToPath} from 'node:url';
-import {runInThisContext} from 'node:vm';
+import {runInNewContext, runInThisContext} from 'node:vm';
 
 const win=new URL('../',import.meta.url);
 const android=new URL('../../PTU_Companion_Android_Tauri/www/',import.meta.url);
@@ -22,6 +22,24 @@ let serverErrors='';
 server.stderr.on('data',chunk=>serverErrors+=chunk);
 
 async function check(api,label){
+  const mobile=label==='Android';
+  const app=await readFile(new URL(mobile?'app.js':'static-preview/app.js',mobile?android:win),'utf8');
+  const portraitUrl=runInNewContext(
+    app.slice(app.indexOf('function pokemonPortraitUrl('),app.indexOf('function pokemonPortraitTag('))+'\npokemonPortraitUrl',
+    {window:globalThis,URLSearchParams}
+  );
+  async function checkPortrait(pokemon,formId){
+    const sprite=formId==='hoopa-unbound'?'pokemon-sprites/10086.png':'pokemon-sprites/720.png';
+    const url=portraitUrl(pokemon);
+    if(mobile){
+      assert.equal(url,sprite);
+    }else{
+      assert.match(url,/[?&]art=2(?:&|$)/);
+      const response=await api(url);
+      assert.equal(response.headers.get('content-type'),'image/png');
+      assert.deepEqual(Buffer.from(await response.arrayBuffer()),await readFile(new URL(sprite,android)));
+    }
+  }
   async function request(path,body,method=body?'POST':'GET',status=200){
     const response=await api(path,{
       method,
@@ -40,10 +58,14 @@ async function check(api,label){
   for(const [id,target,types,expected] of examples){
     const original=await species(id);
     const initial=examples.find(row=>row[0]===target)[3];
+    const build=await request('/api/pokemon/build-preview',{speciesId:id,formState:{baseFormId:target}});
+    assert.equal(build.formResolution.presentation.artworkUrl,target==='hoopa-unbound'?'pokemon-sprites/10086.png':'pokemon-sprites/720.png');
     const pokemon={id:`saved-${id}`,name:'Ring Keeper',species:original.name,level:50,hp:71,maxHp:114,tempHp:0,injuries:0,ball:'Poké Ball',heldItem:null,img:'creatures/default.svg',storage:false,loyalty:4,rosterIds:[],combatStages:{},
       details:{speciesDefinitionId:id,speciesVersionId:`species:${id}@gen8`,
         nature:'Hardy',createdFromDefinition:true,experience:15000,tutorPointsEarned:11,tutorPointsSpent:1,
         tutorPointsRemaining:10,abilities:['Magician'],moves:[...initial.map((id,i)=>({id,key:id,source:i===2?'tutor':'current_species',tutorCost:i===2?1:0})),{id:'trick',source:'current_species'}]}};
+    await checkPortrait(pokemon,id);
+    pokemon.details.formState={schemaVersion:1,baseFormId:'base',activeFormId:null};
     const switched=await request('/api/pokemon/forms/resolve',{pokemon,formState:{baseFormId:target}});
     assert.deepEqual(switched.species.types,types);
     assert.deepEqual(switched.species.levelUpMoves.filter(move=>expected.includes(move.move_id)).map(move=>[Number(move.level),move.move_id]),[[18,expected[0]],[28,expected[1]],[43,expected[2]]]);
@@ -56,6 +78,7 @@ async function check(api,label){
     pokemon.types=types;
     pokemon.details.formState=switched.formState;
     pokemon.details.moves=switched.linkedMoves;
+    await checkPortrait(pokemon,target);
 
     const ref=await request('/api/pokemon/reference-data',{pokemon});
     assert(ref.moves.every(move=>move.definition));
@@ -71,8 +94,11 @@ async function check(api,label){
     assert.equal(restored.id,pokemon.id);
     assert.equal(restored.hp,pokemon.hp);
     assert.equal(restored.details.experience,15000);
+    await checkPortrait(restored,target);
     const back=await request('/api/pokemon/forms/resolve',{pokemon:restored,formState:{baseFormId:'base'}});
     assert.deepEqual(back.linkedMoves.map(move=>move.id),[...initial,'trick']);
+    restored.details.formState=back.formState;
+    await checkPortrait(restored,id);
   }
 
   for(const [id,types] of [['skeledirge',['Fire','Ghost']],...['tinkatink','tinkatuff','tinkaton'].map(id=>[id,['Fairy','Steel']])]){
@@ -101,7 +127,7 @@ async function check(api,label){
     await request('/api/pokemon/progression-preview',{pokemon,expGain:500,gmOverride:true},'POST',400);
     await request('/api/pokemon/restat-preview',{pokemon},'POST',400);
   }
-  console.log(`${label}: Hoopa round-trip and persistence, Scarlet/Violet typing/evolution, fixed Pokébots OK`);
+  console.log(`${label}: Hoopa round-trip, portraits and persistence, Scarlet/Violet typing/evolution, fixed Pokébots OK`);
 }
 
 try{
@@ -114,6 +140,7 @@ try{
   });
   await check((path,init)=>fetch(`http://127.0.0.1:${port}${path}`,init),'Windows');
   globalThis.window=globalThis;
+  globalThis.PTU_ANDROID_BUILD=true;
   globalThis.location={href:'https://app.local/index.html'};
   const local=new Map();
   globalThis.localStorage={getItem:key=>local.get(key)||null,setItem:(key,value)=>local.set(key,value)};

@@ -310,13 +310,19 @@ function mergeArtworkCandidates(...candidates){
   }
   return out;
 }
+const HOOPA_SPRITES=new Map([
+  ['hoopa-confined','pokemon-sprites/720.png'],
+  ['hoopa-unbound','pokemon-sprites/10086.png']
+]);
+
 function speciesArtwork(species){
   const raw=species?.raw||{};
   return mergeArtworkCandidates(
     species?.artwork,
     raw.artwork,
     {normal:species?.portraitDataUrl||species?.image||raw.artwork_url||raw.portrait_data_url||raw.image_url||null,
-      shiny:species?.shinyArtwork||raw.artwork_shiny_url||raw.shiny_artwork_url||raw.shiny_portrait_data_url||raw.shiny_image_url||null}
+      shiny:species?.shinyArtwork||raw.artwork_shiny_url||raw.shiny_artwork_url||raw.shiny_portrait_data_url||raw.shiny_image_url||null},
+    HOOPA_SPRITES.get(species?.id)
   );
 }
 function formArtwork(form){
@@ -326,7 +332,8 @@ function formArtwork(form){
     {normal:overrides.portraitDataUrl||overrides.image||null,shiny:overrides.shinyArtwork||null},
     raw.artwork,
     {normal:raw.artwork_url||raw.portrait_data_url||raw.image_url||null,
-      shiny:raw.artwork_shiny_url||raw.shiny_artwork_url||raw.shiny_portrait_data_url||raw.shiny_image_url||null}
+      shiny:raw.artwork_shiny_url||raw.shiny_artwork_url||raw.shiny_portrait_data_url||raw.shiny_image_url||null},
+    HOOPA_SPRITES.get(form?.id)
   );
 }
 export function resolvePokemonArtwork({species,formResolution,isShiny=false}={}){
