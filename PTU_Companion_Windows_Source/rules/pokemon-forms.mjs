@@ -250,6 +250,39 @@ export function linkedFormMoveKey(species,id){
   return pair?.[0]?.id||null;
 }
 
+const HOOPA_ABILITY_PAIRS=[
+  ['prankster','enduring-rage'],
+  ['run-away','cruelty'],
+  ['handyman','weird-power']
+];
+const isNativeAbilityRecord=record=>['species_starting','level_choice','native_extra'].includes(record?.sourceKind);
+
+export function isHoopaSpecies(id){
+  return id==='hoopa-confined'||id==='hoopa-unbound';
+}
+
+export function resolveHoopaFormAbilities(species,details={}){
+  if(!isHoopaSpecies(species?.id))return null;
+  const slots=new Map((species.abilities||[]).map(slot=>[slug(slot.ability_id||slot.name),slot.name]));
+  const abilities=Array.isArray(details.abilities)?details.abilities:null;
+  const records=Array.isArray(details.abilityRecords)?details.abilityRecords:null;
+  const nativeNames=(records||[]).filter(isNativeAbilityRecord).map(record=>record.name);
+  const known=new Set([details.ability,...(abilities||[]),...nativeNames].map(slug));
+  const replace=name=>{
+    const id=slug(name);
+    if(slots.has(id))return name;
+    const partner=HOOPA_ABILITY_PAIRS.find(pair=>pair.includes(id))?.find(other=>other!==id);
+    return partner&&!known.has(partner)?slots.get(partner)||name:name;
+  };
+  const result={};
+  if(typeof details.ability==='string')result.ability=replace(details.ability);
+  if(abilities)result.abilities=abilities.map(replace);
+  if(records)result.abilityRecords=records.map(record=>
+    isNativeAbilityRecord(record)?{...record,name:replace(record.name)}:record
+  );
+  return result;
+}
+
 export function resolveLinkedFormMoves(species,moves){
   const pairs=species?.raw?.linked_move_pairs;
   const side=species?.raw?.linked_move_side;

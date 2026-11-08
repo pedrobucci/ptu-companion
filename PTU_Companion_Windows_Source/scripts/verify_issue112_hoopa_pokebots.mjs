@@ -52,18 +52,21 @@ async function check(api,label){
   }
   const species=async id=>(await request('/api/definitions/species/'+id)).definition;
   const examples=[
-    ['hoopa-confined','hoopa-unbound',['Psychic','Dark'],['knock-off','dark-pulse','hyperspace-fury']],
-    ['hoopa-unbound','hoopa-confined',['Psychic','Ghost'],['phantom-force','shadow-ball','hyperspace-hole']]
+    ['hoopa-confined','hoopa-unbound',['Psychic','Dark'],['knock-off','dark-pulse','hyperspace-fury'],['Enduring Rage','Weird power']],
+    ['hoopa-unbound','hoopa-confined',['Psychic','Ghost'],['phantom-force','shadow-ball','hyperspace-hole'],['Prankster','Handyman']]
   ];
-  for(const [id,target,types,expected] of examples){
+  for(const [id,target,types,expected,expectedAbilities] of examples){
     const original=await species(id);
-    const initial=examples.find(row=>row[0]===target)[3];
+    const [,,,initial,initialAbilities]=examples.find(row=>row[0]===target);
     const build=await request('/api/pokemon/build-preview',{speciesId:id,formState:{baseFormId:target}});
     assert.equal(build.formResolution.presentation.artworkUrl,target==='hoopa-unbound'?'pokemon-sprites/10086.png':'pokemon-sprites/720.png');
     const pokemon={id:`saved-${id}`,name:'Ring Keeper',species:original.name,level:50,hp:71,maxHp:114,tempHp:0,injuries:0,ball:'Poké Ball',heldItem:null,img:'creatures/default.svg',storage:false,loyalty:4,rosterIds:[],combatStages:{},
       details:{speciesDefinitionId:id,speciesVersionId:`species:${id}@gen8`,
         nature:'Hardy',createdFromDefinition:true,experience:15000,tutorPointsEarned:11,tutorPointsSpent:1,
-        tutorPointsRemaining:10,abilities:['Magician'],moves:[...initial.map((id,i)=>({id,key:id,source:i===2?'tutor':'current_species',tutorCost:i===2?1:0})),{id:'trick',source:'current_species'}]}};
+        tutorPointsRemaining:10,abilities:['Magician',...initialAbilities],
+        abilityRecords:initialAbilities.map((name,i)=>({name,sourceKind:'level_choice',selectedAtLevel:20+20*i})),
+        grantedAbilities:[{name:'Twisted Power',source:'poke_edge',sourceId:'mixed-power'}],
+        moves:[...initial.map((id,i)=>({id,key:id,source:i===2?'tutor':'current_species',tutorCost:i===2?1:0})),{id:'trick',source:'current_species'}]}};
     await checkPortrait(pokemon,id);
     pokemon.details.formState={schemaVersion:1,baseFormId:'base',activeFormId:null};
     const switched=await request('/api/pokemon/forms/resolve',{pokemon,formState:{baseFormId:target}});
@@ -74,6 +77,15 @@ async function check(api,label){
     assert(!switched.species.tutorMoves.some(move=>move.move_id===initial[2]));
     assert.deepEqual(switched.linkedMoves.map(move=>move.id),[...expected,'trick']);
     assert.equal(switched.linkedMoves[2].tutorCost,1);
+    assert.deepEqual(switched.linkedAbilities?.abilities,['Magician',...expectedAbilities]);
+    assert.deepEqual(switched.linkedAbilities.abilityRecords.map(record=>[record.name,record.selectedAtLevel]),
+      [[expectedAbilities[0],20],[expectedAbilities[1],40]]);
+    const [otherFrom,otherTo]=id==='hoopa-confined'?['Run Away','Cruelty']:['Cruelty','Run Away'];
+    const other=await request('/api/pokemon/forms/resolve',{
+      pokemon:{...pokemon,details:{...pokemon.details,abilities:['Magician',otherFrom],abilityRecords:[]}},
+      formState:{baseFormId:target}
+    });
+    assert.deepEqual(other.linkedAbilities.abilities,['Magician',otherTo]);
     pokemon.species=switched.species.name;
     pokemon.types=types;
     pokemon.details.formState=switched.formState;
@@ -83,20 +95,27 @@ async function check(api,label){
     const ref=await request('/api/pokemon/reference-data',{pokemon});
     assert(ref.moves.every(move=>move.definition));
     assert.equal(ref.moves[2].linkedFormMoveKey,'hyperspace-hole');
+    assert(ref.abilities.some(ability=>ability.id===(target==='hoopa-unbound'?'weird-power':'handyman')));
     const options=await request('/api/pokemon/training-options',{pokemon});
     assert(options.moveTeaching.tutor.some(move=>move.id===expected[2]&&move.naturalTutor));
 
     const {state}=await request('/api/state');
     state.pokemon=[pokemon];
     state.selectedPokemonId=pokemon.id;
+    // Simulate a save made by the older build after switching forms.
     await request('/api/state',{state},'PUT');
     const restored=(await request('/api/state')).state.pokemon[0];
     assert.equal(restored.id,pokemon.id);
     assert.equal(restored.hp,pokemon.hp);
     assert.equal(restored.details.experience,15000);
+    assert.deepEqual(restored.details.abilities,['Magician',...expectedAbilities]);
+    assert.deepEqual(restored.details.grantedAbilities,pokemon.details.grantedAbilities);
+    const current=await request('/api/pokemon/reference-data',{pokemon:restored});
+    assert(current.abilities.some(ability=>ability.id===(target==='hoopa-unbound'?'weird-power':'handyman')));
     await checkPortrait(restored,target);
     const back=await request('/api/pokemon/forms/resolve',{pokemon:restored,formState:{baseFormId:'base'}});
     assert.deepEqual(back.linkedMoves.map(move=>move.id),[...initial,'trick']);
+    assert.deepEqual(back.linkedAbilities?.abilities,['Magician',...initialAbilities]);
     restored.details.formState=back.formState;
     await checkPortrait(restored,id);
   }
@@ -127,7 +146,7 @@ async function check(api,label){
     await request('/api/pokemon/progression-preview',{pokemon,expGain:500,gmOverride:true},'POST',400);
     await request('/api/pokemon/restat-preview',{pokemon},'POST',400);
   }
-  console.log(`${label}: Hoopa round-trip, portraits and persistence, Scarlet/Violet typing/evolution, fixed Pokébots OK`);
+  console.log(`${label}: Hoopa moves, abilities, portraits and persistence, Scarlet/Violet typing/evolution, fixed Pokébots OK`);
 }
 
 try{

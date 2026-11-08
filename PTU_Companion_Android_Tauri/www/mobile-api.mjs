@@ -9,7 +9,7 @@ import {resolveTrainerModel,resolveBoundFeatureEffects} from './rules/trainer-en
 import {previewTrainerProgression,applyTrainerProgression,previewTrainerXpPurchase,applyTrainerXpPurchase} from './rules/trainer-progression-engine.mjs';
 import {itemUsageMetadata} from './rules/item-metadata.mjs';
 import {normalizeCapabilities} from './rules/capability-normalization.mjs';
-import {applyPokemonFormStatSwaps,linkedFormMoveKey,resolveLinkedFormMoves,normalizePokemonFormState,resolvePokemonForms,resolvePokemonPresentation} from './rules/pokemon-forms.mjs';
+import {applyPokemonFormStatSwaps,linkedFormMoveKey,resolveLinkedFormMoves,isHoopaSpecies,resolveHoopaFormAbilities,normalizePokemonFormState,resolvePokemonForms,resolvePokemonPresentation} from './rules/pokemon-forms.mjs';
 import {applyPokemonFormTransitionEvent} from './rules/pokemon-form-events.mjs';
 import {applyPokemonFormGameEvent} from './rules/pokemon-form-campaign-state.mjs';
 import {normalizeSpeciesForms} from './rules/pokemon-forms.mjs';
@@ -416,6 +416,14 @@ function hydrateStateForClient(state){
   if(!state)return state;
   const rulesetId=getActiveRuleset();
   state.inventory=Array.isArray(state.inventory)?state.inventory.map(item=>hydrateInventoryItem(item,rulesetId)):[];
+  for(const pokemon of state.pokemon||[]){
+    const id=pokemon.details?.speciesDefinitionId;
+    if(!isHoopaSpecies(id))continue;
+    const species=definitions.getResolved({rulesetId,kind:'species',id});
+    if(!species)continue;
+    const resolution=resolveSpeciesFormState({species,pokemon,includeActive:false});
+    if(resolution.valid)Object.assign(pokemon.details,resolveHoopaFormAbilities(resolution.species,pokemon.details));
+  }
   return state;
 }
 function resolveHeldItemDefinition({rulesetId,pokemon=null,inventoryItem=null}={}){
@@ -695,7 +703,9 @@ function nativeAbilitySlotsForSpecies(species,level){
   }));
 }
 function resolveCreatureAbilityRecords({pokemon,species,rulesetId,heldItemEffect=null}){
-  const details=pokemon?.details||{};
+  const stored=pokemon?.details||{};
+  const linked=resolveHoopaFormAbilities(species,stored);
+  const details=linked?{...stored,...linked}:stored;
   const records=[];
   const structured=Array.isArray(details.abilityRecords)?details.abilityRecords:[];
   const storedNames=Array.isArray(details.abilities)?details.abilities.filter(Boolean):[];
@@ -797,7 +807,7 @@ async function handleApi(req,res,url){
     return json(res,200,{ok:true,desktopSession});
   }
   if(req.method==='GET' && url.pathname==='/api/health'){
-    return json(res,200,{ok:true,version:'2.2.0-beta.45',persistence:'android-local',database:'app-data/content-packs + WebView local storage',schemaVersion:5,definitions:{database:'embedded mobile bundle + installed .ptucp overlays',activeRuleset:getActiveRuleset()}});
+    return json(res,200,{ok:true,version:'2.2.0-beta.46',persistence:'android-local',database:'app-data/content-packs + WebView local storage',schemaVersion:5,definitions:{database:'embedded mobile bundle + installed .ptucp overlays',activeRuleset:getActiveRuleset()}});
   }
   if(req.method==='GET' && url.pathname==='/api/rulesets'){
     const activeRulesetId=getActiveRuleset();
@@ -959,7 +969,7 @@ async function handleApi(req,res,url){
     const baseSpecies=definitions.getResolved({rulesetId,kind:'species',id:speciesId});
     if(!baseSpecies)return json(res,404,{error:'Species definition not found in active ruleset'});
     const resolution=resolveSpeciesFormState({species:baseSpecies,pokemon,payload,includeActive:payload.includeActive!==false});
-    return json(res,resolution.valid?200:400,{rulesetId,baseSpecies:{id:baseSpecies.id,name:baseSpecies.name,forms:baseSpecies.forms||[]},...resolution,linkedMoves:resolution.valid?resolveLinkedFormMoves(resolution.species,details.moves):null});
+    return json(res,resolution.valid?200:400,{rulesetId,baseSpecies:{id:baseSpecies.id,name:baseSpecies.name,forms:baseSpecies.forms||[]},...resolution,linkedMoves:resolution.valid?resolveLinkedFormMoves(resolution.species,details.moves):null,linkedAbilities:resolution.valid?resolveHoopaFormAbilities(resolution.species,details):null});
   }
   if(req.method==='POST' && url.pathname==='/api/pokemon/build-preview'){
     const payload=await bodyJson(req);

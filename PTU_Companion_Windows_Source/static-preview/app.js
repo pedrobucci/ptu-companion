@@ -1,5 +1,5 @@
 /*
- * PTU Companion — Beta v2.1.0-beta.39
+ * PTU Companion — Beta v2.1.0-beta.40
  * No dependencies, no build step, runs offline in a browser.
  *
  * This is deliberately a UI/domain reference implementation. The final Tauri app
@@ -610,7 +610,7 @@ function selectNpc(id){ state.selectedNpcId=id; persist(); render(); }
 function shell(content){
   const t=trainer();
   const toastHtml=state.ui.toast?`<div class="toast ${state.ui.toast.type==='error'?'toast-error':''}">${esc(state.ui.toast.message)}</div>`:'';
-  return `<div class="app-backdrop"><div class="pokedex-shell"><aside class="hardware-rail"><div class="lens"><span></span></div><div class="hardware-dots"><i></i><i></i></div></aside><div class="app-window"><header class="topbar"><div class="brand"><span class="brand-mark">◉</span><strong>PTU Companion</strong><span class="prototype-label functional">BETA v2.1.0-beta.39</span><span class="persistence-badge">${persistenceLabel()}</span></div><div class="top-actions"><span class="gm-status chip ${state.ui.gmOverride?'chip-red':'chip-yellow'}" role="status" aria-label="GM Override ${state.ui.gmOverride?'enabled':'disabled'}">GM ${state.ui.gmOverride?'ON':'OFF'}</span><button onclick="openGlobalActions()">⚙</button><button class="trainer-mini trainer-switcher-button" onclick="openTrainerSwitcher()" title="Switch Trainer">${personPortrait(t,'trainer-mini-avatar','span')}<small>${esc(t.name)}</small><b class="trainer-switch-caret">⌄</b></button></div></header><div class="app-layout"><nav class="sidebar">${nav.map(n=>`<button class="${state.ui.screen===n[0]?'active':''}" onclick="route('${n[0]}')"><span>${n[1]}</span>${n[2]}</button>`).join('')}<div class="sidebar-footer"><button onclick="openSaveTools()">⇄ Save Tools</button></div></nav><main class="screen-content">${content}</main></div><footer class="shell-footer">Desktop beta · ${persistenceLabel()} <span>●</span></footer></div><div class="hardware-bottom"></div></div>${toastHtml}<div id="modal-root"></div></div>`;
+  return `<div class="app-backdrop"><div class="pokedex-shell"><aside class="hardware-rail"><div class="lens"><span></span></div><div class="hardware-dots"><i></i><i></i></div></aside><div class="app-window"><header class="topbar"><div class="brand"><span class="brand-mark">◉</span><strong>PTU Companion</strong><span class="prototype-label functional">BETA v2.1.0-beta.40</span><span class="persistence-badge">${persistenceLabel()}</span></div><div class="top-actions"><span class="gm-status chip ${state.ui.gmOverride?'chip-red':'chip-yellow'}" role="status" aria-label="GM Override ${state.ui.gmOverride?'enabled':'disabled'}">GM ${state.ui.gmOverride?'ON':'OFF'}</span><button onclick="openGlobalActions()">⚙</button><button class="trainer-mini trainer-switcher-button" onclick="openTrainerSwitcher()" title="Switch Trainer">${personPortrait(t,'trainer-mini-avatar','span')}<small>${esc(t.name)}</small><b class="trainer-switch-caret">⌄</b></button></div></header><div class="app-layout"><nav class="sidebar">${nav.map(n=>`<button class="${state.ui.screen===n[0]?'active':''}" onclick="route('${n[0]}')"><span>${n[1]}</span>${n[2]}</button>`).join('')}<div class="sidebar-footer"><button onclick="openSaveTools()">⇄ Save Tools</button></div></nav><main class="screen-content">${content}</main></div><footer class="shell-footer">Desktop beta · ${persistenceLabel()} <span>●</span></footer></div><div class="hardware-bottom"></div></div>${toastHtml}<div id="modal-root"></div></div>`;
 }
 
 function creatureRosterPortrait(p){
@@ -1416,6 +1416,7 @@ async function applyPokemonFormState(nextState,form=null,{manualOverride=false}=
     }
     const updated={...p,details:{...p.details,formState:{...payload.formState},manualFormApprovals:[...approvals]}};
     if(payload.linkedMoves)updated.details.moves=payload.linkedMoves;
+    Object.assign(updated.details,payload.linkedAbilities);
     const connectionResponse=await fetch('/api/pokemon/training-action-preview',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'revalidate_connections',pokemon:updated,rulesetId:catalogState.status?.activeRulesetId})}); const connectionPayload=await connectionResponse.json();
     if(connectionResponse.ok&&connectionPayload.valid){updated.details=connectionPayload.details;if(connectionPayload.resultRecord?.refundedTutorPoints)toast(`Advanced Connection removed; ${connectionPayload.resultRecord.refundedTutorPoints} Tutor Point(s) refunded.`,'info');}
     p.details=updated.details;
