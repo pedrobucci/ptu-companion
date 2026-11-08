@@ -807,7 +807,7 @@ async function handleApi(req,res,url){
     return json(res,200,{ok:true,desktopSession});
   }
   if(req.method==='GET' && url.pathname==='/api/health'){
-    return json(res,200,{ok:true,version:'2.2.0-beta.47',persistence:'android-local',database:'app-data/content-packs + WebView local storage',schemaVersion:5,definitions:{database:'embedded mobile bundle + installed .ptucp overlays',activeRuleset:getActiveRuleset()}});
+    return json(res,200,{ok:true,version:'2.2.0-beta.48',persistence:'android-local',database:'app-data/content-packs + WebView local storage',schemaVersion:5,definitions:{database:'embedded mobile bundle + installed .ptucp overlays',activeRuleset:getActiveRuleset()}});
   }
   if(req.method==='GET' && url.pathname==='/api/rulesets'){
     const activeRulesetId=getActiveRuleset();
@@ -1152,12 +1152,14 @@ async function handleApi(req,res,url){
     const accuracyMap=accuracyTrainingMap(details);
     const moves=(Array.isArray(details.moves)?details.moves:[]).map(m=>{
       const id=slug(m.id||m.name); const definition=id?definitions.getResolved({rulesetId,kind:'moves',id}):null;
-      const resolvedDamage=definition?resolveMoveDamage({pokemon:resolvedPokemonForCombat,moveDefinition:definition,speciesTypes,getDamageBase:db=>definitions.getDamageBase(db),heldItemEffect:held.effect,abilities}):null;
+      const damageArgs={pokemon:resolvedPokemonForCombat,moveDefinition:definition,speciesTypes,getDamageBase:db=>definitions.getDamageBase(db),heldItemEffect:held.effect,abilities};
+      const resolvedDamage=definition?resolveMoveDamage(damageArgs):null;
+      const anchorDamage=resolvedDamage?.anchorStabAvailable?resolveMoveDamage({...damageArgs,fromAnchor:true}):null;
       const accuracyTrainingRanks=accuracyMap.get(id)||0;
       const accuracyRollBonus=modifierSummary.accuracyRollBonus;
       const baseAc=definition?.ac==null?null:Number(definition.ac);
       const effectiveAc=baseAc==null||!Number.isFinite(baseAc)?baseAc:Math.max(0,baseAc-accuracyTrainingRanks);
-      return {record:m,definition,linkedFormMoveKey:linkedFormMoveKey(species,id),resolvedDamage,accuracyTrainingRanks,accuracyRollBonus,effectiveAc};
+      return {record:m,definition,linkedFormMoveKey:linkedFormMoveKey(species,id),resolvedDamage,anchorDamage,accuracyTrainingRanks,accuracyRollBonus,effectiveAc};
     });
     const abilitySlots=nativeAbilitySlotsForSpecies(species,pokemon.level);
     const nativeSelected=[...(Array.isArray(details.abilities)?details.abilities.filter(Boolean):[])];

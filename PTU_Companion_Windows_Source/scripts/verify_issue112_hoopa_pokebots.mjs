@@ -40,25 +40,36 @@ async function check(api,label){
       assert.deepEqual(Buffer.from(await response.arrayBuffer()),await readFile(new URL(sprite,android)));
     }
   }
-  async function checkCombatPower(row){
-    let log='';
+  async function checkCombatDamage(row,fromAnchor=false){
+    let log='',modalHtml='';
     const inputs={'combat-natural-roll':'10','combat-hit-result':'hit','combat-critical-result':'no','combat-manual-damage-roll':'20'};
-    const start=app.indexOf('async function pokemonCombatResolveMove(');
-    const resolve=runInNewContext(app.slice(start,app.indexOf('function pokemonCombatMoveCard(',start))+'\npokemonCombatResolveMove',{
+    const start=app.indexOf('function pokemonCombatMoveRow(');
+    const {open,resolve}=runInNewContext(app.slice(start,app.indexOf('function pokemonCombatMoveCard(',start))+'\n({open:pokemonCombatOpenMove,resolve:pokemonCombatResolveMove})',{
       pokemonCombatReferenceState:{pokemonId:'hoopa',data:{moves:[row]}},
       pokemon:()=>({name:'Hoopa'}),document:{getElementById:id=>({value:inputs[id]})},
       pokemonCombatMoveAvailability:()=>({valid:true}),pokemonCombatSlug:()=>row.record.id,
       pokemonCombatParticipant:()=>({conditions:{}}),pokemonCombatOutcomeSpec:()=>({}),
+      pokemonCombatFuryCutterState:()=>({}),pokemonCombatDoubleDamageDiceExpression:()=>null,
+      pokemonCombatOutcomeUiFields:()=>'',pokemonCombatBoundFeatureRollFields:()=>'',esc:String,
+      modal:html=>{modalHtml=html;},
       pokemonCombatBoundFeatureModifiers:()=>[],pokemonCombatSpendAction:()=>({valid:true}),pokemonCombatSpendFrequency:()=>({valid:true}),
-      pokemonCombatDamageChart:()=>row.resolvedDamage.damageChart,
+      pokemonCombatDamageChart:(_db,move)=>move.resolvedDamage.damageChart,
       pokemonCombatKnowsRollMove:()=>false,pokemonCombatDefenseCurlModifier:()=>({}),
       pokemonCombatApplyMoveOutcome:()=>{},pokemonCombatDispatchMoveFormEvent:()=>{},
       pokemonCombatLog:(_id,_title,detail)=>{log=detail;},closeModal:()=>{},commit:()=>{},render:()=>{},
       toast:(message,kind)=>{assert.notEqual(kind,'error',message);}
     });
-    await resolve('hoopa',0);
-    const {primaryStat,powerDamage}=row.resolvedDamage;
-    assert(log.includes(`20 + Stat ${primaryStat.value} + ${powerDamage.source} ${powerDamage.value} = ${20+primaryStat.value+powerDamage.value}`),log);
+    await resolve('hoopa',0,fromAnchor);
+    const {primaryStat,powerDamage,finalDamageBase}=fromAnchor?row.anchorDamage:row.resolvedDamage;
+    const powerText=powerDamage.value?` + ${powerDamage.source} ${powerDamage.value}`:'';
+    assert(log.includes(`20 + Stat ${primaryStat.value}${powerText} = ${20+primaryStat.value+powerDamage.value}`),log);
+    assert(log.includes(`DB ${finalDamageBase} ·`),log);
+    if(row.anchorDamage){
+      await open('hoopa',0,fromAnchor);
+      assert(modalHtml.includes(`final DB ${finalDamageBase}`));
+      assert(modalHtml.includes(fromAnchor?'Use normally':'Use from Anchor'));
+    }
+    if(fromAnchor)assert.match(log,/Gyro Ball from its Anchor · Steelworker/);
   }
   async function request(path,body,method=body?'POST':'GET',status=200){
     const response=await api(path,{
@@ -163,7 +174,7 @@ async function check(api,label){
       assert.equal(resolvedDamage.finalRoll,`${dice}+${Number(flat)+resolvedDamage.primaryStat.value+expected.value}`);
     }
     assert.equal(ref.moves.find(row=>row.record.id==='trick').resolvedDamage,null);
-    if(physical.source==='Weird Power')await checkCombatPower(ref.moves.find(row=>row.record.id==='knock-off'));
+    if(physical.source==='Weird Power')await checkCombatDamage(ref.moves.find(row=>row.record.id==='knock-off'));
   }
   const weirdOnly=await request('/api/pokemon/reference-data',{pokemon:{...powerProbe,details:{...powerProbe.details,pokeEdges:[]}}});
   assert.deepEqual(weirdOnly.modifierSummary.powerDamage,{physical:{source:'Weird Power',value:17},special:{source:null,value:0}});
@@ -172,6 +183,30 @@ async function check(api,label){
   }});
   assert.equal(bound.modifierSummary.powerDamage.physical.source,'Mixed Power');
   assert.equal(bound.modifierSummary.powerDamage.special.source,'Mixed Power');
+
+  const dhelmise={level:30,details:{
+    speciesDefinitionId:'dhelmise',abilities:['Anchored','Steelworker'],moves:[{id:'gyro-ball'},{id:'shadow-ball'}]
+  }};
+  const steelworker=await request('/api/pokemon/reference-data',{pokemon:dhelmise});
+  assert.deepEqual(steelworker.species.types,['Ghost','Grass']);
+  const gyro=steelworker.moves.find(row=>row.record.id==='gyro-ball');
+  assert.equal(gyro.resolvedDamage.finalDamageBase,6);
+  assert.equal(gyro.anchorDamage?.stabDamageBaseBonus,2);
+  assert.equal(gyro.anchorDamage.finalDamageBase,8);
+  await checkCombatDamage(gyro);
+  await checkCombatDamage(gyro,true);
+  const shadow=steelworker.moves.find(row=>row.record.id==='shadow-ball');
+  assert.equal(shadow.resolvedDamage.stabDamageBaseBonus,2);
+  assert.equal(shadow.anchorDamage,null);
+  dhelmise.details.abilities=['Anchored'];
+  const withoutSteelworker=await request('/api/pokemon/reference-data',{pokemon:dhelmise});
+  assert.equal(withoutSteelworker.moves.find(row=>row.record.id==='gyro-ball').anchorDamage,null);
+  const alreadySteel=await request('/api/pokemon/reference-data',{pokemon:{
+    ...dhelmise,details:{...dhelmise.details,speciesDefinitionId:'metagross',abilities:['Steelworker']}
+  }});
+  const steelGyro=alreadySteel.moves.find(row=>row.record.id==='gyro-ball');
+  assert.equal(steelGyro.resolvedDamage.stabDamageBaseBonus,2);
+  assert.equal(steelGyro.anchorDamage,null);
 
   for(const [id,types] of [['skeledirge',['Fire','Ghost']],...['tinkatink','tinkatuff','tinkaton'].map(id=>[id,['Fairy','Steel']])]){
     const record=await species(id);

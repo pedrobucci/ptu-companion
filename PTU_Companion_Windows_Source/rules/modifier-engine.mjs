@@ -13,6 +13,10 @@ const slug=v=>String(v||'').trim().toLowerCase().replace(/[^a-z0-9]+/g,'-').repl
 const combatStageMultiplier=stage=>{const cs=Math.max(-6,Math.min(6,Math.trunc(Number(stage)||0)));return Number((cs>=0?1+cs*.2:1+cs*.1).toFixed(1));};
 const applyCombatStage=(value,stage)=>Math.floor((Number(value)||0)*combatStageMultiplier(stage));
 const hasAbility=(abilities,id)=>abilities.some(ability=>slug(typeof ability==='string'?ability:ability?.id||ability?.name)===id);
+const storedAbilities=details=>[
+  ...(Array.isArray(details?.abilities)?details.abilities:[]),
+  ...(Array.isArray(details?.grantedAbilities)?details.grantedAbilities:[])
+];
 
 export function hasTwistedPowerEffect(details={}){
   const edges=Array.isArray(details.pokeEdges)?details.pokeEdges:[];
@@ -28,10 +32,7 @@ export function getPokemonModifierSummary(pokemon={}, context={}){
   const stats=d.finalStats||{};
   const resolvedAbilities=context.abilities;
   const twisted=hasTwistedPowerEffect(d)||hasAbility(resolvedAbilities||[],'twisted-power');
-  const weird=hasAbility(resolvedAbilities??[
-    ...(Array.isArray(d.abilities)?d.abilities:[]),
-    ...(Array.isArray(d.grantedAbilities)?d.grantedAbilities:[])
-  ],'weird-power');
+  const weird=hasAbility(resolvedAbilities??storedAbilities(d),'weird-power');
   const twistedSource=Array.isArray(d.pokeEdges)&&d.pokeEdges.some(e=>slug(e?.id||e?.name)==='mixed-power')?'Mixed Power':'Twisted Power';
   const moveLimitBase=Math.max(0,Number(d.moveLimitBase??6)||0);
   const moveLimitModifier=Number(d.moveLimitModifier??0)||0;
@@ -91,7 +92,7 @@ function mergeDiceExpression(rolledDamage, flatBonus){
   return `${m[1]}${total>0?`+${total}`:total<0?total:''}`;
 }
 
-export function resolveMoveDamage({pokemon={},moveDefinition=null,speciesTypes=[],getDamageBase=null,heldItemEffect=null,abilities=null}={}){
+export function resolveMoveDamage({pokemon={},moveDefinition=null,speciesTypes=[],getDamageBase=null,heldItemEffect=null,abilities=null,fromAnchor=false}={}){
   const move=moveDefinition||{};
   const moveClass=String(move.class||move.damageClass||move.raw?.class||'').trim().toLowerCase();
   const damaging=moveClass==='physical'||moveClass==='special';
@@ -99,7 +100,10 @@ export function resolveMoveDamage({pokemon={},moveDefinition=null,speciesTypes=[
   if(!damaging || !Number.isFinite(baseDb) || typeof getDamageBase!=='function') return null;
   const moveType=String(move.type||'').trim().toLowerCase();
   const types=(Array.isArray(speciesTypes)?speciesTypes:[]).map(t=>String(t||'').trim().toLowerCase());
-  const stab=moveType && types.includes(moveType) ? 2 : 0;
+  const naturalStab=types.includes(moveType);
+  const anchorStabAvailable=moveType==='steel'&&!naturalStab&&hasAbility(abilities??storedAbilities(pokemon.details),'steelworker');
+  const anchorStab=fromAnchor&&anchorStabAvailable;
+  const stab=moveType&&(naturalStab||anchorStab)?2:0;
   const itemDbBonus=Number(heldItemEffect?.damageBaseBonus||0);
   const finalDb=Math.max(1,Math.min(28,baseDb+stab+itemDbBonus));
   const chart=getDamageBase(finalDb);
@@ -113,6 +117,7 @@ export function resolveMoveDamage({pokemon={},moveDefinition=null,speciesTypes=[
     moveClass,
     baseDamageBase:baseDb,
     stabDamageBaseBonus:stab,
+    anchorStabAvailable,
     finalDamageBase:finalDb,
     itemDamageBaseBonus:itemDbBonus,
     damageChart:chart,
@@ -124,7 +129,7 @@ export function resolveMoveDamage({pokemon={},moveDefinition=null,speciesTypes=[
     finalRoll:mergeDiceExpression(chart.rolled_damage,flatBonus),
     breakdown:[
       {label:`DB ${baseDb}`,value:baseDb},
-      ...(stab?[{label:'STAB',value:'+2 DB'}]:[]),
+      ...(stab?[{label:anchorStab?'STAB · Steelworker (Anchor)':'STAB',value:'+2 DB'}]:[]),
       ...(itemDbBonus?[{label:`Equipped item Damage Base modifier`,value:`${itemDbBonus>0?'+':''}${itemDbBonus} DB`}]:[]),
       {label:moveClass==='physical'?'Attack':'Special Attack',value:primary},
       ...(powerDamage.value?[{label:powerDamage.source,value:powerDamage.value}]:[]),
