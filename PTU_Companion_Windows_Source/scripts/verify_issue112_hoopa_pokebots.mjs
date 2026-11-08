@@ -69,7 +69,7 @@ async function check(api,label){
       assert(modalHtml.includes(`final DB ${finalDamageBase}`));
       assert(modalHtml.includes(fromAnchor?'Use normally':'Use from Anchor'));
     }
-    if(fromAnchor)assert.match(log,/Gyro Ball from its Anchor · Steelworker/);
+    if(fromAnchor)assert(log.includes(`${row.definition.name} from its Anchor · Steelworker`),log);
   }
   async function request(path,body,method=body?'POST':'GET',status=200){
     const response=await api(path,{
@@ -185,7 +185,7 @@ async function check(api,label){
   assert.equal(bound.modifierSummary.powerDamage.special.source,'Mixed Power');
 
   const dhelmise={level:30,details:{
-    speciesDefinitionId:'dhelmise',abilities:['Anchored','Steelworker'],moves:[{id:'gyro-ball'},{id:'shadow-ball'}]
+    speciesDefinitionId:'dhelmise',abilities:['Anchored','Steelworker'],moves:[{id:'gyro-ball'},{id:'flash-cannon'},{id:'shadow-ball'}]
   }};
   const steelworker=await request('/api/pokemon/reference-data',{pokemon:dhelmise});
   assert.deepEqual(steelworker.species.types,['Ghost','Grass']);
@@ -195,6 +195,11 @@ async function check(api,label){
   assert.equal(gyro.anchorDamage.finalDamageBase,8);
   await checkCombatDamage(gyro);
   await checkCombatDamage(gyro,true);
+  const cannon=steelworker.moves.find(row=>row.record.id==='flash-cannon');
+  assert.equal(cannon.resolvedDamage.moveClass,'special');
+  assert.equal(cannon.anchorDamage?.stabDamageBaseBonus,2);
+  assert.equal(cannon.anchorDamage.finalDamageBase,cannon.resolvedDamage.finalDamageBase+2);
+  await checkCombatDamage(cannon,true);
   const shadow=steelworker.moves.find(row=>row.record.id==='shadow-ball');
   assert.equal(shadow.resolvedDamage.stabDamageBaseBonus,2);
   assert.equal(shadow.anchorDamage,null);
@@ -207,6 +212,21 @@ async function check(api,label){
   const steelGyro=alreadySteel.moves.find(row=>row.record.id==='gyro-ball');
   assert.equal(steelGyro.resolvedDamage.stabDamageBaseBonus,2);
   assert.equal(steelGyro.anchorDamage,null);
+
+  const boxer={level:30,details:{
+    speciesDefinitionId:'hitmonchan',abilities:['Iron Fist'],
+    moves:['mach-punch','meteor-mash','close-combat'].map(id=>({id}))
+  }};
+  const boxing=await request('/api/pokemon/reference-data',{pokemon:boxer});
+  const [mach,meteor,close]=boxing.moves;
+  assert.equal(mach.resolvedDamage.finalDamageBase,8);
+  assert(mach.resolvedDamage.breakdown.some(entry=>entry.label==='Iron Fist'&&entry.value==='+2 DB'));
+  assert.equal(meteor.resolvedDamage.finalDamageBase,meteor.resolvedDamage.baseDamageBase+2);
+  assert.equal(close.resolvedDamage.ironFistDamageBaseBonus,0);
+  await checkCombatDamage(mach);
+  boxer.details.abilities=[];
+  const withoutIronFist=await request('/api/pokemon/reference-data',{pokemon:boxer});
+  assert.equal(withoutIronFist.moves[0].resolvedDamage.finalDamageBase,6);
 
   for(const [id,types] of [['skeledirge',['Fire','Ghost']],...['tinkatink','tinkatuff','tinkaton'].map(id=>[id,['Fairy','Steel']])]){
     const record=await species(id);

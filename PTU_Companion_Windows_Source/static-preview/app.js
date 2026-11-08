@@ -1243,7 +1243,7 @@ function creatureMovesTab(p,data){
 function creatureProgressionTab
     */
     const power=rd?.powerDamage;
-    const damage=rd?`<div class="resolved-damage-box"><div class="row-between"><strong>${esc(rd.finalRoll)}</strong>${power?.value?chip(`${power.source} +${power.value}`,'chip-purple'):''}</div><small>DB ${rd.baseDamageBase}${rd.stabDamageBaseBonus?` + STAB ${rd.stabDamageBaseBonus}`:''} → DB ${rd.finalDamageBase} · ${esc(rd.primaryStat.name)} ${rd.primaryStat.value}</small>${anchorDamage?`<small>Steelworker (Anchor) · DB ${anchorDamage.finalDamageBase} · ${esc(anchorDamage.finalRoll)}</small>`:''}</div>`:'';
+    const damage=rd?`<div class="resolved-damage-box"><div class="row-between"><strong>${esc(rd.finalRoll)}</strong>${power?.value?chip(`${power.source} +${power.value}`,'chip-purple'):''}</div><small>DB ${rd.baseDamageBase}${rd.stabDamageBaseBonus?` + STAB ${rd.stabDamageBaseBonus}`:''}${rd.ironFistDamageBaseBonus?` + Iron Fist ${rd.ironFistDamageBaseBonus}`:''} → DB ${rd.finalDamageBase} · ${esc(rd.primaryStat.name)} ${rd.primaryStat.value}</small>${anchorDamage?`<small>Steelworker (Anchor) · DB ${anchorDamage.finalDamageBase} · ${esc(anchorDamage.finalRoll)}</small>`:''}</div>`:'';
     const contestType=def?.contestType||def?.raw?.contest_type||null;
     const contestEffect=def?.contestEffect||def?.raw?.contest_effect||null;
     const contest=(contestType||contestEffect)?`<div class="move-contest-box"><strong>Contest</strong><div>${contestType?`<span><small>Type</small><b>${esc(contestType)}</b></span>`:''}${contestEffect?`<span><small>Effect</small><b>${esc(contestEffect)}</b></span>`:''}</div></div>`:'';

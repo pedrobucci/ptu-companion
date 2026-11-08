@@ -13,6 +13,12 @@ const slug=v=>String(v||'').trim().toLowerCase().replace(/[^a-z0-9]+/g,'-').repl
 const combatStageMultiplier=stage=>{const cs=Math.max(-6,Math.min(6,Math.trunc(Number(stage)||0)));return Number((cs>=0?1+cs*.2:1+cs*.1).toFixed(1));};
 const applyCombatStage=(value,stage)=>Math.floor((Number(value)||0)*combatStageMultiplier(stage));
 const hasAbility=(abilities,id)=>abilities.some(ability=>slug(typeof ability==='string'?ability:ability?.id||ability?.name)===id);
+// PTU 1.05 Core, p. 321 names the eligible moves explicitly.
+const ironFistMoves=new Set([
+  'bullet-punch','comet-punch','dizzy-punch','drain-punch','dynamic-punch','fire-punch',
+  'focus-punch','hammer-arm','ice-punch','mach-punch','mega-punch','meteor-mash',
+  'power-up-punch','shadow-punch','sky-uppercut','thunder-punch'
+]);
 const storedAbilities=details=>[
   ...(Array.isArray(details?.abilities)?details.abilities:[]),
   ...(Array.isArray(details?.grantedAbilities)?details.grantedAbilities:[])
@@ -101,11 +107,13 @@ export function resolveMoveDamage({pokemon={},moveDefinition=null,speciesTypes=[
   const moveType=String(move.type||'').trim().toLowerCase();
   const types=(Array.isArray(speciesTypes)?speciesTypes:[]).map(t=>String(t||'').trim().toLowerCase());
   const naturalStab=types.includes(moveType);
-  const anchorStabAvailable=moveType==='steel'&&!naturalStab&&hasAbility(abilities??storedAbilities(pokemon.details),'steelworker');
+  const activeAbilities=abilities??storedAbilities(pokemon.details);
+  const anchorStabAvailable=moveType==='steel'&&!naturalStab&&hasAbility(activeAbilities,'steelworker');
   const anchorStab=fromAnchor&&anchorStabAvailable;
   const stab=moveType&&(naturalStab||anchorStab)?2:0;
+  const ironFistBonus=ironFistMoves.has(slug(move.id||move.name))&&hasAbility(activeAbilities,'iron-fist')?2:0;
   const itemDbBonus=Number(heldItemEffect?.damageBaseBonus||0);
-  const finalDb=Math.max(1,Math.min(28,baseDb+stab+itemDbBonus));
+  const finalDb=Math.max(1,Math.min(28,baseDb+stab+ironFistBonus+itemDbBonus));
   const chart=getDamageBase(finalDb);
   if(!chart) return null;
   const modifiers=getPokemonModifierSummary(pokemon,{heldItemEffect,abilities});
@@ -119,6 +127,7 @@ export function resolveMoveDamage({pokemon={},moveDefinition=null,speciesTypes=[
     stabDamageBaseBonus:stab,
     anchorStabAvailable,
     finalDamageBase:finalDb,
+    ironFistDamageBaseBonus:ironFistBonus,
     itemDamageBaseBonus:itemDbBonus,
     damageChart:chart,
     primaryStat:{name:moveClass==='physical'?'Attack':'Special Attack',value:primary,combatStage:moveClass==='physical'?Number(pokemon.details?.combatStages?.attack)||0:Number(pokemon.details?.combatStages?.spAttack)||0},
@@ -130,6 +139,7 @@ export function resolveMoveDamage({pokemon={},moveDefinition=null,speciesTypes=[
     breakdown:[
       {label:`DB ${baseDb}`,value:baseDb},
       ...(stab?[{label:anchorStab?'STAB · Steelworker (Anchor)':'STAB',value:'+2 DB'}]:[]),
+      ...(ironFistBonus?[{label:'Iron Fist',value:'+2 DB'}]:[]),
       ...(itemDbBonus?[{label:`Equipped item Damage Base modifier`,value:`${itemDbBonus>0?'+':''}${itemDbBonus} DB`}]:[]),
       {label:moveClass==='physical'?'Attack':'Special Attack',value:primary},
       ...(powerDamage.value?[{label:powerDamage.source,value:powerDamage.value}]:[]),
