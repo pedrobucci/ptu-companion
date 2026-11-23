@@ -137,9 +137,16 @@ for(const path of ['static-preview/app.js','../PTU_Companion_Android_Tauri/www/a
   const resolve=runInNewContext(`(()=>{${code};return pokemonCombatIncomingAttackResolution})()`);
   assert.deepEqual({...resolve({accuracyRoll:11,baseAc:6,evasion:5,rawDamage:20,defense:7,damageReduction:5,multiplier:1.5})},{hit:true,accuracyCheck:11,afterDefense:8,damage:12},`${path} applies Evasion, Defense, DR, then type effectiveness`);
   assert.equal(resolve({accuracyRoll:10,baseAc:6,evasion:5,rawDamage:20,defense:7,damageReduction:5,multiplier:1.5}).hit,false,`${path} rejects a roll below the Evasion-adjusted AC`);
+  assert.equal(resolve({naturalRoll:1,accuracyRoll:15,baseAc:2}).hit,false,`${path} natural 1 misses despite bonuses`);
+  assert.equal(resolve({naturalRoll:20,accuracyRoll:2,baseAc:8,evasion:6}).hit,true,`${path} natural 20 hits despite penalties`);
   assert.equal(resolve({baseAc:null,evasion:0,rawDamage:20,defense:7,damageReduction:5,multiplier:0,hasAccuracyCheck:false}).damage,0,`${path} applies immunity after defense`);
+  const injuryCode=app.match(/function pokemonHpLossInjuries\([\s\S]*?\n}/)[0];
+  const injuries=runInNewContext(`${injuryCode};pokemonHpLossInjuries`);
+  assert.equal(injuries({hpBefore:60,hpAfter:-50,maxHp:100,damage:110}),4,'One attack can cause Massive Damage and multiple marker Injuries');
+  assert.equal(injuries({hpBefore:50,hpAfter:49,maxHp:100,damage:1}),0,'An already counted marker does not count twice');
+  assert.equal(injuries({hpBefore:26,hpAfter:25,maxHp:51,damage:1}),1,'Crossing half HP on an odd maximum counts');
   assert.ok(app.includes('function pokemonCombatIncomingClassChanged()'),`${path} selects the matching Evasion and Defense`);
   assert.ok(app.includes('pokemonCombatLog(id,resolved.hit?'),`${path} records incoming attack results`);
-  assert.ok(app.includes('applyPokemonFormGameEventUi(id,{kind:\'hp-adjust\',delta:-resolved.damage}'),`${path} persists HP damage through form-aware history`);
+  assert.ok(app.includes('applyPokemonFormGameEventUi(id,{kind:\'hp-adjust\',delta:-hpLoss}'),`${path} persists HP damage through form-aware history`);
 }
 console.log('Issue #69: Bind/AP, incoming Evasion/Defense/DR/effectiveness, persistence hook, and Windows/Android parity verified.');

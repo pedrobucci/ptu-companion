@@ -12,7 +12,7 @@ globalThis.previewPokecenterRecovery=function(state,{pokemonIds=[],serviceCost=0
   const total=cost*(perPokemon?pokemon.length:1),money=Number(state.trainer?.money);
   if(!Number.isSafeInteger(money)||money<0)return {valid:false,errors:['Trainer money is invalid; no recovery was applied.']};
   if(money<total)return {valid:false,errors:[`The Trainer has ₽${money.toLocaleString()} but recovery costs ₽${total.toLocaleString()}.`],pokemon,total};
-  return {valid:true,pokemon,total,rosterId,perPokemon,serviceCost:cost,effects:pokemon.map(p=>({id:p.id,name:p.name,hpBefore:Number(p.hp||0),maxHp:Number(p.maxHp||p.maxHP||p.max_hp||0),injuriesBefore:Number(p.injuries||0),statusAfflictionsBefore:[...(state.ui?.combat?.participants?.[p.id]?.conditions?.statusAfflictions||[])]}))};
+  return {valid:true,pokemon,total,rosterId,perPokemon,serviceCost:cost,effects:pokemon.map(p=>({id:p.id,name:p.name,hpBefore:Number(p.hp||0),maxHp:Number(p.maxHp||p.maxHP||p.max_hp||0),injuriesBefore:Number(p.injuries||0),statusAfflictionsBefore:[...(p.details?.statusAfflictions??state.ui?.combat?.participants?.[p.id]?.conditions?.statusAfflictions??[])].map(row=>typeof row==='string'?row:row.name)}))};
 };
 globalThis.applyPokecenterRecovery=function(state,options={}){
   const preview=previewPokecenterRecovery(state,options);
@@ -22,6 +22,9 @@ globalThis.applyPokecenterRecovery=function(state,options={}){
   for(const row of preview.pokemon){
     const p=next.pokemon.find(item=>String(item.id)===String(row.id));
     p.hp=Number(p.maxHp||p.maxHP||p.max_hp||0);p.injuries=0;
+    p.details ||= {};
+    p.details.statusAfflictions=[];
+    p.details.badPoisonDamage=5;
     const participant=next.ui?.combat?.participants?.[p.id];
     if(participant?.conditions)participant.conditions.statusAfflictions=[];
   }

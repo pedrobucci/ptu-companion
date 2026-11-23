@@ -135,8 +135,8 @@ export function eligibleAbilities(abilitySlots=[]){
 }
 
 function numericMoveLevel(value){
-  const n=Number(String(value??'').trim());
-  return Number.isFinite(n)?Math.trunc(n):null;
+  const level=String(value??'').trim();
+  return /^\d+$/.test(level)?Number(level):null;
 }
 
 export function eligibleNaturalMoves(levelUpMoves=[], level){

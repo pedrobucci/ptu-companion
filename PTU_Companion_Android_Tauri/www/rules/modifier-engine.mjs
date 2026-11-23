@@ -98,12 +98,32 @@ function mergeDiceExpression(rolledDamage, flatBonus){
   return `${m[1]}${total>0?`+${total}`:total<0?total:''}`;
 }
 
+function intrinsicDamageBase(move,pokemon,stages){
+  const id=slug(move.id||move.name);
+  const core=move.contentPackId==='ptu-core-1.05'&&move.sourceId==='core';
+  const loyalty=Number(pokemon.loyalty);
+  if(core&&pokemon.loyalty!=null&&Number.isInteger(loyalty)&&loyalty>=0&&loyalty<=6){
+    if(id==='return')return 3+loyalty;
+    if(id==='frustration')return 9-loyalty;
+  }
+  const editation=move.contentPackId==='ptu-1.05-editation';
+  const sumo=move.contentPackId==='ptu-sumo-references'&&move.sourceId==='sumo';
+  if(core&&id==='stored-power'||editation&&id==='stored-power'||sumo&&id==='power-trip'){
+    const positive=['attack','defense','spAttack','spDefense','speed']
+      .reduce((sum,key)=>sum+Math.max(0,Math.min(6,Math.trunc(Number(stages[key])||0))),0);
+    return Math.min(20,Number(move.damageBase)+2*positive);
+  }
+  return move.damageBase==null?null:Number(move.damageBase);
+}
+
 export function resolveMoveDamage({pokemon={},moveDefinition=null,speciesTypes=[],getDamageBase=null,heldItemEffect=null,abilities=null,fromAnchor=false}={}){
   const move=moveDefinition||{};
   const moveClass=String(move.class||move.damageClass||move.raw?.class||'').trim().toLowerCase();
   const damaging=moveClass==='physical'||moveClass==='special';
-  const baseDb=Number(move.damageBase);
-  if(!damaging || !Number.isFinite(baseDb) || typeof getDamageBase!=='function') return null;
+  if(!damaging || typeof getDamageBase!=='function') return null;
+  const modifiers=getPokemonModifierSummary(pokemon,{heldItemEffect,abilities});
+  const baseDb=intrinsicDamageBase(move,pokemon,modifiers.combatStages);
+  if(!Number.isFinite(baseDb)||baseDb<1)return null;
   const moveType=String(move.type||'').trim().toLowerCase();
   const types=(Array.isArray(speciesTypes)?speciesTypes:[]).map(t=>String(t||'').trim().toLowerCase());
   const naturalStab=types.includes(moveType);
@@ -116,7 +136,6 @@ export function resolveMoveDamage({pokemon={},moveDefinition=null,speciesTypes=[
   const finalDb=Math.max(1,Math.min(28,baseDb+stab+ironFistBonus+itemDbBonus));
   const chart=getDamageBase(finalDb);
   if(!chart) return null;
-  const modifiers=getPokemonModifierSummary(pokemon,{heldItemEffect,abilities});
   const primary=moveClass==='physical'?Number(modifiers.combatStats.attack)||0:Number(modifiers.combatStats.special_attack??modifiers.combatStats.spAttack)||0;
   const powerDamage=modifiers.powerDamage[moveClass];
   const itemDamageBonus=Number(heldItemEffect?.damageRollBonus||0);

@@ -11,16 +11,18 @@ const androidPath=join(root,'../PTU_Companion_Android_Tauri/www/rules/pokemon-fo
 const windows=await import(pathToFileURL(windowsPath));
 const android=await import(pathToFileURL(androidPath));
 const cases=[
-  {pokemon:{hp:0,maxHp:50,injuries:3},delta:50,hp:35,tempHp:15},
-  {pokemon:{hp:45,maxHp:50,injuries:3},delta:5,hp:45,tempHp:5},
-  {pokemon:{hp:40,maxHp:50,injuries:0},delta:20,hp:50,tempHp:10},
-  {pokemon:{hp:35,maxHp:50,injuries:3},delta:-20,hp:15,tempHp:0}
+  {pokemon:{hp:0,maxHp:50,injuries:3},delta:50,hp:35,tempHp:0},
+  {pokemon:{hp:45,maxHp:50,injuries:3,tempHp:4},delta:5,hp:45,tempHp:4},
+  {pokemon:{hp:40,maxHp:50,injuries:0},delta:20,hp:50,tempHp:0},
+  {pokemon:{hp:35,maxHp:50,injuries:3},delta:-20,hp:15,tempHp:0},
+  {pokemon:{hp:1,maxHp:50,injuries:3,tempHp:2},delta:-5,hp:-2,tempHp:0},
+  {pokemon:{hp:-8,maxHp:50,injuries:3},delta:10,hp:2,tempHp:0}
 ];
 for(const [label,engine] of [['Windows',windows],['Android',android]]){
   for(const test of cases){
     const result=engine.applyPokemonHpDelta(test.pokemon,test.delta);
     assert.equal(result.pokemon.hp,test.hp,`${label}: HP delta ${test.delta} with ${test.pokemon.injuries} Injuries`);
-    assert.equal(result.pokemon.tempHp||0,test.tempHp,`${label}: Temporary HP overflow`);
+    assert.equal(result.pokemon.tempHp||0,test.tempHp,`${label}: healing must preserve the Temporary HP pool`);
     assert.equal(result.pokemon.maxHp,test.pokemon.maxHp,`${label}: real Max HP stays unchanged`);
   }
 }
@@ -41,17 +43,17 @@ try{
   const repo=new CampaignRepository(db);
   const state={
     activeProfileId:'injury-persistence',
-    trainer:{id:'injury-persistence',name:'Injury QA',title:'Trainer',level:10,exp:0,nextExp:10,money:0,ptuPoints:0,badges:0,stats:{hp:10},derived:{},skills:{},equipment:{},modifiers:[],gmGrants:[],history:[],details:{currentHp:80,injuries:3}},
-    pokemon:[{id:'injury-pokemon',name:'Testmon',species:'Testmon',level:10,types:['Normal'],hp:27,maxHp:50,injuries:3,ball:'Poké Ball',heldItem:null,storage:false,loyalty:3,rosterIds:[],combatStages:{},details:{}}],
+    trainer:{id:'injury-persistence',name:'Injury QA',title:'Trainer',level:10,exp:0,nextExp:10,money:0,ptuPoints:0,badges:0,stats:{hp:10},derived:{},skills:{},equipment:{},modifiers:[],gmGrants:[],history:[],details:{currentHp:-8,injuries:3}},
+    pokemon:[{id:'injury-pokemon',name:'Testmon',species:'Testmon',level:10,types:['Normal'],hp:-27,maxHp:50,injuries:3,ball:'Poké Ball',heldItem:null,storage:false,loyalty:3,rosterIds:[],combatStages:{},details:{}}],
     rosters:[],inventory:[],npcs:[],shop:{preset:'Poké Mart',discountPct:0,mode:'buy',cart:{}},ui:{round:1,scene:1,day:1}
   };
   repo.saveState(state,{createRevision:false});
   const loaded=repo.loadState('injury-persistence');
-  assert.equal(loaded.pokemon[0].hp,27,'current HP should persist without automatic reduction');
+  assert.equal(loaded.pokemon[0].hp,-27,'current HP should persist without automatic reduction');
   assert.equal(loaded.pokemon[0].maxHp,50,'real Max HP should persist');
   assert.equal(loaded.pokemon[0].injuries,3,'Injuries should persist');
   assert.equal(Math.floor(loaded.pokemon[0].maxHp*(10-loaded.pokemon[0].injuries)/10),35,'healing limit should recompute after reload');
-  assert.equal(loaded.trainer.details.currentHp,80,'Trainer current HP should persist unchanged');
+  assert.equal(loaded.trainer.details.currentHp,-8,'Trainer current HP should persist unchanged');
   assert.equal(loaded.trainer.details.injuries,3,'Trainer Injuries should persist');
 }finally{db.close();}
 

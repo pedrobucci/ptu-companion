@@ -41,16 +41,18 @@ vm.runInContext(extract('changeTrainerHp'),ctx);
 vm.runInContext(extract('editPokemonIdentity',true),ctx);
 
 ctx.changeHp('p1',5);
-if(p.hp!==50||p.tempHp!==3) throw new Error(`Overflow failed: ${p.hp}/${p.maxHp} temp=${p.tempHp}`);
+if(p.hp!==50||p.tempHp!==0) throw new Error(`Healing exceeded the HP limit: ${p.hp}/${p.maxHp} temp=${p.tempHp}`);
+p.tempHp=3;
 ctx.changeHp('p1',-2);
 if(p.hp!==50||p.tempHp!==1) throw new Error(`Temporary HP absorption failed: hp=${p.hp} temp=${p.tempHp}`);
 ctx.changeHp('p1',-5);
 if(p.hp!==46||p.tempHp!==0) throw new Error(`Normal damage after temp failed: hp=${p.hp} temp=${p.tempHp}`);
 p.hp=50; p.tempHp=4; ctx.changeHp('p1',2);
-if(p.hp!==50||p.tempHp!==6) throw new Error(`Temp accumulation failed: hp=${p.hp} temp=${p.tempHp}`);
+if(p.hp!==50||p.tempHp!==4) throw new Error(`Healing changed existing Temporary HP: hp=${p.hp} temp=${p.tempHp}`);
 
 ctx.changeTrainerHp(5);
-if(trainerObj.details.currentHp!==50||trainerObj.details.tempHp!==4) throw new Error('Trainer overflow failed');
+if(trainerObj.details.currentHp!==50||trainerObj.details.tempHp!==0) throw new Error('Trainer healing created Temporary HP');
+trainerObj.details.tempHp=4;
 ctx.changeTrainerHp(-3);
 if(trainerObj.details.currentHp!==50||trainerObj.details.tempHp!==1) throw new Error('Trainer temp absorption failed');
 
@@ -65,4 +67,4 @@ if(trainerObj.history.at(-1)?.title!=='Pokémon identity updated') throw new Err
 for(const needle of ['Edit Identity','Temporary HP','TEMP HP']){
   if(!src.includes(needle)) throw new Error(`UI missing ${needle}`);
 }
-console.log(`HP overflow + Temporary HP + Pokémon identity verification: OK (${appPath})`);
+console.log(`HP limit + Temporary HP + Pokémon identity verification: OK (${appPath})`);

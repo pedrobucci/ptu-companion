@@ -49,6 +49,9 @@ ctx.state={ui:{round:1,scene:1,day:1}};
 ctx.row={pokemonId:'p',turn:{round:1,used:{standard:false,shift:false,swift:false},conversions:[]},frequency:{sceneNumber:1,dayNumber:1,scene:{},day:{},eot:{}},resourceTransactions:[],resourceSequence:0};
 ctx.pokemonCombatParticipant=(id,{create=true}={})=>id==='p'?ctx.row:null;
 ctx.pokemonCombatLog=()=>null;
+ctx.pokemon=id=>id==='p'?{}:null;
+ctx.pokemonStatusRows=()=>[];
+ctx.pokemonStatusRulesSource=()=> 'ptu-core-1.05';
 for(const name of ['pokemonCombatSlug','pokemonCombatParseFrequency','pokemonCombatSyncBoundaries','pokemonCombatTurn','pokemonCombatStandardRemaining','pokemonCombatSpendStandardToken','pokemonCombatCanSpendAction','pokemonCombatSpendAction','pokemonCombatFrequencyAvailability','pokemonCombatSpendFrequency'])vm.runInContext(extractFunction(sources[0],name),ctx);
 vm.runInContext("const POKEMON_COMBAT_TRACKED_ACTION_COSTS=new Set(['Full Action','Standard Action','Shift Action','Swift Action','Free Action']);",ctx);
 for(const name of ['pokemonCombatNonMoveSpec','pokemonCombatAbilityResourceSpec','pokemonCombatFormActionResourceSpec','pokemonCombatCapabilityResourceSpec','pokemonCombatNonMoveResourceKey','pokemonCombatNonMoveAvailability','pokemonCombatActionDelta','pokemonCombatFrequencyValue','pokemonCombatRefundActionDelta','pokemonCombatSpendNonMoveResource','pokemonCombatRefundNonMoveResourceCore','pokemonCombatNonMoveTransactionRefundable'])vm.runInContext(extractFunction(sources[0],name),ctx);
@@ -72,6 +75,11 @@ const sceneSpec=ctx.pokemonCombatNonMoveSpec('ability','scene-test','Scene test'
 const dailySpec=ctx.pokemonCombatNonMoveSpec('ability','daily-test','Daily test','Free Action','Daily');assert.equal(ctx.pokemonCombatSpendNonMoveResource('p',dailySpec,{log:false}).valid,true);assert.equal(ctx.pokemonCombatSpendNonMoveResource('p',dailySpec,{log:false}).valid,false);ctx.state.ui.day=3;assert.equal(ctx.pokemonCombatNonMoveAvailability('p',dailySpec).valid,true,'Day boundary must reset namespaced Daily use');
 const bondSpend=ctx.pokemonCombatSpendNonMoveResource('p',bond,{log:false});assert.equal(bondSpend.valid,true);assert.equal(bondSpend.tracked,false);assert.equal(bondSpend.transaction,null,'Extended Action must remain informational, not become a turn action');
 
+ctx.pokemonStatusRows=()=>['Suppressed'];
+ctx.pokemonStatusRulesSource=()=> 'ptu-february-2016-playtest';
+assert.equal(ctx.pokemonCombatFrequencyAvailability('p','move-test','Scene').valid,false,'Suppression prevents a Move above At-Will');
+assert.equal(ctx.pokemonCombatFrequencyAvailability('p','nonmove:move:move-test','Scene').valid,false,'A Move used through an Ability stays subject to Suppression');
+assert.equal(ctx.pokemonCombatNonMoveAvailability('p',sceneSpec).valid,true,'Suppression does not restrict a Scene Ability');
 const doc=JSON.parse(await readFile(docJson,'utf8'));assert.equal(doc.schema_version,1);assert.equal(doc.shared_with_moves,true);assert.equal(doc.physical_dice_only,true);assert.equal(doc.sources.schooling.action_cost,'Free Action');assert.equal(doc.sources.schooling.frequency,'Daily');assert.equal(doc.sources.power_construct.action_cost,'Swift Action');assert.equal(doc.sources.stance_change_manual.action_cost,'Full Action');assert.equal(doc.sources.ice_face_hail_restore.action_cost,'Standard Action');assert.equal(doc.sources.weapon_bond.tracked_as_turn_action,false);assert.equal(doc.refund.supported,true);
 const md=await readFile(docMd,'utf8');assert.match(md,/same Pokémon Combat action\/frequency ledger/i);assert.match(md,/Schooling/);assert.match(md,/Power Construct/);assert.match(md,/Stance Change/);assert.match(md,/Ice Face/);assert.match(md,/Weapon Bond/);assert.match(md,/Undo/);
 const session=JSON.parse(await readFile(sessionJson,'utf8'));assert.equal(session.shared_resources.non_move_sources.enabled,true);assert.equal(session.shared_resources.non_move_sources.source_keyed,true);assert.equal(session.shared_resources.non_move_sources.shares_move_action_frequency_ledger,true);assert.equal(session.shared_resources.non_move_sources.refund_supported,true);assert.ok(session.form_resource_spending.enabled_subset.includes('Schooling'));assert.ok(session.form_resource_spending.enabled_subset.includes('Power Construct'));

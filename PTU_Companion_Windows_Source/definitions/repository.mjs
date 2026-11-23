@@ -1,3 +1,4 @@
+import {normalizeLote241Definition} from '../rules/lote241-decisions.mjs';
 import {normalizePokeEdgeDefinition} from '../rules/poke-edge-normalization.mjs';
 import { DatabaseSync } from 'node:sqlite';
 import {normalizeCapabilities} from '../rules/capability-normalization.mjs';
@@ -65,6 +66,11 @@ export class DefinitionRepository {
     )`;
   }
 
+  _editationEnabled(rulesetId,kind){
+    return kind==='moves' && !!this.db.prepare(`SELECT 1 FROM campaign_ruleset_packs
+      WHERE ruleset_id=? AND pack_id='ptu-1.05-editation' AND enabled=1`).get(rulesetId);
+  }
+
   listResolved({rulesetId,kind,q='',limit=60,offset=0}){
     this._validateKind(kind);
     limit=Math.max(1,Math.min(200,Number(limit)||60)); offset=Math.max(0,Number(offset)||0);
@@ -76,7 +82,8 @@ export class DefinitionRepository {
       SELECT * FROM candidates
       WHERE rn=1 ${hideMisclassifiedFieldClinic} AND (?='' OR lower(logical_id) LIKE ? OR lower(raw_json) LIKE ?)
       ORDER BY logical_id LIMIT ? OFFSET ?`).all(rulesetId,kind,String(q||'').trim(),needle,needle,queryLimit,queryOffset);
-    const result=rows.map(r=>this._formatRow(r));
+    const editationEnabled=this._editationEnabled(rulesetId,kind);
+    const result=rows.map(r=>this._formatRow(r,false,{editationEnabled}));
     if(kind==='edges'){
       const fieldClinic=this._fieldClinicPlaytestEdge(rulesetId);
       const query=String(q||'').trim().toLowerCase();
@@ -112,7 +119,7 @@ export class DefinitionRepository {
     }
     const row=this.db.prepare(`${this._resolvedCte()}
       SELECT * FROM candidates WHERE rn=1 AND logical_id=? LIMIT 1`).get(rulesetId,kind,id);
-    return row?this._formatRow(row,true):(kind==='edges'&&id==='field-clinic'?this._fieldClinicPlaytestEdge(rulesetId):(kind==='items'?getBuiltInFormItem(id):null));
+    return row?this._formatRow(row,true,{editationEnabled:this._editationEnabled(rulesetId,kind)}):(kind==='edges'&&id==='field-clinic'?this._fieldClinicPlaytestEdge(rulesetId):(kind==='items'?getBuiltInFormItem(id):null));
   }
 
   getVersions({kind,id}){
@@ -310,7 +317,7 @@ export class DefinitionRepository {
     return {...row,raw:safeJson(row.raw_json,{})};
   }
 
-  _formatRow(row,full=false){
+  _formatRow(row,full=false,options){
     const raw=safeJson(row.raw_json,{});
     const name=raw.name || raw.display_name || row.logical_id;
     const summary={
@@ -371,7 +378,7 @@ export class DefinitionRepository {
       summary.tutorMoves=raw.tutor_moves || [];
       summary.eggMoves=raw.egg_moves || [];
     }
-    return normalizePokeEdgeDefinition(summary.kind==='poke_edges'?{...summary,raw,rawText:raw.raw_text}:summary);
+    return normalizeLote241Definition(normalizePokeEdgeDefinition(summary.kind==='poke_edges'?{...summary,raw,rawText:raw.raw_text}:summary),options);
   }
 }
 

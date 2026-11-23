@@ -1,3 +1,4 @@
+import {normalizeLote241Definition} from './rules/lote241-decisions.mjs';
 import {previewBoundEntityAction} from './rules/bound-entities.mjs';
 import {pusherExperienceGain,resolvePushedSkills,previewSkillTrainer,hasCaretakingFeature,applyCaretakingSpecies,previewRebalancing,previewThisOnesSpecial} from './pokemon-caretaking.mjs';
 import {resolveMoveCapabilities} from './rules/move-capabilities.mjs';
@@ -165,7 +166,10 @@ export class MobileDefinitions {
     if(!record||record.id!==id||(versionId&&!(data.versionGroups?.[`${kind}:${id}`]||[]).includes(versionId)&&versionId!==record.versionId))return versionId?null:kind==='items'?getBuiltInFormItem(id):null;
     const out={...deep(record),kind};
     if(kind==='species'){out.capabilities=normalizeCapabilities(out.capabilities||out.raw?.capabilities);out.forms=mergeBuiltInSpeciesForms(id,out.forms||out.raw?.forms||out.raw?.form_definitions||[]);}
-    return normalizePokeEdgeDefinition(out);
+    const ruleset=(data.rulesets||[]).find(row=>row.id===rulesetId);
+    const pinned=ruleset?.pins?.some(pin=>pin.definition_key===`${kind}:${id}`&&pin.version_id===vid);
+    const editationEnabled=kind==='moves'&&!versionId&&!pinned&&ruleset?.packs?.some(pack=>pack.pack_id==='ptu-1.05-editation'&&pack.enabled);
+    return normalizeLote241Definition(normalizePokeEdgeDefinition(out),{editationEnabled});
   }
   _fieldClinicPlaytestEdge(rulesetId){
     const featureVersion=this._map(rulesetId,'features')['field-clinic'];
@@ -182,7 +186,7 @@ export class MobileDefinitions {
     rows.sort((a,b)=>String(a.name||a.id).localeCompare(String(b.name||b.id))); return rows.slice(Number(offset)||0,(Number(offset)||0)+(Number(limit)||60));
   }
   countResolved({rulesetId,kind,q=''}){ return this.listResolved({rulesetId,kind,q,limit:100000,offset:0}).length; }
-  getVersions({kind,id}){ const vids=data.versionGroups?.[`${kind}:${id}`]||[]; const versions=vids.map(v=>{const record=data.records[v];if(!record)return null;const out={...deep(record),kind};if(kind==='species'){out.capabilities=normalizeCapabilities(out.capabilities||out.raw?.capabilities);out.forms=mergeBuiltInSpeciesForms(id,out.forms||out.raw?.forms||out.raw?.form_definitions||[]);}return out;}).filter(Boolean); if(kind==='edges'&&id==='field-clinic'&&!versions.length){const edge=this._fieldClinicPlaytestEdge('all-provided-material');return edge?[edge]:[];}return versions; }
+  getVersions({kind,id}){ const vids=data.versionGroups?.[`${kind}:${id}`]||[]; const versions=vids.map(v=>{const record=data.records[v];if(!record)return null;const out={...deep(record),kind};if(kind==='species'){out.capabilities=normalizeCapabilities(out.capabilities||out.raw?.capabilities);out.forms=mergeBuiltInSpeciesForms(id,out.forms||out.raw?.forms||out.raw?.form_definitions||[]);}return normalizeLote241Definition(out);}).filter(Boolean); if(kind==='edges'&&id==='field-clinic'&&!versions.length){const edge=this._fieldClinicPlaytestEdge('all-provided-material');return edge?[edge]:[];}return versions; }
   getCounts(rulesetId){ const out={}; for(const k of ALLOWED_KINDS)out[k]=this.countResolved({rulesetId,kind:k,q:''}); return out; }
   getDamageBase(db){ return deep(data.damageBase?.[String(Number(db))]||null); }
   getTypeMatchups(){ return deep(data.typeMatchups||[]); }
@@ -807,7 +811,7 @@ async function handleApi(req,res,url){
     return json(res,200,{ok:true,desktopSession});
   }
   if(req.method==='GET' && url.pathname==='/api/health'){
-    return json(res,200,{ok:true,version:'2.2.0-beta.49',persistence:'android-local',database:'app-data/content-packs + WebView local storage',schemaVersion:5,definitions:{database:'embedded mobile bundle + installed .ptucp overlays',activeRuleset:getActiveRuleset()}});
+    return json(res,200,{ok:true,version:'2.2.0-beta.50',persistence:'android-local',database:'app-data/content-packs + WebView local storage',schemaVersion:5,definitions:{database:'embedded mobile bundle + installed .ptucp overlays',activeRuleset:getActiveRuleset()}});
   }
   if(req.method==='GET' && url.pathname==='/api/rulesets'){
     const activeRulesetId=getActiveRuleset();

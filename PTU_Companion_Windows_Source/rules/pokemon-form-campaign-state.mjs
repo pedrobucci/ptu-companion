@@ -41,30 +41,19 @@ function activeTempHpBlock(details){
 
 export function applyPokemonHpDelta(pokemon,delta){
   const p=clone(pokemon||{});const details=ensureDetails(p);const amount=finite(delta)??0;
-  p.hp=Math.max(0,Math.min(finite(p.maxHp)??0,finite(p.hp)??0));
+  p.hp=Math.min(finite(p.maxHp)??0,finite(p.hp)??0);
   const beforeHp=p.hp,beforeTemp=p.tempHp;
-  let blockedTempHp=0;
   if(amount>0){
     const injuries=Math.max(0,Math.min(10,Math.trunc(finite(p.injuries)??0)));
     const healingLimit=Math.floor((finite(p.maxHp)??0)*(10-injuries)/10);
     const missing=Math.max(0,healingLimit-p.hp);
     const restored=Math.min(amount,missing);p.hp+=restored;
-    const overflow=Math.max(0,amount-restored);
-    if(overflow>0){
-      if(activeTempHpBlock(details))blockedTempHp=overflow;
-      else{
-        p.tempHp+=overflow;
-        // Campaign rule: excess healing becomes Temporary HP. Because this can mix with
-        // non-form THP, drop source provenance rather than falsely attributing it.
-        details.formTempHpBySource={};
-      }
-    }
   }else if(amount<0){
     let damage=-amount;
     const absorbed=Math.min(p.tempHp,damage);
     p.tempHp-=absorbed;damage-=absorbed;
     if(absorbed>0)syncTrackedTempHpAfterLoss(p,beforeTemp);
-    p.hp=Math.max(0,p.hp-damage);
+    p.hp-=damage;
   }
   details.tempHp=p.tempHp;
   return {
@@ -72,7 +61,7 @@ export function applyPokemonHpDelta(pokemon,delta){
     hpChanged:Math.abs(p.hp-beforeHp)>1e-9,
     tempHpChanged:Math.abs(p.tempHp-beforeTemp)>1e-9,
     fainted:beforeHp>0&&p.hp<=0,
-    blockedTempHp,
+    blockedTempHp:0,
     before:{hp:beforeHp,tempHp:beforeTemp},
     after:{hp:p.hp,tempHp:p.tempHp},
   };

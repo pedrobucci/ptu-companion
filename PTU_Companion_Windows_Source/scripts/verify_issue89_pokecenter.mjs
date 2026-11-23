@@ -8,7 +8,7 @@ const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..','..');
 const engine=readFileSync(path.join(root,'PTU_Companion_Windows_Source/static-preview/pokecenter-engine.js'),'utf8');
 const context=vm.createContext({});vm.runInContext(engine,context);
 const state={trainer:{money:50},selectedRosterId:'active',rosters:[{id:'active',active:true},{id:'inactive',active:false}],pokemon:[
-  {id:'hurt',name:'Hurt',hp:3,maxHp:20,injuries:4,tempHp:2,storage:false,rosterIds:['active']},
+  {id:'hurt',name:'Hurt',hp:3,maxHp:20,injuries:4,tempHp:2,details:{statusAfflictions:[{name:'Badly Poisoned'}],badPoisonDamage:20},storage:false,rosterIds:['active']},
   {id:'second',name:'Second',hp:1,maxHp:12,injuries:1,storage:false,rosterIds:['active']},
   {id:'other',name:'Other',hp:1,maxHp:12,injuries:1,storage:false,rosterIds:['inactive']},
   {id:'stored',name:'Stored',hp:0,maxHp:10,injuries:2,storage:true,rosterIds:[]}
@@ -18,6 +18,9 @@ const preview=context.previewPokecenterRecovery(state,{pokemonIds:['hurt'],servi
 assert.equal(preview.valid,true);assert.equal(preview.total,40);assert.equal(preview.effects[0].hpBefore,3);
 const applied=context.applyPokecenterRecovery(state,{pokemonIds:['hurt'],serviceCost:40,rosterId:'active'});
 assert.equal(applied.state.trainer.money,10);assert.equal(applied.state.pokemon[0].hp,20);assert.equal(applied.state.pokemon[0].injuries,0);assert.equal(applied.state.pokemon[0].tempHp,2,'recovery preserves positive Temporary HP');
+assert.deepEqual([...preview.effects[0].statusAfflictionsBefore],['Badly Poisoned']);
+assert.deepEqual([...applied.state.pokemon[0].details.statusAfflictions],[]);
+assert.equal(applied.state.pokemon[0].details.badPoisonDamage,5);
 assert.equal(JSON.stringify(applied.state.ui.combat.participants.hurt.conditions.statusAfflictions),'[]');assert.equal(applied.state.ui.combat.participants.hurt.conditions.stuck,true);
 assert.equal(JSON.stringify(state),pristine,'preview/apply must not mutate their input');
 assert.equal(context.previewPokecenterRecovery(state,{pokemonIds:['hurt','hurt'],serviceCost:40,perPokemon:true,rosterId:'active'}).total,40,'duplicate IDs charge only once');

@@ -47,6 +47,7 @@ for(const path of appPaths){
     revalidatePokemonFormAfterDirectHpMutation:async(id,options)=>{calls.push({kind:'revalidate',id,options});p.details.formState.activeFormId=null;return {valid:true};},
     commit:async message=>{commits.push(message);},
     inventoryItem:id=>ctx.item?.id===id?ctx.item:null,
+    injuryHealingHpLimit:(maxHp,injuries=0)=>Math.floor(maxHp*(10-injuries)/10),
     applyPokemonFormGameEventUi:async(id,event,options)=>{calls.push({kind:'apply',id,event,options});p.hp=Math.min(p.maxHp,p.hp+Number(event.delta||0));return {valid:true};},
     state:{ui:{gmOverride:false}},
   };
@@ -67,6 +68,7 @@ for(const path of appPaths){
   assert.equal(p.storage,true);assert.equal(p.hp,p.maxHp);assert.equal(p.tempHp,0);assert.deepEqual({...p.details.formTempHpBySource},{});assert.equal(p.combatStages.attack,0);assert.ok(calls.some(x=>x.kind==='revalidate'&&x.options.tempHpChanged===true));
   await ctx.withdrawPokemon('p1');assert.equal(p.storage,false);assert.equal(p.tempHp,0);
 
+  vm.runInContext(extractFunction(src,'supportsAutomatedItemUse'),ctx);
   vm.runInContext(extractFunction(src,'useItem'),ctx);
   ctx.item={id:'potion',name:'Potion',qty:2};p.hp=10;p.details.speciesDefinitionId='testmon';
   await ctx.useItem('potion','p1');

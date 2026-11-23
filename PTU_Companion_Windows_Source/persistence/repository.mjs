@@ -244,7 +244,7 @@ export class CampaignRepository {
     if(!state || typeof state!=='object') throw new Error('State must be an object');
     if(!state.trainer?.id || !state.trainer?.name) throw new Error('Trainer is required');
     for(const field of ['pokemon','rosters','inventory','npcs']) if(!Array.isArray(state[field])) throw new Error(`${field} must be an array`);
-    const pids=new Set(); for(const p of state.pokemon){ if(!p.id || pids.has(p.id)) throw new Error('Duplicate or missing Pokémon id'); pids.add(p.id); if(p.hp<0 || p.maxHp<1 || p.hp>p.maxHp) throw new Error(`Invalid HP for ${p.name}`); if(p.injuries<0) throw new Error(`Invalid Injuries for ${p.name}`); }
+    const pids=new Set(); for(const p of state.pokemon){ if(!p.id || pids.has(p.id)) throw new Error('Duplicate or missing Pokémon id'); pids.add(p.id); if(p.hp==null || !Number.isFinite(Number(p.hp)) || p.maxHp<1 || p.hp>p.maxHp) throw new Error(`Invalid HP for ${p.name}`); if(p.injuries<0) throw new Error(`Invalid Injuries for ${p.name}`); }
     const rids=new Set(state.rosters.map(r=>r.id));
     for(const p of state.pokemon) for(const rid of (p.rosterIds||[])) if(!rids.has(rid)) throw new Error(`Unknown roster membership ${rid}`);
   }
